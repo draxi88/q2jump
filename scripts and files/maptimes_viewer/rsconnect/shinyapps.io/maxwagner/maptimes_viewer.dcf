@@ -1,0 +1,13 @@
+name: maptimes_viewer
+title: maptimes_viewer
+username:
+account: maxwagner
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 228586
+bundleId: 1161997
+url: https://maxwagner.shinyapps.io/maptimes_viewer/
+when: 1515089695.6544
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: alltimes.xlsx|alltimes2.xlsx

@@ -1,0 +1,41 @@
+---
+title: "Test Server Upload Rules"
+date: "September 9, 2015"
+output:
+  html_document:
+    highlight: tango
+    theme: spacelab
+    toc: true
+  pdf_document: default
+---
+
+***
+## Uploading a Map
+* Download a FTP client like [filezilla](https://filezilla-project.org/download.php?type=client).
+* Use the following to login
+    * IP: 195.93.242.155
+    * Username: quake2test
+    * Password: FngS4GGg2TJSJuKS9tdB
+* Upload all files with the following naming format:
+    * testing: mapname_test1.bsp, mapname_test2.bsp etc
+    * **NO CAPTIAL LETTERS**
+    
+![](ftpclient.jpg)
+
+***    
+## Testing a Map
+* login with **admin super user**
+* ![](adminlogin.jpg)
+
+* add a map with **addmap mapname**
+* ![](addmap.jpg)
+
+* remove a map with **remmap #**
+* ![](remmap.jpg)
+
+***    
+## Finishing a Map
+* when you think your map is finished, add a final version with the name, **mapname_final.bsp**, and let a admin know.
+* remove all other versions of your map, first from the rotation, and then from FTP.
+* after a admin approves it, upload the map to the maps channel in slack in a zip file with the following format:
+    * ![](format.png)

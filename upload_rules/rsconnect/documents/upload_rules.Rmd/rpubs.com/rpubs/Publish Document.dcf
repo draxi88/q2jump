@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/267546/b1d601ab19364004ac31765fe7820b55
+bundleId: https://api.rpubs.com/api/v1/document/267546/b1d601ab19364004ac31765fe7820b55
+url: http://rpubs.com/mezzani/267546
+when: 1503532026.2384
