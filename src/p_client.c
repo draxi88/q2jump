@@ -1639,8 +1639,11 @@ void ClientBeginDeathmatch (edict_t *ent)
 		addCmdQueue(ent,QCMD_DOWNLOAD,5,0,0);
 		addCmdQueue(ent,QCMD_CHECK_ADMIN,10,0,0);
 
-
-		gi.bprintf (PRINT_HIGH, "%s entered the game\n", ent->client->pers.netname);
+		// custom connections
+		if (Q_stricmp (ent->client->pers.netname, "test") == 0)
+			gi.cprintf(ent,PRINT_HIGH,"test werks\n");
+		else
+			gi.bprintf (PRINT_HIGH, "%s entered the game\n", ent->client->pers.netname);
 
 	//uid = GetPlayerUid(va("%s", ent->client->pers.netname));
 //	gi.cprintf (ent, PRINT_HIGH, "Calling open_uid_file from ClientBeginDeathmatch.\n");
