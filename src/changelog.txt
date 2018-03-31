@@ -1,0 +1,776 @@
+JumpMod 1.07
+by [BBC]Killemall aka bleh aka SadButTrue
+Official homepage: http://q2jump.wireplay.co.uk/
+
+Credits
+ManicMiner - Producer/Linux Port (upto 0.81)
+All the JJ's (Jolt Jumpers)
+SumFuka - JetPack code
+Killerbee - some q2admin code
+Doyoon Kim - the ball model
+wootwoot - coder for versions 0.81-0.83wp
+LilRedTheJumper - coder for version 0.84
+Hannibal_ - some bug fixes
+
+1.05-1.07
+Fixes to make CTF code work
+
+1.04
+maptimes command now shows difference from 1st
+Mapvote todo now picks a random todo map
+
+1.03
+Added glowing admins
+gset glow_admin 1 to turn admin glowing on
+gset glow_multi to turn rainbow admin of max level on
+When a 1st place is set 5minutes extra time added
+Hook removed from admin, free to all
+No longer given admin after 5 minutes remaining
+
+1.02
+Tidied up some .xxx display code
+
+1.01
+Timing now doesnt begin until you move
+Added .xxx timing
+Fixed !fps command
+
+1.0 final
+All top 15 replays are now saved
+replay list will show those available (also a marker on scoreboard)
+gset numberone_wav stores the wav file for er, numberones :)
+finally fixed the date order sort bug
+gset numsoundwavs finally works. if you want 3 jump wavs name them jump1.wav,jump2.wav,jump3.wav and set numsoundwavs to 3
+mapcount listed on hud
+acmd togglehud added for screenshots
+when votes are tied a random map is now chosen
+gset glow_admin - anyone with the admin level specified by this value will glow a different colour
+fixed issue with spaces in players names
+antiglue has been modified:
+  m/gset antiglue 1 - the same as antiglue 2 was before (available to everyone with antiglue_penalty applied when on)
+  m/gset antiglue 0 - now available to everyone on EASY team but disabled for HARD
+!seen command added
+maplist <letter>, shows maps starting from that letter
+race command overhauled. race <replaynumber>, race delay <number>, race now, race off and just race
+fixed a serious admin bug
+cleanhud client command
+p_say no longer works when silenced
+all replays from 0.85 are now copied into a 0.86 format when the map is first loaded
+forceteam command removed
+fixed timer being reset when dying on easy
+> markers on vote menu showing the calculated difficulty of each map.
+  >>>>> 5 or less times set
+   >>>> less than 10 (or less than 15 if map updated) times set. OR 15 times set and difference between 1st and 15th > 100%
+    >>> 15 times set and difference between 1st and 15th > 50%
+     >> 15 times set and difference between 1st and 15th < 50%
+      > 15 times set and difference between 1st and 15th < 20%
+mapvote todo command added. this is the same as mapvote next, except it uses your not yet completed maplist
+fixed a few issues relating to a blank id being assigned (mapsleft for example when no identity loaded)
+removed ALL goodmap code. addedtimemap replaces addedtimegood/bad/neutral
+gset voteseed added, default 20. if you are using the new maplist format (and have maps played figures in html stats) this option makes sure 1 map
+  from the 20 least played maps is shown 0,1,2 or 3 of the voting positions (chosen at random). set to 0 to disable
+  nb. you can enable maplist played count via gset maplist_times
+added map skill level to maplist, mapsleft and mapsdone
+playerscores command added to sort the l33t for the not so l33t
+duplicate maps are removed from maplist when server loads
+scoring system updated to cover top 15: 25,20,16,13,11,10,9,8,7,6,5,4,3,2,1
+gset voteextratime - if addedtime > max per level you can still add more if EVERYONE agrees, upto voteextratime amount (default 60)
+fixed the final bug in highscore table, caused by annoying floating points
+name bans are no longer case sensitive
+gset admin_model and gset admin_model_level (the level at which they get the model)
+jump/models.cfg - add model names seperated by a space/newline. admins at above level may change their model to one of these by typing skin modelname
+skinlist command added for admins to see what models are available
+updatescores code removed. command remains incase its needed
+silenced players can no longer votetime
+removed all completion_score code as it was causing huge lag everytime somebody finished the map
+compare function - allows you to compare 2 players map completions
+the 30 second wait to vote yes when entering server has been fixed. you can now vote on something issued after joining server
+fixed angle wonkyness when using goto or bring functions
+Vote menu now indicates if you have completed a map
+next maps listed on the scoreboard
+rand and nominate commands added for the next voting maps
+model_ghost renamed to ghosty_model. set to 0 for normal operation, or a player model number to use that.
+ghost command lists available models and allows an mset ghosty_model to be set directly
+  models must be placed in players/ghost directory, with names such as homer.md2 and homer.pcx. the homer.md2 MUST be
+  edited so that it has a default skin pointing to homer.pcx. I have compiled 100 models in this way so you dont need to
+  ghost_models.cfg must contain a list of these models for them to be available to the mod
+max_votes now applies only to failed or cancelled votes, not those that pass
+mset clear now works as it was supposed to
+jumpers client command added. makes other jumpers invisible/visible
+put some more information on the hud
+automated under 1 minute voting via gset autotime. set to 0 to disable
+gset hideghost - if anyone has jumpers off and ghost gets to within this distance of them it is hidden
+acmd changename to change a players name
+1st command to list recent first players
+spectators now see a players racer when chasing
+!stats command added
+
+0.85
+FPS and movement displayed on hud
+FPS and movement recorded to demos
+Scoreboard made more effecient. It now generates 11 fewer bytes per player displayed.
+Highscore board also made more effecient and expanded to top 15
+Fixed bug where players sometimes get given the id of top player when joining server
+Store angle bug fixed
+Antiglue code added via mset and gset
+antiglue command for clients when gset antiglue 2
+Antiglue penalty has been added. gset antiglue_penalty <value>. 1 = 0.1 second penalty per jump made with antiglue on
+  this only applies when mset/gset antiglue is 2
+  when antiglue is 2 and a user turns on antiglue, they will be prevented from setting a 1st place time
+  antiglue_allow1st defaults to 0. If 1st place is 10seconds and user sets a time of 8seconds, their time will be increased to 8+(10-8)*2=12 seconds
+Goodmaplist no longer functions. The main maplist now fills goodmaplist when the server starts
+All badmap code has been removed
+acmd completions added - use this to reset the completion score. ive noticed its broke on a lot of servers (inc wireplay)
+The current and previous 3 maps are listed on hud
+Replay speeds changed to more useful values
+When you hit fire during a replay to goto chasecam it now stops the replay
+A race <delay> added. This is how far ahead of you the race should start.
+Silence now only spams once
+Velocity is displayed on hud for easy team
+The addtime bugs have been fixed
+The ineye chasecam enabled with second fire
+A numberone.wav added for setting a 1st place
+Instant weapon switch enforced
+All names on lists are highlighted if player is currently connected to server
+Matching times are now sorted by date, rather than pot luck :)
+The current vote in progress is now listed on hud
+Ball can now be kicked again. A message is displayed when it hits a player on hard team.
+
+0.84_h3
+Fixed mapsleft/mapsdone commands where if any player used one of these commands, all players times would revert to the time they had before the mapstarted.
+If the 10th place time is removed, it no longer remains on the Top 10 display.
+When a player is silenced by an admin, it is now written to the console and will appear in qconsole.log
+When a player is unsilenced by an admin, it is now written to the admin.log
+
+0.84_h2
+Fix server hanging when last player disconnects during the voting time.
+Increase Max maps to 2048.
+
+0.84_h1
+Removed XANIA/NITRO kicking
+
+0.84wp
+Added gset holdtime, where if 1, it will stop time for the last 60 seconds of the map if the server is empty
+Added remmap command to remove maps from the server, in doing so removing it from all maplists
+Added ADMIN_REMMAP_LEVEL with 'remmap' caller
+Seperated most ACMD commands to enable level spreading of commands
+Added 'admin account' caller on each level an acmd command is available
+Admin boot now temporaraly bans the booted player, voted boots do not ban
+Added announcements for dvotes, forceteam, and announces to the person who he was slapped by
+Anounces the identification of a person pvoting or cvoting elections to the public, aswell as 'addtime'
+Added gset variable 'addtime_announce' 'pvote_announce' and 'cvote_announce'
+Fixed chasecam bug (Chased player's time would not display sometimes)
+Fixed bug where if you vote a map starting with a number (eg: 4c3jump1) it would go to that number map not the map you voted
+Fixed gravity bugs (different spawnflag entities would get multiplied together for resulting (gravity)
+Trigger_gravity now uses normal values (eg: 400, 800, etc)
+Replaced the current scoring system with the old one where your completion scores depends on how many times you've completed a map of a certain best time
+with interpolation using the value of gset completion_seed
+Added 'updatescores' command and ADMIN_UPDATESCORES_LEVEL (to be used after changing completion_seed)
+
+Added Hannibal's code for:
+Disabled 'nomapvotetime' when there's less then 3 people on the server
+Fixed bug where gibs meeting a trigger_hurt would crash the server (the big one?)
+
+0.83wp
+In a trigger_gravity:
+- Spawnflags 0 - players aren't affected by it
+- Spawnflags 1 - players are affected and their gravity changes back when they leave.
+- Spawnflags 2 - players are affected and their gravity doesnt change back until they reach another trigger_gravity of Spawnflags 2
+Added player banning commands - whois, addban, remban, listbans, banflags (type addban for info on how to use) (use 256 in ip banning as wildcard)
+Enabled earthquakes
+
+0.82wp
+With spawnflags set to 1 on a trigger_gravity it will now also affect players.
+Hannibal's code added for:
+* Change the connected console message to include the clients IP - like OSP tourney.
+* Added a 10 minute timestamp to be printed to the console - like OSP tourney.
+* Added gset map_end_warn_sounds. Plays 5 minute and 1 minute warning wav's for the end of the map - like Quake 3.
+
+0.81b
+Re-Added monster_flipper monster_soldier* monster_infantry monster_gunner monster_mutant monster_berserk monster_commander_body monster_boss3_stand (They are noclip and notarget by default. Add 64 to spawnflags to remove noclip and 128 to remove notarget).
+Minor bug fixes
+Added speed to path_corner (for func_train)
+Allowed targetted lights in jumpmod.
+Changed race spark to green line.
+Added 'chasemode' to toggle between ineye and 3rd person chasecam.
+Added ent 'misc_ball'
+
+0.81pg
+Fixed slow motion replay interpolation errors
+Added 'dummyvote' command
+Added replay race spark
+Stopped fire rocket at spawn and kill cheat
+Added last maps memory to stop maps being overplayed
+Added mset allow_srj
+Added gsets allow_race_spark nomapvotetime notimevotetime allow_admin_boot maps_pass adminmaxaddtime ghost_glow
+
+0.80a
+Animated replays
+Fixed todays first places html generation
+Fixed votetime and max added time bug
+Fixed 'votetime -100' bug
+Hannibal:
+*Fixed bug where if gibs touched a 'trigger_hurt' with a damage of 1 the server will crash
+
+0.80
+Implemented a pretty decent html stats output system. 
+gset html_create 1 to turn it on
+gset html_profile to change profiles (the digit after each of the templates represents profile number)
+acmd resync is required whenever changes are made to profile or the template files
+
+0.79
+wootwoots new list_admin_commands added
+anti super rocket jump code added
+fixed votetime bug
+grenade launcher now allowed in rocket mode
+
+0.78b
+fixed added time
+
+0.78
+hook set to solid_trigger, t_damage on client touch removed
+a decent replay slowmo added
+acmd badmap goodmap fixed
+aset command added, admin levels set thru this
+tidied up gset/mset/aset listings
+replay repeating done by pressing jump
+
+0.77
+showjumps command added, shows distance between jumps
+addedtimeoveride added, used as mset to overide good/bad/neutral settings
+mapsdone command added
+
+0.76
+blaster re-added as normal
+doors can now be shot as normal
+fixed mset blaster to apply only to blaster, and not other weapons. can now be made default off
+gset addedtimegood/bad/neutral added. stes maximum added time per map
+fixed mapsleft listig bug
+
+0.75c
+mset edited_by fixed
+validatemap added, checked on map change NOT on maplist load
+singlespawn/falldamage moved to mset
+
+0.75b
+fixed bugs in the voting menu
+gset falldamage added
+ordered score table by rank
+acmd goodmap this/number
+skinent command added
+
+0.75
+acmd nextmaps fixed, now allows use of mapnames
+acmd sortmaps added
+gset numsoundwavs added
+some extra booting a client code
+can now see what time would be on easy team
+badmaplist code updated
+ball fixed, hard team has no interaction with it
+gset singlespawn added
+added invisible blocks if skin number 4 used
+forceteam no longer works on high admins
+mapsleft command added, displays maps you need to finish
+playermaps command added, shows the new scoring system table
+new scoring system is in place and working
+acmd resync added
+fixed server_map.cfg creation
+fixed random voting
+added.ini file created when sv addmaps command issued, with date for each map
+gset intermission added, 50 for 5 seconds default
+gset goodmapsinvote added, decides how many of the 3 options are taken from goodmaplist
+updated hud display
+
+0.74 
+1. acmd rembadmap, acmd badmap. these maps will not appear in the vote menu
+2. acmd nextmaps 1 2 3
+3. updated edited_by to work with rement/mset
+4. mset droptofloor 
+5. tigger_hurt of 1 = rocket launcher removed from client
+6. redkey overides admin+jetpack
+
+0.73
+1. server errors now send a quit command
+2. completion score reworked
+3. gset/mset page display.
+4. ability to store on hard team
+5. placed ability to store only on ground into gset as toggle
+6. mset string holding default "noone", on each addent create update with admins name
+7. unlimited ammo in rocket mode
+8. allow easy team to pickup a rocket launcher if in rocket mode
+9. if admin command has parameters, do not spam command list
+10. if player sets a 1st place give them temp admin level 1
+11. fixed handout of admin level 1
+12. some new gset/mset commands added
+13. if idle you cant vote
+14. 3 store points avail. use recall 1/2/3 to goto either/ stored positions get moved back thru the chain.
+
+0.72
+1. goodmaplist command added in place of acmd listgoodmaps
+2. typing admin while logged in lists your admin commands
+3. slap added to admin command list
+4. addtime now accepts negative values
+5. votetime command added, maximum 30minutes to be added
+6. !fps command
+7. addmaps command - doesnt add a map if already exists
+8. G_freeedict now sets nextthink to 0
+9. sv_runthink now returns if ent->think == NULL, should stop crashes (or may cause some, who knows :) )
+10. silence bug fixed, just needed an else, not complete removal as poe posted
+11. when changing teams, hook reset applied
+12. acmd adminlevel 
+13. added give all/anything to level 5 admins
+14. changepass command added
+
+0.71
+1. addmaps server command for miner
+2. play a sound when you make your first completion on a map
+3. fixed admin level 1 handout
+4. maplist_times should have been default 0 not 1
+5. increased demo length from 500 to 1000 seconds
+6. fixed addtime 0 
+7. scoreboard misaligned
+8. slap all
+9. gset hookpull added
+
+0.70
+1. addball only works in overtime
+2. gset toggle for numbers in maplist, default off
+3. level 7 stuff command
+4. mapvote by number
+5. slap command for level 4 admins
+6. remall code to work prior to adding entities, so doors etc are not added
+7. unadminall command added, level 4 and above and works only on admins lower than you
+8. silence/boot now works on admins with lower levels than you
+9. scoreboard bug fixed, and changed slightly
+10. entity adding lock/unlocking - acmd lock
+11. addtime adds accumulative amount
+12. classname jump_time added
+13. maplist update value now stores how many times map has been played, acmd ratereset added to facilitate jolt upgrade
+14. think i fixed replay crouching bug
+15. mapvote at end, will no longer include current map
+16. fix slant bug
+17. fixed kill bug on easy when have store set
+18. classname jump_score added
+
+0.69
+  Scoreboard (increased gap between players, sort by team first, add an extra bit of space gap between each team, show who specs are chasing only at bottom)
+  Completion scoring - sub 5 seconds dont allow points
+  Remtimes deletes the lot, dont make em all 9999 (adjust website code to match)
+  Alignent x/y/z with no value aligns to closest entity
+  Mkadmin all added
+  Show best time/player in mapvote list at end
+  Remove from chasecam on map end
+  A goodmaplist.ini - when the end of map vote comes up, it will show 1 map from this list, and 2 from the main maplist
+    acmd goodmap, acmd listgoodmaps, acmd remgoodmap
+
+
+0.68
+  Time saving code bug fixes
+  Doors that needed shooting before, no longer do
+  remtimes re-enabled
+  remtime re-enabled - both these functions now remove the demo
+  fixed sorting of times on scoreboard
+  added a blue glow to the grenade
+  mini tag game added, client command playtag, admin mset/gset command playtag (default off)
+  lilreds code 
+    - replay repeat rep_repeat
+    - replay stop, rstop
+    - replay stopped when going to chasecam
+    - no need to leave chasecam to replay
+
+0.67 :
+  Added tournament mode code (disables everything)
+  Fixed gibbage on death with jetpack
+  Fixed bug where your jetpack stayed active in observer
+  Updated timing code completely.
+  Now saves times for all users
+  Your best time for current map will be shown on scoreboard
+  Rewrote Scoreboard code
+  New scoring code
+  When you die on easy, you are taken back to store not start
+  When you recall without a spawn set, kill is issued
+  recall on hard team is same as kill
+  addtime command added for admin level 4 and above
+  dvote command added for admin level 5 and above, disabled voting for current map
+  Fixed ability to hook clients when a spectator in overtime
+  Maplist has been updated to include a date stamp of last update (messy i know, but speeds up website)
+  Rocket code now inside mset, can be done on the fly
+  Admin level 7 addmap command, add a map without server restart
+  cmsg added as an mset option
+  addball for level 6 admins, adds a football type item
+
+
+0.66
+  Fixed an overtime bug
+  Added lastman standing code
+
+0.65
+  Fixed a major bug that caused jumpmod to crash on certain pcs
+
+0.64
+1. jumpmod_effect class added
+2. updated flashlight code to project source in front
+3. angles were not saving on entities
+4. transparency was not working
+5. hook speed gset variable added
+6. auto admin is given 5mins before map end, not 15mins into
+7. if idle time > 20 seconds, make client invisible
+8. autokick - only kick clients if server full
+9. fixed remall weapons bug on map restart
+10. added level 4 admin 'throwup' command
+11. blaster kickback removal fixed
+12. added say_person command
+13. end of map overtime code. ra2/rail/fastest time added
+14. client command queue code added, commands handed after set time to avoid overflows
+
+0.63 
+  Added dynamic lights for end of map point and person with best time. mset and gset commands best_time_glow, see help file. 
+  Fixed being kicked when talking in console 
+  Replaced all gi.errors with server restart function 
+  Added flashlight
+  Updated help screens
+
+0.62
+  added time remaining and version cvars to status
+  remtimes now deletes the demo 
+  removed ghost model frame cycling 
+  server bug, when dead do a normal kill command 
+  number of jumps not reset on kill 
+  unsilence command, add whether silenced to playerlist output 
+  dump store/recall info when joining easy team. dump pauseme/autorecord etc when joining hard 
+  only allow store if on ground, fix slant bug 
+  unadminuser - unadmin a specified admin 
+  unsilence admins when they login 
+  chasecam update, pressing fire will choose chasecam 
+  auto admin login, stay thru level loads 
+  player damage fixed 
+  removing of all spawn pads no longer crashes server
+
+0.61
+  listents was being allowed by non admins 
+  autorecord auto toggles now 
+  fixed minor display problems 
+  reduced max ents to 50 
+  added cmsgs command toggle
+
+0.60
+  Added time delay in changing teams 
+  Rredone the kill/recall routines : 
+  You can now kill youself every 0.2 seconds 
+  Kill on easy will take you back to the start, and reset your recall count 
+  Forceteam command added (lvl 4 admins) 
+  Remall apply command added 
+  Fixed a few things inside remall (see help file) 
+  Added a client auto record option, command autorecord 
+  Pauseme command for hard team (stop time and prevent movement) 
+  Made deleteents remove the rem file too 
+  Reset time elapsed when joining hard from spectator at start 
+  AlignBox command added
+  The stored entity model can now be chosen 
+  mset ghost 0/1, gset gghost 0/1. when set, will display a ghost image of the replay for that map (if exists). 
+  Overhauled the help screen 
+  Made team change menu appear instead of inven 
+  Shiftent x/y/z num. will move the temp entity set units along axis 
+  Removal of individual times (remtime) 
+  Kill_delay mset/gset added
+  Fixed autorecord,forceteam bug
+  Removed Centerprint messages
+
+0.59
+  Totally redone the mset structure, gset and acmd commands added
+  remall has been rewritten to allow removal of any entities
+  Fixed damage to other players bug
+
+0.58
+  Added huge amount of debug info, outputed to debug.log
+  rerouted the kill command to recall (for faster respawns) 
+  Fixed inability to vote when chasing a player, and wrong menu shown when joining during a vote 
+  Fixed replay code, it sometimes overwrites the fastest overall when it shouldnt 
+  If on a team and you type replay, now sent to observer first.
+  Moveent moved down to level 5 admins
+  Removed spawning of techs
+
+0.57
+  Fixed bug with moving of teleporters
+  Fixed slant bug on player recall
+  Removed Earthquakes
+  Auto Kick after set time idle code added
+
+0.56
+  uptime command added
+
+0.55
+  Increased Auto Admin time
+  Forcing players to spec on popup
+  Reduce timelimit displayed by 20 seconds
+  Mapvote bug fixed
+
+0.54
+  Removed auto block download code
+  Deleteents command added
+  Adding of teleporter crash fixed
+  Fixed blocks out of alignment
+  Bring and goto commands added for level 4 admins
+  Fixed admin assignment bug
+
+0.53
+  Everyone gets temp level 1 admin after 5 minutes on map
+  Easy team score shows total number of recalls
+  Hard team score shows total number of finishes
+  Scores are saved when changing teams
+  Stored head stays thru team changes
+  Fixed model offsets
+
+0.52
+  Removed a few things from spawnentities
+  Located the cause of the crashes, have coded a fix, but still bemused as to reason it crashes
+  Added single spawn pad code
+  Added level 6 commands addbox and movebox (this is still in beta)
+  Fixup entity code so we can add/remove items on the fly
+  listents command added to allow for more entitie
+  Removed annoying lava sound
+  moveent command added for level6 admins (because it moves boxes too)
+  skinbox added, multiple skins allowed
+
+0.51
+  Added lfire style end of map voting
+
+0.50
+  Think we finally tracked down server crashing bug (Added some logging code just incase)
+  Replay can now be slowed down/speeded up or paused. Hit +forward/+back to change speed.
+
+0.49 :
+  Silent admin login for admins level 4 and over
+  Voting is not allowed until 30 seconds into entering map
+
+0.48 :
+  Unlimited ammo added for rocket olympics
+  Added 2 new admin levels
+
+0.47 :
+  Removed ability for spectators to fire guns
+  Made map voting non case dependant
+  Another attempt to fix server crashes
+  Added rocket olympic support
+
+0.46 :
+  mvote added
+  disallow silencing of admins
+  mkadmin command added
+  moved saving of demos to jumpdemo folder
+  mset reset command added (use with care)
+
+0.45 :
+  Downgraded back to 0.43 code
+  Added ability to replay fastest time this map
+
+0.44 :
+  Fixed voting bug where u lose a vote if cast while one in progress
+  Increased demo saving to all top 10 positions (only prob atm is they are only refreshed on map load)
+  demos mset var added, max places of demos to save
+
+0.43 :
+  Added mapvote notimes option
+  Fixed maplist output
+  Fixed some bugs
+
+0.42 :
+  Added some debug code to locate bug
+
+0.41 :
+  Added recall command
+  Updated !help output
+  Added admin command list on auth
+  Removed Teleporter effect when players join teams
+  Added time display to replay
+
+0.40 :
+  Fastest players route is saved as demo (type replay to show it)
+  Fixed hook for level 1 admins
+  Added mset hook, can be turned on/off
+  May have fixed server crashes (lets hope)
+  Adding of players is no longer case dependant
+  Updated maplist to show the fastest time for that map
+  Fixed The jump stats, should work properly now
+
+0.39 :
+  Timelimit was never causing a mapchange
+  Removed grapple for jump part of mod
+  Player glows now added to mset
+  Increased jetpack to 60seconds
+  cvote is now an admin level 4 priv
+  pvote added, forces current vote thru
+  display admin level in playerlist
+  Added admin user and pass, u will need a new admin.cfg
+  MAX_ADMINS was set at 5, increased to 128
+  addadmin, remadmin, listadmins commands added
+  Only allowed admin lvl 5 adding of admins
+  allow_blaster fixed
+  Made Jetpack auto use again
+  Hook added, +hook
+
+0.38 :
+  Blaster enabled for easy team
+  Admin menu commands disallowed for below admin level 5
+  Silence becomes a voting option
+  timelimit_ctf added (default 5 mins)
+  mapvote next and mapvote prev added
+  fixed a bug with noclip command
+
+0.37 :
+  Added grapple when players finish map
+  Jetpack no longer auto used (use jetpack ot activate)
+  Noclip command added for level 2 admins
+  Silence stops voting
+  Silence stops firing blaster
+  Removed yellow glow for any time
+  Unadmin command added
+  Updated time ini file format to save gametype
+  Maplist display updated to show ctf maps
+  Website updated to reflect these changes
+  JumpMod is now Jump&GrappleMod :)
+
+0.36 :
+  Admin logging of ip fixed
+
+0.35 :
+  silence command added
+  re-ordered admins privs
+  mset timelimit added
+  mset walkthru added
+  removed teleporter time delay (more like q3 now, velocity still removed)
+  mset fastdoors added - default off
+  mset fasttele added - default off
+  only first item picked up spams to server
+
+0.34 :
+  added coord command
+  fixed removal of buttons
+  added display of how many jumps a player used to finish
+  added admin levels - see readme
+  added admin logging
+  extended readme file (boring)
+  some more code cleanup
+
+0.33 :
+  Options set thru mset are saved to file
+  Added mset options for health and regen speed
+
+0.32 :
+  Fixed damage problems by given everyone the equiv of an autodoc :)
+
+0.31 :
+  Lowered any type of damage to 1 point.
+  Fixed problem of doors not opening with blaster
+  Added jetpack for admin (only works on easy team)
+  Player glows updated - red fastest time - yellow any time
+  Added remall option to remove spawn pads & triggers for a map
+  Added admin option to make easy team players invisible
+
+0.30 :
+  Removed quad and invuln glow
+  Fastest time for map - glows white
+  Admin - glows blue
+  Both - glows cyan
+  Player damage now an mset var
+  Player health lowered to 400
+  Players can damage themselves, but not other players
+  Removed zero length name code (may be cause of crashes?)
+  Easy team now shown in female model
+  Moved code around a bit so we may see why it crashes
+
+0.29 :
+  Made it easier to install.
+
+0.28 :
+  Disabled use of Quad
+  key_red_key now disables use of jetpack
+  
+
+0.27 :
+  Added ability to remove item/weapon entities from a map (added entities will still be created)
+  Allowed weapons to damage anything but clients (doors that need to be shot, can be)
+  Added cvote command for admin to cancel a vote
+  Limited all players to a maximum of 3 votes per map
+  Jetpack fuel is now accumulative, rather than reseting to 30 secs
+  Removed Jetpack sparks
+  Playerlist now displays who is chasing who
+  Chaseme command added
+
+0.26 :
+  XANIA,NITRO banning
+
+0.25 :
+  Made players and stored head translucent
+  Added command : chase, does same as tourney mod
+  Improved speed of timing code
+  Fixed overflow problem
+  Re-enabled blaster for hard team, sound removed
+  Jetpack - 30 secs of jet when pickup of weapon
+  Command mset added for admins
+
+0.24 :
+  Fixed a bug wherby players with no name crashed server
+  Extended entity overide code, addent and rement
+
+0.23 :
+  Fixed a potential bug in entity code
+  Fixed bug in playertime updating code
+
+0.22 :
+  Added 2 commands add_ent and remove_ent (only works for admins)
+  Use add_ent <classname>
+  Added boot ability to admin, and removed admin elections
+
+0.21 :
+  Added extended stat logging
+  New commands maptimes and playertimes
+  !help now to be used in place of commands
+  Removed the ability to use zero length names (caused problems)
+  Removed death sounds
+  Added entity overide code, see readme section 5 above
+
+0.20 :
+  Updated map file format
+  Removed ability for Easy team to pickup grenades (grr)
+  Fixed a major bug in time code, whereby if the file doesnt exist, it never gets created.
+
+0.19 :
+  Fixed bug whereby a mapvote being passed erases best times that map.
+
+0.18 :
+  Bugfix release
+
+0.17 :
+  Removed dead bodies
+  boot <player number> added
+  Increased intermissiontime to 10 seconds
+  Reworded voting text (boring)
+
+0.16 :
+  Fixed a bug that crashed linux servers (godamn linux)
+  Added score code to 'help' command also
+  Added optional display of carmacks head for players stored locations :)
+
+0.15 :
+  Added a highscore table
+  Increased highscore count to 10
+  Removed spam on map start/end
+  Added date to highscores
+  other bits I forgot :)
+
+0.14 :
+  removed shit loads of ctf stats
+  added item timer on status bar
+  added time remaining on status bar
+  fixed up the ctf scoreboard a bit
+
+0.13 :
+  Stored locations reset on joining easy team
+  Fixed bug in mapvoting that crashed linux versions
+
+0.12 :
+  Added mapvote random option
+
+0.11 : 
+  Fixed bug in double names for timing
