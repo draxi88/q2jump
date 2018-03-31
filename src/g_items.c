@@ -35,6 +35,7 @@ void Weapon_Grenade (edict_t *ent);
 void Weapon_GrenadeLauncher (edict_t *ent);
 void Weapon_Railgun (edict_t *ent);
 void Weapon_BFG (edict_t *ent);
+void Weapon_Finish (edict_t *ent);
 
 gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
 gitem_armor_t combatarmor_info	= { 50, 100, .60, .30, ARMOR_COMBAT};
@@ -1745,6 +1746,29 @@ always owned, never in the world
 /* precache */ "sprites/s_bfg1.sp2 sprites/s_bfg2.sp2 sprites/s_bfg3.sp2 weapons/bfg__f1y.wav weapons/bfg__l1a.wav weapons/bfg__x1b.wav weapons/bfg_hum.wav"
 	},
 
+/*QUAKED weapon_finish (.5 .5 .5) ?
+*/
+	{
+		"weapon_finish", 
+		Pickup_Weapon,
+		Use_Weapon,
+		Drop_Weapon,
+		Weapon_Finish,
+		"misc/w_pkup.wav",
+		"models/weapons/g_rail/tris.md2", EF_ROTATE,
+		"models/weapons/v_rail/tris.md2",
+/* icon */		"w_railgun",
+/* pickup */	"Railgun",
+		0,
+		1,
+		"Slugs",
+		IT_WEAPON|IT_STAY_COOP,
+		WEAP_RAILGUN,
+		NULL,
+		0,
+/* precache */ "weapons/rg_hum.wav"
+	},
+
 #if 0
 //ZOID
 /*QUAKED weapon_laser (.3 .3 1) (-16 -16 -16) (16 16 16)
@@ -2616,7 +2640,7 @@ void SP_jumpbox_small (edict_t *ent)
 	ent->s.renderfx |= RF_TRANSLUCENT;
 		VectorSet (ent->mins, -16,-16,-16);
 		VectorSet (ent->maxs, 16, 16, 16);
-	ent->s.modelindex = gi.modelindex ("models/jump/smallbo2/tris.md2");
+	ent->s.modelindex = gi.modelindex ("models/jump/smallbox3/tris.md2");
 	gi.linkentity (ent);
 	level.jumpboxes[0]++;
 }
@@ -2629,7 +2653,7 @@ void SP_jumpbox_medium (edict_t *ent)
 	ent->s.renderfx |= RF_TRANSLUCENT;
 		VectorSet (ent->mins, -32,-32,-16);
 		VectorSet (ent->maxs, 32, 32, 48);
-	ent->s.modelindex = gi.modelindex ("models/jump/mediumbo2/tris.md2");
+	ent->s.modelindex = gi.modelindex ("models/jump/mediumbox3/tris.md2");
 	gi.linkentity (ent);
 	level.jumpboxes[1]++;
 }
@@ -2643,7 +2667,7 @@ void SP_jumpbox_large (edict_t *ent)
 		VectorSet (ent->mins, -64,-64,-32);
 		VectorSet (ent->maxs, 64, 64, 96);
 //		VectorSet (ent->maxs, 64, 64+(128), 96+(128));
-	ent->s.modelindex = gi.modelindex ("models/jump/largebo2/tris.md2");
+	ent->s.modelindex = gi.modelindex ("models/jump/largebox3/tris.md2");
 //	ent->s.modelindex = gi.modelindex ("models/jump/wall1bo2/tris.md2");
 	gi.linkentity (ent);
 	level.jumpboxes[2]++;

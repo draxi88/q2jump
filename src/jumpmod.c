@@ -18,23 +18,32 @@ char map_skill2[10][10];
 static char *help_main[] = {
 	"\n--------------------------------------------------\n",
 	"Öïôéîç Ãïííáîäó\n",
-	"maplist, mapvote, votetime, boot, silence\n"
+	"maplist - view all maps on the server\n",
+	"mapvote - vote a specific map, type mapvote for more details\n",
+	"timevote - vote more time to play\n",
+	"rand - randomize the votemaps\n",
+	"boot - vote to kick a player\n",
+	"silence - vote to silence a player\n",
 	"\nÇåîåòáì Ãïííáîäó\n",
-	"hook, jetpack, cmsg, replay, flashlight, jumpers\n"
-	"\nÔåáí Ãïííáîäó\n",
-	"store, recall, reset, kill\n",
-	"chasemode, chaseme, playerlist\n"
-	"autorecord, antiglue, cleanhud\n",
-	"\ntype store to save current location, then recall to return to it\n",
+	"hook - bind a key to +hook in order to use\n",
+	"cmsg - enable/disable messages triggered in the map\n",
+	"replay - replay # to view replays 1-15\n",
+	"jumpers - turn on or off player models\n",
+	"store - place a marker that stores your location\n",
+	"recall / kill - return to your store location\n",
+	"reset - removes your store location\n",
+	"playerlist - list the players in game\n",
 	"\nÓôáôéóôéãó\n",
-	"maptimes, playertimes, playerscores\n",
-	"mapsleft, playermaps\n",
-	"!seen, compare, !stats, 1st\n",
+	"maptimes - view best times on a map\n",
+	"playertimes - view overall points in the server\n",
+	"playerscores - view best points per map players\n",
+	"playermaps - view the players who have done the most maps\n",
+	"mapsleft - the number of maps on the server you haven't done\n",
+	"!stats - view individual stats for players\n",
+	"compare - compare yourself to another player\n",
+	"1st - view first places set in the last 24 hours\n",
+	"!seen - view when a player was last in the server\n",
 	"--------------------------------------------------\n\n",
-	"for complete command list, overall map stats and help  \n",
-	"on how to do trick jumps goto\n",
-	"http://q2jump.wireplay.co.uk\n",
-	"\n--------------------------------------------------\n\n",
 	NULL
 };
 
@@ -144,7 +153,7 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->health,
   },
   { 
-	1,500,2,
+	1,500,1,
     "kill_delay",
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -242,7 +251,7 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->edited_by,
   },
   { 
-	1,10000,800,
+	0,10000,800,
     "gravity", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -358,7 +367,7 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->health,
   },
   { 
-	1,500,2,
+	1,500,1,
     "gkill_delay",
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
@@ -414,7 +423,7 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->edited_by,
   },
   { 
-	1,10000,800,
+	0,10000,800,
     "ggravity", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
@@ -455,9 +464,6 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &gset_vars->voteextratime,
   },
-
-
-
   { 
 	0,1,1,
     "debug",
@@ -1671,14 +1677,12 @@ void ClearScores(void)
 	for (i=0;i<MAX_USERS;i++)
 	{
 		for (j=0;j<MAX_HIGHSCORES;j++)
-			maplist.users[i].points[j] = 0;
+		maplist.users[i].points[j] = 0;
 		maplist.users[i].score = 0;
 		maplist.users[i].maps_with_points = 0;
 		maplist.users[i].maps_with_1st = 0;
-
 	}
    maplist.sort_num_users = maplist.num_users;
-
 }
 
 void UpdateScores(void)
@@ -1926,23 +1930,18 @@ void ShowPlayerTimes(edict_t *ent)
    if (offset<0)
 	   offset = 0;
 	
-   gi.cprintf (ent, PRINT_HIGH, "--------------------------------------------------\n"); 
-	gi.cprintf (ent, PRINT_HIGH, "Îï® Îáíå             ±óô ²îä ³òä ´ôè µôè ¶ôè ·ôè ¸ôè ¹ôè ±°ôè Óãïòå\n"); 
-
+   gi.cprintf (ent, PRINT_HIGH, "\n-----------------------------------------\n\n"); 
+   gi.cprintf (ent, PRINT_HIGH, "Point Values: 1-15: 25,20,16,13,11,10,9,8,7,6,5,4,3,2,1 \n"); 
+   gi.cprintf (ent, PRINT_HIGH, "\n-----------------------------------------\n\n"); 
+   gi.cprintf (ent, PRINT_HIGH, "Îï® Îáíå             ±óô ²îä ³òä ´ôè µôè ¶ôè ·ôè ¸ôè ¹ôè ±°ôè ±±ôè ±²ôè ±³ôè ±´ôè ±µôè Óãïòå\n"); 
    for (i=(20*offset); (i<maplist.sort_num_users) && (i<(20*offset)+20); i++) 
    { 
 	  temp = maplist.sorted_users[i].uid;
 	  if (temp>=0)
 	  {
 		  Com_sprintf(name,sizeof(name),maplist.users[temp].name);
-		  Com_sprintf(txt,sizeof(txt),"%-3d %-16s %3d %3d %3d %3d %3d %3d %3d %3d %3d  %3d %5d", i+1, name,maplist.users[temp].points[0],maplist.users[temp].points[1],maplist.users[temp].points[2],maplist.users[temp].points[3],
-			  maplist.users[temp].points[4],
-			  maplist.users[temp].points[5],
-			  maplist.users[temp].points[6],
-			  maplist.users[temp].points[7],
-			  maplist.users[temp].points[8],
-			  maplist.users[temp].points[9],
-			  maplist.users[temp].score);
+		  Com_sprintf(txt,sizeof(txt),"%-3d %-16s %3d %3d %3d %3d %3d %3d %3d %3d %3d  %3d  %3d  %3d  %3d  %3d  %3d %5d", i+1, name,maplist.users[temp].points[0],maplist.users[temp].points[1],maplist.users[temp].points[2],maplist.users[temp].points[3],
+			  maplist.users[temp].points[4],maplist.users[temp].points[5],maplist.users[temp].points[6],maplist.users[temp].points[7],maplist.users[temp].points[8],maplist.users[temp].points[9],maplist.users[temp].points[10],maplist.users[temp].points[11],maplist.users[temp].points[12],maplist.users[temp].points[13],maplist.users[temp].points[14],maplist.users[temp].score);
 ///		  Highlight_Name(name);
 		  if (Can_highlight_Name(name))
 			  gi.cprintf (ent, PRINT_HIGH,"%s\n",HighAscii(txt));
@@ -1951,10 +1950,8 @@ void ShowPlayerTimes(edict_t *ent)
 	      
 	  }
    } 
-
    gi.cprintf (ent, PRINT_HIGH, "Page %d/%1.0f (%i users). Use playertimes <page>\n",(offset+1),ceil(maplist.sort_num_users/20.0),maplist.sort_num_users); 
-
-   gi.cprintf (ent, PRINT_HIGH, "--------------------------------------------------\n"); 
+   gi.cprintf (ent, PRINT_HIGH, "-----------------------------------------\n\n"); 
 
 } 
 
@@ -1973,8 +1970,11 @@ void ShowPlayerScores(edict_t *ent)
    if (offset<0)
 	   offset = 0;
 	
-   gi.cprintf (ent, PRINT_HIGH, "--------------------------------------------------\n"); 
-	Com_sprintf(txt,sizeof(txt), "No. Name             1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th Score"); 
+   gi.cprintf (ent, PRINT_HIGH, "\n-----------------------------------------\n\n"); 
+   gi.cprintf (ent, PRINT_HIGH, "Score = (Your Score) / (Potential Score if 1st on all Your Completed Maps)\n\n"); 
+   gi.cprintf (ent, PRINT_HIGH, "Ex: 5 Maps Completed || 3 1st's, 2 3rd's = 107 pts || 5 1st's = 125pts || 107/125 = 85.6 Percent\n");    
+   gi.cprintf (ent, PRINT_HIGH, "\n-----------------------------------------\n\n"); 
+   Com_sprintf(txt,sizeof(txt), "No. Name             1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th 11th 12th 13th 14th 15th Score"); 
 	gi.cprintf (ent, PRINT_HIGH,"%s\n",HighAscii(txt));
 
    for (i=(20*offset); (i<maplist.sort_num_users_israfel) && (i<(20*offset)+20); i++) 
@@ -1984,13 +1984,8 @@ void ShowPlayerScores(edict_t *ent)
 	  {
 		  Com_sprintf(name,sizeof(name),maplist.users[temp].name);
 		  //Highlight_Name(name);
-	      Com_sprintf(txt,sizeof(txt),"%-3d %-16s %3d %3d %3d %3d %3d %3d %3d %3d %3d  %3d %4.1f%%", i+1, name,maplist.users[temp].points[0],maplist.users[temp].points[1],maplist.users[temp].points[2],maplist.users[temp].points[3],
-			  maplist.users[temp].points[4],
-			  maplist.users[temp].points[5],
-			  maplist.users[temp].points[6],
-			  maplist.users[temp].points[7],
-			  maplist.users[temp].points[8],
-			  maplist.users[temp].points[9],
+		  Com_sprintf(txt,sizeof(txt),"%-3d %-16s %3d %3d %3d %3d %3d %3d %3d %3d %3d  %3d  %3d  %3d  %3d  %3d  %3d %4.1f%%", i+1, name,maplist.users[temp].points[0],maplist.users[temp].points[1],maplist.users[temp].points[2],maplist.users[temp].points[3],
+			  maplist.users[temp].points[4],maplist.users[temp].points[5],maplist.users[temp].points[6],maplist.users[temp].points[7],maplist.users[temp].points[8],maplist.users[temp].points[9],maplist.users[temp].points[10],maplist.users[temp].points[11],maplist.users[temp].points[12],maplist.users[temp].points[13],maplist.users[temp].points[14],
 			  maplist.users[temp].israfel
 			  );
 		  if (Can_highlight_Name(name))
@@ -2002,9 +1997,9 @@ void ShowPlayerScores(edict_t *ent)
 
    gi.cprintf (ent, PRINT_HIGH, "Page %d/%1.0f (%i users). Use playerscores <page>\n",(offset+1),ceil(maplist.sort_num_users_israfel/20.0),maplist.sort_num_users_israfel); 
 
-   gi.cprintf (ent, PRINT_HIGH, "--------------------------------------------------\n"); 
+   gi.cprintf (ent, PRINT_HIGH, "\n-----------------------------------------\n\n"); 
 
-} 
+}  
 
 void ShowPlayerMaps(edict_t *ent) 
 { 
@@ -2021,9 +2016,8 @@ void ShowPlayerMaps(edict_t *ent)
    if (offset<0)
 	   offset = 0;
 	
-   gi.cprintf (ent, PRINT_HIGH, "--------------------------------------------------\n"); 
+   gi.cprintf (ent, PRINT_HIGH, "-----------------------------------------\n"); 
 	gi.cprintf (ent, PRINT_HIGH, "Îï® Îáíå               Maps     %%\n"); 
-
    for (i=(20*offset); (i<maplist.sort_num_users) && (i<(20*offset)+20); i++) 
    { 
 	  temp = maplist.sorted_completions[i].uid;
@@ -2041,8 +2035,7 @@ void ShowPlayerMaps(edict_t *ent)
 
    gi.cprintf (ent, PRINT_HIGH, "Page %d/%1.0f (%i users). Use playermaps <page>\n",(offset+1),ceil(maplist.sort_num_users/20.0),maplist.sort_num_users); 
 
-   gi.cprintf (ent, PRINT_HIGH, "--------------------------------------------------\n"); 
-
+   gi.cprintf (ent, PRINT_HIGH, "-----------------------------------------\n"); 
 } 
 
 int closest_ent(edict_t *ent)
@@ -4272,13 +4265,13 @@ void apply_time(edict_t *other, edict_t *ent)
 			{
 				if (!Neuro_RedKey_Overide && map_added_time<5)
 				{
-					gi.bprintf(PRINT_HIGH,"%s has set a 1st place, adding 5 minutes extra time.\n",other->client->pers.netname);
+					gi.bprintf(PRINT_HIGH,"%s has set a 1st place on %s in %1.3f seconds.\n",other->client->pers.netname, maplist.mapnames[level.mapnum], other->client->resp.item_timer);
 					map_added_time += 5;
 					Update_Added_Time();
 				}
 				else
 				{
-					gi.bprintf(PRINT_HIGH,"%s has set a 1st place.\n",other->client->pers.netname);
+					gi.bprintf(PRINT_HIGH,"%s has set a 1st place on %s in %1.3f seconds.\n",other->client->pers.netname, maplist.mapnames[level.mapnum], other->client->resp.item_timer);
 				}
 			}
 
@@ -5465,13 +5458,13 @@ void Box_Skin(edict_t *ent)
 		return;
 	if (gi.argc() < 2)
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 4");
+		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10");
 		return;
 	}
 	snum = atoi(gi.argv(1));
-	if ((snum<1) || (snum>4))
+	if ((snum<1) || (snum>10))
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 4");
+		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10");
 		return;
 	}
 	snum--;
@@ -5626,7 +5619,7 @@ void Skin_Ent(edict_t *ent)
 		level_items.ents[i]->s.skinnum = snum;
 		gi.linkentity(level_items.ents[i]);
 		WriteEnts();
-		gi.cprintf(ent,PRINT_HIGH,"%i skinned with value %i\n",i,snum);
+		gi.cprintf(ent,PRINT_HIGH,"%i skinned with value %i\n",i,snum + 1);
 	}
 	else
 	{
@@ -7593,7 +7586,7 @@ void shiftent (edict_t *ent)
 		if (gi.argc() < 3)
 		{
 			show_ent_list(ent,0);
-			gi.cprintf(ent,PRINT_HIGH,"Format : shiftent <axis> <entity>\nexample shiftent z 1\n");
+			gi.cprintf(ent,PRINT_HIGH,"Format : shiftent <axis> <units>\nexample shiftent z 1\n");
 			return;
 		}
 
@@ -9899,8 +9892,8 @@ void Cmd_UpdateScores(edict_t* ent)
 		return;
 
 	gi.bprintf(PRINT_HIGH, "Updating scores, please wait...\n");
-	//UpdateScores2();
-	//write_users_file();
+	UpdateScores2();
+	write_users_file();
 	gi.bprintf(PRINT_HIGH, "Done.\n");
 }
 
@@ -13616,7 +13609,8 @@ void Cmd_Stats(edict_t *ent)
 	}
 	if (gi.argc()==2)
 	{
-		Com_sprintf(txt,sizeof(txt),"%s Statistics",maplist.users[uid].name);
+		gi.cprintf (ent, PRINT_HIGH, "\n-------------------------------------------");
+		Com_sprintf(txt,sizeof(txt),"Statistics for %s:",maplist.users[uid].name);
 		gi.cprintf(ent,PRINT_HIGH,"\n%s\n",HighAscii(txt));
 		gi.cprintf(ent,PRINT_HIGH,"±st %3d  ¶th %3d ±±th %3d\n",maplist.users[uid].points[0],maplist.users[uid].points[5],maplist.users[uid].points[10]);
 		gi.cprintf(ent,PRINT_HIGH,"²nd %3d  ·th %3d ±²th %3d\n",maplist.users[uid].points[1],maplist.users[uid].points[6],maplist.users[uid].points[11]);
@@ -13625,14 +13619,32 @@ void Cmd_Stats(edict_t *ent)
 		gi.cprintf(ent,PRINT_HIGH,"µth %3d ±°th %3d ±µth %3d\n",maplist.users[uid].points[4],maplist.users[uid].points[9],maplist.users[uid].points[14]);
 		gi.cprintf(ent,PRINT_HIGH,"Total Maps Completed %4d\n",maplist.users[uid].completions);
 		gi.cprintf(ent,PRINT_HIGH,"Remaining            %4d\n",(maplist.nummaps-maplist.users[uid].completions));
-		gi.cprintf(ent,PRINT_HIGH,"\nType !stats %s 1 to see 1st places.\nType !stats %s 2 to see 2nd places.\nand so on\n\n",name,name);
+		gi.cprintf(ent,PRINT_HIGH,"\nType !stats %s 1 to see 1st places.\nType !stats %s 2 to see 2nd places.\nand so on...\n",name,name);
+		gi.cprintf (ent, PRINT_HIGH, "-------------------------------------------\n\n");
+		
+//		gi.cprintf(ent,PRINT_HIGH,"\n%s\n",HighAscii(txt));
+//		gi.cprintf(ent,PRINT_HIGH,"\n 1st %3d   11th %3d   21st %3d   31st %3d   41st %3d\n",maplist.users[uid].points[0],maplist.users[uid].points[10],maplist.users[uid].points[20],maplist.users[uid].points[30],maplist.users[uid].points[40]);
+//		gi.cprintf(ent,PRINT_HIGH," 2nd %3d   12th %3d   22nd %3d   32nd %3d   42nd %3d\n",maplist.users[uid].points[1],maplist.users[uid].points[11],maplist.users[uid].points[21],maplist.users[uid].points[31],maplist.users[uid].points[41]);
+//		gi.cprintf(ent,PRINT_HIGH," 3rd %3d   13th %3d   23rd %3d   33rd %3d   43rd %3d\n",maplist.users[uid].points[2],maplist.users[uid].points[12],maplist.users[uid].points[22],maplist.users[uid].points[32],maplist.users[uid].points[42]);
+//		gi.cprintf(ent,PRINT_HIGH," 4th %3d   14th %3d   24th %3d   34th %3d   44th %3d\n",maplist.users[uid].points[3],maplist.users[uid].points[13],maplist.users[uid].points[23],maplist.users[uid].points[33],maplist.users[uid].points[43]);
+//		gi.cprintf(ent,PRINT_HIGH," 5th %3d   15th %3d   25th %3d   35th %3d   45th %3d\n",maplist.users[uid].points[4],maplist.users[uid].points[14],maplist.users[uid].points[24],maplist.users[uid].points[34],maplist.users[uid].points[44]);
+//		gi.cprintf(ent,PRINT_HIGH," 6th %3d   16th %3d   26th %3d   36th %3d   46th %3d\n",maplist.users[uid].points[5],maplist.users[uid].points[15],maplist.users[uid].points[25],maplist.users[uid].points[35],maplist.users[uid].points[45]);
+//		gi.cprintf(ent,PRINT_HIGH," 7th %3d   17th %3d   27th %3d   37th %3d   47th %3d\n",maplist.users[uid].points[6],maplist.users[uid].points[16],maplist.users[uid].points[26],maplist.users[uid].points[36],maplist.users[uid].points[46]);
+//		gi.cprintf(ent,PRINT_HIGH," 8th %3d   18th %3d   28th %3d   38th %3d   48th %3d\n",maplist.users[uid].points[7],maplist.users[uid].points[17],maplist.users[uid].points[27],maplist.users[uid].points[37],maplist.users[uid].points[47]);
+//		gi.cprintf(ent,PRINT_HIGH," 9th %3d   19th %3d   29th %3d   39th %3d   49th %3d\n",maplist.users[uid].points[8],maplist.users[uid].points[18],maplist.users[uid].points[28],maplist.users[uid].points[38],maplist.users[uid].points[48]);
+//		gi.cprintf(ent,PRINT_HIGH,"10th %3d   20th %3d   30th %3d   40th %3d   50th %3d\n",maplist.users[uid].points[9],maplist.users[uid].points[19],maplist.users[uid].points[29],maplist.users[uid].points[39],maplist.users[uid].points[49]);
+//		gi.cprintf (ent, PRINT_HIGH, "\n-------------------------------------------\n");
+//		gi.cprintf(ent,PRINT_HIGH,"Total Maps Completed %4d\n",maplist.users[uid].completions);
+//		gi.cprintf(ent,PRINT_HIGH,"Remaining            %4d\n",(maplist.nummaps-maplist.users[uid].completions));
+//		gi.cprintf(ent,PRINT_HIGH,"\nType !stats %s 1 to see 1st places.\nType !stats %s 2 to see 2nd places.\nand so on...\n",name,name);
+//		gi.cprintf (ent, PRINT_HIGH, "-------------------------------------------\n\n");
 	}
 	else
 	{
 		points = atoi(gi.argv(2));
-		if (points<1 || points>15)
+		if (points<1 || points>500)
 		{
-			gi.cprintf(ent,PRINT_HIGH,"You must provide a number between 1 and 15\n");
+			gi.cprintf(ent,PRINT_HIGH,"You must provide a number between 1 and 500\n");
 			return;
 		}
 		offset = 1;
@@ -13668,8 +13680,8 @@ void Cmd_Stats(edict_t *ent)
 				continue;
 			}
 		}
-		gi.cprintf (ent, PRINT_HIGH,"type !stats %s %d %d to see the next page\n",gi.argv(1),(points+1),(offset+2));	
-
+		gi.cprintf (ent, PRINT_HIGH,"type !stats %s %d %d to see the next page\n",gi.argv(1),(
+			+1),(offset+2));	
 	}
 }
 

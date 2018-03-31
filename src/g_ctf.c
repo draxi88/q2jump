@@ -90,15 +90,6 @@ char *ctf_statusbar =
 "yb -8 "
 "string2 \"Speed\" "
 "endif "
-
-"if 16 "
-"yb -32 "
-"xv -34 "
-"num 4 4 "
-"xv 0 "
-"yb -8 "
-"string2 \"Glue\" "
-"endif "
 //  frags
 /*"xr -24 "
 "yt 2 "
@@ -174,13 +165,7 @@ char *ctf_statusbar =
 
 "if 16 "
   "xv 72 "
-  "yb -8 "
-  "stat_string 16 "
   "yb -16 "
-  "stat_string 25 "
-  "yb -24 "
-  "stat_string 26 "
-  "yb -32 "
   "stat_string 29 "
   "xr -128 "
   "yt 2 "
@@ -3583,38 +3568,41 @@ void CTFHelp_vote(edict_t *ent, pmenuhnd_t *p);
 
 pmenu_t creditsmenu[] = {
 	{ "*Quake II JumpMod",						PMENU_ALIGN_CENTER, NULL },
-	{ "*http://q2jump.wireplay.co.uk",	PMENU_ALIGN_CENTER, NULL },
+	{ "* ",	PMENU_ALIGN_CENTER, NULL },
 	{ NULL,								PMENU_ALIGN_CENTER, NULL },
 	{ "*Programming",					PMENU_ALIGN_CENTER, NULL }, 
 	{ "SadButTrue",				PMENU_ALIGN_CENTER, NULL },
-	{ "WP alterations by wootwoot",				PMENU_ALIGN_CENTER, NULL },
-	{ "HAHN alterations by Maotoyon",				PMENU_ALIGN_CENTER, NULL },
+	{ "WP changes by wootwoot",				PMENU_ALIGN_CENTER, NULL },
+	{ "HAHN changes by Maotoyon",				PMENU_ALIGN_CENTER, NULL },
+	{ ".german changes by Ace",				PMENU_ALIGN_CENTER, NULL },
+	{ NULL,					PMENU_ALIGN_CENTER, NULL },
 	{ "*Producer", 					PMENU_ALIGN_CENTER, NULL },
 	{ "ManicMiner",				PMENU_ALIGN_CENTER, NULL },
 	{ NULL,					PMENU_ALIGN_CENTER, NULL },
 	{ "*Others",				PMENU_ALIGN_CENTER, NULL },
-	{ "Special thanks to all",							PMENU_ALIGN_CENTER, NULL },
+	{ "Special thanks to:",							PMENU_ALIGN_CENTER, NULL },
 	{ "the JJs (Jolt Jumpers)",		PMENU_ALIGN_CENTER, NULL },
 	{ "the WPJs (Wireplay)",		PMENU_ALIGN_CENTER, NULL },
+	{ "the GJs (.german)",		PMENU_ALIGN_CENTER, NULL },
 	{ NULL,							PMENU_ALIGN_CENTER, NULL },
 	{ NULL,				PMENU_ALIGN_CENTER, NULL },
 	{ NULL,		PMENU_ALIGN_CENTER, NULL },
 	{ NULL,								PMENU_ALIGN_CENTER, NULL },
-	{ "Return to Main Menu",			PMENU_ALIGN_LEFT, CTFReturnToMain }
+	{ "Return to Main Menu",			PMENU_ALIGN_CENTER, CTFReturnToMain }
 };
 
 pmenu_t helpmenu[] = {
 	{ "*Quake II JumpMod",						PMENU_ALIGN_CENTER, NULL },
-	{ "*http://q2jump.wireplay.co.uk",	PMENU_ALIGN_CENTER, NULL },
+	{ "* ",	PMENU_ALIGN_CENTER, NULL },
 	{ NULL,								PMENU_ALIGN_CENTER, NULL },
 	{ "Main Client Commands",					PMENU_ALIGN_CENTER, CTFHelp_main }, 
 	{ NULL,				PMENU_ALIGN_CENTER, NULL },
 	{ NULL,				PMENU_ALIGN_CENTER, NULL },
 	{ "Voting",				PMENU_ALIGN_CENTER, CTFHelp_vote },
 	{ NULL,				PMENU_ALIGN_CENTER, NULL },
-	{ NULL,				PMENU_ALIGN_CENTER, NULL },
-	{ "AntiGlue",				PMENU_ALIGN_CENTER, CTFHelp_antiglue },
-	{ NULL,				PMENU_ALIGN_CENTER, NULL },
+
+
+
 	{ NULL,					PMENU_ALIGN_CENTER, NULL },
 	{ "Other Stuff",				PMENU_ALIGN_CENTER, CTFHelp_misc },
 	{ NULL,				PMENU_ALIGN_CENTER, NULL },
@@ -3626,7 +3614,7 @@ pmenu_t helpmenu[] = {
 
 pmenu_t helpmenu_main[] = {
 	{ "*Quake II JumpMod",						PMENU_ALIGN_CENTER, NULL },
-	{ "*http://q2jump.wireplay.co.uk",	PMENU_ALIGN_CENTER, NULL },
+	{ "* ",	PMENU_ALIGN_CENTER, NULL },
 	{ NULL,								PMENU_ALIGN_LEFT, NULL },
 	{ "*store",					PMENU_ALIGN_LEFT, NULL }, 
 	{ "stores current location",					PMENU_ALIGN_LEFT, NULL },
@@ -3647,7 +3635,7 @@ pmenu_t helpmenu_main[] = {
 
 pmenu_t helpmenu_misc[] = {
 	{ "*Quake II JumpMod",						PMENU_ALIGN_CENTER, NULL },
-	{ "*http://q2jump.wireplay.co.uk",	PMENU_ALIGN_CENTER, NULL },
+	{ "* ",	PMENU_ALIGN_CENTER, NULL },
 	{ NULL,								PMENU_ALIGN_LEFT, NULL },
 	{ "*maptimes",					PMENU_ALIGN_LEFT, NULL },
 	{ "*playertimes, playerscores",					PMENU_ALIGN_LEFT, NULL },
@@ -3668,7 +3656,7 @@ pmenu_t helpmenu_misc[] = {
 
 pmenu_t helpmenu_antiglue[] = {
 	{ "*Quake II JumpMod",						PMENU_ALIGN_CENTER, NULL },
-	{ "*http://q2jump.wireplay.co.uk",	PMENU_ALIGN_CENTER, NULL },
+	{ "* ",	PMENU_ALIGN_CENTER, NULL },
 	{ NULL,								PMENU_ALIGN_LEFT, NULL },
 	{ NULL,					PMENU_ALIGN_LEFT, NULL },
 	{ "Glue is caused by jumping",					PMENU_ALIGN_LEFT, NULL },
@@ -3689,7 +3677,7 @@ pmenu_t helpmenu_antiglue[] = {
 
 pmenu_t helpmenu_vote[] = {
 	{ "*Quake II JumpMod",						PMENU_ALIGN_CENTER, NULL },
-	{ "*http://q2jump.wireplay.co.uk",	PMENU_ALIGN_CENTER, NULL },
+	{ "* ",	PMENU_ALIGN_CENTER, NULL },
 	{ NULL,								PMENU_ALIGN_LEFT, NULL },
 	{ "*mapvote",					PMENU_ALIGN_LEFT, NULL },
 	{ "  initiate a vote for map",					PMENU_ALIGN_LEFT, NULL },
@@ -3718,7 +3706,7 @@ static const int jmenu_reqmatch = 11;
 
 pmenu_t joinmenu[] = {
 	{ "*Quake II JumpMod",			PMENU_ALIGN_CENTER, NULL },
-	{ "*http://q2jump.wireplay.co.uk",	PMENU_ALIGN_CENTER, NULL },
+	{ "* ",	PMENU_ALIGN_CENTER, NULL },
 	{ NULL,					PMENU_ALIGN_CENTER, NULL },
 	{ NULL,					PMENU_ALIGN_CENTER, NULL },
 	{ NULL,					PMENU_ALIGN_CENTER, NULL },
@@ -3739,7 +3727,7 @@ pmenu_t joinmenu[] = {
 
 pmenu_t votemenu[] = {
 	{ "*Quake II JumpMod",			PMENU_ALIGN_CENTER, NULL },
-	{ "*http://q2jump.wireplay.co.uk",	PMENU_ALIGN_CENTER, NULL },
+	{ "* ",	PMENU_ALIGN_CENTER, NULL },
 	{ NULL,					PMENU_ALIGN_CENTER, NULL },
 	{ "",		PMENU_ALIGN_LEFT, CTFVoteChoice0 },
 	{ NULL,					PMENU_ALIGN_LEFT, NULL },
@@ -3760,7 +3748,7 @@ pmenu_t votemenu[] = {
 
 pmenu_t nochasemenu[] = {
 	{ "*Quake II JumpMod",			PMENU_ALIGN_CENTER, NULL },
-	{ "*http://q2jump.wireplay.co.uk",	PMENU_ALIGN_CENTER, NULL },
+	{ "* ",	PMENU_ALIGN_CENTER, NULL },
 	{ NULL,					PMENU_ALIGN_CENTER, NULL },
 	{ NULL,					PMENU_ALIGN_CENTER, NULL },
 	{ "No one to chase",	PMENU_ALIGN_LEFT, NULL },
@@ -5560,56 +5548,32 @@ void UpdateVoteMaps(void)
 
 void GenerateVoteMaps(void)
 {
-
-	qboolean done[3];
-	done[0] = done[1] = done[2] = 0;
 	if (admin_overide_vote_maps)
-	{		
+	{
 		return;
 	}
 
-	if (maplist.nummaps)
+    if (maplist.nummaps <= 0)
+    {
+        printf("Error: Cannot generate vote maps.  Number of maps is <= 0 (actual: %d)\n", maplist.nummaps);
+        return;
+    }
+
+	if (maplist.nummaps < 3)
 	{
-		if (maplist.nummaps<3)
-		{
-			map1 = 0;
-			map2 = 0;
-			map3 = 0;
-		}
-		else
-		{
-			if (!nominated_map)
-			{
-				//if (gset_vars->maplist_times && gset_vars->voteseed>10 && !((rand() + 1) % 4))
-					//map1 = rand() % (gset_vars->voteseed);
-				//else
-					map1 = rand() % (votemapnum);
-				map1 = votemaplist[map1];
-			}
-
-			do
-			{	
-				//if (gset_vars->maplist_times && gset_vars->voteseed>10 && !((rand() + 1) % 4))
-					//map2 = rand() % (gset_vars->voteseed);
-				//else
-				//	map2 = rand() % (votemapnum);
-				map2 = votemaplist[map2];
-			}
-			while (map2==map1);
-
-			
-			do
-			{
-				if (gset_vars->maplist_times && rand()&1)
-					map3 = rand() % (gset_vars->voteseed);
-				else
-					map3 = rand() % (votemapnum);
-				map3 = votemaplist[map3];
-			} while ((map3==map1) || (map3==map2));
-
-			
-		}
+		map1 = 0;
+		map2 = 0;
+		map3 = 0;
+        return;
 	}
+
+    // If a map has been nominated, map1 will already be set
+	if (!nominated_map)
+	{
+		map1 = votemaplist[(int)(rand() % votemapnum)];
+	}
+    map2 = votemaplist[(int)(rand() % votemapnum)];
+    map3 = votemaplist[(int)(rand() % votemapnum)];
 }
 
 void CTFCreateVoteMenu(void)

@@ -1139,7 +1139,7 @@ void ClientCommand (edict_t *ent)
 		Cmd_Say_f (ent, false, false);
 		return;
 	}
-	if ((Q_stricmp (cmd, "say_person") == 0) || (Q_stricmp (cmd, "p_say") == 0))
+	if ((Q_stricmp (cmd, "say_person") == 0) || (Q_stricmp (cmd, "p_say") == 0) || (Q_stricmp (cmd, "!w") == 0))
 	{
 		say_person(ent);
 		return;
@@ -1250,7 +1250,7 @@ void ClientCommand (edict_t *ent)
 			list_mapsleft(ent);
 		else if (Q_stricmp (cmd, "mapsdone") == 0)
 			list_mapsdone(ent);
-		else if (Q_stricmp (cmd, "votetime") == 0)
+		else if ((Q_stricmp (cmd, "votetime") == 0) || (Q_stricmp (cmd, "timevote") == 0))
 			CTFVoteTime(ent);
 		else if (Q_stricmp (cmd, "goto") == 0)
 		{
@@ -1303,7 +1303,7 @@ void ClientCommand (edict_t *ent)
 			AlignEnt (ent);
 		else if (Q_stricmp (cmd, "shiftent") == 0)
 			shiftent (ent);
-		else if (Q_stricmp (cmd, "listents") == 0)
+		else if ((Q_stricmp (cmd, "listents") == 0) || (Q_stricmp (cmd, "entlist") == 0))
 			show_ent_list(ent,atoi(gi.argv(1)));
 		else if (Q_stricmp (cmd, "rement") == 0)
 			remove_ent (ent);
@@ -1382,7 +1382,7 @@ void ClientCommand (edict_t *ent)
 		ShowPlayerMaps (ent);
 	else if (Q_stricmp (cmd, "maptimes") == 0)
 		ShowMapTimes (ent);
-	else if (Q_stricmp (cmd, "!help") == 0)
+	else if ((Q_stricmp (cmd, "!help") == 0) || (Q_stricmp (cmd, "!commands") == 0))
 		Cmd_Show_Help(ent);
 	else if (Q_stricmp (cmd, "!glue") == 0)
 		Cmd_Show_Glue(ent);

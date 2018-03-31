@@ -1,4 +1,4 @@
-JumpMod 1.07
+JumpMod 1.08
 by [BBC]Killemall aka bleh aka SadButTrue
 Official homepage: http://q2jump.wireplay.co.uk/
 
@@ -11,6 +11,21 @@ Doyoon Kim - the ball model
 wootwoot - coder for versions 0.81-0.83wp
 LilRedTheJumper - coder for version 0.84
 Hannibal_ - some bug fixes
+Ace - changes for german server (1.08 and on)
+
+1.08
+-added a new resizeable finish line weapon that allows for a "plane" finish like in q3 defrag
+
+-rewrote the info that comes up when you type !help to be useful, made !commands point to the same thing
+-added a !w cmd, same as p_say
+-listents and entlist both point to listents now
+-gravity can now be mset/gset to 0, it used to reset to 800 (DJ's request for a stubbsy map)
+-allowed skinbox to go up to 10 instead of 4 for the additional skins Death_Jump made, and changed the path of boxes to be [size]box3, in order to force download to people
+-Removed glue/jumpers/race/website info from hud/inven
+
+-added explanation to the playerscores percentage
+-added point values to top of playertimes
+-changed playertimes and playerscores to top 15 instead of top 10
 
 1.05-1.07
 Fixes to make CTF code work
