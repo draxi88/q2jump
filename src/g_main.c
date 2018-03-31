@@ -887,7 +887,7 @@ void G_RunFrame (void)
 			(map_added_time*60))
 			-level.time)/60;
 
-	if (itemp<=0 && !num_time_votes && gset_vars->autotime && (ctfgame.election == ELECT_NONE) && activeclients>0)
+	if (itemp<=0 && !num_time_votes && gset_vars->autotime && (ctfgame.election == ELECT_NONE) && activeclients>0 && map_allow_voting) // draxi - added "map_allow_voting" so the dvotes command disable/enable it!
 	{
 		num_time_votes++;
 		sprintf(text, "Automated vote: Do you wish to add %i minutes extra time?",gset_vars->autotime);
