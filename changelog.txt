@@ -1,3 +1,11 @@
+#####v1.14ger#####
+-added checkpoints to ui
+-all admins announce on login
+-added mapsdone to !help
+-changed msgs when you join a team
+-store is placed automatically on team easy if you dont already have one
+-ability to have custom connection msgs
+
 #####v1.13ger#####
 -added 15 more resizable checkpoints, total is now 20
 -increased checkpoint_total mset range
