@@ -33,12 +33,14 @@ static char *help_main[] = {
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
 	"playerlist - list the players in game\n",
+	"idle - toggles idle status\n",
 	"\nΣτατιστιγσ\n",
 	"maptimes - view best times on a map\n",
 	"playertimes - view overall points in the server\n",
 	"playerscores - view best points per map players\n",
 	"playermaps - view the players who have done the most maps\n",
-	"mapsleft - the number of maps on the server you haven't done\n",
+	"mapsdone - the maps on the server you have done\n",
+	"mapsleft - the maps on the server you haven't done\n",
 	"!stats - view individual stats for players\n",
 	"compare - compare yourself to another player\n",
 	"1st - view first places set in the last 24 hours\n",
@@ -7888,11 +7890,14 @@ void Notify_Of_Team_Commands(edict_t *ent)
 	UpdateThisUsersUID(ent,ent->client->pers.netname);
 	if (ent->client->resp.ctf_team==CTF_TEAM1)
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Type !help if you require assistance.\n");
+		gi.cprintf(ent,PRINT_HIGH,"Team Easy: Use the commands store and recall to practice jumps.\n");
+		if (ent->client->resp.store != 1) {
+			Cmd_Store_f(ent);
+		}
 	}
 	else if (ent->client->resp.ctf_team==CTF_TEAM2)
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Type !help if you require assistance.\n");
+		gi.cprintf(ent,PRINT_HIGH,"Team Hard: Grab the rail and set a time!\n");
 	}
 }
 
@@ -11190,7 +11195,7 @@ void list_mapsleft(edict_t *ent)
 	int offset;	
 	int index,i,i2;
 	char txt[255];
-char name[64];
+	char name[64];
 	offset = atoi(gi.argv(1));
 	if (offset<=0 || offset> 200)
 		offset=1;
@@ -11261,7 +11266,7 @@ void list_mapsdone(edict_t *ent)
 	int offset;	
 	int index,i,i2;
 	char txt[255];
-char name[64];
+	char name[64];
 
 	offset = atoi(gi.argv(1));
 	if (offset<=0 || offset> 200)
@@ -12912,6 +12917,7 @@ void Copy_Recording(int uid)
 	fclose(f);
 }
 
+//maybe base this off total map time, not hardcoded values
 void Update_Skill(void)
 {
 	int i,i2;

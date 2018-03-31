@@ -76,7 +76,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define CONFIG_JUMP_RACE_ON 1603
 #define CONFIG_JUMP_RACE_OFF 1604
 #define CONFIG_CP_ON 1605
-#define CONFIG_JUMP_CP_OFF 1606
+#define CONFIG_CP_OFF 1606
 #define CONFIG_JUMP_EMPTY 1609
 
 

@@ -824,7 +824,8 @@ void Cmd_Kill_f (edict_t *ent)
 		Cmd_Recall(ent);
 		return;
 	}
-	gi.cprintf(ent,PRINT_HIGH,"Type !help if you require assistance.\n");
+	//this message only plays if you kill yourself on easy, without a store
+	//gi.cprintf(ent,PRINT_HIGH,"Type !help if you require assistance.\n");
 	ent->flags &= ~FL_GODMODE;
 	ent->health = 0;
 	meansOfDeath = MOD_SUICIDE;

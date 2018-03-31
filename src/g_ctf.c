@@ -167,6 +167,8 @@ char *ctf_statusbar =
   "xv 72 "
   "yb -16 "
   "stat_string 29 "
+  "yb -8 "
+  "stat_string 26 "
   "xr -128 "
   "yt 2 "
   "string \"%s\" "
@@ -1403,6 +1405,10 @@ void SetCTFStats(edict_t *ent)
 	else {
 		ent->client->ps.stats[STAT_CTF_ID_VIEW] = 0;
 	}
+	if (mset_vars->checkpoint_total >= 1)
+		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_ON;
+	else
+		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_OFF;
 	if (ent->client->resp.rep_racing)
 		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
 	else
@@ -4966,7 +4972,7 @@ void CTFAdmin(edict_t *ent)
 			
 			ent->client->resp.admin = admin_pass[alevel].level;
 			List_Admin_Commands(ent);
-			if (admin_pass[alevel].level<5)
+			if (admin_pass[alevel].level<16) //always print
 			{
 				gi.bprintf(PRINT_HIGH, "%s has become a level %d admin.\n", ent->client->pers.netname,admin_pass[alevel].level);
 			}
