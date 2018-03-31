@@ -1277,17 +1277,16 @@ void SP_worldspawn (edict_t *ent)
 		strcpy(prev_levels[0].mapname,this_map);
 		for (i=0;i<strlen(this_map);i++)
 			this_map[i] |= 128;
-		gi.configstring (CONFIG_JUMP_ANTIGLUE,         "Antiglue   œŒ");			
-		gi.configstring (CONFIG_JUMP_ANTIGLUE_OFF,     "Antiglue  œ∆∆");			
-		gi.configstring (CONFIG_JUMP_ANTIGLUE_DISABLED,"Antiglue  ŒØ¡");
-
-		gi.configstring (CONFIG_JUMP_JUMPERS_ON,       " Jumpers   œŒ");
-		gi.configstring (CONFIG_JUMP_JUMPERS_OFF,      " Jumpers  œ∆∆");
-		gi.configstring (CONFIG_JUMP_RACE_ON,          "    Race   œŒ");
-		gi.configstring (CONFIG_JUMP_RACE_OFF,         "    Race  œ∆∆");
-		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    team ≈¡”Ÿ");
-		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    team »¡“ƒ");
-		gi.configstring (CONFIG_JUMP_TEAM_OBSERVER,    "     observer");
+		gi.configstring (CONFIG_JUMP_ANTIGLUE,         "Antiglue    œÓ");			
+		gi.configstring (CONFIG_JUMP_ANTIGLUE_OFF,     "Antiglue   œ∆∆");			
+		gi.configstring (CONFIG_JUMP_ANTIGLUE_DISABLED,"Antiglue   ŒØ¡");
+		gi.configstring (CONFIG_CP_ON,va(              "    Chkpts:  %d",mset_vars->checkpoint_total));
+		gi.configstring (CONFIG_JUMP_CP_OFF,           "              ");
+		gi.configstring (CONFIG_JUMP_RACE_ON,          "    Race    œŒ");
+		gi.configstring (CONFIG_JUMP_RACE_OFF,         "    Race   œ∆∆");
+		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    Team: ≈·Û˘");
+		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    Team: »·Ú‰");
+		gi.configstring (CONFIG_JUMP_TEAM_OBSERVER,    "    Team: œ‚ÛÂÚˆÂÚ");
 		gi.configstring (CONFIG_JUMP_EMPTY,    " ");
 
 		gi.configstring (CONFIG_JUMP_MAPCOUNT,va("%4d",maplist.nummaps));

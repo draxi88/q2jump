@@ -62,7 +62,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define STAT_JUMP_FPS			23
 #define STAT_JUMP_KEY_CROUCH			24
 #define STAT_JUMP_TEAM 29
-#define STAT_JUMP_JUMPERS 26
+#define STAT_JUMP_CPS 26
 #define STAT_JUMP_RACE 25
 
 #define STAT_CTF_ID_VIEW			27
@@ -75,8 +75,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define CONFIG_JUMP_TEAM_OBSERVER 1602
 #define CONFIG_JUMP_RACE_ON 1603
 #define CONFIG_JUMP_RACE_OFF 1604
-#define CONFIG_JUMP_JUMPERS_ON 1605
-#define CONFIG_JUMP_JUMPERS_OFF 1606
+#define CONFIG_CP_ON 1605
+#define CONFIG_JUMP_CP_OFF 1606
 #define CONFIG_JUMP_EMPTY 1609
 
 

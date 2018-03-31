@@ -93,7 +93,7 @@
 			Name="Release|Win32"
 			>
 			<DebugSettings
-				Command="C:\quake2\QUAKE2.exe"
+				Command=""
 				WorkingDirectory=""
 				CommandArguments=""
 				Attach="false"

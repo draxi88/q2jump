@@ -515,10 +515,14 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 {
 	char		item_name[128];
 	gitem_t		*item;
+	
+
 	if (gametype->value==GAME_CTF)
 		return false;
-	if ((other->client->resp.ctf_team==CTF_TEAM1))
-		return false;
+
+	// let people pick up checkpoints on easy?
+	//if ((other->client->resp.ctf_team==CTF_TEAM1))
+		//return false;
 
 	if (level.status==LEVEL_STATUS_OVERTIME)
 	{
@@ -531,7 +535,6 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 			return false;
 		}
 	}
-
 
 	if (coop->value)
 	{
@@ -550,12 +553,176 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		}
 		return true;
 	}
-
-	//pooy
-	apply_time(other,ent);
-
-	other->client->pers.inventory[ITEM_INDEX(ent->item)]++;
-	return true;
+	// check if checkpoints have been picked up
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 1")==0 && other->client->pers.rs1_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs1_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 2")==0 && other->client->pers.rs2_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs2_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 3")==0 && other->client->pers.rs3_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs3_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 4")==0 && other->client->pers.rs4_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs4_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 5")==0 && other->client->pers.rs5_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs5_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 6")==0 && other->client->pers.rs6_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs6_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 7")==0 && other->client->pers.rs7_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs7_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 8")==0 && other->client->pers.rs8_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs8_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 9")==0 && other->client->pers.rs9_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs9_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 10")==0 && other->client->pers.rs10_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs10_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 11")==0 && other->client->pers.rs11_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs11_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 12")==0 && other->client->pers.rs12_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs12_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 13")==0 && other->client->pers.rs13_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs13_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 14")==0 && other->client->pers.rs14_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs14_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 15")==0 && other->client->pers.rs15_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs15_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 16")==0 && other->client->pers.rs16_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs16_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 17")==0 && other->client->pers.rs17_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs17_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 18")==0 && other->client->pers.rs18_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs18_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 19")==0 && other->client->pers.rs19_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs19_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 20")==0 && other->client->pers.rs20_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.rs20_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"Airstrike Marker")==0 && other->client->pers.target_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.target_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"Blue Key")==0 && other->client->pers.blue_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.blue_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"Data CD")==0 && other->client->pers.cd_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.cd_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"Data Spinner")==0 && other->client->pers.spinner_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.spinner_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"Security Pass")==0 && other->client->pers.pass_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.pass_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"Power Cube")==0 && other->client->pers.cube_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.cube_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"Pyramid Key")==0 && other->client->pers.pyramid_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.pyramid_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	if (Q_stricmp(ent->item->pickup_name,"Red Key")==0 && other->client->pers.red_checkpoint != 1) {
+		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
+		other->client->pers.red_checkpoint = 1;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+	}
+	return false; // leave item on the ground
 }
 
 //======================================================================
@@ -1745,11 +1912,13 @@ always owned, never in the world
 		0,
 /* precache */ "sprites/s_bfg1.sp2 sprites/s_bfg2.sp2 sprites/s_bfg3.sp2 weapons/bfg__f1y.wav weapons/bfg__l1a.wav weapons/bfg__x1b.wav weapons/bfg_hum.wav"
 	},
-
+	
+	
 /*QUAKED weapon_finish (.5 .5 .5) ?
 */
 	{
-		"weapon_finish", 
+		// this ent allows a plane or box to serve as the finish line, instead of a weapon -Ace
+		"weapon_finish",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -2346,6 +2515,448 @@ tank commander's head
 /* precache */ ""
 	},
 
+/*QUAKED cp_resize_1 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_1",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 1",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+
+/*QUAKED cp_resize_2 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_2",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 2",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_3 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_3",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 3",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_4 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_4",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 4",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_5 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_5",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 5",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_6 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_6",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 6",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_7 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_7",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 7",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_8 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_8",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 8",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_9 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_9",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 9",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_10 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_10",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 10",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_11 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_11",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 11",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_12 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_12",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 12",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_13 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_13",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 13",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_14 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_14",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 14",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_15 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_15",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 15",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_16 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_16",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 16",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_17 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_17",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 17",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_18 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_18",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 18",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_19 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_19",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 19",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+/*QUAKED cp_resize_20 (.5 .5 .5) ?
+*/
+	{
+		"cp_resize_20",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp resize 20",
+		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+
 	{
 		NULL,
 		Pickup_Health,
@@ -2666,12 +3277,11 @@ void SP_jumpbox_large (edict_t *ent)
 	ent->s.renderfx |= RF_TRANSLUCENT;
 		VectorSet (ent->mins, -64,-64,-32);
 		VectorSet (ent->maxs, 64, 64, 96);
-//		VectorSet (ent->maxs, 64, 64+(128), 96+(128));
 	ent->s.modelindex = gi.modelindex ("models/jump/largebox3/tris.md2");
-//	ent->s.modelindex = gi.modelindex ("models/jump/wall1bo2/tris.md2");
 	gi.linkentity (ent);
 	level.jumpboxes[2]++;
 }
+
 
 void SP_effect(edict_t *ent)
 {

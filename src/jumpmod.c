@@ -167,7 +167,7 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->playtag,
   },
   { 
-	1,100,5,
+	-100,100,5,
     "regen",
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -292,6 +292,13 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &mset_vars->allowsrj,
   },
+  { 
+	0,100,0,
+    "checkpoint_total", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->checkpoint_total,
+  },
 
   /************************** GSET MAP **************/
 
@@ -381,7 +388,7 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->playtag,
   },
   { 
-	1,100,5,
+	-100,100,5,
     "gregen",
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
@@ -456,6 +463,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->addedtimeoveride,
+  },
+   { 
+	0,100,0,
+    "gcheckpoint_total", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,  
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->checkpoint_total,
   },
   { 
 	0,120,60,
@@ -4231,6 +4245,36 @@ void apply_time(edict_t *other, edict_t *ent)
 	char		item_name[128];
 	int diff = 0;
 
+	other->client->pers.checkpoints = 0;
+	other->client->pers.red_checkpoint = 0;
+	other->client->pers.target_checkpoint = 0;
+	other->client->pers.blue_checkpoint = 0;
+	other->client->pers.cd_checkpoint = 0;
+	other->client->pers.cube_checkpoint = 0;
+	other->client->pers.pyramid_checkpoint = 0;
+	other->client->pers.pass_checkpoint = 0;
+	other->client->pers.spinner_checkpoint = 0;
+	other->client->pers.rs1_checkpoint = 0;
+	other->client->pers.rs2_checkpoint = 0;
+	other->client->pers.rs3_checkpoint = 0;
+	other->client->pers.rs4_checkpoint = 0;
+	other->client->pers.rs5_checkpoint = 0;
+	other->client->pers.rs6_checkpoint = 0;
+	other->client->pers.rs7_checkpoint = 0;
+	other->client->pers.rs8_checkpoint = 0;
+	other->client->pers.rs9_checkpoint = 0;
+	other->client->pers.rs10_checkpoint = 0;
+	other->client->pers.rs11_checkpoint = 0;
+	other->client->pers.rs12_checkpoint = 0;
+	other->client->pers.rs13_checkpoint = 0;
+	other->client->pers.rs14_checkpoint = 0;
+	other->client->pers.rs15_checkpoint = 0;
+	other->client->pers.rs16_checkpoint = 0;
+	other->client->pers.rs17_checkpoint = 0;
+	other->client->pers.rs18_checkpoint = 0;
+	other->client->pers.rs19_checkpoint = 0;
+	other->client->pers.rs20_checkpoint = 0;
+
 	Stop_Recording(other);
 	if (((other->client->resp.item_timer_allow) || (other->client->resp.ctf_team==CTF_TEAM2)) || (gametype->value==GAME_CTF && other->client->resp.ctf_team==CTF_TEAM1))
 	{
@@ -4265,13 +4309,13 @@ void apply_time(edict_t *other, edict_t *ent)
 			{
 				if (!Neuro_RedKey_Overide && map_added_time<5)
 				{
-					gi.bprintf(PRINT_HIGH,"%s has set a 1st place on %s in %1.3f seconds.\n",other->client->pers.netname, maplist.mapnames[level.mapnum], other->client->resp.item_timer);
+					gi.bprintf(PRINT_HIGH,"%s has set a 1st place, adding 5 minutes extra time.\n",other->client->pers.netname);
 					map_added_time += 5;
 					Update_Added_Time();
 				}
 				else
 				{
-					gi.bprintf(PRINT_HIGH,"%s has set a 1st place on %s in %1.3f seconds.\n",other->client->pers.netname, maplist.mapnames[level.mapnum], other->client->resp.item_timer);
+					gi.bprintf(PRINT_HIGH,"%s has set a 1st place.\n",other->client->pers.netname);
 				}
 			}
 
@@ -4868,6 +4912,36 @@ void Cmd_Recall(edict_t *ent)
 	int i;
 	vec3_t	spawn_origin, spawn_angles;
 
+	ent->client->pers.checkpoints = 0;
+	ent->client->pers.red_checkpoint = 0;
+	ent->client->pers.target_checkpoint = 0;
+	ent->client->pers.blue_checkpoint = 0;
+	ent->client->pers.cd_checkpoint = 0;
+	ent->client->pers.cube_checkpoint = 0;
+	ent->client->pers.pyramid_checkpoint = 0;
+	ent->client->pers.pass_checkpoint = 0;
+	ent->client->pers.spinner_checkpoint = 0;
+	ent->client->pers.rs1_checkpoint = 0;
+	ent->client->pers.rs2_checkpoint = 0;
+	ent->client->pers.rs3_checkpoint = 0;
+	ent->client->pers.rs4_checkpoint = 0;
+	ent->client->pers.rs5_checkpoint = 0;
+	ent->client->pers.rs6_checkpoint = 0;
+	ent->client->pers.rs7_checkpoint = 0;
+	ent->client->pers.rs8_checkpoint = 0;
+	ent->client->pers.rs9_checkpoint = 0;
+	ent->client->pers.rs10_checkpoint = 0;
+	ent->client->pers.rs11_checkpoint = 0;
+	ent->client->pers.rs12_checkpoint = 0;
+	ent->client->pers.rs13_checkpoint = 0;
+	ent->client->pers.rs14_checkpoint = 0;
+	ent->client->pers.rs15_checkpoint = 0;
+	ent->client->pers.rs16_checkpoint = 0;
+	ent->client->pers.rs17_checkpoint = 0;
+	ent->client->pers.rs18_checkpoint = 0;
+	ent->client->pers.rs19_checkpoint = 0;
+	ent->client->pers.rs20_checkpoint = 0;
+
 	if (gametype->value==GAME_CTF)
 		return;
 	if (ent->client->resp.store) 
@@ -5438,9 +5512,6 @@ void Add_Box(edict_t *ent)
 				break;
 		}
 
-		
-
-
 		gi.cprintf(ent,PRINT_HIGH,"Displaying box %s\n",gi.argv(1));
 		if (ent->client->resp.ctf_team!=CTF_NOTEAM)
 		{
@@ -5935,7 +6006,7 @@ void List_acmd_commands(edict_t *ent)
 		gi.cprintf(ent, PRINT_HIGH, "  deleteents <mapname>\n");
 		gi.cprintf(ent, PRINT_HIGH, "  remtimes\n");
 		gi.cprintf(ent, PRINT_HIGH, "  togglehud\n");
-//		gi.cprintf(ent, PRINT_HIGH, "  lock\n");
+		gi.cprintf(ent, PRINT_HIGH, "  lock\n");
 		gi.cprintf(ent, PRINT_HIGH, "  nextmaps <1> <2> <3>\n");
 		gi.cprintf(ent, PRINT_HIGH, "  ghost\n");
 	}
@@ -8738,46 +8809,72 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 {
 	int i;
 	int trecid;
+	float oldtime;
 	char penalty_str[64];
 	memset(penalty_str,0,sizeof(penalty_str));
-	if (item_time_penalty)
-	{
+
+	if (item_time_penalty) {
 		sprintf(penalty_str,"(%2.1f seconds antiglue penalty)",item_time_penalty/10);
 	}
+
 	//find user in tourney record
 	trecid = FindTRecID(uid);
-	if (trecid>=0)
-	{
+
+	//record old time
+	oldtime = 0;
+	if (tourney_record[trecid].time > 0) {
+		oldtime = tourney_record[trecid].time;
+	}
+
+	if (trecid>=0) {
 		//we only need to update
-		if (time<tourney_record[trecid].time)
-		{
+		if (time<tourney_record[trecid].time) {
 			tourney_record[trecid].time = time;
 			strcpy(tourney_record[trecid].date,date);
 			ent->client->resp.trecid =trecid;
 			ent->client->resp.best_time = time;
 		}
 
-		if (!tourney_record[trecid].completions)
-		{
+		if (!tourney_record[trecid].completions) {
 			maplist.users[uid].completions++;
 			append_uid_file(uid,level.mapname);
 		}
+
 		tourney_record[trecid].completions++;
 		tourney_record[trecid].fresh = true;
 
-		gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (%i completions) %s\n",
-			ent->client->pers.netname,time,tourney_record[trecid].completions,penalty_str);
+		// if we want to re-add # of comps
+		//tourney_record[trecid].completions
+		//maplist.times[level.mapnum][0].time
+		//tourney_record[0].time
+		//level_items.stored_item_times[0].time
 		
+		//setting a first
+		if (time <= level_items.stored_item_times[0].time) {
+			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st %1.3f)\n",
+				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
+			return false;
+		}
+		
+		// beat pb/1st, show to server
+		if (time < oldtime) {
+			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f)\n",
+				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
+		}
+
+		// didn't beat pb/1st, only show to player
+		if (time >= oldtime) {
+			gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
+				time,time-oldtime,time-level_items.stored_item_times[0].time);
+		}
 
 		return false;
 	}
-	else
-	{
+	else {
 		if (time>0)
 		for (i=0;i<MAX_USERS;i++)
 		{
-			if (!tourney_record[i].completions)
-			{
+			if (!tourney_record[i].completions) {
 				//found a spare record, use it
 				tourney_record[i].uid = uid;
 				tourney_record[i].time = time;
@@ -8791,16 +8888,23 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 				tourney_record[i].fresh = true;
 				ent->client->resp.trecid =i;
 				ent->client->resp.best_time = time;
-				
-				gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st completion) %s\n",
-					ent->client->pers.netname,time,penalty_str);
+
+				// 1st comp AND 1st place
+				if (time <= level_items.stored_item_times[0].time) {
+					gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st completion) (1st %1.3f)\n",
+						ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
+					return false;
+				}
+
+				// always display someone's first completion
+				gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st completion) (1st +%1.3f)\n",
+					ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
 				if (gset_vars->playsound)
 				if (time>gset_vars->playsound)
 				{
 					return true;
 				}
 				return false;
-				
 			}
 		}
 	}
@@ -9799,7 +9903,7 @@ void AddMap(edict_t *ent)
 	maplist.gametype[maplist.nummaps] = 0;
 
 	maplist.nummaps++;
-	gi.cprintf(ent,PRINT_HIGH,"%s added to map rotation\n",mapname);
+	gi.bprintf(PRINT_HIGH,"%s has added %s to the map rotation.\n", ent->client->pers.netname, mapname);
 	UpdateVoteMaps();
 
 }
@@ -13642,9 +13746,9 @@ void Cmd_Stats(edict_t *ent)
 	else
 	{
 		points = atoi(gi.argv(2));
-		if (points<1 || points>500)
+		if (points<1 || points>15)
 		{
-			gi.cprintf(ent,PRINT_HIGH,"You must provide a number between 1 and 500\n");
+			gi.cprintf(ent,PRINT_HIGH,"You must provide a number between 1 and 15\n");
 			return;
 		}
 		offset = 1;

@@ -1403,11 +1403,6 @@ void SetCTFStats(edict_t *ent)
 	else {
 		ent->client->ps.stats[STAT_CTF_ID_VIEW] = 0;
 	}
-
-	if (!ent->client->resp.hide_jumpers)
-		ent->client->ps.stats[STAT_JUMP_JUMPERS] = CONFIG_JUMP_JUMPERS_ON;
-	else
-		ent->client->ps.stats[STAT_JUMP_JUMPERS] = CONFIG_JUMP_JUMPERS_OFF;
 	if (ent->client->resp.rep_racing)
 		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
 	else
@@ -3865,6 +3860,36 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 {
 	char *s;
 
+	ent->client->pers.checkpoints = 0;
+	ent->client->pers.red_checkpoint = 0;
+	ent->client->pers.target_checkpoint = 0;
+	ent->client->pers.blue_checkpoint = 0;
+	ent->client->pers.cd_checkpoint = 0;
+	ent->client->pers.cube_checkpoint = 0;
+	ent->client->pers.pyramid_checkpoint = 0;
+	ent->client->pers.pass_checkpoint = 0;
+	ent->client->pers.spinner_checkpoint = 0;
+	ent->client->pers.rs1_checkpoint = 0;
+	ent->client->pers.rs2_checkpoint = 0;
+	ent->client->pers.rs3_checkpoint = 0;
+	ent->client->pers.rs4_checkpoint = 0;
+	ent->client->pers.rs5_checkpoint = 0;
+	ent->client->pers.rs6_checkpoint = 0;
+	ent->client->pers.rs7_checkpoint = 0;
+	ent->client->pers.rs8_checkpoint = 0;
+	ent->client->pers.rs9_checkpoint = 0;
+	ent->client->pers.rs10_checkpoint = 0;
+	ent->client->pers.rs11_checkpoint = 0;
+	ent->client->pers.rs12_checkpoint = 0;
+	ent->client->pers.rs13_checkpoint = 0;
+	ent->client->pers.rs14_checkpoint = 0;
+	ent->client->pers.rs15_checkpoint = 0;
+	ent->client->pers.rs16_checkpoint = 0;
+	ent->client->pers.rs17_checkpoint = 0;
+	ent->client->pers.rs18_checkpoint = 0;
+	ent->client->pers.rs19_checkpoint = 0;
+	ent->client->pers.rs20_checkpoint = 0;
+	
 	PMenu_Close(ent);
 
 
@@ -3897,6 +3922,36 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 void CTFJoinTeam1(edict_t *ent, pmenuhnd_t *p)
 {
 
+	ent->client->pers.checkpoints = 0;
+	ent->client->pers.red_checkpoint = 0;
+	ent->client->pers.target_checkpoint = 0;
+	ent->client->pers.blue_checkpoint = 0;
+	ent->client->pers.cd_checkpoint = 0;
+	ent->client->pers.cube_checkpoint = 0;
+	ent->client->pers.pyramid_checkpoint = 0;
+	ent->client->pers.pass_checkpoint = 0;
+	ent->client->pers.spinner_checkpoint = 0;
+	ent->client->pers.rs1_checkpoint = 0;
+	ent->client->pers.rs2_checkpoint = 0;
+	ent->client->pers.rs3_checkpoint = 0;
+	ent->client->pers.rs4_checkpoint = 0;
+	ent->client->pers.rs5_checkpoint = 0;
+	ent->client->pers.rs6_checkpoint = 0;
+	ent->client->pers.rs7_checkpoint = 0;
+	ent->client->pers.rs8_checkpoint = 0;
+	ent->client->pers.rs9_checkpoint = 0;
+	ent->client->pers.rs10_checkpoint = 0;
+	ent->client->pers.rs11_checkpoint = 0;
+	ent->client->pers.rs12_checkpoint = 0;
+	ent->client->pers.rs13_checkpoint = 0;
+	ent->client->pers.rs14_checkpoint = 0;
+	ent->client->pers.rs15_checkpoint = 0;
+	ent->client->pers.rs16_checkpoint = 0;
+	ent->client->pers.rs17_checkpoint = 0;
+	ent->client->pers.rs18_checkpoint = 0;
+	ent->client->pers.rs19_checkpoint = 0;
+	ent->client->pers.rs20_checkpoint = 0;
+	
 	if (ClientIsBanned(ent,BAN_PLAY))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You are banned from joining a team.\n");
@@ -3939,6 +3994,36 @@ void CTFJoinTeam1(edict_t *ent, pmenuhnd_t *p)
 void CTFJoinTeam2(edict_t *ent, pmenuhnd_t *p)
 {
 
+	ent->client->pers.checkpoints = 0;
+	ent->client->pers.red_checkpoint = 0;
+	ent->client->pers.target_checkpoint = 0;
+	ent->client->pers.blue_checkpoint = 0;
+	ent->client->pers.cd_checkpoint = 0;
+	ent->client->pers.cube_checkpoint = 0;
+	ent->client->pers.pyramid_checkpoint = 0;
+	ent->client->pers.pass_checkpoint = 0;
+	ent->client->pers.spinner_checkpoint = 0;
+	ent->client->pers.rs1_checkpoint = 0;
+	ent->client->pers.rs2_checkpoint = 0;
+	ent->client->pers.rs3_checkpoint = 0;
+	ent->client->pers.rs4_checkpoint = 0;
+	ent->client->pers.rs5_checkpoint = 0;
+	ent->client->pers.rs6_checkpoint = 0;
+	ent->client->pers.rs7_checkpoint = 0;
+	ent->client->pers.rs8_checkpoint = 0;
+	ent->client->pers.rs9_checkpoint = 0;
+	ent->client->pers.rs10_checkpoint = 0;
+	ent->client->pers.rs11_checkpoint = 0;
+	ent->client->pers.rs12_checkpoint = 0;
+	ent->client->pers.rs13_checkpoint = 0;
+	ent->client->pers.rs14_checkpoint = 0;
+	ent->client->pers.rs15_checkpoint = 0;
+	ent->client->pers.rs16_checkpoint = 0;
+	ent->client->pers.rs17_checkpoint = 0;
+	ent->client->pers.rs18_checkpoint = 0;
+	ent->client->pers.rs19_checkpoint = 0;
+	ent->client->pers.rs20_checkpoint = 0;
+	
 	if (ClientIsBanned(ent,BAN_PLAY))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You are banned from joining a team.\n");

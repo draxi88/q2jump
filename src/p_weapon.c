@@ -128,9 +128,9 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 	 //pooy
 	if (!mset_vars->rocket)
-	if ((other->client->resp.ctf_team==CTF_TEAM1))
+	if ((other->client->resp.ctf_team==CTF_TEAM1)) // team easy things
 	{
-		//notigy client what time they got ere
+		//tell the client what time they got the weapon in
 		if (other->client->resp.item_timer_allow)
 		{
 			if (other->client->resp.item_timer_penalty>=1)
@@ -141,8 +141,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		}
 		return false;
 	}
-	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) 
-		&& other->client->pers.inventory[index])
+	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) && other->client->pers.inventory[index])
 	{
 		if (!(ent->spawnflags & (DROPPED_ITEM | DROPPED_PLAYER_ITEM) ) )
 			return false;	// leave the weapon for others to pickup
@@ -159,6 +158,9 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 			return false;
 		}
 	}
+
+	//checkpoint thing, dont pick up railguns
+	//if (Q_stricmp(ent->item->pickup_name,"Railgun")==0) {}
 	other->client->pers.inventory[index]++;
 
 	if (!(ent->spawnflags & DROPPED_ITEM) )
@@ -191,26 +193,26 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 	//pooy
 
-	if (other->client->resp.ctf_team==CTF_TEAM2)
+	if (other->client->resp.ctf_team==CTF_TEAM2) // team hard, so apply the time
 	{
-	//gi.bprintf(PRINT_HIGH,"%d %d %d pickup\n",other->client->ps.pmove.origin[0],other->client->ps.pmove.origin[1],other->client->ps.pmove.origin[2]);
-	//gi.bprintf(PRINT_HIGH,"%d %d %d pickup old\n",other->client->old_pmove.origin[0],other->client->old_pmove.origin[1],other->client->old_pmove.origin[2]);
-	//gi.bprintf(PRINT_HIGH,"%f %f %f pickup old_origin\n",other->s.old_origin[0]*8,other->s.old_origin[1]*8,other->s.old_origin[2]*8);
-	//gi.bprintf(PRINT_HIGH,"%f %f %f pickup origin\n",other->s.origin[0]*8,other->s.origin[1]*8,other->s.origin[2]*8);
-		if (mset_vars->rocket)
-		{
-			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0)
-			{
-			}
-			else if (Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0)
-			{
-			}
-			else
-			{
-				apply_time(other,ent);	
-			}
+		if (mset_vars->rocket && mset_vars->checkpoint_total) { // rocket and checkpoint
+			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0){}
+			else if (Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0){}
+			else if (other->client->pers.checkpoints >= mset_vars->checkpoint_total) { apply_time(other,ent); }
+			else {gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);}
 		}
-		else
+		else if (mset_vars->rocket) // just rocket, no checkpoints
+		{
+			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0){}
+			else if (Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0){}
+			else { apply_time(other,ent); }
+		}
+		else if (mset_vars->checkpoint_total) // no rocket, just checkpoints
+		{
+			if (other->client->pers.checkpoints >= mset_vars->checkpoint_total) { apply_time(other,ent); }
+			else {gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);}
+		}
+		else // no rockets, no checkpoints
 		{
 			apply_time(other,ent);	
 		}
@@ -221,7 +223,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		( !deathmatch->value || other->client->pers.weapon == FindItem("blaster") ) )
 		other->client->newweapon = ent->item;
 
-	return true;
+	return false; //leave the weapon there
 }
 
 
@@ -1535,5 +1537,5 @@ void Weapon_Finish (edict_t *ent)
 	static int	pause_frames[]	= {25, 33, 42, 50, 0};
 	static int	fire_frames[]	= {5, 0};
 
-	Weapon_Generic (ent, 4, 12, 50, 54, pause_frames, fire_frames, Weapon_RocketLauncher_Fire);
+	Weapon_Generic (ent, 4, 12, 50, 54, pause_frames, fire_frames, weapon_railgun_fire);
 }

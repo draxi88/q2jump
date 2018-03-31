@@ -1639,7 +1639,9 @@ void ClientBeginDeathmatch (edict_t *ent)
 		addCmdQueue(ent,QCMD_DOWNLOAD,5,0,0);
 		addCmdQueue(ent,QCMD_CHECK_ADMIN,10,0,0);
 
+
 		gi.bprintf (PRINT_HIGH, "%s entered the game\n", ent->client->pers.netname);
+
 	//uid = GetPlayerUid(va("%s", ent->client->pers.netname));
 //	gi.cprintf (ent, PRINT_HIGH, "Calling open_uid_file from ClientBeginDeathmatch.\n");
 	//open_uid_file (uid, ent);
@@ -2290,8 +2292,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
         pm.groundentity = NULL;		/*now we are no longer on ground*/
   /*ATTILA end*/
 
-	if (ent->groundentity && !pm.groundentity && (pm.cmd.upmove >= 10) && (pm.waterlevel == 0))
-	{
+	if (ent->groundentity && !pm.groundentity && (pm.cmd.upmove >= 10) && (pm.waterlevel == 0)) {
 		gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
 		PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
 	}

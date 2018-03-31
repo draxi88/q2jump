@@ -889,6 +889,37 @@ typedef struct
 	int			max_cells;
 	int			max_slugs;
 
+	// checkpoint things
+	int			checkpoints;
+	int			red_checkpoint;
+	int			target_checkpoint;
+	int			blue_checkpoint;
+	int			cd_checkpoint;
+	int			cube_checkpoint;
+	int			pyramid_checkpoint;
+	int			pass_checkpoint;
+	int			spinner_checkpoint;
+	int			rs1_checkpoint;
+	int			rs2_checkpoint;
+	int			rs3_checkpoint;
+	int			rs4_checkpoint;
+	int			rs5_checkpoint;
+	int			rs6_checkpoint;
+	int			rs7_checkpoint;
+	int			rs8_checkpoint;
+	int			rs9_checkpoint;
+	int			rs10_checkpoint;
+	int			rs11_checkpoint;
+	int			rs12_checkpoint;
+	int			rs13_checkpoint;
+	int			rs14_checkpoint;
+	int			rs15_checkpoint;
+	int			rs16_checkpoint;
+	int			rs17_checkpoint;
+	int			rs18_checkpoint;
+	int			rs19_checkpoint;
+	int			rs20_checkpoint;
+
 	gitem_t		*weapon;
 	gitem_t		*lastweapon;
 
