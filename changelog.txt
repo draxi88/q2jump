@@ -1,3 +1,7 @@
+#####v1.14.1ger#####
+-old votetime bug from wireplay code
+-made dvotes command disable/enable map_allow_voting
+
 #####v1.14ger#####
 -added checkpoints to ui
 -all admins announce on login
