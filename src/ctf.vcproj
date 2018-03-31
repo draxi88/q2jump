@@ -359,7 +359,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib"
-				OutputFile="E:\Libraries\Documents\BitBucket\quake2jump\jump\release\gamex86.dll"
+				OutputFile="$(OutDir)\gamex86.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile=".\ctf.def"

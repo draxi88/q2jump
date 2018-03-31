@@ -3329,9 +3329,9 @@ void CTFWinElection(int pvote, edict_t* pvoter)
 			return;
 		}
 		if ((map_added_time<0) && (map_added_time<(-timeleft))){
-+			End_Jumping();
-+			return;
-+		}
+			End_Jumping();
+			return;
+		}
 		break;
 	case ELECT_SILENCE :
 		ctfgame.ekick->client->resp.silence = true;
