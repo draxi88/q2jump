@@ -165,10 +165,8 @@ char *ctf_statusbar =
 
 "if 16 "
   "xv 72 "
-  "yb -24 "
-  "stat_string 29 "
   "yb -16 "
-  "stat_string 25 "
+  "stat_string 29 "
   "yb -8 "
   "stat_string 26 "
   "xr -128 "
@@ -1229,7 +1227,6 @@ void SetCTFStats(edict_t *ent)
 	edict_t *e;
 	int keys;
 	int fps;
-    int race_this;
 
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
@@ -1412,26 +1409,8 @@ void SetCTFStats(edict_t *ent)
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_ON;
 	else
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_OFF;
-    if (ent->client->resp.rep_racing){
-        race_this = ent->client->resp.rep_race_number;
-        if (race_this == 0) { gi.configstring (CONFIG_JUMP_RACE_ON,      "    Race: ±");}
-        else if (race_this == 1) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ²");}
-        else if (race_this == 2) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ³");}
-        else if (race_this == 3) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ´");}
-        else if (race_this == 4) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: µ");}
-        else if (race_this == 5) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ¶");}
-        else if (race_this == 6) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ·");}
-        else if (race_this == 7) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ¸");}
-        else if (race_this == 8) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ¹");}
-        else if (race_this == 9) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ±°");}
-        else if (race_this == 10) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ±±");}
-        else if (race_this == 11) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ±²");}
-        else if (race_this == 12) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ±³");}
-        else if (race_this == 13) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ±´");}
-        else if (race_this == 14) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ±µ");}
-        else if (race_this == MAX_HIGHSCORES) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ÎÏ×");}
-        ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
-    }
+	if (ent->client->resp.rep_racing)
+		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
 	else
 		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_OFF;
 	if (ent->client->resp.ctf_team==CTF_TEAM1)
