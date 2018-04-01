@@ -1,3 +1,7 @@
+#####v1.15ger#####
+-checkpoint ui slightly changed
+-race ui is back, now shows which race you are racing
+
 #####v1.14.1ger#####
 -old votetime bug from wireplay code
 -made dvotes command disable/enable map_allow_voting

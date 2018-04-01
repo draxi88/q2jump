@@ -20,7 +20,8 @@ Send a question if you cannot get it to compile.
 | wootwoot        | programmer for 0.81 - 0.83wp
 | LilRedTheJumper | programmer for 0.84wp
 | ace             | programmer for 1.08ger - current
-| 754(slippery)   | 1.12 infinite loop fix
+| 754(slippery)   | programmer for 1.12ger - current
+| draxi           | programmer for 1.14ger - current
 | fish            | various scripts for discord integration
 | quadz           | fix_users_file script
 | maq             | last_place_fix/duplicate checker scripts
