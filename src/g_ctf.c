@@ -1229,7 +1229,10 @@ void SetCTFStats(edict_t *ent)
 	edict_t *e;
 	int keys;
 	int fps;
-    int race_this;
+
+    //Special HUD numbers == draxi
+    const char *SpecNR[64] = {"°", "±", "²", "³", "´", "µ", "¶", "·", "¸", "¹", "±°", "±", "±²", "±³", "±´", "±µ", "±¶", "±·", "±¸", "±¹", "²°", "²±", "²²", "²³", "²´", "²µ", "²¶", "²·", "²¸", "²¹", "³°", "³±"};
+
 
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
@@ -1413,23 +1416,8 @@ void SetCTFStats(edict_t *ent)
 	else
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_OFF;
     if (ent->client->resp.rep_racing){
-        race_this = ent->client->resp.rep_race_number;
-        if (race_this == 0) { gi.configstring (CONFIG_JUMP_RACE_ON,      "    Race: ±");}
-        else if (race_this == 1) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ²");}
-        else if (race_this == 2) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ³");}
-        else if (race_this == 3) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ´");}
-        else if (race_this == 4) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: µ");}
-        else if (race_this == 5) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ¶");}
-        else if (race_this == 6) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ·");}
-        else if (race_this == 7) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ¸");}
-        else if (race_this == 8) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ¹");}
-        else if (race_this == 9) { gi.configstring (CONFIG_JUMP_RACE_ON, "    Race: ±°");}
-        else if (race_this == 10) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ±±");}
-        else if (race_this == 11) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ±²");}
-        else if (race_this == 12) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ±³");}
-        else if (race_this == 13) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ±´");}
-        else if (race_this == 14) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ±µ");}
-        else if (race_this == MAX_HIGHSCORES) { gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ÎÏ×");}
+        gi.configstring (CONFIG_JUMP_RACE_ON,va("    Race: %s",SpecNR[(int)(ent->client->resp.rep_race_number+1)]));
+        if (ent->client->resp.rep_race_number==MAX_HIGHSCORES){gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ÎÏ×");}
         ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
     }
 	else
