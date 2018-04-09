@@ -3320,11 +3320,15 @@ void CTFWinElection(int pvote, edict_t* pvoter)
 		gi.bprintf(PRINT_HIGH, "%s Adding %i minutes.\n", msg, ctfgame.ekicknum);
 		map_added_time += ctfgame.ekicknum;
 		Update_Added_Time();
-		timeleft = ((int)(level.time / 60)) + (mset_vars->timelimit + map_added_time);
+		timeleft = ((mset_vars->timelimit + map_added_time) - ((int)(level.time / 60))); // old ((int)(level.time / 60)) + (mset_vars->timelimit + map_added_time);
 		ctfgame.election = ELECT_NONE;
 		if (timeleft < 0)
 		{
 //			gi.bprintf(PRINT_HIGH,"%d\n",((int)(level.time / 60)) + (mset_vars->timelimit + map_added_time));
+			End_Jumping();
+			return;
+		}
+		if ((map_added_time<0) && (map_added_time<(-timeleft))){
 			End_Jumping();
 			return;
 		}
