@@ -4602,7 +4602,7 @@ void SP_trigger_teleport (edict_t *ent)
 	ent->enemy = s;
 	for (i = 0; i < 3; i++)
 		s->s.origin[i] = ent->mins[i] + (ent->maxs[i] - ent->mins[i])/2;
-	s->s.sound = gi.soundindex ("world/hum1.wav");
+	s->s.sound = gi.soundindex (""); //old "world/hum1.wav"
 	gi.linkentity(s);
 	
 }
