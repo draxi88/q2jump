@@ -1280,10 +1280,10 @@ void SP_worldspawn (edict_t *ent)
 		gi.configstring (CONFIG_JUMP_ANTIGLUE,         "Antiglue    œÓ");			
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_OFF,     "Antiglue   œ∆∆");			
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_DISABLED,"Antiglue   ŒØ¡");
-		gi.configstring (CONFIG_CP_ON,va(              "Checkpoints:  %d",mset_vars->checkpoint_total));
+		gi.configstring (CONFIG_CP_ON,va(              "    Chkpts:  %d",mset_vars->checkpoint_total));
 		gi.configstring (CONFIG_CP_OFF,           "              ");
         gi.configstring (CONFIG_JUMP_RACE_ON,          "    Race: draxi:)");
-        gi.configstring (CONFIG_JUMP_RACE_OFF,         ""); // old "    Race: œ∆∆"
+        gi.configstring (CONFIG_JUMP_RACE_OFF,         "    Race: œ∆∆");
 		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    Team: ≈·Û˘");
 		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    Team: »·Ú‰");
 		gi.configstring (CONFIG_JUMP_TEAM_OBSERVER,    "    Team: œ‚ÛÂÚˆÂÚ");
