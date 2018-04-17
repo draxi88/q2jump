@@ -1,6 +1,10 @@
 #####v1.15ger#####
--checkpoint ui slightly changed
--race ui is back, now shows which race you are racing
+-checkpoint ui uses a new system
+-race ui is back, now shows which race you are racing, is off if not being used
+-trigger_push can now be used with checkpoints
+-give the trigger_push a target "checkpoint" and a count of how ever many checkpoints you need to pass it
+-updated makefile for easier use
+-removed sound from trigger_teleport
 
 #####v1.14.1ger#####
 -old votetime bug from wireplay code
