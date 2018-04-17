@@ -405,11 +405,9 @@ static int windsound;
 
 void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-    int i;
-    // draxi checkpoint-wall
-    for (i=1 ; i<28 ; i++) {
-        if ((self->target = "Checkpoint") &&(self->count == i) && (other->client->pers.checkpoints >= i))
-            return;
+	if (strncmp(self->target, "checkpoint", strlen("checkpoint")) == 0) {
+           if (other->client->pers.checkpoints >= self->count)
+			   return;
     }
     
     if (strcmp(other->classname, "grenade") == 0)
