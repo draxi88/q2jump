@@ -409,6 +409,8 @@ void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurfac
         if (strncmp(self->target, "checkpoint", strlen("checkpoint")) == 0) {
 			if (other->client->pers.checkpoints >= self->count)
 				return;
+			else
+				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s) to pass this barrier.\n", self->count);
         }
     }
     
