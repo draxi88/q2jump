@@ -405,9 +405,11 @@ static int windsound;
 
 void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	if (strncmp(self->target, "checkpoint", strlen("checkpoint")) == 0) {
-           if (other->client->pers.checkpoints >= self->count)
-			   return;
+	if(self->target) {
+        if (strncmp(self->target, "checkpoint", strlen("checkpoint")) == 0) {
+			if (other->client->pers.checkpoints >= self->count)
+				return;
+        }
     }
     
     if (strcmp(other->classname, "grenade") == 0)
