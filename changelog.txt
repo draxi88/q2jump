@@ -1,3 +1,7 @@
+#####v1.15.1ger#####
+-added a check for self->target in trigger_push, the lack of a check caused a crash on pushes that didn't have a target
+-added a msg to `checkpoint` trigger pushes if the user does not have the needed amount to pass, telling them how many they need
+
 #####v1.15ger#####
 -checkpoint ui uses a new system
 -race ui is back, now shows which race you are racing, is off if not being used
