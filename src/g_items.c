@@ -553,6 +553,42 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		}
 		return true;
 	}
+
+	// resizable ent that can clear checkpoints, print msg if they had some
+	if (Q_stricmp(ent->item->pickup_name,"cp clear")==0) {
+		if (other->client->pers.checkpoints > 0)
+			gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->pers.checkpoints);
+		other->client->pers.checkpoints = 0;
+		other->client->pers.rs1_checkpoint = 0;
+		other->client->pers.rs2_checkpoint = 0;
+		other->client->pers.rs3_checkpoint = 0;
+		other->client->pers.rs4_checkpoint = 0;
+		other->client->pers.rs5_checkpoint = 0;
+		other->client->pers.rs6_checkpoint = 0;
+		other->client->pers.rs7_checkpoint = 0;
+		other->client->pers.rs8_checkpoint = 0;
+		other->client->pers.rs9_checkpoint = 0;
+		other->client->pers.rs10_checkpoint = 0;
+		other->client->pers.rs11_checkpoint = 0;
+		other->client->pers.rs12_checkpoint = 0;
+		other->client->pers.rs13_checkpoint = 0;
+		other->client->pers.rs14_checkpoint = 0;
+		other->client->pers.rs15_checkpoint = 0;
+		other->client->pers.rs16_checkpoint = 0;
+		other->client->pers.rs17_checkpoint = 0;
+		other->client->pers.rs18_checkpoint = 0;
+		other->client->pers.rs19_checkpoint = 0;
+		other->client->pers.rs20_checkpoint = 0;
+		other->client->pers.target_checkpoint = 0;
+		other->client->pers.blue_checkpoint = 0;
+		other->client->pers.cd_checkpoint = 0;
+		other->client->pers.spinner_checkpoint = 0;
+		other->client->pers.pass_checkpoint = 0;
+		other->client->pers.red_checkpoint = 0;
+		other->client->pers.pyramid_checkpoint = 0;
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+	}
+
 	// check if checkpoints have been picked up
 	if (Q_stricmp(ent->item->pickup_name,"cp resize 1")==0 && other->client->pers.rs1_checkpoint != 1) {
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
@@ -2506,6 +2542,30 @@ tank commander's head
 /* icon */		"i_airstrike",
 /* pickup */	"Airstrike Marker",
 /* width */		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+
+/*QUAKED cp_clear (.5 .5 .5) ?
+can clear checkpoints in a player's inventory
+*/
+	{
+		"cp_clear",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"cp clear",
+		2,
 		0,
 		NULL,
 		IT_STAY_COOP|IT_KEY,
