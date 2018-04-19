@@ -46,7 +46,7 @@ CC=gcc
 BASE_CFLAGS=-Dstricmp=strcasecmp
 
 #use these cflags to optimize it
-CFLAGS=$(BASE_CFLAGS) -march=native -O6 -ffast-math -funroll-loops \
+CFLAGS=$(BASE_CFLAGS) -march=native -O3 -ffast-math -funroll-loops \
 	-fomit-frame-pointer -fexpensive-optimizations -falign-loops=2 \
 	-falign-jumps=2 -falign-functions=2
 #use these when debugging 
