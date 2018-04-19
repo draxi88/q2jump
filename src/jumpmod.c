@@ -253,7 +253,7 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->edited_by,
   },
   { 
-	0,10000,800,
+	-10000,10000,800,
     "gravity", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -432,7 +432,7 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->edited_by,
   },
   { 
-	0,10000,800,
+	-10000,10000,800,
     "ggravity", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
