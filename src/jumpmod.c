@@ -295,7 +295,7 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->allowsrj,
   },
   { 
-	0,100,0,
+	0,28,0,
     "checkpoint_total", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -467,7 +467,7 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->addedtimeoveride,
   },
    { 
-	0,100,0,
+	0,28,0,
     "gcheckpoint_total", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,  
     CMDTYPE_NUMBER,
