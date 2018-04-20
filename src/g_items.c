@@ -631,7 +631,8 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.pass_checkpoint = 0;
 		other->client->pers.red_checkpoint = 0;
 		other->client->pers.pyramid_checkpoint = 0;
-		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+		if (!other->client->resp.mute_cps)
+			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 	}
 
 	// check if checkpoints have been picked up
