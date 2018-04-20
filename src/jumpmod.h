@@ -782,6 +782,7 @@ void cmd_test(edict_t *ent);
 #define RECORD_FPS_SHIFT    8
 #define RECORD_FPS_MASK   255 << RECORD_FPS_SHIFT
 void Update_Added_Time(void);
+void Update_nr15();
 void Update_Highscores(int start);
 void Highlight_Name(char *name);
 qboolean Can_highlight_Name(char *name);

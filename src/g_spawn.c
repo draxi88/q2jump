@@ -864,7 +864,7 @@ debug_log(text);
     sort_users();
 
 	open_tourney_file(level.mapname,false);
-	Update_Highscores(10);
+	Update_Highscores(15); //draxi 
 	Load_Recording();
 
 	SetSpinnyThing();

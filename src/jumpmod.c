@@ -7779,8 +7779,8 @@ void remtime(edict_t *ent)
 			tourney_record[trecid].time = 0;
 			tourney_record[trecid].completions = 0;
 		}
-//		Update_Highscores(MAX_HIGHSCORES-1);
-
+//		Update_Highscores(MAX_HIGHSCORES-1); 
+        Update_nr15();
 		UpdateScores();
 		sort_users();
 
@@ -7824,7 +7824,6 @@ void remtime(edict_t *ent)
 		gi.cprintf(ent,PRINT_HIGH,"Invalid map time.\n",remnum);
 	}
 }
-
 
 void cmsg(edict_t *ent)
 {
@@ -12563,6 +12562,60 @@ void Update_Added_Time(void)
 
 }
 
+//fix top15 on remtime.
+void Update_nr15()
+{
+    int placement;
+	int trec;
+	int li;
+    int nr15;
+	qboolean alreadytop;
+    qboolean setnr15;
+
+    placement = 15;
+    setnr15 = false;
+    alreadytop = false;
+
+	for (trec=0;trec<MAX_USERS;trec++)
+	{   
+        alreadytop = false;
+		//loop thru the top 15
+		for (li=0;li<MAX_HIGHSCORES;li++)
+		{
+			//dont add to the board if in there already
+			if (level_items.stored_item_times[li].uid==tourney_record[trec].uid){
+				alreadytop = true;
+                break;
+			}
+		}
+        if(!alreadytop){
+            if (!setnr15){
+                nr15 = trec;
+                setnr15 = true;
+                break;
+            }
+            else if (level_items.stored_item_times[trec].time<level_items.stored_item_times[nr15].time){
+                nr15 = trec;
+            }
+        }
+    }
+		gi.dprintf("%s %f\n",maplist.users[tourney_record[nr15].uid].name,tourney_record[nr15].time);
+		//add it to the stored_items
+		placement = level_items.stored_item_times_count;
+		level_items.stored_item_times[placement].uid = tourney_record[nr15].uid;
+		level_items.stored_item_times[placement].time = tourney_record[nr15].time;
+		strcpy(level_items.stored_item_times[placement].owner,maplist.users[tourney_record[nr15].uid].name);
+		strcpy(level_items.stored_item_times[placement].name,maplist.users[tourney_record[nr15].uid].name);
+		level_items.stored_item_times[placement].fresh = false;
+
+		level_items.stored_item_times[placement].timestamp = 0;
+        sprintf(level_items.stored_item_times[placement].date, "%s",tourney_record[nr15].date);
+				level_items.stored_item_times_count++;
+		sort_queue(level_items.stored_item_times_count);
+		if (level_items.stored_item_times_count>MAX_HIGHSCORES)
+			level_items.stored_item_times_count = MAX_HIGHSCORES; 
+}
+
 //When map loads go thru all times and update the highscore list
 void Update_Highscores(int start)
 {
@@ -12588,8 +12641,8 @@ void Update_Highscores(int start)
 		if (!tourney_record[trec].completions)
 			break;
 		cando = true;
-		//loop thru the top 10
-		for (li=0;li<MAX_HIGHSCORES*2;li++)
+		//loop thru the top 15
+		for (li=0;li<MAX_HIGHSCORES;li++)
 		{
 			//dont add to the board if in there already
 			if (level_items.stored_item_times[li].uid==tourney_record[trec].uid)
@@ -12604,7 +12657,7 @@ void Update_Highscores(int start)
 
 		if (!cando)
 			continue;
-		//gi.dprintf("%s %f\n",maplist.users[tourney_record[trec].uid].name,tourney_record[trec].time);
+		gi.dprintf("%s %f\n",maplist.users[tourney_record[trec].uid].name,tourney_record[trec].time);
 		//add it to the stored_items
 		placement = level_items.stored_item_times_count;
 		level_items.stored_item_times[placement].uid = tourney_record[trec].uid;
@@ -12620,7 +12673,7 @@ void Update_Highscores(int start)
 		if (level_items.stored_item_times_count>MAX_HIGHSCORES)
 			level_items.stored_item_times_count = MAX_HIGHSCORES;
 	}
-//	UpdateScores();
+	//UpdateScores(); 
 
 }
 
