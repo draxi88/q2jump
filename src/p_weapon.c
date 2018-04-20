@@ -221,11 +221,11 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 
 
+		// old version
+
 		//if (mset_vars->rocket && mset_vars->checkpoint_total) { // rocket and checkpoint
 		//	if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0){}
 		//	else if (Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0){}
-		//	else if (mset_vars->bfg)
-		//		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0){}
 		//	else if (other->client->pers.checkpoints >= mset_vars->checkpoint_total) { apply_time(other,ent); }
 		//	else {gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);}
 		//}
@@ -233,8 +233,6 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		//{
 		//	if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0){}
 		//	else if (Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0){}
-		//	else if (mset_vars->bfg)
-		//		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0){}
 		//	else { apply_time(other,ent); }
 		//}
 		//else if (mset_vars->checkpoint_total) // no rocket, just checkpoints
@@ -246,8 +244,6 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		//}
 		//else // no rockets, no checkpoints
 		//{
-		//	if (mset_vars->bfg)
-		//		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0){}
 		//	apply_time(other,ent);	
 		//}
 	}
