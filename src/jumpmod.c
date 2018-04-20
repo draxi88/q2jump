@@ -184,6 +184,13 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->rocket,
   },
   { 
+	0,1,0,
+    "bfg", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->bfg,
+  },
+  { 
 	0,2,0,
     "antiglue", 
     CMDWHERE_CFGFILE | CMD_MSET, 
@@ -403,6 +410,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->rocket,
+  },
+  { 
+	0,1,0,
+    "gbfg", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->bfg,
   },
   { 
 	0,2147483647,8388608,

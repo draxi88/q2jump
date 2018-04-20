@@ -429,6 +429,7 @@ typedef struct
 	unsigned int addedtimeoveride;	
 	unsigned int allowsrj;
 	unsigned int checkpoint_total;
+	unsigned int bfg;
 	int ghost_model;
 } mset_vars_t;
 
