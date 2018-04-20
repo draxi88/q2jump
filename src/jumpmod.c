@@ -7780,8 +7780,8 @@ void remtime(edict_t *ent)
 			tourney_record[trecid].completions = 0;
 		}
 //		Update_Highscores(MAX_HIGHSCORES-1); 
-        Update_nr15();
-		UpdateScores();
+        Update_nr15(); //draxi
+		//UpdateScores();
 		sort_users();
 
 		for (i = 1; i <= maxclients->value; i++) 
@@ -12572,7 +12572,7 @@ void Update_nr15()
 	qboolean alreadytop;
     qboolean setnr15;
 
-    placement = 15;
+    placement = 14;
     setnr15 = false;
     alreadytop = false;
 
