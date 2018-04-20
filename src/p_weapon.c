@@ -120,6 +120,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	int			index;
 	gitem_t		*ammo;
 	gitem_t		*item;
+	int			pickup;
 
 	index = ITEM_INDEX(ent->item);	
 	
@@ -195,27 +196,63 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 	if (other->client->resp.ctf_team==CTF_TEAM2) // team hard, so apply the time
 	{
-		if (mset_vars->rocket && mset_vars->checkpoint_total) { // rocket and checkpoint
-			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0){}
-			else if (Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0){}
-			else if (other->client->pers.checkpoints >= mset_vars->checkpoint_total) { apply_time(other,ent); }
-			else {gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);}
+		pickup = 0;
+
+		if (mset_vars->bfg == 1) { // bfg
+			gi.cprintf(other,PRINT_HIGH,"entering bfg %d\n", mset_vars->bfg);
+			if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0)
+				pickup = 1;
 		}
-		else if (mset_vars->rocket) // just rocket, no checkpoints
-		{
-			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0){}
-			else if (Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0){}
-			else { apply_time(other,ent); }
+
+		if (mset_vars->rocket == 1) { // rockets
+			gi.cprintf(other,PRINT_HIGH,"entering rockets %d\n", mset_vars->rocket);
+			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0)
+				pickup = 1;
 		}
-		else if (mset_vars->checkpoint_total) // no rocket, just checkpoints
-		{
-			if (other->client->pers.checkpoints >= mset_vars->checkpoint_total) { apply_time(other,ent); }
-			else {gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);}
+
+		if (mset_vars->checkpoint_total > 0) { // cps
+			gi.cprintf(other,PRINT_HIGH,"entering cps %d\n", mset_vars->checkpoint_total);
+			if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
+				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
+				pickup = 1;
+			}
 		}
-		else // no rockets, no checkpoints
-		{
-			apply_time(other,ent);	
+		if (pickup == 0) { // no other quals
+			gi.cprintf(other,PRINT_HIGH,"entering else... %d\n", mset_vars->checkpoint_total);
+			apply_time(other,ent);
 		}
+
+
+
+		//if (mset_vars->rocket && mset_vars->checkpoint_total) { // rocket and checkpoint
+		//	if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0){}
+		//	else if (Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0){}
+		//	else if (mset_vars->bfg)
+		//		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0){}
+		//	else if (other->client->pers.checkpoints >= mset_vars->checkpoint_total) { apply_time(other,ent); }
+		//	else {gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);}
+		//}
+		//else if (mset_vars->rocket) // just rocket, no checkpoints
+		//{
+		//	if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0){}
+		//	else if (Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0){}
+		//	else if (mset_vars->bfg)
+		//		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0){}
+		//	else { apply_time(other,ent); }
+		//}
+		//else if (mset_vars->checkpoint_total) // no rocket, just checkpoints
+		//{
+		//	if (mset_vars->bfg)
+		//		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0){}
+		//	else if (other->client->pers.checkpoints >= mset_vars->checkpoint_total) { apply_time(other,ent); }
+		//	else {gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);}
+		//}
+		//else // no rockets, no checkpoints
+		//{
+		//	if (mset_vars->bfg)
+		//		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0){}
+		//	apply_time(other,ent);	
+		//}
 	}
 
 	if (other->client->pers.weapon != ent->item && 
