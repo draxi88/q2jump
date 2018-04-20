@@ -1509,7 +1509,7 @@ void weapon_bfg_fire (edict_t *ent)
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	if (mset_vars->weapons)
+	if (mset_vars->weapons || mset_vars->bfg)
 		fire_bfg (ent, start, forward, damage, 400, damage_radius);
 
 	ent->client->ps.gunframe++;
