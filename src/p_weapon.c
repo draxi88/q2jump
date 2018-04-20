@@ -199,26 +199,23 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		pickup = 0;
 
 		if (mset_vars->bfg == 1) { // bfg
-			gi.cprintf(other,PRINT_HIGH,"entering bfg %d\n", mset_vars->bfg);
 			if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0)
 				pickup = 1;
 		}
 
 		if (mset_vars->rocket == 1) { // rockets
-			gi.cprintf(other,PRINT_HIGH,"entering rockets %d\n", mset_vars->rocket);
 			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0)
 				pickup = 1;
 		}
 
 		if (mset_vars->checkpoint_total > 0) { // cps
-			gi.cprintf(other,PRINT_HIGH,"entering cps %d\n", mset_vars->checkpoint_total);
 			if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
 				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
 				pickup = 1;
 			}
 		}
+
 		if (pickup == 0) { // no other quals
-			gi.cprintf(other,PRINT_HIGH,"entering else... %d\n", mset_vars->checkpoint_total);
 			apply_time(other,ent);
 		}
 
