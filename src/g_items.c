@@ -556,11 +556,13 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 	
 	// resizable starting line, timer is reset when you pass over it, cp's also removed
 	if (Q_stricmp(ent->item->pickup_name,"start line")==0) {
-		other->client->resp.item_timer = 0;
-		other->client->resp.client_think_begin = 0;
-		gi.cprintf(other,PRINT_HIGH,"You started at %1.1f seconds.\n", other->client->resp.item_timer);
-		if (other->client->pers.checkpoints > 0)
-			gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->pers.checkpoints);
+
+		Stop_Recording(other); // stop the recording for race line alignment
+		Start_Recording(other); // start another recording for this rep
+		other->client->resp.item_timer = 0; // internal timer reset
+		other->client->resp.client_think_begin = 0; // ui timer reset
+		other->client->resp.race_frame = 0; //reset race frame if racing
+
 		other->client->pers.checkpoints = 0;
 		other->client->pers.rs1_checkpoint = 0;
 		other->client->pers.rs2_checkpoint = 0;
@@ -589,7 +591,6 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.pass_checkpoint = 0;
 		other->client->pers.red_checkpoint = 0;
 		other->client->pers.pyramid_checkpoint = 0;
-		gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 	}
 
 	// resizable ent that can clear checkpoints, print msg if they had some
