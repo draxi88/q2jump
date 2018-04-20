@@ -557,6 +557,12 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 	// resizable starting line, timer is reset when you pass over it, cp's also removed
 	if (Q_stricmp(ent->item->pickup_name,"start line")==0) {
 
+		memset(other->client->pers.inventory, 0, sizeof(other->client->pers.inventory)); // reset their inventory
+
+		item = FindItem("Blaster"); // set their equiped item to a blaster
+		other->client->newweapon = item;
+		ChangeWeapon (other);
+
 		Stop_Recording(other); // stop the recording for race line alignment
 		Start_Recording(other); // start another recording for this rep
 		other->client->resp.item_timer = 0; // internal timer reset
