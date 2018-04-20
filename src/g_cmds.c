@@ -1565,6 +1565,8 @@ void ClientCommand (edict_t *ent)
 	}
 	else if (Q_stricmp (cmd, "jumpers") == 0)
 		Jumpers_on_off(ent);
+	else if (Q_stricmp (cmd, "cpsound") == 0)
+		Cpsound_on_off(ent);
 	else if (Q_stricmp (cmd, "remban") == 0)
 		RemBan(ent);
 	else if (Q_stricmp (cmd, "banflags") == 0)
