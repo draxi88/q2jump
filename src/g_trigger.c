@@ -406,7 +406,7 @@ static int windsound;
 void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
 	if(self->target) {
-        if (strncmp(self->target, "checkpoint", strlen("checkpoint")) == 0) {
+        if (strncmp(self->target, "checkpoint", strlen("checkpoint")) == 0 && strcmp(other->classname, "player") == 0) {
 			if (other->client->pers.checkpoints >= self->count)
 				return;
 			else

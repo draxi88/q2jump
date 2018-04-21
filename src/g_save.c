@@ -252,11 +252,18 @@ void InitGame (void)
 
 	g_select_empty = gi.cvar ("g_select_empty", "0", CVAR_ARCHIVE);
 
-	run_pitch = gi.cvar ("run_pitch", "0.002", 0);
-	run_roll = gi.cvar ("run_roll", "0.005", 0);
-	bob_up  = gi.cvar ("bob_up", "0.005", 0);
-	bob_pitch = gi.cvar ("bob_pitch", "0.002", 0);
-	bob_roll = gi.cvar ("bob_roll", "0.002", 0);
+	run_pitch = gi.cvar ("run_pitch", "0.000", 0);
+	run_roll = gi.cvar ("run_roll", "0.000", 0);
+	bob_up  = gi.cvar ("bob_up", "0.000", 0);
+	bob_pitch = gi.cvar ("bob_pitch", "0.000", 0);
+	bob_roll = gi.cvar ("bob_roll", "0.000", 0);
+
+	// old
+	//run_pitch = gi.cvar ("run_pitch", "0.002", 0);
+	//run_roll = gi.cvar ("run_roll", "0.005", 0);
+	//bob_up  = gi.cvar ("bob_up", "0.005", 0);
+	//bob_pitch = gi.cvar ("bob_pitch", "0.002", 0);
+	//bob_roll = gi.cvar ("bob_roll", "0.002", 0);
 
 	// flood control
 	flood_msgs = gi.cvar ("flood_msgs", "4", 0);
