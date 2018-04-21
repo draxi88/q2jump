@@ -185,7 +185,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 				if ((int)(dmflags->value) & DF_WEAPONS_STAY)
 					ent->flags |= FL_RESPAWN;
 				else
-					SetRespawn (ent, 30);
+					SetRespawn (ent, 1);
 			}
 			if (coop->value)
 				ent->flags |= FL_RESPAWN;
