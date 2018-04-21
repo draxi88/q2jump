@@ -7781,7 +7781,7 @@ void remtime(edict_t *ent)
 		}
 //		Update_Highscores(MAX_HIGHSCORES-1); 
         Update_nr15(); //draxi
-		//UpdateScores();
+		UpdateScores();
 		sort_users();
 
 		for (i = 1; i <= maxclients->value; i++) 
