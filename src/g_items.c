@@ -553,6 +553,16 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		}
 		return true;
 	}
+
+	// resizable ent that removes all weapons on touch
+	if (Q_stricmp(ent->item->pickup_name,"weapon clear")==0) {
+
+		memset(other->client->pers.inventory, 0, sizeof(other->client->pers.inventory)); // reset their inventory
+
+		item = FindItem("Blaster"); // set their equiped item to a blaster
+		other->client->newweapon = item;
+		ChangeWeapon (other);
+	}
 	
 	// resizable starting line, timer is reset when you pass over it, cp's also removed
 	if (Q_stricmp(ent->item->pickup_name,"start line")==0) {
@@ -2616,6 +2626,30 @@ tank commander's head
 /* icon */		"i_airstrike",
 /* pickup */	"Airstrike Marker",
 /* width */		2,
+		0,
+		NULL,
+		IT_STAY_COOP|IT_KEY,
+		0,
+		NULL,
+		0,
+/* precache */ ""
+	},
+
+/*QUAKED weapon_clear (.5 .5 .5) ?
+removes all weapons from a player's inventory
+*/
+	{
+		"weapon_clear",
+		Pickup_Key,
+		NULL,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/items/keys/red_key/tris.md2", EF_GIB,
+		NULL,
+		"k_redkey",
+		"weapon clear",
+		2,
 		0,
 		NULL,
 		IT_STAY_COOP|IT_KEY,
