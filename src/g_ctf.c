@@ -4981,7 +4981,7 @@ void CTFAdmin(edict_t *ent)
 			
 			ent->client->resp.admin = admin_pass[alevel].level;
 			List_Admin_Commands(ent);
-			if (admin_pass[alevel].level<16) //always print
+			if (admin_pass[alevel].level<15) //only print for non 15's, i dont wanna talk to people
 			{
 				gi.bprintf(PRINT_HIGH, "%s has become a level %d admin.\n", ent->client->pers.netname,admin_pass[alevel].level);
 			}
