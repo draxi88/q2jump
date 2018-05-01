@@ -8910,7 +8910,7 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 				ent->client->resp.best_time = time;
 
 				// 1st comp AND 1st place
-				if (time <= level_items.stored_item_times[0].time) {
+				if (time < level_items.stored_item_times[0].time) {
 					gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st completion) (1st %1.3f)\n",
 						ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
 					return false;
