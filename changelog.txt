@@ -1,3 +1,10 @@
+#####v1.17ger#####
+-weapon_finish no longer rotates (didn't see this as it usually invisible)
+-fixed a votetime bug where map ended too early
+-fixed a bug where if a player is in first, and you tie first, it printed to all players instead of just the player
+-spawnflag 1 on trigger_teleport and misc_teleporter now save velocity
+	-this ignores the angle of the misc_teleporter_dest, as velocity is both speed + angle
+
 #####v1.16ger#####
 -new makefile for linux, more stable
 -mset/gset gravity can now take negative values

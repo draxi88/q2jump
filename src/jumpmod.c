@@ -8870,13 +8870,13 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		//level_items.stored_item_times[0].time
 		
 		//setting a first
-		if (time <= level_items.stored_item_times[0].time) {
+		if (time < level_items.stored_item_times[0].time) {
 			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st %1.3f)\n",
 				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
 			return false;
 		}
 		
-		// beat pb/1st, show to server
+		// beat pb, show to server
 		if (time < oldtime) {
 			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f)\n",
 				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);

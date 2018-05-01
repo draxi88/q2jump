@@ -54,3 +54,6 @@ Temporary Items
 *.manifest
 *.idb
 *.lib
+scripts and files/output.csv
+scripts and files/timelimit testing.R
+src/release/
