@@ -575,8 +575,8 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 
 		Stop_Recording(other); // stop the recording for race line alignment
 		Start_Recording(other); // start another recording for this rep
-		other->client->resp.item_timer = 0; // internal timer reset
-		other->client->resp.client_think_begin = 0; // ui timer reset
+		other->client->resp.item_timer = 0; // internal timer reset 1
+		other->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
 		other->client->resp.race_frame = 0; //reset race frame if racing
 
 		other->client->pers.checkpoints = 0;
