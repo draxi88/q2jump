@@ -1,3 +1,8 @@
+#####v1.18ger#####
+-another time display bug fix
+-start line fix, gives .xxx finish times now instead of .x
+-checkpoints now give .xxx instead of .x
+
 #####v1.17ger#####
 -weapon_finish no longer rotates (didn't see this as it usually invisible)
 -fixed a votetime bug where map ended too early
