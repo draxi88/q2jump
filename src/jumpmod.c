@@ -29,6 +29,7 @@ static char *help_main[] = {
 	"cmsg - enable/disable messages triggered in the map\n",
 	"replay - replay # to view replays 1-15\n",
 	"jumpers - turn on or off player models\n",
+	"cpsound - turn on or off checkpoint sounds\n",
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
@@ -183,6 +184,13 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->rocket,
   },
   { 
+	0,1,0,
+    "bfg", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->bfg,
+  },
+  { 
 	0,2,0,
     "antiglue", 
     CMDWHERE_CFGFILE | CMD_MSET, 
@@ -253,7 +261,7 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->edited_by,
   },
   { 
-	0,10000,800,
+	-10000,10000,800,
     "gravity", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -295,7 +303,7 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->allowsrj,
   },
   { 
-	0,100,0,
+	0,28,0,
     "checkpoint_total", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -404,6 +412,13 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->rocket,
   },
   { 
+	0,1,0,
+    "gbfg", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->bfg,
+  },
+  { 
 	0,2147483647,8388608,
     "gtarget_glow", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
@@ -432,7 +447,7 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->edited_by,
   },
   { 
-	0,10000,800,
+	-10000,10000,800,
     "ggravity", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
@@ -467,7 +482,7 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->addedtimeoveride,
   },
    { 
-	0,100,0,
+	0,28,0,
     "gcheckpoint_total", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,  
     CMDTYPE_NUMBER,
@@ -8854,13 +8869,13 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		//level_items.stored_item_times[0].time
 		
 		//setting a first
-		if (time <= level_items.stored_item_times[0].time) {
+		if (time < level_items.stored_item_times[0].time) {
 			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st %1.3f)\n",
 				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
 			return false;
 		}
 		
-		// beat pb/1st, show to server
+		// beat pb, show to server
 		if (time < oldtime) {
 			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f)\n",
 				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
@@ -8894,7 +8909,7 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 				ent->client->resp.best_time = time;
 
 				// 1st comp AND 1st place
-				if (time <= level_items.stored_item_times[0].time) {
+				if (time < level_items.stored_item_times[0].time) {
 					gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st completion) (1st %1.3f)\n",
 						ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
 					return false;
@@ -13565,7 +13580,7 @@ void Jumpers_on_off(edict_t *ent)
 	int i;
 	char s[255];
 	ent->client->resp.hide_jumpers = !ent->client->resp.hide_jumpers;
-	Com_sprintf(s,sizeof(s),"Players models are now %s",(ent->client->resp.hide_jumpers ? "OFF" : "ON"));
+	Com_sprintf(s,sizeof(s),"Players models are now %s",(ent->client->resp.hide_jumpers ? "OFF." : "ON."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 	if (!ent->client->resp.hide_jumpers)
 	{
@@ -13587,6 +13602,14 @@ void Jumpers_on_off(edict_t *ent)
 		//stuffcmd(ent,"download players/female/invis.pcx\n");
 	}
 	
+}
+
+void Cpsound_on_off(edict_t *ent)
+{
+	char s[255];
+	ent->client->resp.mute_cps = !ent->client->resp.mute_cps;
+	Com_sprintf(s,sizeof(s),"Checkpoint sounds are now %s",(ent->client->resp.mute_cps ? "OFF." : "ON."));
+	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
 void	FS_CreatePath (char *path)

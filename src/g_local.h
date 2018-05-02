@@ -977,6 +977,7 @@ typedef struct
 	qboolean	finished;
 	int			jumps;
 	qboolean	hide_jumpers;
+	qboolean	mute_cps;
 	int			cur_jumper;
 	qboolean	going_up;
 	qboolean	going_forward;

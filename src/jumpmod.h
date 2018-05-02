@@ -1,7 +1,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.15.1ger"
+#define CTF_VERSION_S		"1.18ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -429,6 +429,7 @@ typedef struct
 	unsigned int addedtimeoveride;	
 	unsigned int allowsrj;
 	unsigned int checkpoint_total;
+	unsigned int bfg;
 	int ghost_model;
 } mset_vars_t;
 
@@ -843,6 +844,7 @@ extern char map_skill[10][10];
 extern char map_skill2[10][10];
 void Jumpers_Update_Skins(edict_t *ent);
 void Jumpers_on_off(edict_t *ent);
+void Cpsound_on_off(edict_t *ent);
 extern int number_of_jumpers_off;
 typedef struct 
 {

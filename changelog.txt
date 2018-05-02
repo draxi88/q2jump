@@ -1,3 +1,40 @@
+#####v1.18ger#####
+-another time display bug fix
+-start line fix, gives .xxx finish times now instead of .x
+-checkpoints now give .xxx instead of .x
+
+#####v1.17ger#####
+-weapon_finish no longer rotates (didn't see this as it usually invisible)
+-fixed a votetime bug where map ended too early
+-fixed a bug where if a player is in first, and you tie first, it printed to all players instead of just the player
+-spawnflag 1 on trigger_teleport and misc_teleporter now save velocity
+	-this ignores the angle of the misc_teleporter_dest, as velocity is both speed + angle
+
+#####v1.16ger#####
+-new makefile for linux, more stable
+-mset/gset gravity can now take negative values
+-mset/gset checkpoint_total max value is now 28, the max potential atm
+-new ent, cp_clear, it removes all checkpoints from a player
+-new ent, start_line
+	-restarts time when you pass it
+	-resets checkpoints you have
+	-removes all weapons you have
+-new ent, weapon_clear
+	-clears all weapons from inventory
+	-switches your weapon to a blaster
+	-the older way to do this was with a trigger_hurt
+-new mset/gset, bfg, turn it on to be able to use bfg jumps
+	-bfg now has infinite ammo with this toggled
+	-projectile and weapon splash visible with this toggled
+-the way time is applied is changed for better future use
+	-uses a pickup counter instead of comvoluted if/else
+-crash fix for checkpoint wall, now checks to make it's a player passing it
+-new toggle, cpsound, toggles the sound of picking up checkpoints and cp_clear
+-default respawn time of weapons is now 1 second, instead of 30, mostly for local testing
+-changed default run_pitch, run_roll, bob_up, bob_pitch, bob_roll to 0
+	-gets rid of a lot of the shake you get at higher speeds
+	-before this cmd in player's configs was overwritten by the server
+
 #####v1.15.1ger#####
 -added a check for self->target in trigger_push, the lack of a check caused a crash on pushes that didn't have a target
 -added a msg to `checkpoint` trigger pushes if the user does not have the needed amount to pass, telling them how many they need
