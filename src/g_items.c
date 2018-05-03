@@ -2134,7 +2134,7 @@ always owned, never in the world
 		Weapon_Finish,
 		"misc/w_pkup.wav",
 		"models/weapons/g_rail/tris.md2", 0,
-		NULL,
+		"models/weapons/v_rail/tris.md2",
 /* icon */		"w_railgun",
 /* pickup */	"Railgun",
 		0,
