@@ -394,7 +394,7 @@ void SP_trigger_always (edict_t *ent)
 }
 
 // fxn to delay trigger messages
-qboolean trigger_push_timer(edict_t *ent, edict_t *other) {
+qboolean trigger_push_timer(edict_t *other) {
 
 	const int TIME_BETWEEN_MESSAGES = 5; // seconds
 	time_t currentTime = time(0);
@@ -425,7 +425,7 @@ void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurfac
 			if (other->client->pers.checkpoints >= self->count)
 				return;
 			else {
-				if (trigger_push_timer(self, other))
+				if (trigger_push_timer(other))
 					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s) to pass this barrier.\n", self->count);
 			}
         }
