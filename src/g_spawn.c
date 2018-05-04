@@ -581,20 +581,17 @@ qboolean Neuro_RedKey_Overide;
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 {
 	FILE		*fe_add;
-	FILE		*fe_rem;
 	qboolean done_spawn;
 	long		lSize;
 	char		*buffer2;
 	char		file_loc[256];
 	char		file_loc2[256];
-	char		rent[256];
 	edict_t		*ent;
 	int			inhibit;
 	char		*com_token;
 	int			i;
 	cvar_t	*game_dir;
 	int			addent_count;
-	int v;
 	char text[128];
 
 	if (removed_map)
