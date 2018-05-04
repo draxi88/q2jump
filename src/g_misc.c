@@ -1838,6 +1838,13 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	if (!(self->spawnflags & 1))
 		VectorClear (other->velocity);
 
+	if (!mset_vars->fasttele)
+    {
+        other->client->ps.pmove.pm_time = 160>>3;        // hold time
+        other->client->ps.pmove.pm_flags |= PMF_TIME_TELEPORT;
+    }
+
+
 	// set angles
 	for (i=0 ; i<3 ; i++)
 		other->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(dest->s.angles[i] - other->client->resp.cmd_angles[i]);
