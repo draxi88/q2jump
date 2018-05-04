@@ -136,22 +136,20 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 				pickup = 1;
 		}
 
-		if (mset_vars->rocket == 1) { // rockets
+		if (mset_vars->rocket == 1 && pickup != 1) { // rockets
 			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0)
 				pickup = 1;
 		}
 
-		if (mset_vars->checkpoint_total > 0) { // cps
+		if (mset_vars->checkpoint_total > 0 && pickup != 1) { // cps
 			if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
 				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
 				pickup = 1;
 			}
 		}
 
-		if (pickup == 0) { // no other quals
+		if (pickup == 0) // no other quals
 			gi.cprintf(other,PRINT_HIGH,"You would have got this weapon in %3.1f seconds.\n",other->client->resp.item_timer);
-			other->client->pers.inventory[index]++;
-		}
 	}
 
 	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) && other->client->pers.inventory[index])
@@ -171,6 +169,8 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 			return false;
 		}
 	}
+
+	other->client->pers.inventory[index]++;
 
 	if (!(ent->spawnflags & DROPPED_ITEM) )
 	{
@@ -207,22 +207,20 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 				pickup = 1;
 		}
 
-		if (mset_vars->rocket == 1) { // rockets
+		if (mset_vars->rocket == 1 && pickup != 1) { // rockets
 			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0)
 				pickup = 1;
 		}
 
-		if (mset_vars->checkpoint_total > 0) { // cps
+		if (mset_vars->checkpoint_total > 0 && pickup != 1) { // cps
 			if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
 				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
 				pickup = 1;
 			}
 		}
 
-		if (pickup == 0) { // no other quals
+		if (pickup == 0) // no other quals
 			apply_time(other,ent);
-			other->client->pers.inventory[index]++;
-		}
 	}
 
 	if (other->client->pers.weapon != ent->item && 
