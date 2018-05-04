@@ -1837,15 +1837,6 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	// clear the velocity and hold them in place briefly
 	if (!(self->spawnflags & 1))
 		VectorClear (other->velocity);
-	if (!mset_vars->fasttele)
-	{
-		other->client->ps.pmove.pm_time = 160>>3;		// hold time
-		other->client->ps.pmove.pm_flags |= PMF_TIME_TELEPORT;
-
-		// draw the teleport splash at source and on the player
-		self->owner->s.event = EV_PLAYER_TELEPORT;
-		other->s.event = EV_PLAYER_TELEPORT;
-	}
 
 	// set angles
 	for (i=0 ; i<3 ; i++)
