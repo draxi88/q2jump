@@ -1913,7 +1913,44 @@ void SP_misc_teleporter_dest (edict_t *ent)
 	gi.linkentity (ent);
 }
 
+/*QUAKED trigger_teleport (0.5 0.5 0.5) ?
+Players touching this will be teleported
+*/
+void SP_trigger_teleport (edict_t *ent)
+{
+	edict_t *s;
+	int i;
 
+	if (!ent->target)
+	{
+		gi.dprintf ("teleporter without a target.\n");
+		G_FreeEdict (ent);
+		return;
+	}
+
+	ent->svflags |= SVF_NOCLIENT;
+	ent->solid = SOLID_TRIGGER;
+	ent->touch = teleporter_touch;
+	gi.setmodel (ent, ent->model);
+	gi.linkentity (ent);
+
+	// noise maker and splash effect dude
+	s = G_Spawn();
+	ent->enemy = s;
+	for (i = 0; i < 3; i++)
+		s->s.origin[i] = ent->mins[i] + (ent->maxs[i] - ent->mins[i])/2;
+	s->s.sound = gi.soundindex (""); //old "world/hum1.wav"
+	gi.linkentity(s);
+	
+}
+
+/*QUAKED info_teleport_destination (0.5 0.5 0.5) (-16 -16 -24) (16 16 32)
+Point trigger_teleports at these.
+*/
+void SP_info_teleport_destination (edict_t *ent)
+{
+	ent->s.origin[2] += 16;
+}
 
 
 void ThrowVomit (edict_t *ent, vec3_t mouth_pos, vec3_t forward, vec3_t right, vec3_t player_vel);
