@@ -170,11 +170,10 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	}
 
 	// give them the weapon... conditionally
-	if (!mset_vars->bfg == 1) // if no bfg jumps, dont give weapon
-		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0) {}
+	if (!mset_vars->bfg == 1 && Q_stricmp (ent->item->pickup_name,"BFG10K")==0) {} // if no bfg jumps, dont give weapon
 
-	else if (!mset_vars->rocket) // if no rockets or grenades, dont give weapon
-		if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0) {}
+	else if (!mset_vars->rocket && 
+		(Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0)) {} // if no rockets or grenades, dont give weapon
 
 	else // otherwise give them weapon
 		other->client->pers.inventory[index]++;
@@ -501,7 +500,7 @@ static void Weapon_Generic2 (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FI
 		return;
 	}
 
-	if (ent->client->weaponstate == WEAPON_READY)
+	if (ent->client->weaponstate == WEAPON_READY || (mset_vars->fast_firing == 1 && Q_stricmp(ent->client->pers.weapon->pickup_name, "Rocket Launcher") == 0))
 	{
 		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
 		{

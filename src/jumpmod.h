@@ -432,6 +432,7 @@ typedef struct
 	unsigned int allowsrj;
 	unsigned int checkpoint_total;
 	unsigned int bfg;
+	unsigned int fast_firing;
 	int ghost_model;
 } mset_vars_t;
 

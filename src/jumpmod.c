@@ -191,6 +191,13 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->bfg,
   },
   { 
+	0,1,0,
+    "fast_firing", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->fast_firing,
+  },
+  { 
 	0,2,0,
     "antiglue", 
     CMDWHERE_CFGFILE | CMD_MSET, 
@@ -417,6 +424,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->bfg,
+  },
+  { 
+	0,1,0,
+    "gfast_firing", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->fast_firing,
   },
   { 
 	0,2147483647,8388608,
