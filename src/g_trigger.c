@@ -18,6 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 #include "g_local.h"
+#include <time.h>
+
+static time_t timeOfLastTriggerPushMessage = 0;
 
 
 void InitTrigger (edict_t *self)
@@ -390,6 +393,18 @@ void SP_trigger_always (edict_t *ent)
 	G_UseTargets(ent, ent);
 }
 
+// fxn to delay trigger messages
+qboolean trigger_push_timer(edict_t *other) {
+
+	const int TIME_BETWEEN_MESSAGES = 5; // seconds
+	time_t currentTime = time(0);
+
+    if (difftime(currentTime, timeOfLastTriggerPushMessage ) > TIME_BETWEEN_MESSAGES) {
+        timeOfLastTriggerPushMessage = currentTime;
+		return true;
+	} else
+		return false;
+}
 
 /*
 ==============================================================================
@@ -409,8 +424,10 @@ void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurfac
         if (strncmp(self->target, "checkpoint", strlen("checkpoint")) == 0 && strcmp(other->classname, "player") == 0) {
 			if (other->client->pers.checkpoints >= self->count)
 				return;
-			else
-				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s) to pass this barrier.\n", self->count);
+			else {
+				if (trigger_push_timer(other))
+					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s) to pass this barrier.\n", self->count);
+			}
         }
     }
     

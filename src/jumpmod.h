@@ -1,7 +1,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.18ger"
+#define CTF_VERSION_S		"1.19ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -299,6 +299,8 @@ void		delete_all_demos(void);
 void		delete_all_times(void);
 void		remall(edict_t *ent);
 void		remtimes(edict_t *ent);
+void		Apply_Nominated_Map(char *mapname);
+int			get_admin_id(char *givenpass,char *givenname);
 
 extern cvar_t		*gametype;
 extern admin_type	admin_pass[MAX_ADMINS];
@@ -430,6 +432,7 @@ typedef struct
 	unsigned int allowsrj;
 	unsigned int checkpoint_total;
 	unsigned int bfg;
+	unsigned int fast_firing;
 	int ghost_model;
 } mset_vars_t;
 

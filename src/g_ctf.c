@@ -493,8 +493,6 @@ void CTFAssignSkin(edict_t *ent, char *s)
 
 void CTFAssignTeam(gclient_t *who)
 {
-	edict_t		*player;
-	int i;
 	int team1count = 0, team2count = 0;
 
 	who->resp.ctf_state = 0;
@@ -795,8 +793,6 @@ void CTFResetFlags(void)
 qboolean CTFPickup_Flag(edict_t *ent, edict_t *other)
 {
 	int ctf_team;
-	int i;
-	edict_t *player;
 	gitem_t *flag_item, *enemy_flag_item;
 
 	//baaaaad mmmmkay
@@ -1223,12 +1219,7 @@ static void CTFSetIDView(edict_t *ent)
 
 void SetCTFStats(edict_t *ent)
 {
-	gitem_t *tech;
-	int i;
-	int p1, p2;
-	edict_t *e;
 	int keys;
-	int fps;
 
     //Special HUD numbers == draxi
     const char *SpecNR[64] = {"°", "±", "²", "³", "´", "µ", "¶", "·", "¸", "¹", "±°", "±", "±²", "±³", "±´", "±µ", "±¶", "±·", "±¸", "±¹", "²°", "²±", "²²", "²³", "²´", "²µ", "²¶", "²·", "²¸", "²¹", "³°", "³±"};
@@ -1957,16 +1948,15 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	char	entry[1024];
 	char	string[1400];
 	int		stringlength;
-	int		i, j, k,n;
+	int		i, j, k;
 	int		sorted[MAX_CLIENTS];
 	float		sortedscores[MAX_CLIENTS];
 	float	score;
 	int		total;
 	int		picnum;
-	int		x, y;
+	int		y;
 	gclient_t	*cl;
 	edict_t		*cl_ent;
-	char	*tag;
 	char status[32];
 	int trecid;
 	int total_easy;
@@ -3001,9 +2991,7 @@ void CTFWinElection(int pvote, edict_t* pvoter);
 
 qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require_max)
 {
-	int i;
 	int count;
-	edict_t *e;
 
 	if (ent!=NULL)
 	{
@@ -3241,7 +3229,6 @@ void CTFWinElection(int pvote, edict_t* pvoter)
 	edict_t	*e2;
 	int timeleft;
 	char* msg;
-	char* msg2;
 
 	if (ctfgame.etarget==NULL)
 	{
@@ -4499,100 +4486,6 @@ qboolean CTFCheckRules(void)
 	return false;
 }
 
-/*--------------------------------------------------------------------------
- * just here to help old map conversions
- *--------------------------------------------------------------------------*/
-
-static void old_teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
-{
-	edict_t		*dest;
-	int			i;
-
-	if (!other->client)
-		return;
-	dest = G_Find (NULL, FOFS(targetname), self->target);
-	if (!dest)
-	{
-//		gi.dprintf ("Couldn't find destination\n");
-		return;
-	}
-
-//ZOID
-	CTFPlayerResetGrapple(other);
-//ZOID
-
-	// unlink to make sure it can't possibly interfere with KillBox
-	gi.unlinkentity (other);
-
-	VectorCopy (dest->s.origin, other->s.origin);
-	VectorCopy (dest->s.origin, other->s.old_origin);
-	other->s.origin[2] += 10;
-
-	// clear the velocity and hold them in place briefly
-	if (!(self->spawnflags & 1))
-		VectorClear (other->velocity);
-	if (!mset_vars->fasttele)
-	{
-		other->client->ps.pmove.pm_time = 160>>3;		// hold time
-		other->client->ps.pmove.pm_flags |= PMF_TIME_TELEPORT;
-
-		// draw the teleport splash at source and on the player
-		self->owner->s.event = EV_PLAYER_TELEPORT;
-		other->s.event = EV_PLAYER_TELEPORT;
-	}
-
-	// set angles
-	for (i=0 ; i<3 ; i++)
-		other->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(dest->s.angles[i] - other->client->resp.cmd_angles[i]);
-
-	VectorClear (other->s.angles);
-	VectorClear (other->client->ps.viewangles);
-	VectorClear (other->client->v_angle);
-
-	// kill anything at the destination
-	KillBox (other);
-
-}
-
-/*QUAKED trigger_teleport (0.5 0.5 0.5) ?
-Players touching this will be teleported
-*/
-void SP_trigger_teleport (edict_t *ent)
-{
-	edict_t *s;
-	int i;
-
-	if (!ent->target)
-	{
-		gi.dprintf ("teleporter without a target.\n");
-		G_FreeEdict (ent);
-		return;
-	}
-
-	ent->svflags |= SVF_NOCLIENT;
-	ent->solid = SOLID_TRIGGER;
-	ent->touch = old_teleporter_touch;
-	gi.setmodel (ent, ent->model);
-	gi.linkentity (ent);
-
-	// noise maker and splash effect dude
-	s = G_Spawn();
-	ent->enemy = s;
-	for (i = 0; i < 3; i++)
-		s->s.origin[i] = ent->mins[i] + (ent->maxs[i] - ent->mins[i])/2;
-	s->s.sound = gi.soundindex (""); //old "world/hum1.wav"
-	gi.linkentity(s);
-	
-}
-
-/*QUAKED info_teleport_destination (0.5 0.5 0.5) (-16 -16 -24) (16 16 32)
-Point trigger_teleports at these.
-*/
-void SP_info_teleport_destination (edict_t *ent)
-{
-	ent->s.origin[2] += 16;
-}
-
 /*----------------------------------------------------------------------------------*/
 /* ADMIN */
 
@@ -4957,7 +4850,6 @@ void CTFOpenAdminMenu(edict_t *ent)
 
 void CTFAdmin(edict_t *ent)
 {
-	char text[1024];
 	int alevel;
 
 	if (!allow_admin->value) {
@@ -5676,12 +5568,7 @@ void CTFCreateVoteMenu(void)
 	int i2;
 	edict_t *e2;
 	int num = 0;
-	char text[64];
-	int time_left;
-	int skill;
 	int curmap;
-	float diff;
-	char text2[256];
 //sprintf(text2,"==== Creating Vote Menu ====");
 //debug_log(text2);
 
@@ -5844,8 +5731,6 @@ void CTFUpdateVoteMenu(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice0(edict_t *ent, pmenuhnd_t *p)
 {
-	char text[64];
-
 	if (ent->client->resp.current_vote!=0)
 	{
 		//if our vote does not equal this, update vote data
@@ -5860,8 +5745,6 @@ void CTFVoteChoice0(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice1(edict_t *ent, pmenuhnd_t *p)
 {
-	char text[64];
-
 	if (ent->client->resp.current_vote!=1)
 	{
 		//if our vote does not equal this, update vote data
@@ -5876,8 +5759,6 @@ void CTFVoteChoice1(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice2(edict_t *ent, pmenuhnd_t *p)
 {
-	char text[64];
-
 	if (ent->client->resp.current_vote!=2)
 	{
 		//if our vote does not equal this, update vote data
@@ -5892,8 +5773,6 @@ void CTFVoteChoice2(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice3(edict_t *ent, pmenuhnd_t *p)
 {
-	char text[64];
-
 	if (ent->client->resp.current_vote!=3)
 	{
 		//if our vote does not equal this, update vote data

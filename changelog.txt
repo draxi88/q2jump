@@ -1,3 +1,13 @@
+#####v1.19ger#####
+-team easy now only gets x.x read out from checkpoints, hard still gets x.xxx
+-new mset `fast_firing` that allows the rocket launcher to shoot much more frequently
+-weapon_finish now gives you the proper model, gets rid of a bug where rail shot faster because of no animation
+-removed some animation from teleport that caused some crashes
+-dont pick up rocket, bfg, if their mset isnt enabled
+-trigger_push's that have a checkpoint requirement only display the msg once every 5 seconds (less spam)
+-removed a little lag from the weapon_pickup fxn
+
+
 #####v1.18ger#####
 -another time display bug fix
 -start line fix, gives .xxx finish times now instead of .x
