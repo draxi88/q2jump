@@ -170,20 +170,26 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		}
 	}
 
-	other->client->pers.inventory[index]++;
+	// give them the weapon... conditionally
+	if (!mset_vars->bfg == 1) // if no bfg jumps, dont give weapon
+		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0) {}
+
+	else if (!mset_vars->rocket) // if no rockets or grenades, dont give weapon
+		if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0) {}
+
+	else // otherwise give them weapon
+		other->client->pers.inventory[index]++;
 
 	if (!(ent->spawnflags & DROPPED_ITEM) )
 	{
-		// give them some ammo with it
+		// ammo supply for the weapon they picked up
 		ammo = FindItem (ent->item->ammo);
-		if (mset_vars->rocket)
+
+		if ( (int)dmflags->value & DF_INFINITE_AMMO ) // give a lot of ammo of infinite flag is on
 			Add_Ammo (other, ammo, 1000);
-		else {
-			if ( (int)dmflags->value & DF_INFINITE_AMMO )
-				Add_Ammo (other, ammo, 1000);
-			else
-				Add_Ammo (other, ammo, ammo->quantity);
-		}
+
+		else // give the normal amount
+			Add_Ammo (other, ammo, ammo->quantity);
 
 		if (! (ent->spawnflags & DROPPED_PLAYER_ITEM) ) {
 			if (deathmatch->value) {
