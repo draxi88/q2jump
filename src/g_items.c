@@ -195,6 +195,7 @@ void SetRespawn (edict_t *ent, float delay)
 qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 {
 	int		quantity;
+	gitem_t		*item;
 
 	if (gametype->value==GAME_CTF)
 		return false;
@@ -512,6 +513,7 @@ void	Use_Silencer (edict_t *ent, gitem_t *item)
 
 qboolean Pickup_Key (edict_t *ent, edict_t *other)
 {
+	char		item_name[128];
 	gitem_t		*item;
 	int			my_time;
 	float		my_time_decimal;
@@ -1235,6 +1237,8 @@ void Use_PowerArmor (edict_t *ent, gitem_t *item)
 qboolean Pickup_PowerArmor (edict_t *ent, edict_t *other)
 {
 	int		quantity;
+	char		item_name[128];
+	gitem_t		*item;
 
 	if (gametype->value==GAME_CTF)
 		return false;
@@ -3768,6 +3772,8 @@ void SP_jump_score (edict_t *ent)
 void SP_jump_time_think(edict_t *ent)
 {
 	int cur_time;
+	char time_str[32];
+	int time_skin;
 	int h1,h2,h3,h4;
 	cur_time = ((mset_vars->timelimit*60)+(map_added_time*60)-level.time);
 	ent->nextthink = level.time + 1;

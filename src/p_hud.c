@@ -80,6 +80,7 @@ void BeginIntermission (edict_t *targ)
 {
 	int		i, n;
 	edict_t	*ent, *client;
+	char	stored[128];
 
 //	debug_log ("CHECKPOINT: Function: BeginIntermission Line: 85 File: p_hud.c");
 
@@ -484,7 +485,8 @@ G_SetStats
 */
 void G_SetStats (edict_t *ent)
 {
-	int			cells;
+	gitem_t		*item;
+	int			index, cells;
 	int			power_armor_type;
 	int temp,temp2;
 	float gottime;

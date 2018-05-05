@@ -163,6 +163,7 @@ void Cmd_Give_f (edict_t *ent)
 {
 	char		*name;
 	gitem_t		*it;
+	int			index;
 	int			i;
 	qboolean	give_all;
 	edict_t		*it_ent;
@@ -507,6 +508,7 @@ Cmd_Inven_f
 */
 void Cmd_Inven_f (edict_t *ent)
 {
+	int			i;
 	gclient_t	*cl;
 
 	cl = ent->client;
@@ -1006,10 +1008,14 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 {
 	int		j;
 	edict_t	*other;
+	edict_t *comp;
+	char	temp[256];
+	int		kicknum;
 	int		i;
 	char	*p;
 	int len;
 	char	text[2048];
+	char	text2[2048];
 //	char	nitro[128],xania[128];
 
 	if (gi.argc () < 2 && !arg0)
@@ -1145,6 +1151,7 @@ void ClientCommand (edict_t *ent)
 //	char crashstr[4];
 	char	*cmd;
 	int i;
+	qboolean done_command;
 	if (!ent->client)
 		return;		// not fully in game yet
 

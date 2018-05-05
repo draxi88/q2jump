@@ -493,6 +493,8 @@ void CTFAssignSkin(edict_t *ent, char *s)
 
 void CTFAssignTeam(gclient_t *who)
 {
+	edict_t		*player;
+	int i;
 	int team1count = 0, team2count = 0;
 
 	who->resp.ctf_state = 0;
@@ -793,6 +795,8 @@ void CTFResetFlags(void)
 qboolean CTFPickup_Flag(edict_t *ent, edict_t *other)
 {
 	int ctf_team;
+	int i;
+	edict_t *player;
 	gitem_t *flag_item, *enemy_flag_item;
 
 	//baaaaad mmmmkay
@@ -1219,7 +1223,12 @@ static void CTFSetIDView(edict_t *ent)
 
 void SetCTFStats(edict_t *ent)
 {
+	gitem_t *tech;
+	int i;
+	int p1, p2;
+	edict_t *e;
 	int keys;
+	int fps;
 
     //Special HUD numbers == draxi
     const char *SpecNR[64] = {"°", "±", "²", "³", "´", "µ", "¶", "·", "¸", "¹", "±°", "±", "±²", "±³", "±´", "±µ", "±¶", "±·", "±¸", "±¹", "²°", "²±", "²²", "²³", "²´", "²µ", "²¶", "²·", "²¸", "²¹", "³°", "³±"};
@@ -1948,15 +1957,16 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	char	entry[1024];
 	char	string[1400];
 	int		stringlength;
-	int		i, j, k;
+	int		i, j, k,n;
 	int		sorted[MAX_CLIENTS];
 	float		sortedscores[MAX_CLIENTS];
 	float	score;
 	int		total;
 	int		picnum;
-	int		y;
+	int		x, y;
 	gclient_t	*cl;
 	edict_t		*cl_ent;
+	char	*tag;
 	char status[32];
 	int trecid;
 	int total_easy;
@@ -2991,7 +3001,9 @@ void CTFWinElection(int pvote, edict_t* pvoter);
 
 qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require_max)
 {
+	int i;
 	int count;
+	edict_t *e;
 
 	if (ent!=NULL)
 	{
@@ -3229,6 +3241,7 @@ void CTFWinElection(int pvote, edict_t* pvoter)
 	edict_t	*e2;
 	int timeleft;
 	char* msg;
+	char* msg2;
 
 	if (ctfgame.etarget==NULL)
 	{
@@ -4850,6 +4863,7 @@ void CTFOpenAdminMenu(edict_t *ent)
 
 void CTFAdmin(edict_t *ent)
 {
+	char text[1024];
 	int alevel;
 
 	if (!allow_admin->value) {
@@ -5568,7 +5582,12 @@ void CTFCreateVoteMenu(void)
 	int i2;
 	edict_t *e2;
 	int num = 0;
+	char text[64];
+	int time_left;
+	int skill;
 	int curmap;
+	float diff;
+	char text2[256];
 //sprintf(text2,"==== Creating Vote Menu ====");
 //debug_log(text2);
 
@@ -5731,6 +5750,8 @@ void CTFUpdateVoteMenu(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice0(edict_t *ent, pmenuhnd_t *p)
 {
+	char text[64];
+
 	if (ent->client->resp.current_vote!=0)
 	{
 		//if our vote does not equal this, update vote data
@@ -5745,6 +5766,8 @@ void CTFVoteChoice0(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice1(edict_t *ent, pmenuhnd_t *p)
 {
+	char text[64];
+
 	if (ent->client->resp.current_vote!=1)
 	{
 		//if our vote does not equal this, update vote data
@@ -5759,6 +5782,8 @@ void CTFVoteChoice1(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice2(edict_t *ent, pmenuhnd_t *p)
 {
+	char text[64];
+
 	if (ent->client->resp.current_vote!=2)
 	{
 		//if our vote does not equal this, update vote data
@@ -5773,6 +5798,8 @@ void CTFVoteChoice2(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice3(edict_t *ent, pmenuhnd_t *p)
 {
+	char text[64];
+
 	if (ent->client->resp.current_vote!=3)
 	{
 		//if our vote does not equal this, update vote data
