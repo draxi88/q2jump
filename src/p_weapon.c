@@ -148,7 +148,8 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		}
 
 		if (pickup == 0) // no other quals
-			gi.cprintf(other,PRINT_HIGH,"You would have got this weapon in %3.1f seconds.\n",other->client->resp.item_timer);
+			if (trigger_timer(other, 5))
+				gi.cprintf(other,PRINT_HIGH,"You would have got this weapon in %3.1f seconds.\n",other->client->resp.item_timer);
 	}
 
 	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) && other->client->pers.inventory[index])
