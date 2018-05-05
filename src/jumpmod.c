@@ -6,6 +6,8 @@
 #include <sys/time.h>
 #endif
 
+#include <time.h>
+
 int curclients = 0;
 int activeclients = 0;
 int map_added_time = 0;
@@ -13680,3 +13682,18 @@ int Sys_Milliseconds (void)
 #endif
 
 qboolean removed_map = false;
+
+
+// fxn to delay trigger messages
+static time_t timeOfLastTriggerMessage = 0;
+
+qboolean trigger_timer(edict_t *other, int timeBetweenMessages) {
+
+	time_t currentTime = time(0);
+
+    if (difftime(currentTime, timeOfLastTriggerMessage ) > timeBetweenMessages) {
+        timeOfLastTriggerMessage = currentTime;
+		return true;
+	} else
+		return false;
+}
