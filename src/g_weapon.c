@@ -682,6 +682,9 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 	int			mask;
 	qboolean	water;
 
+	edict_t		*player;
+	int i;
+
 	VectorMA (start, 8192, aimdir, end);
 	VectorCopy (start, from);
 	ignore = self;
@@ -974,6 +977,7 @@ void ball_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 	int		damage = 0;
 	float	radius = 0;
 	edict_t		*touch_ent;
+	char msg[256];
 
 	if (surf && (surf->flags & SURF_SKY))
 	{

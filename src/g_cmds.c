@@ -163,6 +163,7 @@ void Cmd_Give_f (edict_t *ent)
 {
 	char		*name;
 	gitem_t		*it;
+	int			index;
 	int			i;
 	qboolean	give_all;
 	edict_t		*it_ent;
@@ -507,6 +508,7 @@ Cmd_Inven_f
 */
 void Cmd_Inven_f (edict_t *ent)
 {
+	int			i;
 	gclient_t	*cl;
 
 	cl = ent->client;
@@ -740,37 +742,40 @@ Cmd_Kill_f
 */
 void Cmd_Kill_f (edict_t *ent)
 {
-
-	ent->client->pers.checkpoints = 0;
-	ent->client->pers.red_checkpoint = 0;
-	ent->client->pers.target_checkpoint = 0;
-	ent->client->pers.blue_checkpoint = 0;
-	ent->client->pers.cd_checkpoint = 0;
-	ent->client->pers.cube_checkpoint = 0;
-	ent->client->pers.pyramid_checkpoint = 0;
-	ent->client->pers.pass_checkpoint = 0;
-	ent->client->pers.spinner_checkpoint = 0;
-	ent->client->pers.rs1_checkpoint = 0;
-	ent->client->pers.rs2_checkpoint = 0;
-	ent->client->pers.rs3_checkpoint = 0;
-	ent->client->pers.rs4_checkpoint = 0;
-	ent->client->pers.rs5_checkpoint = 0;
-	ent->client->pers.rs6_checkpoint = 0;
-	ent->client->pers.rs7_checkpoint = 0;
-	ent->client->pers.rs8_checkpoint = 0;
-	ent->client->pers.rs9_checkpoint = 0;
-	ent->client->pers.rs10_checkpoint = 0;
-	ent->client->pers.rs11_checkpoint = 0;
-	ent->client->pers.rs12_checkpoint = 0;
-	ent->client->pers.rs13_checkpoint = 0;
-	ent->client->pers.rs14_checkpoint = 0;
-	ent->client->pers.rs15_checkpoint = 0;
-	ent->client->pers.rs16_checkpoint = 0;
-	ent->client->pers.rs17_checkpoint = 0;
-	ent->client->pers.rs18_checkpoint = 0;
-	ent->client->pers.rs19_checkpoint = 0;
-	ent->client->pers.rs20_checkpoint = 0;
 	
+	// if team hard, clear cps
+	if (ent->client->resp.ctf_team==CTF_TEAM2) {
+		ent->client->pers.checkpoints = 0;
+		ent->client->pers.red_checkpoint = 0;
+		ent->client->pers.target_checkpoint = 0;
+		ent->client->pers.blue_checkpoint = 0;
+		ent->client->pers.cd_checkpoint = 0;
+		ent->client->pers.cube_checkpoint = 0;
+		ent->client->pers.pyramid_checkpoint = 0;
+		ent->client->pers.pass_checkpoint = 0;
+		ent->client->pers.spinner_checkpoint = 0;
+		ent->client->pers.rs1_checkpoint = 0;
+		ent->client->pers.rs2_checkpoint = 0;
+		ent->client->pers.rs3_checkpoint = 0;
+		ent->client->pers.rs4_checkpoint = 0;
+		ent->client->pers.rs5_checkpoint = 0;
+		ent->client->pers.rs6_checkpoint = 0;
+		ent->client->pers.rs7_checkpoint = 0;
+		ent->client->pers.rs8_checkpoint = 0;
+		ent->client->pers.rs9_checkpoint = 0;
+		ent->client->pers.rs10_checkpoint = 0;
+		ent->client->pers.rs11_checkpoint = 0;
+		ent->client->pers.rs12_checkpoint = 0;
+		ent->client->pers.rs13_checkpoint = 0;
+		ent->client->pers.rs14_checkpoint = 0;
+		ent->client->pers.rs15_checkpoint = 0;
+		ent->client->pers.rs16_checkpoint = 0;
+		ent->client->pers.rs17_checkpoint = 0;
+		ent->client->pers.rs18_checkpoint = 0;
+		ent->client->pers.rs19_checkpoint = 0;
+		ent->client->pers.rs20_checkpoint = 0;
+	}
+
 //ZOID
 	if (ent->solid == SOLID_NOT)
 		return;
@@ -1003,10 +1008,14 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 {
 	int		j;
 	edict_t	*other;
+	edict_t *comp;
+	char	temp[256];
+	int		kicknum;
 	int		i;
 	char	*p;
 	int len;
 	char	text[2048];
+	char	text2[2048];
 //	char	nitro[128],xania[128];
 
 	if (gi.argc () < 2 && !arg0)
@@ -1142,6 +1151,7 @@ void ClientCommand (edict_t *ent)
 //	char crashstr[4];
 	char	*cmd;
 	int i;
+	qboolean done_command;
 	if (!ent->client)
 		return;		// not fully in game yet
 

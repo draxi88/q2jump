@@ -124,6 +124,7 @@ Two entities have touched, so run their touch functions
 void SV_Impact (edict_t *e1, trace_t *trace)
 {
 	edict_t		*e2;
+	int i;
 //	cplane_t	backplane;
 
 	e2 = trace->ent;
@@ -1114,6 +1115,9 @@ G_RunEntity
 */
 void G_RunEntity (edict_t *ent)
 {
+	gclient_t	*cl;
+	edict_t		*temp;
+	int i;
 //pooy
 
 	if (ent->prethink)
