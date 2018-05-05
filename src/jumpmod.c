@@ -2755,65 +2755,62 @@ void Cmd_Commands_f (edict_t *ent)
 
 }
 
-void Cmd_Store_f (edict_t *ent)
-{
+void Cmd_Store_f (edict_t *ent) {
+
+	// set default to false
 	qboolean can_store = false;
+
+	// check for ctf
 	if (gametype->value==GAME_CTF)
 		return;
-	if ((ent->client->resp.ctf_team==CTF_TEAM1) || (ent->client->resp.ctf_team==CTF_TEAM2))
-	{
-		if (gset_vars->store_safe)
-		{
+
+	// are we on a team?
+	if ((ent->client->resp.ctf_team==CTF_TEAM1) || (ent->client->resp.ctf_team==CTF_TEAM2)) {
+
+		// can we store in the air?
+		if (gset_vars->store_safe) {
 			if (ent->client->ps.pmove.pm_flags & PMF_ON_GROUND)
 				can_store = true;
-		}
-		else
+		} else
 			can_store = true;
-		if (can_store)
-		{
 
-		ent->client->resp.stored_item_timer = ent->client->resp.item_timer;
-		VectorCopy(ent->client->resp.store_pos2,ent->client->resp.store_pos3);
-		VectorCopy(ent->client->resp.store_angles2,ent->client->resp.store_angles3);
-		VectorCopy(ent->client->resp.store_pos,ent->client->resp.store_pos2);
-		VectorCopy(ent->client->resp.store_angles,ent->client->resp.store_angles2);
+		// can we store?
+		if (can_store) {
+			ent->client->resp.stored_item_timer = ent->client->resp.item_timer;
+			VectorCopy(ent->client->resp.store_pos2,ent->client->resp.store_pos3);
+			VectorCopy(ent->client->resp.store_angles2,ent->client->resp.store_angles3);
+			VectorCopy(ent->client->resp.store_pos,ent->client->resp.store_pos2);
+			VectorCopy(ent->client->resp.store_angles,ent->client->resp.store_angles2);
+			VectorCopy(ent->s.origin,ent->client->resp.store_pos);
+			VectorCopy(ent->s.angles,ent->client->resp.store_angles);
+			ent->client->resp.store_angles[2] = 0;
+			ent->client->resp.store = 1;
 
+			if (jump_show_stored_ent) {
+				if (ent->client->resp.stored_ent)	
+					G_FreeEdict(ent->client->resp.stored_ent);
 
-		VectorCopy(ent->s.origin,ent->client->resp.store_pos);
-		VectorCopy(ent->s.angles,ent->client->resp.store_angles);
-		ent->client->resp.store_angles[2] = 0;
-		ent->client->resp.store = 1;
+				ent->client->resp.stored_ent = G_Spawn();
+				VectorCopy (ent->client->resp.store_pos, ent->client->resp.stored_ent->s.origin);
+				VectorCopy (ent->client->resp.store_pos, ent->client->resp.stored_ent->s.old_origin);
+				ent->client->resp.stored_ent->s.old_origin[2] -=10;
+				ent->client->resp.stored_ent->s.origin[2] -=10;
+				ent->client->resp.stored_ent->svflags = SVF_PROJECTILE;
+				VectorCopy(ent->client->resp.store_angles, ent->client->resp.stored_ent->s.angles);
+				ent->client->resp.stored_ent->movetype = MOVETYPE_NONE;
+				ent->client->resp.stored_ent->clipmask = MASK_PLAYERSOLID;
+				ent->client->resp.stored_ent->solid = SOLID_NOT;
+				ent->client->resp.stored_ent->s.renderfx = RF_TRANSLUCENT;
+				VectorClear (ent->client->resp.stored_ent->mins);
+				VectorClear (ent->client->resp.stored_ent->maxs);
+				ent->client->resp.stored_ent->s.modelindex = gi.modelindex (gset_vars->model_store);
+				ent->client->resp.stored_ent->dmg = 0;
+				ent->client->resp.stored_ent->classname = "stored_ent";
+				gi.linkentity (ent->client->resp.stored_ent);
 
-		if (jump_show_stored_ent)
-		{
-			if (ent->client->resp.stored_ent)	
-				G_FreeEdict(ent->client->resp.stored_ent);
-
-			ent->client->resp.stored_ent = G_Spawn();
-			VectorCopy (ent->client->resp.store_pos, ent->client->resp.stored_ent->s.origin);
-			VectorCopy (ent->client->resp.store_pos, ent->client->resp.stored_ent->s.old_origin);
-			ent->client->resp.stored_ent->s.old_origin[2] -=10;
-			ent->client->resp.stored_ent->s.origin[2] -=10;
-
-			ent->client->resp.stored_ent->svflags = SVF_PROJECTILE; // special net code is used for projectiles
-			VectorCopy(ent->client->resp.store_angles, ent->client->resp.stored_ent->s.angles);
-			ent->client->resp.stored_ent->movetype = MOVETYPE_NONE;
-			ent->client->resp.stored_ent->clipmask = MASK_PLAYERSOLID;
-			ent->client->resp.stored_ent->solid = SOLID_NOT;
-			//ent->client->resp.stored_ent->s.effects = EF_COLOR_SHELL;
-			ent->client->resp.stored_ent->s.renderfx = RF_TRANSLUCENT;
-			VectorClear (ent->client->resp.stored_ent->mins);
-			VectorClear (ent->client->resp.stored_ent->maxs);
-			ent->client->resp.stored_ent->s.modelindex = gi.modelindex (gset_vars->model_store);
-			ent->client->resp.stored_ent->dmg = 0;
-			ent->client->resp.stored_ent->classname = "stored_ent";
-			gi.linkentity (ent->client->resp.stored_ent);
+			} else
+				gi.cprintf(ent,PRINT_HIGH,"Can only store on ground\n");
 		}
-	}
-	else
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Can only store on ground\n");
-	}
 	}
 }
 
