@@ -4310,7 +4310,7 @@ void CTFObserver(edict_t *ent)
 	unpause_client(ent);
 	// start as 'observer'
 //	Cmd_Reset_f(ent);
-
+    hook_reset(ent->client->hook); //draxi
 	if (ent->movetype == MOVETYPE_NOCLIP)
 
 	CTFPlayerResetGrapple(ent);
