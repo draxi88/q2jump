@@ -2144,7 +2144,7 @@ void show_ent_list(edict_t *ent,int page)
 				VectorCopy(v1,closest);
 				closest_num = i;
 			}
-			gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
+            gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s %-2d \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,level_items.ents[i]->count,level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
 		}
    } 
 
@@ -2165,7 +2165,7 @@ qboolean AddNewEnt(void)
 		{
 			level_items.ents[i] = level_items.newent;
 			level_items.newent = NULL;
-			if (strstr(level_items.ents[i]->classname,"jumpbox_"))
+			if (strstr(level_items.ents[i]->classname,"jumpbox_") || strstr(level_items.ents[i]->classname,"cpbox_"))
 			{
 			}
 			else
@@ -4958,6 +4958,9 @@ void Cmd_Recall(edict_t *ent)
 	ent->client->pers.rs18_checkpoint = 0;
 	ent->client->pers.rs19_checkpoint = 0;
 	ent->client->pers.rs20_checkpoint = 0;
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint);i++) {
+        ent->client->pers.cpbox_checkpoint[i] = 0;
+    }
 
 	if (gametype->value==GAME_CTF)
 		return;
@@ -5477,9 +5480,9 @@ void List_Box_Types(edict_t *ent)
 	gi.cprintf(ent,PRINT_HIGH,"1. Small Box\n");
 	gi.cprintf(ent,PRINT_HIGH,"2. Medium Box\n");
 	gi.cprintf(ent,PRINT_HIGH,"3. Large Box\n");
-//	gi.cprintf(ent,PRINT_HIGH,"4. Small Platform\n");
-//	gi.cprintf(ent,PRINT_HIGH,"5. Medium Platform\n");
-//	gi.cprintf(ent,PRINT_HIGH,"6. Long Platform\n");
+	gi.cprintf(ent,PRINT_HIGH,"4. Small Checkpoint\n");
+	gi.cprintf(ent,PRINT_HIGH,"5. Medium Checkpoint\n");
+	gi.cprintf(ent,PRINT_HIGH,"6. Large Checkpoint\n");
 }
 
 void Add_Box(edict_t *ent)
@@ -5487,6 +5490,7 @@ void Add_Box(edict_t *ent)
 	char	temp[256];
 	int i;
 	int box_num;
+    int cp;
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDBOX_LEVEL)
 		return;
@@ -5511,10 +5515,17 @@ void Add_Box(edict_t *ent)
 		VectorCopy (ent->s.origin, level_items.newent->s.origin);
 		VectorCopy (ent->s.origin, level_items.newent->s.old_origin);
 		box_num = atoi(gi.argv(1));
-		if ((box_num<1) || (box_num>3))
+        if ((box_num>3) && (box_num<7) && (gi.argc() < 3)){
+            gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to 16 (Ex: Addbox 4 1).\n");
+            return;
+        } else {
+            cp = atoi(gi.argv(2));
+        }
+		if ((box_num<1) || (box_num>6))
 			box_num = 1;
 		switch (box_num)
 		{
+
 		case 1 : SP_jumpbox_small (level_items.newent);
 				level_items.newent->s.origin[2] -=8;
 				level_items.newent->s.old_origin[2] -=8;
@@ -5524,6 +5535,18 @@ void Add_Box(edict_t *ent)
 				level_items.newent->s.old_origin[2] -=8;
 				break;
 		case 3 : SP_jumpbox_large (level_items.newent);
+				level_items.newent->s.origin[2] -=8;
+				level_items.newent->s.old_origin[2] -=8;
+				break;
+        case 4 : SP_cpbox_small (level_items.newent, cp);
+				level_items.newent->s.origin[2] -=8;
+				level_items.newent->s.old_origin[2] -=8;
+				break;
+        case 5 : SP_cpbox_medium (level_items.newent, cp);
+				level_items.newent->s.origin[2] -=8;
+				level_items.newent->s.old_origin[2] -=8;
+				break;
+        case 6 : SP_cpbox_large (level_items.newent, cp);
 				level_items.newent->s.origin[2] -=8;
 				level_items.newent->s.old_origin[2] -=8;
 				break;
@@ -5630,7 +5653,7 @@ void Move_Ent(edict_t *ent)
 
 	if (level_items.ents[i])
 	{
-		if (!strstr(level_items.ents[i]->classname,"jumpbox_"))
+		if (!strstr(level_items.ents[i]->classname,"jumpbox_") || !strstr(level_items.ents[i]->classname,"cpbox_"))
 		{
 			gi.unlinkentity(level_items.ents[i]);
 			VectorCopy (ent->s.origin, level_items.ents[i]->s.origin);

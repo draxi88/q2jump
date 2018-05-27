@@ -916,6 +916,7 @@ typedef struct
 	int			rs18_checkpoint;
 	int			rs19_checkpoint;
 	int			rs20_checkpoint;
+    int         cpbox_checkpoint[16];
 
 	gitem_t		*weapon;
 	gitem_t		*lastweapon;

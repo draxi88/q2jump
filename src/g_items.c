@@ -3563,6 +3563,69 @@ void SP_jumpbox_large (edict_t *ent)
 	level.jumpboxes[2]++;
 }
 
+void cpbox_touch (edict_t *self, edict_t *other){
+    int my_time;
+    float my_time_decimal;
+    // get the clients time in .xxx format
+	my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
+	my_time_decimal = (float)my_time / 1000.0f;
+
+    if (other->client->pers.cpbox_checkpoint[self->count] == 0){
+        other->client->pers.cpbox_checkpoint[self->count] = 1;
+        other->client->pers.checkpoints += 1;
+        if (other->client->resp.ctf_team==CTF_TEAM1){
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+        } else {
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+        }
+    }
+}
+
+void SP_cpbox_small (edict_t *ent, int cp)
+{
+	ent->classname = "cpbox_small";
+    ent->count = cp;
+	ent->movetype = MOVETYPE_NONE;
+	ent->solid = SOLID_TRIGGER;
+	ent->s.renderfx |= RF_TRANSLUCENT;
+		VectorSet (ent->mins, -16,-16,-16);
+		VectorSet (ent->maxs, 16, 16, 16);
+	ent->s.modelindex = gi.modelindex ("models/jump/smallbox3/tris.md2");
+    ent->touch = cpbox_touch;
+	gi.linkentity (ent);
+	level.jumpboxes[0]++;
+}
+
+void SP_cpbox_medium (edict_t *ent, int cp)
+{
+	ent->classname = "cpbox_medium";
+    ent->count = cp;
+	ent->movetype = MOVETYPE_NONE;
+	ent->solid = SOLID_TRIGGER;
+	ent->s.renderfx |= RF_TRANSLUCENT;
+		VectorSet (ent->mins, -32,-32,-16);
+		VectorSet (ent->maxs, 32, 32, 48);
+	ent->s.modelindex = gi.modelindex ("models/jump/mediumbox3/tris.md2");
+    ent->touch = cpbox_touch;
+	gi.linkentity (ent);
+	level.jumpboxes[1]++;
+}
+
+void SP_cpbox_large (edict_t *ent, int cp)
+{
+	ent->classname = "cpbox_large";
+    ent->count = cp;
+	ent->movetype = MOVETYPE_NONE;
+	ent->solid = SOLID_TRIGGER;
+	ent->s.renderfx |= RF_TRANSLUCENT;
+		VectorSet (ent->mins, -64,-64,-32);
+		VectorSet (ent->maxs, 64, 64, 96);
+	ent->s.modelindex = gi.modelindex ("models/jump/largebox3/tris.md2");
+    ent->touch = cpbox_touch;
+	gi.linkentity (ent);
+	level.jumpboxes[2]++;
+}
+
 
 void SP_effect(edict_t *ent)
 {

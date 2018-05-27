@@ -742,7 +742,7 @@ Cmd_Kill_f
 */
 void Cmd_Kill_f (edict_t *ent)
 {
-
+    int i;
 	ent->client->pers.checkpoints = 0;
 	ent->client->pers.red_checkpoint = 0;
 	ent->client->pers.target_checkpoint = 0;
@@ -772,6 +772,9 @@ void Cmd_Kill_f (edict_t *ent)
 	ent->client->pers.rs18_checkpoint = 0;
 	ent->client->pers.rs19_checkpoint = 0;
 	ent->client->pers.rs20_checkpoint = 0;
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint);i++) {
+        ent->client->pers.cpbox_checkpoint[i] = 0;
+    }
 	
 //ZOID
 	if (ent->solid == SOLID_NOT)

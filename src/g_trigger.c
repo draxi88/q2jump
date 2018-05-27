@@ -644,4 +644,3 @@ void SP_trigger_monsterjump (edict_t *self)
 	self->touch = trigger_monsterjump_touch;
 	self->movedir[2] = st.height;
 }
-
