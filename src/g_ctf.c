@@ -1230,7 +1230,7 @@ void SetCTFStats(edict_t *ent)
 	int keys;
 	int fps;
 
-    //Special HUD numbers == draxi
+	// hud numbers by draxi
     const char *SpecNR[64] = {"°", "±", "²", "³", "´", "µ", "¶", "·", "¸", "¹", "±°", "±", "±²", "±³", "±´", "±µ", "±¶", "±·", "±¸", "±¹", "²°", "²±", "²²", "²³", "²´", "²µ", "²¶", "²·", "²¸", "²¹", "³°", "³±"};
 
 
@@ -4311,7 +4311,7 @@ void CTFObserver(edict_t *ent)
 	unpause_client(ent);
 	// start as 'observer'
 //	Cmd_Reset_f(ent);
-
+    hook_reset(ent->client->hook); //draxi
 	if (ent->movetype == MOVETYPE_NOCLIP)
 
 	CTFPlayerResetGrapple(ent);
