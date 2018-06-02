@@ -1,7 +1,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.18ger"
+#define CTF_VERSION_S		"1.20ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -299,6 +299,9 @@ void		delete_all_demos(void);
 void		delete_all_times(void);
 void		remall(edict_t *ent);
 void		remtimes(edict_t *ent);
+void		Apply_Nominated_Map(char *mapname);
+int			get_admin_id(char *givenpass,char *givenname);
+qboolean	trigger_timer(edict_t *other, int timeBetweenMessages);
 
 extern cvar_t		*gametype;
 extern admin_type	admin_pass[MAX_ADMINS];
@@ -430,6 +433,7 @@ typedef struct
 	unsigned int allowsrj;
 	unsigned int checkpoint_total;
 	unsigned int bfg;
+	unsigned int fast_firing;
 	int ghost_model;
 } mset_vars_t;
 
@@ -783,7 +787,6 @@ void cmd_test(edict_t *ent);
 #define RECORD_FPS_SHIFT    8
 #define RECORD_FPS_MASK   255 << RECORD_FPS_SHIFT
 void Update_Added_Time(void);
-void Update_nr15();
 void Update_Highscores(int start);
 void Highlight_Name(char *name);
 qboolean Can_highlight_Name(char *name);

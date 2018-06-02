@@ -143,13 +143,15 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 		if (mset_vars->checkpoint_total > 0 && pickup != 1) { // cps
 			if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
-				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
+				if (trigger_timer(other, 5))
+					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
 				pickup = 1;
 			}
 		}
 
 		if (pickup == 0) // no other quals
-			gi.cprintf(other,PRINT_HIGH,"You would have got this weapon in %3.1f seconds.\n",other->client->resp.item_timer);
+			if (trigger_timer(other, 5))
+				gi.cprintf(other,PRINT_HIGH,"You would have got this weapon in %3.1f seconds.\n",other->client->resp.item_timer);
 	}
 
 	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) && other->client->pers.inventory[index])
@@ -171,11 +173,10 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	}
 
 	// give them the weapon... conditionally
-	if (!mset_vars->bfg == 1) // if no bfg jumps, dont give weapon
-		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0) {}
+	if (!mset_vars->bfg == 1 && Q_stricmp (ent->item->pickup_name,"BFG10K")==0) {} // if no bfg jumps, dont give weapon
 
-	else if (!mset_vars->rocket) // if no rockets or grenades, dont give weapon
-		if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0) {}
+	else if (!mset_vars->rocket && 
+		(Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0)) {} // if no rockets or grenades, dont give weapon
 
 	else // otherwise give them weapon
 		other->client->pers.inventory[index]++;
@@ -220,7 +221,8 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 		if (mset_vars->checkpoint_total > 0 && pickup != 1) { // cps
 			if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
-				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
+				if (trigger_timer(other, 5))
+					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
 				pickup = 1;
 			}
 		}
@@ -502,7 +504,7 @@ static void Weapon_Generic2 (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FI
 		return;
 	}
 
-	if (ent->client->weaponstate == WEAPON_READY)
+	if (ent->client->weaponstate == WEAPON_READY || (mset_vars->fast_firing == 1 && Q_stricmp(ent->client->pers.weapon->pickup_name, "Rocket Launcher") == 0))
 	{
 		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
 		{
@@ -817,7 +819,7 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	if (mset_vars->weapons)
+	if (mset_vars->weapons || mset_vars->rocket)
 		fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
 
 	gi.WriteByte (svc_muzzleflash);
