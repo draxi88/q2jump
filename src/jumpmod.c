@@ -2144,8 +2144,12 @@ void show_ent_list(edict_t *ent,int page)
 				VectorCopy(v1,closest);
 				closest_num = i;
 			}
-            gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s %-2d \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,level_items.ents[i]->count,level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
-		}
+            if (strstr(level_items.ents[i]->classname,"cpbox_")){
+                gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s ID:%d \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,(level_items.ents[i]->count+1),level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
+            } else {
+                gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
+            }
+        }
    } 
 
    gi.cprintf (ent, PRINT_HIGH, "Page %d. Use listents <page>\n",(offset+1)); 
@@ -2233,9 +2237,10 @@ void WriteEnts(void)
 		}
 
 		fprintf (f, "\"origin\" \"%f %f %f\"\n",level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
-
-		fprintf (f, "\"angles\" \"%f %f %f\"\n",level_items.ents[i]->s.angles[0],level_items.ents[i]->s.angles[1],level_items.ents[i]->s.angles[2]);
-		if (level_items.ents[i]->target)
+        if (level_items.ents[i]->s.angles[0]){
+		    fprintf (f, "\"angles\" \"%f %f %f\"\n",level_items.ents[i]->s.angles[0],level_items.ents[i]->s.angles[1],level_items.ents[i]->s.angles[2]);
+        }
+        if (level_items.ents[i]->target)
 		{
 //			temp_e = level_items.ents[i]->target;
 			fprintf (f, "\"target\" \"%s\"\n",level_items.ents[i]->target);
@@ -2244,6 +2249,10 @@ void WriteEnts(void)
 		{
 			fprintf (f, "\"skinnum\" \"%d\"\n",level_items.ents[i]->s.skinnum);
 		}
+        if (strstr(level_items.ents[i]->classname,"cpbox_"))
+        {
+            fprintf (f, "\"count\" \"%d\"\n",level_items.ents[i]->count);
+        }
 		if (level_items.ents[i]->targetname)
 		{
 			fprintf (f, "\"targetname\" \"%s\"\n",level_items.ents[i]->targetname);
@@ -4958,7 +4967,8 @@ void Cmd_Recall(edict_t *ent)
 	ent->client->pers.rs18_checkpoint = 0;
 	ent->client->pers.rs19_checkpoint = 0;
 	ent->client->pers.rs20_checkpoint = 0;
-    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint);i++) {
+
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
         ent->client->pers.cpbox_checkpoint[i] = 0;
     }
 
@@ -5491,6 +5501,7 @@ void Add_Box(edict_t *ent)
 	int i;
 	int box_num;
     int cp;
+    int cpsize;
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDBOX_LEVEL)
 		return;
@@ -5515,11 +5526,18 @@ void Add_Box(edict_t *ent)
 		VectorCopy (ent->s.origin, level_items.newent->s.origin);
 		VectorCopy (ent->s.origin, level_items.newent->s.old_origin);
 		box_num = atoi(gi.argv(1));
-        if ((box_num>3) && (box_num<7) && (gi.argc() < 3)){
-            gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to 16 (Ex: Addbox 4 1).\n");
-            return;
+        cp = atoi(gi.argv(2));
+        cpsize = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);
+        if ((box_num>3) && (box_num<7) && (gi.argc() > 2)){
+            if ((cp<1) || (cp>cpsize)) {
+                gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
+                return;
+            } else {
+                cp = atoi(gi.argv(2)) - 1;
+            }
         } else {
-            cp = atoi(gi.argv(2));
+            gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
+            return;
         }
 		if ((box_num<1) || (box_num>6))
 			box_num = 1;
@@ -5538,17 +5556,20 @@ void Add_Box(edict_t *ent)
 				level_items.newent->s.origin[2] -=8;
 				level_items.newent->s.old_origin[2] -=8;
 				break;
-        case 4 : SP_cpbox_small (level_items.newent, cp);
+        case 4 : SP_cpbox_small (level_items.newent);
 				level_items.newent->s.origin[2] -=8;
 				level_items.newent->s.old_origin[2] -=8;
+                level_items.newent->count = cp;
 				break;
-        case 5 : SP_cpbox_medium (level_items.newent, cp);
+        case 5 : SP_cpbox_medium (level_items.newent);
 				level_items.newent->s.origin[2] -=8;
 				level_items.newent->s.old_origin[2] -=8;
+                level_items.newent->count = cp;
 				break;
-        case 6 : SP_cpbox_large (level_items.newent, cp);
+        case 6 : SP_cpbox_large (level_items.newent);
 				level_items.newent->s.origin[2] -=8;
 				level_items.newent->s.old_origin[2] -=8;
+                level_items.newent->count = cp;
 				break;
 		}
 

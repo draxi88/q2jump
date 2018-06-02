@@ -3581,10 +3581,9 @@ void cpbox_touch (edict_t *self, edict_t *other){
     }
 }
 
-void SP_cpbox_small (edict_t *ent, int cp)
+void SP_cpbox_small (edict_t *ent)
 {
 	ent->classname = "cpbox_small";
-    ent->count = cp;
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_TRIGGER;
 	ent->s.renderfx |= RF_TRANSLUCENT;
@@ -3596,10 +3595,9 @@ void SP_cpbox_small (edict_t *ent, int cp)
 	level.jumpboxes[0]++;
 }
 
-void SP_cpbox_medium (edict_t *ent, int cp)
+void SP_cpbox_medium (edict_t *ent)
 {
 	ent->classname = "cpbox_medium";
-    ent->count = cp;
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_TRIGGER;
 	ent->s.renderfx |= RF_TRANSLUCENT;
@@ -3611,10 +3609,9 @@ void SP_cpbox_medium (edict_t *ent, int cp)
 	level.jumpboxes[1]++;
 }
 
-void SP_cpbox_large (edict_t *ent, int cp)
+void SP_cpbox_large (edict_t *ent)
 {
 	ent->classname = "cpbox_large";
-    ent->count = cp;
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_TRIGGER;
 	ent->s.renderfx |= RF_TRANSLUCENT;

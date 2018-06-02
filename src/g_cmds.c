@@ -772,7 +772,7 @@ void Cmd_Kill_f (edict_t *ent)
 	ent->client->pers.rs18_checkpoint = 0;
 	ent->client->pers.rs19_checkpoint = 0;
 	ent->client->pers.rs20_checkpoint = 0;
-    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint);i++) {
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
         ent->client->pers.cpbox_checkpoint[i] = 0;
     }
 	

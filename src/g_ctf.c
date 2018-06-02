@@ -3904,7 +3904,7 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 	ent->client->pers.rs18_checkpoint = 0;
 	ent->client->pers.rs19_checkpoint = 0;
 	ent->client->pers.rs20_checkpoint = 0;
-    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint);i++) {
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
         ent->client->pers.cpbox_checkpoint[i] = 0;
     }
 	
@@ -3969,7 +3969,7 @@ void CTFJoinTeam1(edict_t *ent, pmenuhnd_t *p)
 	ent->client->pers.rs18_checkpoint = 0;
 	ent->client->pers.rs19_checkpoint = 0;
 	ent->client->pers.rs20_checkpoint = 0;
-    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint);i++) {
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
         ent->client->pers.cpbox_checkpoint[i] = 0;
     }
 	
@@ -4044,7 +4044,7 @@ void CTFJoinTeam2(edict_t *ent, pmenuhnd_t *p)
 	ent->client->pers.rs18_checkpoint = 0;
 	ent->client->pers.rs19_checkpoint = 0;
 	ent->client->pers.rs20_checkpoint = 0;
-    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint);i++) {
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
         ent->client->pers.cpbox_checkpoint[i] = 0;
     }
 	
