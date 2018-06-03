@@ -579,69 +579,14 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->resp.item_timer = 0; // internal timer reset 1
 		other->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
 		other->client->resp.race_frame = 0; //reset race frame if racing
-
-		other->client->pers.checkpoints = 0;
-		other->client->pers.rs1_checkpoint = 0;
-		other->client->pers.rs2_checkpoint = 0;
-		other->client->pers.rs3_checkpoint = 0;
-		other->client->pers.rs4_checkpoint = 0;
-		other->client->pers.rs5_checkpoint = 0;
-		other->client->pers.rs6_checkpoint = 0;
-		other->client->pers.rs7_checkpoint = 0;
-		other->client->pers.rs8_checkpoint = 0;
-		other->client->pers.rs9_checkpoint = 0;
-		other->client->pers.rs10_checkpoint = 0;
-		other->client->pers.rs11_checkpoint = 0;
-		other->client->pers.rs12_checkpoint = 0;
-		other->client->pers.rs13_checkpoint = 0;
-		other->client->pers.rs14_checkpoint = 0;
-		other->client->pers.rs15_checkpoint = 0;
-		other->client->pers.rs16_checkpoint = 0;
-		other->client->pers.rs17_checkpoint = 0;
-		other->client->pers.rs18_checkpoint = 0;
-		other->client->pers.rs19_checkpoint = 0;
-		other->client->pers.rs20_checkpoint = 0;
-		other->client->pers.target_checkpoint = 0;
-		other->client->pers.blue_checkpoint = 0;
-		other->client->pers.cd_checkpoint = 0;
-		other->client->pers.spinner_checkpoint = 0;
-		other->client->pers.pass_checkpoint = 0;
-		other->client->pers.red_checkpoint = 0;
-		other->client->pers.pyramid_checkpoint = 0;
+		ClearCheckpoints(&other->client->pers);
 	}
 
 	// resizable ent that can clear checkpoints, print msg if they had some
 	if (Q_stricmp(ent->item->pickup_name,"cp clear")==0) {
 		if (other->client->pers.checkpoints > 0)
 			gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->pers.checkpoints);
-		other->client->pers.checkpoints = 0;
-		other->client->pers.rs1_checkpoint = 0;
-		other->client->pers.rs2_checkpoint = 0;
-		other->client->pers.rs3_checkpoint = 0;
-		other->client->pers.rs4_checkpoint = 0;
-		other->client->pers.rs5_checkpoint = 0;
-		other->client->pers.rs6_checkpoint = 0;
-		other->client->pers.rs7_checkpoint = 0;
-		other->client->pers.rs8_checkpoint = 0;
-		other->client->pers.rs9_checkpoint = 0;
-		other->client->pers.rs10_checkpoint = 0;
-		other->client->pers.rs11_checkpoint = 0;
-		other->client->pers.rs12_checkpoint = 0;
-		other->client->pers.rs13_checkpoint = 0;
-		other->client->pers.rs14_checkpoint = 0;
-		other->client->pers.rs15_checkpoint = 0;
-		other->client->pers.rs16_checkpoint = 0;
-		other->client->pers.rs17_checkpoint = 0;
-		other->client->pers.rs18_checkpoint = 0;
-		other->client->pers.rs19_checkpoint = 0;
-		other->client->pers.rs20_checkpoint = 0;
-		other->client->pers.target_checkpoint = 0;
-		other->client->pers.blue_checkpoint = 0;
-		other->client->pers.cd_checkpoint = 0;
-		other->client->pers.spinner_checkpoint = 0;
-		other->client->pers.pass_checkpoint = 0;
-		other->client->pers.red_checkpoint = 0;
-		other->client->pers.pyramid_checkpoint = 0;
+		ClearCheckpoints(&other->client->pers);
 		if (!other->client->resp.mute_cps)
 			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 	}

@@ -4383,35 +4383,7 @@ void apply_time(edict_t *other, edict_t *ent)
 	char		item_name[128];
 	int diff = 0;
 
-	other->client->pers.checkpoints = 0;
-	other->client->pers.red_checkpoint = 0;
-	other->client->pers.target_checkpoint = 0;
-	other->client->pers.blue_checkpoint = 0;
-	other->client->pers.cd_checkpoint = 0;
-	other->client->pers.cube_checkpoint = 0;
-	other->client->pers.pyramid_checkpoint = 0;
-	other->client->pers.pass_checkpoint = 0;
-	other->client->pers.spinner_checkpoint = 0;
-	other->client->pers.rs1_checkpoint = 0;
-	other->client->pers.rs2_checkpoint = 0;
-	other->client->pers.rs3_checkpoint = 0;
-	other->client->pers.rs4_checkpoint = 0;
-	other->client->pers.rs5_checkpoint = 0;
-	other->client->pers.rs6_checkpoint = 0;
-	other->client->pers.rs7_checkpoint = 0;
-	other->client->pers.rs8_checkpoint = 0;
-	other->client->pers.rs9_checkpoint = 0;
-	other->client->pers.rs10_checkpoint = 0;
-	other->client->pers.rs11_checkpoint = 0;
-	other->client->pers.rs12_checkpoint = 0;
-	other->client->pers.rs13_checkpoint = 0;
-	other->client->pers.rs14_checkpoint = 0;
-	other->client->pers.rs15_checkpoint = 0;
-	other->client->pers.rs16_checkpoint = 0;
-	other->client->pers.rs17_checkpoint = 0;
-	other->client->pers.rs18_checkpoint = 0;
-	other->client->pers.rs19_checkpoint = 0;
-	other->client->pers.rs20_checkpoint = 0;
+	ClearCheckpoints(&other->client->pers);
 
 	Stop_Recording(other);
 	if (((other->client->resp.item_timer_allow) || (other->client->resp.ctf_team==CTF_TEAM2)) || (gametype->value==GAME_CTF && other->client->resp.ctf_team==CTF_TEAM1))
@@ -5050,36 +5022,7 @@ void Cmd_Recall(edict_t *ent)
 	int i;
 	vec3_t	spawn_origin, spawn_angles;
 
-
-	ent->client->pers.checkpoints = 0;
-	ent->client->pers.red_checkpoint = 0;
-	ent->client->pers.target_checkpoint = 0;
-	ent->client->pers.blue_checkpoint = 0;
-	ent->client->pers.cd_checkpoint = 0;
-	ent->client->pers.cube_checkpoint = 0;
-	ent->client->pers.pyramid_checkpoint = 0;
-	ent->client->pers.pass_checkpoint = 0;
-	ent->client->pers.spinner_checkpoint = 0;
-	ent->client->pers.rs1_checkpoint = 0;
-	ent->client->pers.rs2_checkpoint = 0;
-	ent->client->pers.rs3_checkpoint = 0;
-	ent->client->pers.rs4_checkpoint = 0;
-	ent->client->pers.rs5_checkpoint = 0;
-	ent->client->pers.rs6_checkpoint = 0;
-	ent->client->pers.rs7_checkpoint = 0;
-	ent->client->pers.rs8_checkpoint = 0;
-	ent->client->pers.rs9_checkpoint = 0;
-	ent->client->pers.rs10_checkpoint = 0;
-	ent->client->pers.rs11_checkpoint = 0;
-	ent->client->pers.rs12_checkpoint = 0;
-	ent->client->pers.rs13_checkpoint = 0;
-	ent->client->pers.rs14_checkpoint = 0;
-	ent->client->pers.rs15_checkpoint = 0;
-	ent->client->pers.rs16_checkpoint = 0;
-	ent->client->pers.rs17_checkpoint = 0;
-	ent->client->pers.rs18_checkpoint = 0;
-	ent->client->pers.rs19_checkpoint = 0;
-	ent->client->pers.rs20_checkpoint = 0;
+	ClearCheckpoints(&ent->client->pers);
 
     for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
         ent->client->pers.cpbox_checkpoint[i] = 0;
@@ -14179,4 +14122,54 @@ qboolean trigger_timer(edict_t *other, int timeBetweenMessages) {
 		return true;
 	} else
 		return false;
+}
+
+
+// fxn to clear all checkpoints from a player
+void ClearCheckpoints(client_persistant_t* pers) {
+
+	int i;
+
+    if (pers == 0) {
+        return;
+    }
+
+	// total count
+    pers->checkpoints = 0;
+
+	// resizable cps
+	pers->rs1_checkpoint = 0;
+	pers->rs2_checkpoint = 0;
+	pers->rs3_checkpoint = 0;
+	pers->rs4_checkpoint = 0;
+	pers->rs5_checkpoint = 0;
+	pers->rs6_checkpoint = 0;
+	pers->rs7_checkpoint = 0;
+	pers->rs8_checkpoint = 0;
+	pers->rs9_checkpoint = 0;
+	pers->rs10_checkpoint = 0;
+	pers->rs11_checkpoint = 0;
+	pers->rs12_checkpoint = 0;
+	pers->rs13_checkpoint = 0;
+	pers->rs14_checkpoint = 0;
+	pers->rs15_checkpoint = 0;
+	pers->rs16_checkpoint = 0;
+	pers->rs17_checkpoint = 0;
+	pers->rs18_checkpoint = 0;
+	pers->rs19_checkpoint = 0;
+	pers->rs20_checkpoint = 0;
+
+	// key cps
+	pers->target_checkpoint = 0;
+	pers->blue_checkpoint = 0;
+	pers->cd_checkpoint = 0;
+	pers->spinner_checkpoint = 0;
+	pers->pass_checkpoint = 0;
+	pers->red_checkpoint = 0;
+	pers->pyramid_checkpoint = 0;
+
+	// cp box checkpoints
+	for (i=0;i<sizeof(pers->cpbox_checkpoint)/sizeof(int);i++) {
+        pers->cpbox_checkpoint[i] = 0;
+    }
 }
