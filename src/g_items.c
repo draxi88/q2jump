@@ -3563,7 +3563,7 @@ void SP_jumpbox_large (edict_t *ent)
 	level.jumpboxes[2]++;
 }
 
-void cpbox_touch (edict_t *self, edict_t *other){
+void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf){
     int my_time;
     float my_time_decimal;
     // get the clients time in .xxx format
