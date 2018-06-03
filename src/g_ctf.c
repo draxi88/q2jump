@@ -3873,6 +3873,7 @@ Notify_Of_Team_Commands(ent);
 
 void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 {
+    int i;
 	char *s;
 
 	ent->client->pers.checkpoints = 0;
@@ -3904,6 +3905,9 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 	ent->client->pers.rs18_checkpoint = 0;
 	ent->client->pers.rs19_checkpoint = 0;
 	ent->client->pers.rs20_checkpoint = 0;
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
+        ent->client->pers.cpbox_checkpoint[i] = 0;
+    }
 	
 	PMenu_Close(ent);
 
@@ -3936,7 +3940,7 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 
 void CTFJoinTeam1(edict_t *ent, pmenuhnd_t *p)
 {
-
+    int i;
 	ent->client->pers.checkpoints = 0;
 	ent->client->pers.red_checkpoint = 0;
 	ent->client->pers.target_checkpoint = 0;
@@ -3966,6 +3970,9 @@ void CTFJoinTeam1(edict_t *ent, pmenuhnd_t *p)
 	ent->client->pers.rs18_checkpoint = 0;
 	ent->client->pers.rs19_checkpoint = 0;
 	ent->client->pers.rs20_checkpoint = 0;
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
+        ent->client->pers.cpbox_checkpoint[i] = 0;
+    }
 	
 	if (ClientIsBanned(ent,BAN_PLAY))
 	{
@@ -4008,7 +4015,7 @@ void CTFJoinTeam1(edict_t *ent, pmenuhnd_t *p)
 
 void CTFJoinTeam2(edict_t *ent, pmenuhnd_t *p)
 {
-
+    int i;
 	ent->client->pers.checkpoints = 0;
 	ent->client->pers.red_checkpoint = 0;
 	ent->client->pers.target_checkpoint = 0;
@@ -4038,6 +4045,9 @@ void CTFJoinTeam2(edict_t *ent, pmenuhnd_t *p)
 	ent->client->pers.rs18_checkpoint = 0;
 	ent->client->pers.rs19_checkpoint = 0;
 	ent->client->pers.rs20_checkpoint = 0;
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
+        ent->client->pers.cpbox_checkpoint[i] = 0;
+    }
 	
 	if (ClientIsBanned(ent,BAN_PLAY))
 	{

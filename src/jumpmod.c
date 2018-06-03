@@ -2160,8 +2160,12 @@ void show_ent_list(edict_t *ent,int page)
 				VectorCopy(v1,closest);
 				closest_num = i;
 			}
-			gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
-		}
+            if (strstr(level_items.ents[i]->classname,"cpbox_")){
+                gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s ID:%d \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,(level_items.ents[i]->count+1),level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
+            } else {
+                gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
+            }
+        }
    } 
 
    gi.cprintf (ent, PRINT_HIGH, "Page %d. Use listents <page>\n",(offset+1)); 
@@ -2181,7 +2185,7 @@ qboolean AddNewEnt(void)
 		{
 			level_items.ents[i] = level_items.newent;
 			level_items.newent = NULL;
-			if (strstr(level_items.ents[i]->classname,"jumpbox_"))
+			if (strstr(level_items.ents[i]->classname,"jumpbox_") || strstr(level_items.ents[i]->classname,"cpbox_"))
 			{
 			}
 			else
@@ -2249,9 +2253,10 @@ void WriteEnts(void)
 		}
 
 		fprintf (f, "\"origin\" \"%f %f %f\"\n",level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
-
-		fprintf (f, "\"angles\" \"%f %f %f\"\n",level_items.ents[i]->s.angles[0],level_items.ents[i]->s.angles[1],level_items.ents[i]->s.angles[2]);
-		if (level_items.ents[i]->target)
+        if (level_items.ents[i]->s.angles[0]){
+		    fprintf (f, "\"angles\" \"%f %f %f\"\n",level_items.ents[i]->s.angles[0],level_items.ents[i]->s.angles[1],level_items.ents[i]->s.angles[2]);
+        }
+        if (level_items.ents[i]->target)
 		{
 //			temp_e = level_items.ents[i]->target;
 			fprintf (f, "\"target\" \"%s\"\n",level_items.ents[i]->target);
@@ -2260,6 +2265,10 @@ void WriteEnts(void)
 		{
 			fprintf (f, "\"skinnum\" \"%d\"\n",level_items.ents[i]->s.skinnum);
 		}
+        if (strstr(level_items.ents[i]->classname,"cpbox_"))
+        {
+            fprintf (f, "\"count\" \"%d\"\n",level_items.ents[i]->count);
+        }
 		if (level_items.ents[i]->targetname)
 		{
 			fprintf (f, "\"targetname\" \"%s\"\n",level_items.ents[i]->targetname);
@@ -2850,6 +2859,7 @@ void Cmd_Store_f (edict_t *ent) {
 			ent->client->pers.stored_rs19_checkpoint3 = ent->client->pers.stored_rs19_checkpoint2;
 			ent->client->pers.stored_rs20_checkpoint3 = ent->client->pers.stored_rs20_checkpoint2;
 
+
 			// stored 1 moves to stored 2
 			ent->client->pers.stored_checkpoints2 = ent->client->pers.stored_checkpoints1;
 			ent->client->pers.stored_red_checkpoint2 = ent->client->pers.stored_red_checkpoint1;
@@ -2911,6 +2921,10 @@ void Cmd_Store_f (edict_t *ent) {
 			ent->client->pers.stored_rs18_checkpoint1 = ent->client->pers.rs18_checkpoint;
 			ent->client->pers.stored_rs19_checkpoint1 = ent->client->pers.rs19_checkpoint;
 			ent->client->pers.stored_rs20_checkpoint1 = ent->client->pers.rs20_checkpoint;
+
+            memcpy(ent->client->pers.cpbox_checkpoint3,ent->client->pers.cpbox_checkpoint2,sizeof(ent->client->pers.cpbox_checkpoint));
+            memcpy(ent->client->pers.cpbox_checkpoint2,ent->client->pers.cpbox_checkpoint1,sizeof(ent->client->pers.cpbox_checkpoint));
+            memcpy(ent->client->pers.cpbox_checkpoint1,ent->client->pers.cpbox_checkpoint,sizeof(ent->client->pers.cpbox_checkpoint));
 
 			if (jump_show_stored_ent) {
 				if (ent->client->resp.stored_ent)	
@@ -5036,6 +5050,41 @@ void Cmd_Recall(edict_t *ent)
 	int i;
 	vec3_t	spawn_origin, spawn_angles;
 
+
+	ent->client->pers.checkpoints = 0;
+	ent->client->pers.red_checkpoint = 0;
+	ent->client->pers.target_checkpoint = 0;
+	ent->client->pers.blue_checkpoint = 0;
+	ent->client->pers.cd_checkpoint = 0;
+	ent->client->pers.cube_checkpoint = 0;
+	ent->client->pers.pyramid_checkpoint = 0;
+	ent->client->pers.pass_checkpoint = 0;
+	ent->client->pers.spinner_checkpoint = 0;
+	ent->client->pers.rs1_checkpoint = 0;
+	ent->client->pers.rs2_checkpoint = 0;
+	ent->client->pers.rs3_checkpoint = 0;
+	ent->client->pers.rs4_checkpoint = 0;
+	ent->client->pers.rs5_checkpoint = 0;
+	ent->client->pers.rs6_checkpoint = 0;
+	ent->client->pers.rs7_checkpoint = 0;
+	ent->client->pers.rs8_checkpoint = 0;
+	ent->client->pers.rs9_checkpoint = 0;
+	ent->client->pers.rs10_checkpoint = 0;
+	ent->client->pers.rs11_checkpoint = 0;
+	ent->client->pers.rs12_checkpoint = 0;
+	ent->client->pers.rs13_checkpoint = 0;
+	ent->client->pers.rs14_checkpoint = 0;
+	ent->client->pers.rs15_checkpoint = 0;
+	ent->client->pers.rs16_checkpoint = 0;
+	ent->client->pers.rs17_checkpoint = 0;
+	ent->client->pers.rs18_checkpoint = 0;
+	ent->client->pers.rs19_checkpoint = 0;
+	ent->client->pers.rs20_checkpoint = 0;
+
+    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
+        ent->client->pers.cpbox_checkpoint[i] = 0;
+    }
+
 	if (gametype->value==GAME_CTF)
 		return;
 
@@ -5084,6 +5133,7 @@ void Cmd_Recall(edict_t *ent)
 					ent->client->pers.rs18_checkpoint = ent->client->pers.stored_rs18_checkpoint1;
 					ent->client->pers.rs19_checkpoint = ent->client->pers.stored_rs19_checkpoint1;
 					ent->client->pers.rs20_checkpoint = ent->client->pers.stored_rs20_checkpoint1;
+                    memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint1,sizeof(ent->client->pers.cpbox_checkpoint));
 						break;
 					case 2 :
 					VectorCopy(ent->client->resp.store_pos2,spawn_origin);
@@ -5117,6 +5167,7 @@ void Cmd_Recall(edict_t *ent)
 					ent->client->pers.rs18_checkpoint = ent->client->pers.stored_rs18_checkpoint2;
 					ent->client->pers.rs19_checkpoint = ent->client->pers.stored_rs19_checkpoint2;
 					ent->client->pers.rs20_checkpoint = ent->client->pers.stored_rs20_checkpoint2;
+                    memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint2,sizeof(ent->client->pers.cpbox_checkpoint));
 						break;
 					case 3 :
 					VectorCopy(ent->client->resp.store_pos3,spawn_origin);
@@ -5150,6 +5201,7 @@ void Cmd_Recall(edict_t *ent)
 					ent->client->pers.rs18_checkpoint = ent->client->pers.stored_rs18_checkpoint3;
 					ent->client->pers.rs19_checkpoint = ent->client->pers.stored_rs19_checkpoint3;
 					ent->client->pers.rs20_checkpoint = ent->client->pers.stored_rs20_checkpoint3;
+                    memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint3,sizeof(ent->client->pers.cpbox_checkpoint));
 						break;
 					default :
 					VectorCopy(ent->client->resp.store_pos,spawn_origin);
@@ -5183,6 +5235,7 @@ void Cmd_Recall(edict_t *ent)
 					ent->client->pers.rs18_checkpoint = ent->client->pers.stored_rs18_checkpoint1;
 					ent->client->pers.rs19_checkpoint = ent->client->pers.stored_rs19_checkpoint1;
 					ent->client->pers.rs20_checkpoint = ent->client->pers.stored_rs20_checkpoint1;
+                    memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint1,sizeof(ent->client->pers.cpbox_checkpoint));
 						break;
 				}
 			} else {
@@ -5218,6 +5271,7 @@ void Cmd_Recall(edict_t *ent)
 				ent->client->pers.rs18_checkpoint = ent->client->pers.stored_rs18_checkpoint1;
 				ent->client->pers.rs19_checkpoint = ent->client->pers.stored_rs19_checkpoint1;
 				ent->client->pers.rs20_checkpoint = ent->client->pers.stored_rs20_checkpoint1;
+                memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint1,sizeof(ent->client->pers.cpbox_checkpoint));
 			}
 		
 			VectorClear (ent->velocity);
@@ -5696,9 +5750,9 @@ void List_Box_Types(edict_t *ent)
 	gi.cprintf(ent,PRINT_HIGH,"1. Small Box\n");
 	gi.cprintf(ent,PRINT_HIGH,"2. Medium Box\n");
 	gi.cprintf(ent,PRINT_HIGH,"3. Large Box\n");
-//	gi.cprintf(ent,PRINT_HIGH,"4. Small Platform\n");
-//	gi.cprintf(ent,PRINT_HIGH,"5. Medium Platform\n");
-//	gi.cprintf(ent,PRINT_HIGH,"6. Long Platform\n");
+	gi.cprintf(ent,PRINT_HIGH,"4. Small Checkpoint\n");
+	gi.cprintf(ent,PRINT_HIGH,"5. Medium Checkpoint\n");
+	gi.cprintf(ent,PRINT_HIGH,"6. Large Checkpoint\n");
 }
 
 void Add_Box(edict_t *ent)
@@ -5706,6 +5760,8 @@ void Add_Box(edict_t *ent)
 	char	temp[256];
 	int i;
 	int box_num;
+    int cp;
+    int cpsize;
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDBOX_LEVEL)
 		return;
@@ -5730,10 +5786,24 @@ void Add_Box(edict_t *ent)
 		VectorCopy (ent->s.origin, level_items.newent->s.origin);
 		VectorCopy (ent->s.origin, level_items.newent->s.old_origin);
 		box_num = atoi(gi.argv(1));
-		if ((box_num<1) || (box_num>3))
+        cp = atoi(gi.argv(2));
+        cpsize = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);
+        if ((box_num>3) && (box_num<7) && (gi.argc() > 2)){
+            if ((cp<1) || (cp>cpsize)) {
+                gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
+                return;
+            } else {
+                cp = atoi(gi.argv(2)) - 1;
+            }
+        } else {
+            gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
+            return;
+        }
+		if ((box_num<1) || (box_num>6))
 			box_num = 1;
 		switch (box_num)
 		{
+
 		case 1 : SP_jumpbox_small (level_items.newent);
 				level_items.newent->s.origin[2] -=8;
 				level_items.newent->s.old_origin[2] -=8;
@@ -5745,6 +5815,21 @@ void Add_Box(edict_t *ent)
 		case 3 : SP_jumpbox_large (level_items.newent);
 				level_items.newent->s.origin[2] -=8;
 				level_items.newent->s.old_origin[2] -=8;
+				break;
+        case 4 : SP_cpbox_small (level_items.newent);
+				level_items.newent->s.origin[2] -=8;
+				level_items.newent->s.old_origin[2] -=8;
+                level_items.newent->count = cp;
+				break;
+        case 5 : SP_cpbox_medium (level_items.newent);
+				level_items.newent->s.origin[2] -=8;
+				level_items.newent->s.old_origin[2] -=8;
+                level_items.newent->count = cp;
+				break;
+        case 6 : SP_cpbox_large (level_items.newent);
+				level_items.newent->s.origin[2] -=8;
+				level_items.newent->s.old_origin[2] -=8;
+                level_items.newent->count = cp;
 				break;
 		}
 
@@ -5849,7 +5934,7 @@ void Move_Ent(edict_t *ent)
 
 	if (level_items.ents[i])
 	{
-		if (!strstr(level_items.ents[i]->classname,"jumpbox_"))
+		if (!strstr(level_items.ents[i]->classname,"jumpbox_") || !strstr(level_items.ents[i]->classname,"cpbox_"))
 		{
 			gi.unlinkentity(level_items.ents[i]);
 			VectorCopy (ent->s.origin, level_items.ents[i]->s.origin);

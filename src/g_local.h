@@ -916,6 +916,10 @@ typedef struct
 	int			rs18_checkpoint;
 	int			rs19_checkpoint;
 	int			rs20_checkpoint;
+    int         cpbox_checkpoint[16];
+    int         cpbox_checkpoint1[16];
+    int         cpbox_checkpoint2[16];
+    int         cpbox_checkpoint3[16];
 
 	// stored checkpoints 1
 	int			stored_checkpoints1;
