@@ -5731,16 +5731,18 @@ void Add_Box(edict_t *ent)
 		box_num = atoi(gi.argv(1));
         cp = atoi(gi.argv(2));
         cpsize = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);
-        if ((box_num>3) && (box_num<7) && (gi.argc() > 2)){
-            if ((cp<1) || (cp>cpsize)) {
+         if ((box_num>3) && (box_num<7)){
+            if (gi.argc() > 2){
+                if ((cp<1) || (cp>cpsize)) {
+                    gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
+                    return;
+                } else {
+                    cp = atoi(gi.argv(2)) - 1;
+                }
+            } else {
                 gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
                 return;
-            } else {
-                cp = atoi(gi.argv(2)) - 1;
             }
-        } else {
-            gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
-            return;
         }
 		if ((box_num<1) || (box_num>6))
 			box_num = 1;
