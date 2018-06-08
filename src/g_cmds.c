@@ -741,39 +741,10 @@ Cmd_Kill_f
 =================
 */
 void Cmd_Kill_f (edict_t *ent)
-{
-	
+{	
 	// if team hard, clear cps
 	if (ent->client->resp.ctf_team==CTF_TEAM2) {
-		ent->client->pers.checkpoints = 0;
-		ent->client->pers.red_checkpoint = 0;
-		ent->client->pers.target_checkpoint = 0;
-		ent->client->pers.blue_checkpoint = 0;
-		ent->client->pers.cd_checkpoint = 0;
-		ent->client->pers.cube_checkpoint = 0;
-		ent->client->pers.pyramid_checkpoint = 0;
-		ent->client->pers.pass_checkpoint = 0;
-		ent->client->pers.spinner_checkpoint = 0;
-		ent->client->pers.rs1_checkpoint = 0;
-		ent->client->pers.rs2_checkpoint = 0;
-		ent->client->pers.rs3_checkpoint = 0;
-		ent->client->pers.rs4_checkpoint = 0;
-		ent->client->pers.rs5_checkpoint = 0;
-		ent->client->pers.rs6_checkpoint = 0;
-		ent->client->pers.rs7_checkpoint = 0;
-		ent->client->pers.rs8_checkpoint = 0;
-		ent->client->pers.rs9_checkpoint = 0;
-		ent->client->pers.rs10_checkpoint = 0;
-		ent->client->pers.rs11_checkpoint = 0;
-		ent->client->pers.rs12_checkpoint = 0;
-		ent->client->pers.rs13_checkpoint = 0;
-		ent->client->pers.rs14_checkpoint = 0;
-		ent->client->pers.rs15_checkpoint = 0;
-		ent->client->pers.rs16_checkpoint = 0;
-		ent->client->pers.rs17_checkpoint = 0;
-		ent->client->pers.rs18_checkpoint = 0;
-		ent->client->pers.rs19_checkpoint = 0;
-		ent->client->pers.rs20_checkpoint = 0;
+		ClearCheckpoints(&ent->client->pers);
 	}
 
 //ZOID
@@ -782,7 +753,6 @@ void Cmd_Kill_f (edict_t *ent)
 //ZOID
 	if((level.framenum - ent->client->respawn_time) < mset_vars->kill_delay)
 		return;
-
 
 	if (level.status == LEVEL_STATUS_OVERTIME)
 	{
