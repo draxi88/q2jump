@@ -1,5 +1,6 @@
 #####v1.21ger#####
 -spawnflag 3(1+2) on trigger tele ignores destination angle
+	-also needs `mset fasttele 1` to work correctly
 -minor hookfix
 -added checkpoint boxes, same sizes as normal adminboxes
 -added ClearCheckpoints fxn
