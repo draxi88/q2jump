@@ -499,6 +499,7 @@ typedef struct
 	int cvote_announce;
 	unsigned int voteextratime;
 	int addtime_announce;
+    int multipleservers;
 } gset_vars_t;
 
 typedef struct
@@ -652,6 +653,7 @@ void removeClientCommands(edict_t *ent);
 void AutoPutClientInServer (edict_t *ent);
 
 qboolean tourney_log(edict_t *ent, int uid, float time, float item_time_penalty, char *date );
+void sort_tourney_file(char *filename);
 void open_tourney_file(char *filename,qboolean apply);
 void write_tourney_file(char *filename,int mapnum);
 

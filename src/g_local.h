@@ -544,6 +544,7 @@ extern	cvar_t	*dmflags;
 extern	cvar_t	*skill;
 extern	cvar_t	*fraglimit;
 extern	cvar_t	*timelimit;
+extern  cvar_t  *multipleservers;
 //ZOID
 extern	cvar_t	*capturelimit;
 //extern	cvar_t	*instantweap;

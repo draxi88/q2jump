@@ -912,6 +912,13 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
 	&gset_vars->addtime_announce,
   },
+  {
+	0,1,1,
+	"multipleservers",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->multipleservers,
+  },
 /*  {
 	0,1,0,
 	"updated",
@@ -1282,7 +1289,11 @@ int LoadMapList(char *filename)
    fp = OpenFile2(filename); 
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
    //reset users
    maplist.num_users = 0;
@@ -4489,7 +4500,11 @@ void		Save_Recording(edict_t *ent,int uid,int uid_1st)
 	client_record[index].allow_record = false;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "27910", 0);
+    }
 	
 #ifdef ANIM_REPLAY
 	sprintf (name, "%s/jumpdemo/%s.dj2", tgame->string,level.mapname);
@@ -4548,7 +4563,11 @@ void Save_Individual_Recording(edict_t *ent)
 	client_record[index].allow_record = false;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "27910", 0);
+    }
 	
 	sprintf (name, "%s/jumpdemo/%s_%d.dj3", tgame->string,level.mapname,ent->client->resp.uid-1);
 	f = fopen (name, "wb");
@@ -4721,7 +4740,11 @@ void Load_Recording(void)
 	qboolean loaded = false;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	//multireplay code, look for dj3 first via uid of player at 0
 	if (level_items.stored_item_times[0].uid>=0)
@@ -4782,7 +4805,11 @@ void Load_Individual_Recording(int num,int uid)
 	level_items.recorded_time_frames[num] = 0;
 	level_items.recorded_time_uid[num] = -1;
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 	sprintf (name, "%s/jumpdemo/%s_%d.dj3", tgame->string,level.mapname,uid);
 	//gi.dprintf("%s\n",name);
 	f = fopen (name, "rb");
@@ -5484,7 +5511,6 @@ void mvote(edict_t *ent)
 			return;
 		}
 
-
 		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",gi.argv(1));
 			admin_log(ent,text);
@@ -5573,7 +5599,11 @@ void delete_all_times(void)
 	cvar_t	*tgame;
 	int i;
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	for (i=0;i<maplist.nummaps;i++)
 	{
@@ -5591,7 +5621,11 @@ void delete_all_demos(void)
 	cvar_t	*tgame;
 	int i;
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	for (i=0;i<maplist.nummaps;i++)
 	{
@@ -6167,7 +6201,11 @@ void open_debug_file(void)
 	char	name[256];
 	cvar_t	*tgame;
 	cvar_t	*port;
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	tgame = gi.cvar("game", "", 0);
 	sprintf (name, "%s/%s/debug.log", tgame->string,port->string);
@@ -6678,6 +6716,16 @@ void GSET(edict_t *ent)
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Invalid command\n");
 	}
+    if(strcmp(gi.argv(1),"multipleservers")==0){
+        if(atoi(gi.argv(2))==1){
+	        FS_CreatePath(va("%s/multiserver/",game_dir->string));
+	        FS_CreatePath(va("%s/multiserver/jumpdemo/",game_dir->string));
+	        FS_CreatePath(va("%s/multiserver/ent/",game_dir->string));
+            FS_CreatePath(va("%s/multiserver/checkmap/",game_dir->string));
+        } else {
+            return;
+        }
+    }
 
 
 }
@@ -6968,6 +7016,7 @@ void SetDefaultValues(void)
 	strcpy(gset_vars->mset->edited_by,"noone");
 	gset_vars->debug =0;
 	gset_vars->addtime_announce = 1;
+    gset_vars->multipleservers = 0;
 	gset_vars->holdtime = 1;
 	gset_vars->pvote_announce = 1;
 	gset_vars->cvote_announce = 1;
@@ -9179,7 +9228,94 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 	}
 	return false;
 }
+void sort_tourney_file(char *filename){
+    FILE	*f;
+    char	buffer[128];
+	int i,i2;
+    char	name[128];
 
+    char    dateArr[MAX_USERS];
+    float   timeArr[MAX_USERS];
+    int     uidArr[MAX_USERS];
+    int     compArr[MAX_USERS];
+    char    datetmp;
+    float   timetmp;
+    int     uidtmp;
+    int     comptmp;
+    int     uid;
+
+    cvar_t	*port;
+	cvar_t	*tgame;
+
+	tgame = gi.cvar("game", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
+
+	if (!*tgame->string)
+	{
+		sprintf	(name, "jump/%s/%s.t", port->string,filename);
+	}
+	else
+	{
+		sprintf (name, "%s/%s/%s.t", tgame->string,port->string,filename);
+	}
+    i=0;
+	f = fopen (name, "r");
+	if (!f)
+	{
+		return;
+	}	
+    while (!feof(f))
+	{
+		if (i>MAX_USERS)
+			break;
+        fscanf(f, "%s", &dateArr[i]);
+		fscanf(f, "%f", &timeArr[i]);
+		fscanf(f, "%i", &uid);
+        uidArr[i] = uid;
+		fscanf(f, "%i", &compArr[i]);	
+		i++;
+	}
+        
+    //sort by time..
+    for (i=0;i<MAX_USERS;i++){
+        if (compArr[i]==0)
+			break;    
+        for (i2=0;i2<MAX_USERS;i2++){
+            if (compArr[i2]==0)
+			    break;
+            if(timeArr[i2]<timeArr[i]){
+                strcpy(datetmp,dateArr[i]);
+                timetmp = timeArr[i];
+                uidtmp = uidArr[i];
+                comptmp = compArr[i];
+                
+                strcpy(dateArr[i],dateArr[i2]);
+                timeArr[i] = timeArr[i2];
+                uidArr[i] = uidArr[i2];
+                compArr[i] = compArr[i2];
+
+                strcpy(dateArr[i2],datetmp);
+                timeArr[i2] = timetmp;
+                uidArr[i2] = uidtmp;
+                compArr[i2] = comptmp;
+            }
+        }
+    }
+    fclose(f);
+    f = fopen (name, "w");
+    for (i=0;i<MAX_USERS;i++)
+	{
+		if (!compArr[i])
+			continue;
+		Com_sprintf(buffer,sizeof(buffer), " %s %f %i %i",dateArr[i],timeArr[i],uidArr[i],compArr[i]);
+		fprintf (f, "%s\n", buffer);
+	}
+	fclose(f);
+}
 void open_tourney_file(char *filename,qboolean apply)
 {
 	cvar_t	*var;
@@ -9195,7 +9331,11 @@ void open_tourney_file(char *filename,qboolean apply)
 	int uid;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	if (!*tgame->string)
 	{
@@ -9222,16 +9362,21 @@ void open_tourney_file(char *filename,qboolean apply)
 		return;
 	}	
 
-	while (!feof(f))
-	{
-		fscanf(f,"%s",&temp);
-		if (strcmp(temp,"JUMPMOD067ALLTIMES")==0)
-		{
-			break;
-		}
-	}
+    fscanf(f,"%s",&temp);
+    if(strstr(temp,"Jump067")){
+	    while (!feof(f))
+	    {
+		    fscanf(f,"%s",&temp);
+		    if (strcmp(temp,"JUMPMOD067ALLTIMES")==0)
+		    {
+			    break;
+		    }
+	    }
+    } else {
+        rewind(f);
+    }
 
-
+    
 	while (!feof(f))
 	{
 		//problem here, its reading 1 too many? - LilRed: not anymore
@@ -9253,8 +9398,7 @@ void open_tourney_file(char *filename,qboolean apply)
 				}
 			}
 		}
-		//only allow MAX_USERS records
-		
+		//only allow MAX_USERS records		
 		i++;
 	}
 	fclose(f);
@@ -9278,7 +9422,11 @@ void write_tourney_file(char *filename,int mapnum)
 	int		month,day,year;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "27910", 0);
+    }
 	strcpy(port_d,port->string);
 	if (!port_d[0])
 		strcpy(port_d,"27910");
@@ -9305,7 +9453,7 @@ void write_tourney_file(char *filename,int mapnum)
 		year = current_date->tm_year;
 
 
-
+    /* fuck this shit
 	//right, we need to save the top 10 scores first
 	fprintf (f, "Jump067\n");
 
@@ -9318,6 +9466,7 @@ void write_tourney_file(char *filename,int mapnum)
 	fprintf (f, "%s\n",filename);
 	//print top10marker
 	fprintf (f, "JUMPMOD067TOP10TIMES\n");
+    
 
 	for (i=0;i<level_items.stored_item_times_count;i++)
 	{
@@ -9329,15 +9478,16 @@ void write_tourney_file(char *filename,int mapnum)
 
 	//print other marker
 	fprintf (f, "\nJUMPMOD067ALLTIMES\n");
-		
+	*/
 	for (i=0;i<MAX_USERS;i++)
 	{
 		if (!tourney_record[i].completions)
 			continue;
 		Com_sprintf(buffer,sizeof(buffer), " %s %f %i %i",tourney_record[i].date,tourney_record[i].time,tourney_record[i].uid,tourney_record[i].completions);
-		fprintf (f, "%s", buffer);
+		fprintf (f, "%s\n", buffer);
 	}
 	fclose(f);
+    //sort_tourney_file(filename);
 }
 
 void open_users_file()
@@ -9358,7 +9508,11 @@ void open_users_file()
 	int tmp = maplist.version;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	if (!*tgame->string)
 	{
@@ -9453,7 +9607,11 @@ void write_users_file(void)
 	cvar_t	*tgame;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "27910", 0);
+    }
 
 	strcpy(port_d,port->string);
 	if (!port_d[0])
@@ -9727,12 +9885,14 @@ void read_top10_tourney_log(char *filename)
 	int i;
 	char	name[128];
 	char	temp[1024];
+    char    nothing[8];
 	int		temp2;
 	cvar_t	*port;
 	cvar_t	*tgame;
 	qboolean apply_date;
 	fpos_t position;
 	int uid;
+    int completions;
 
 	//clear old times first
 	strcpy(level_items.mapname,filename);
@@ -9740,7 +9900,11 @@ void read_top10_tourney_log(char *filename)
 
 	i=0;
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	if (!*tgame->string)
 	{
@@ -9757,31 +9921,46 @@ void read_top10_tourney_log(char *filename)
 		level_items.stored_item_times_count = 0;
 		return;
 	}
-	
-	while(!feof(f))
-	{
-		fscanf(f,"%s",&temp);
-		if (strcmp(temp,"JUMPMOD067TOP10TIMES")==0)
-			break;
-	}
 
-	while (!feof(f))
-	{
-		fscanf(f, "%s", &temp);
-		if (strcmp(temp,"JUMPMOD067ALLTIMES")==0)
-			break;
-		strcpy(level_items.stored_item_times[i].date,temp);
-		fscanf(f, "%f", &level_items.stored_item_times[i].time);
-		fscanf(f, "%i", &uid);
-		level_items.stored_item_times[i].uid = uid;
+    fscanf(f,"%s",&temp);
+    if(!strstr(temp,"Jump067")){
+        rewind(f);
+        for(i = 0; i <= MAX_HIGHSCORES; i++){
+            fscanf(f, " %s %f %i %i", &temp, &level_items.stored_item_times[i].time, &uid, &completions);
+            if(feof(f)){
+                break;
+            }
+            level_items.stored_item_times[i].uid = uid;
+            strcpy(level_items.stored_item_times[i].date,temp);
+            strcpy(level_items.stored_item_times[i].name,maplist.users[uid].name);
+            strcpy(level_items.stored_item_times[i].owner,maplist.users[uid].name);
+        }
+    } else {
+	    while(!feof(f))
+	    {
+		    fscanf(f,"%s",&temp);
+		    if (strcmp(temp,"JUMPMOD067TOP10TIMES")==0)
+			    break;
+	    }
+
+	    while (!feof(f))
+	    {
+		    fscanf(f, "%s", &temp);
+		    if (strcmp(temp,"JUMPMOD067ALLTIMES")==0)
+			    break;
+		    strcpy(level_items.stored_item_times[i].date,temp);
+		    fscanf(f, "%f", &level_items.stored_item_times[i].time);
+		    fscanf(f, "%i", &uid);
+		    level_items.stored_item_times[i].uid = uid;
 
 
-		strcpy(level_items.stored_item_times[i].name,maplist.users[uid].name);
-		strcpy(level_items.stored_item_times[i].owner,maplist.users[uid].name);
-		i++;
-		if (i>MAX_HIGHSCORES)
-			break;
-	}
+		    strcpy(level_items.stored_item_times[i].name,maplist.users[uid].name);
+		    strcpy(level_items.stored_item_times[i].owner,maplist.users[uid].name);
+		    i++;
+		    if (i>=MAX_HIGHSCORES)
+			    break;
+	    }
+    }
 	
 	fclose(f);
 	level_items.stored_item_times_count = i;
@@ -9813,7 +9992,11 @@ qboolean ReadTimes(char *filename)
 
 	i=0;
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	if (!*tgame->string)
 	{
@@ -9910,7 +10093,11 @@ void WriteTimes(char *filename)
 	int		month,day,year;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
+    if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "27910", 0);
+    }
 
 	strcpy(port_d,port->string);
 	if (!port_d[0])
@@ -10214,7 +10401,11 @@ void RemoveMap (edict_t* ent)
 
 	gi.cprintf(ent, PRINT_HIGH, "Removed %s from the maplist.\n", maplist.mapnames[num]);
 	strcpy(maplist.mapnames[num], "");
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 	tgame = gi.cvar("game","",0);
 	sprintf (maplist_path, "%s/%s/maplist.ini", tgame->string,port->string);
 	//write_tourney_file(level.mapname,level.mapnum);
@@ -10728,7 +10919,11 @@ void addmaps(void)
 	qboolean got_match;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	if (!*tgame->string)
 	{
@@ -11236,7 +11431,11 @@ void open_uid_file(int uid,edict_t *ent)
 		index = 0;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	if (!*tgame->string)
 	{
@@ -11309,7 +11508,11 @@ qboolean open_uid_file_compare(edict_t *ent)
 		
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	for (i=0;i<MAX_MAPS;i++)
 		compare_users[index].user1.maps[i] = compare_users[index].user2.maps[i] = 0;
@@ -11375,7 +11578,11 @@ void write_uid_file(int uid,edict_t *ent)
 	index = ent-g_edicts-1;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	if (!*tgame->string)
 	{
@@ -11415,7 +11622,11 @@ void append_uid_file(int uid,char *filename)//,edict_t *ent)
 	//index = ent-g_edicts-1;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+    if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 
 	if (!*tgame->string)
 	{
@@ -11613,7 +11824,11 @@ void resync(qboolean overide)
 		restart = true;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 	if (!*tgame->string)
 	{
 		sprintf	(name, "jump/%s/0.u", port->string);
@@ -11709,7 +11924,11 @@ void append_added_ini(char *mapname)
 	int		month,day,year;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 	if (!*tgame->string)
 	{
 		sprintf	(name, "jump/%s/added.ini", port->string);
@@ -12950,7 +13169,11 @@ void Lastseen_Save(void)
 	long lSize;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
+    if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "27910", 0);
+    }
 	
 	strcpy(port_d,port->string);
 	if (!port_d[0])
@@ -12996,7 +13219,11 @@ void Lastseen_Load(void)
 	int lastseen;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
+    if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "27910", 0);
+    }
 	
 	strcpy(port_d,port->string);
 	if (!port_d[0])
