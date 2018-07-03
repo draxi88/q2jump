@@ -8155,7 +8155,8 @@ void Notify_Of_Team_Commands(edict_t *ent)
 	if (ent->client->resp.ctf_team==CTF_TEAM1)
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Team Easy: Use the commands store and recall to practice jumps.\n");
-		if (ent->client->resp.store != 1) {
+		if (ent->client->resp.store != 1) { // this only happens if a person has not placed a store
+			M_droptofloor(ent); // drop them to the floor in case spawn is raised
 			Cmd_Store_f(ent);
 		}
 	}
