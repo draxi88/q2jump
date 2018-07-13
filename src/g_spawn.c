@@ -870,7 +870,7 @@ debug_log(text);
     sort_users();
 
 	open_tourney_file(level.mapname,false);
-	Update_Highscores(10);
+	//Update_Highscores(10);
 	Load_Recording();
 
 	SetSpinnyThing();

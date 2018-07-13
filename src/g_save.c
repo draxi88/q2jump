@@ -304,7 +304,11 @@ void InitGame (void)
 	
 
 	//create dir here
-	
+	if(gset_vars->multipleservers==1){
+        port = gi.cvar("multiserver", "multiserver", 0);
+    } else {
+	    port = gi.cvar("port", "", 0);
+    }
 	sprintf (maplist_path, "%s/%s/maplist.ini", tgame->string,port->string);
 
 	sprintf(text,"==== Loading MapList ====");
