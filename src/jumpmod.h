@@ -49,6 +49,7 @@ typedef struct
 	qboolean fresh;
 } times_record;
 
+
 typedef struct
 {
 	float israfel;
@@ -661,6 +662,7 @@ extern times_record tourney_record[MAX_USERS];
 void read_top10_tourney_log(char *filename);
 void UpdateThisUsersUID(edict_t *ent,char *name);
 
+void update_users_file();
 void open_users_file();
 void write_users_file(void);
 
@@ -689,11 +691,16 @@ typedef struct {
 	int maps[MAX_MAPS];
 } overall_completions_t;
 
+typedef struct {
+    char mapname[256];
+} maplist_uid_file;
+
 void append_uid_file(int uid,char *filename);
 void clear_uid_info(int num);
 void list_mapsleft(edict_t *ent);
 void open_uid_file(int uid,edict_t *ent);
 void write_uid_file(int uid,edict_t *ent);
+void removemapfrom_uid_file(char mapname,int uid);
 extern overall_completions_t overall_completions[24];
 extern overall_completions_t temp_overall_completions;
 void sort_users_3( int n );
@@ -863,3 +870,4 @@ void		Cmd_1st(edict_t *ent);
 void Changename(edict_t *ent);
 void Cmd_Stats(edict_t *ent);
 extern qboolean removed_map;
+
