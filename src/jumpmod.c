@@ -8240,6 +8240,7 @@ void remtime(edict_t *ent)
 			Load_Individual_Recording(i,level_items.stored_item_times[i].uid);
 		}
 		gi.cprintf(ent,PRINT_HIGH,"Time %d removed.\n",remnum);
+        read_top10_tourney_log(level.mapname);//fix top 15..
         removemapfrom_uid_file(remuid);
 	}
 	else

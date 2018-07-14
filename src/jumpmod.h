@@ -700,7 +700,7 @@ void clear_uid_info(int num);
 void list_mapsleft(edict_t *ent);
 void open_uid_file(int uid,edict_t *ent);
 void write_uid_file(int uid,edict_t *ent);
-void removemapfrom_uid_file(char mapname,int uid);
+void removemapfrom_uid_file(int uid);
 extern overall_completions_t overall_completions[24];
 extern overall_completions_t temp_overall_completions;
 void sort_users_3( int n );
