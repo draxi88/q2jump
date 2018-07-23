@@ -8208,6 +8208,7 @@ void remtime(edict_t *ent)
 
 		UpdateScores();
 		sort_users();
+        sort_tourney_records();
 
 		for (i = 1; i <= maxclients->value; i++) 
 		{
