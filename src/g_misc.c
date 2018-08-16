@@ -1827,7 +1827,7 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	CTFPlayerResetGrapple(other);
 //ZOID
 
-    if(self->style==1){
+    if(self->style==1337){
         if(other->client->pers.checkpoints<self->count){
             return;
         }
