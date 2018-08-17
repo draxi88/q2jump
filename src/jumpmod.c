@@ -1913,6 +1913,7 @@ void ShowMapTimes(edict_t *ent)
 		if (strcmp(maplist.mapnames[i],temp)==0)
 		{
 			mapnum = i;
+            gi.dprintf("Map: %s  id:%d\n",maplist.mapnames[i],i);
 			break;
 		}
 	}
@@ -1963,7 +1964,7 @@ def:
 					time = maplist.times[mapnum][i].time;				
 			  Com_sprintf(name,sizeof(name),maplist.users[maplist.times[mapnum][i].uid].name);
 			  Highlight_Name(name);
-		      gi.cprintf (ent, PRINT_HIGH, "%-3d %-18s   %s  %8.3f %9.3f\n",i+1,name,maplist.times[mapnum][i].date,time,maplist.times[mapnum][i].time);
+              gi.cprintf (ent, PRINT_HIGH, "%-3d %-18s   %s  %8.3f %9.3f\n",i+1,name,maplist.times[mapnum][i].date,time,maplist.times[mapnum][i].time);
 			}
 		} 
 		if (overall_completions[index].maps[mapnum]==1)
@@ -3838,11 +3839,13 @@ void BestTimesScoreboardMessage (edict_t *ent, edict_t *killer)
 	chr[0] = 13;
 	chr[1] = 0;
 	//get total completions
-	for (completions=0;completions<4096;completions++)
+    completions = 0;
+	for (i=0;i<4096;i++)
 	{
-		total_count += tourney_record[completions].completions;
-		if (!tourney_record[completions].completions)
-			break;
+        if (!tourney_record[i].completions)
+			continue;
+		total_count += tourney_record[i].completions;
+        completions++;
 	}
 	sprintf(string+strlen(string), "xv 0 yv 0 string2 \"No   Player                    Date \" ");
 	for (i=0;i<MAX_HIGHSCORES;i++)
@@ -4778,7 +4781,7 @@ void Cmd_Replay(edict_t *ent)
 //		gi.cprintf(ent,PRINT_HIGH,"You need to be an observer to replay.\n");
 //		return;
 	}
-
+    ent->client->resp.rep_racing = false;
 }
 
 void Load_Recording(void)
@@ -8152,7 +8155,7 @@ void remtime(edict_t *ent)
 			remuid = level_items.stored_item_times[remnum-1].uid;
 			if (remuid==-1)
 				return;
-            maplist.users[remuid].completions--;
+            maplist.users[remuid].completions--; //does this work?
 			for (i=remnum-1;i<level_items.stored_item_times_count-1;i++)
 			{
 				level_items.stored_item_times[i].uid = level_items.stored_item_times[i+1].uid;
@@ -8198,13 +8201,14 @@ void remtime(edict_t *ent)
 		{
 			tourney_record[trecid].fresh = false;
 			tourney_record[trecid].time = 0;
-            //tourney_record[trecid].uid = -1; //will get deleted from tourney_records in update_tourney_records
+            //tourney_record[trecid].uid = -1;
 			tourney_record[trecid].completions = -1;
 		}
 //		Update_Highscores(MAX_HIGHSCORES-1);
 
 		UpdateScores();
 		sort_users();
+        sort_tourney_records();
 
 		for (i = 1; i <= maxclients->value; i++) 
 		{
@@ -9731,6 +9735,8 @@ void update_users_file()
 			fscanf(f, "%i", &completions);
             fscanf(f, "%i", &score);
 		    fscanf(f, "%s", &name);
+            if ((uid>=MAX_USERS) || (uid<0))
+			    continue;
             if(sizeof(maplist.users[uid].name)<2){ //meaning that the user is created on some other server
                 maplist.users[uid].completions = completions;
             }
@@ -9797,6 +9803,7 @@ void open_users_file()
     }
     else
     { 
+        maplist.version = 1;
         rewind(f);
         newusers = true;
     }
@@ -9846,6 +9853,8 @@ void open_users_file()
 			fscanf(f, "%i", &completions);
             fscanf(f, "%i", &score);
 		    fscanf(f, "%s", &name);
+            if ((uid>=MAX_USERS) || (uid<0))
+			    continue;
             strcpy(maplist.users[uid].name,name);
 		    maplist.users[uid].completions = completions;
             maplist.num_users++;
@@ -9896,11 +9905,10 @@ void write_users_file(void)
 	done=false;
 	for (i=0;i<MAX_USERS;i++)
 	{
-        if(strlen(maplist.users[i].name)<2){
-            continue;
+        if(maplist.users[i].name[0]){
+            Com_sprintf(buffer,sizeof(buffer), " %i %i %i %s",i,maplist.users[i].completions,maplist.users[i].score,maplist.users[i].name);
+		    fprintf (f, "%s", buffer);
         }
-        Com_sprintf(buffer,sizeof(buffer), " %i %i %i %s",i,maplist.users[i].completions,maplist.users[i].score,maplist.users[i].name);
-		fprintf (f, "%s", buffer);
 	}
 	fclose(f);
 }
@@ -9917,14 +9925,13 @@ void old_write_users_file(void)
 	cvar_t	*port;
 	cvar_t	*tgame;
 
-    update_users_file();
 	tgame = gi.cvar("game", "jump", 0);
 	if(gset_vars->multipleservers==1){
         port = gi.cvar("multiserver", "multiserver", 0);
     } else {
 	    port = gi.cvar("port", "27910", 0);
     }
-
+    
 	strcpy(port_d,port->string);
 	if (!port_d[0])
 		strcpy(port_d,"27910");
@@ -10205,6 +10212,7 @@ void read_top10_tourney_log(char *filename)
 	int uid;
     int completions;
 
+    sort_tourney_records();
 	//clear old times first
 	strcpy(level_items.mapname,filename);
 	ClearTimes();
@@ -10237,12 +10245,12 @@ void read_top10_tourney_log(char *filename)
     if(!strstr(temp,"Jump067")){
         rewind(f);
         //gi.dprintf("Read new top 15 tourneyfile!\n");
-        for(i = 0; i <= MAX_HIGHSCORES; i++){
-            fscanf(f, "%s", temp);
+        for(i = 0; i < MAX_HIGHSCORES; i++){
+            fscanf(f, "%s", &temp);
             fscanf(f, "%f", &level_items.stored_item_times[i].time);
             fscanf(f, "%i", &uid);
             fscanf(f, "%i", &completions);
-            if(feof(f)){
+            if(feof(f) || strlen(temp)<2){
                 break;
             }
             level_items.stored_item_times[i].uid = uid;
@@ -10251,7 +10259,10 @@ void read_top10_tourney_log(char *filename)
 		    strcpy(level_items.stored_item_times[i].name,maplist.users[uid].name);
 		    strcpy(level_items.stored_item_times[i].owner,maplist.users[uid].name);
             strcpy(level_items.stored_item_times[i].date,temp);
+            if (i>=MAX_HIGHSCORES)
+			    break;
         }
+        level_items.stored_item_times_count = i;
     } else {
 	    while(!feof(f))
 	    {
@@ -10276,10 +10287,11 @@ void read_top10_tourney_log(char *filename)
 		    if (i>=MAX_HIGHSCORES)
 			    break;
 	    }
+        level_items.stored_item_times_count = i;
     }
 	
 	fclose(f);
-	level_items.stored_item_times_count = i;
+	
 	if (level_items.stored_item_times_count>MAX_HIGHSCORES)
 		level_items.stored_item_times_count=MAX_HIGHSCORES;
 }

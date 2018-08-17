@@ -1229,10 +1229,7 @@ void SetCTFStats(edict_t *ent)
 	edict_t *e;
 	int keys;
 	int fps;
-
-	// hud numbers by draxi
-    const char *SpecNR[64] = {"°", "±", "²", "³", "´", "µ", "¶", "·", "¸", "¹", "±°", "±", "±²", "±³", "±´", "±µ", "±¶", "±·", "±¸", "±¹", "²°", "²±", "²²", "²³", "²´", "²µ", "²¶", "²·", "²¸", "²¹", "³°", "³±"};
-
+    char racenr[2];
 
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
@@ -1415,10 +1412,11 @@ void SetCTFStats(edict_t *ent)
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_ON;
 	else
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_OFF;
-    if (ent->client->resp.rep_racing){
-        gi.configstring (CONFIG_JUMP_RACE_ON,va("    Race: %s",SpecNR[(int)(ent->client->resp.rep_race_number+1)]));
+    if (ent->client->resp.rep_racing && !ent->client->resp.replaying){
+        itoa(ent->client->resp.rep_race_number+1,racenr,10);
+        gi.configstring (CONFIG_JUMP_RACE_ON,va("    Race: %s",HighAscii(racenr))); //draxi Ascii
         if (ent->client->resp.rep_race_number==MAX_HIGHSCORES){gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: ÎÏ×");}
-        ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
+            ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
     }
 	else
 		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_OFF;
