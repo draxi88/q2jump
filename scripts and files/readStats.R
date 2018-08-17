@@ -23,7 +23,7 @@ suffix <- ".html"
 usermaps <- data.frame(NULL)
 i <- 1
 while (i < length + 1) {
-  if (grepl("#|apocalypse61", maplist[i,])) {} #getting rid of bad map names
+  if (grepl("#|qqqqqqqq", maplist[i,])) {} # remove names with #, leave the or to remember it
   else {
     mapfile <- strip(html_nodes(read_html(paste(prefix, maplist[i,], suffix, sep = "")), "div"))
     mapfile <- data.frame(matrix(mapfile, ncol = 5, byrow = TRUE))
@@ -50,6 +50,6 @@ usermaps <- rbind(usermaps, mapfile)
 colnames(usermaps) <- c("pos", "name", "date", "time", "map")
 ace <- subset(usermaps, name == "ace")
 first <- subset(usermaps, pos == 1)
-write.csv(usermaps, file = paste0(Sys.Date(), "-maptimes.csv"))
-write.csv(ace, file = paste0(Sys.Date(), "-ace.csv"))
-write.csv(first, file = paste0(Sys.Date(), "-first.csv"))
+write.csv(usermaps, file = paste0(Sys.Date(), "-maptimes.csv"), row.names = FALSE)
+write.csv(ace, file = paste0(Sys.Date(), "-ace.csv"), row.names = FALSE)
+write.csv(first, file = paste0(Sys.Date(), "-first.csv"), row.names = FALSE)
