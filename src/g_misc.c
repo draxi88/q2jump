@@ -1834,13 +1834,15 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	adds `style` value to teleporters
 	setting `style` to 1337 allows teles to work as long as checkpoints >= `count`
 	*/
-    if (self->style == 1337){
-        if (other->client->pers.checkpoints < self->count) {
-            return;
-        }
-    } else {
-        if (other->client->pers.checkpoints != self->count) {
-            return;
+    if (self->count>0){
+        if (self->style == 1337){
+            if (other->client->pers.checkpoints < self->count) {
+                return;
+            }
+        } else {
+            if (other->client->pers.checkpoints != self->count) {
+                return;
+            }
         }
     }
 
