@@ -500,7 +500,6 @@ typedef struct
 	int cvote_announce;
 	unsigned int voteextratime;
 	int addtime_announce;
-    int multipleservers;
 } gset_vars_t;
 
 typedef struct
