@@ -3996,74 +3996,31 @@ void sort_queue( int n )
 
 void AddUser(char *name,int i)
 {
-    FILE *f;
 	int j;
-    char fname[128];
-    char port_d[32];
-	cvar_t	*port;
-	cvar_t	*tgame;
-
-    //update_users_file();
-	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
-
-	strcpy(port_d,port->string);
-	if (!port_d[0])
-		strcpy(port_d,"27910");
-	if (!*tgame->string) {
-		sprintf	(fname, "jump/%s/users.t", port_d);
-	} else {
-		sprintf (fname, "%s/%s/users.t", tgame->string,port_d);
-	}
-
-	f = fopen (fname, "a");
-    fprintf(f," %i 0 0 %s",i,name);
-    fclose(f);
 	strcpy(maplist.users[i].name,name);
 	for (j=0;j<MAX_HIGHSCORES;j++)
 		maplist.users[i].points[j] = 0;
 	maplist.users[i].score = 0;
 	maplist.users[i].lastseen = Get_Timestamp();
 	maplist.num_users++;
+	
 }
 
 int GetPlayerUid(char *name)
 {
-    FILE *file;
 	int i;
-	cvar_t	*port;
-	cvar_t	*tgame;
-	char	filename[256];
-
-	tgame = gi.cvar("game", "", 0);
-    port = gi.cvar("port", "", 0);
-
-    update_users_file();
 	for (i=0;i<MAX_USERS;i++)
 	{
 		if (!maplist.users[i].name[0])
 		{
-			break;
+			AddUser(name,i);
+			return i;
 		}
 		if (Q_stricmp(name,maplist.users[i].name)==0)
 		{
 			return i;
 		}
 	}
-    for(i=0;i<=MAX_USERS;i++){
-        if (!*tgame->string)
-	    {
-		    sprintf	(filename, "jump/%s/%i.u", port->string,i);
-	    }
-	    else
-	    {
-		    sprintf (filename, "%s/%s/%i.u", tgame->string,port->string,i);
-	    }
-        if((file = fopen(filename,"r"))==NULL){
-            AddUser(name,i);
-	        return i;
-        }
-    }
 	return -1;
 }
 
