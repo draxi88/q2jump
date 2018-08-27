@@ -437,6 +437,7 @@ typedef struct
 	unsigned int bfg;
 	unsigned int fast_firing;
 	int ghost_model;
+	int ghost_trans;
 } mset_vars_t;
 
 typedef struct

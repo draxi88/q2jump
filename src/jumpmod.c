@@ -260,6 +260,13 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,0,
+    "ghost_trans", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->ghost_trans,
+  },
+  { 
+	0,1,0,
     "tourney", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -450,6 +457,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->timelimit,
+  },
+  { 
+	0,1,0,
+    "ghost_trans", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->ghost_trans,
   },
   { 
 	0,1,0,
@@ -7048,6 +7062,7 @@ void SetDefaultValues(void)
 	gset_vars->mset->antiglue_allow1st = 0;
 	gset_vars->mset->target_glow = 512;
 	gset_vars->mset->ghost = 1;
+	gset_vars->mset->ghost_trans = 0;
 	gset_vars->mset->kill_delay = 2;
 	gset_vars->mset->singlespawn = 0;
 	gset_vars->mset->falldamage = 1;
@@ -7813,7 +7828,8 @@ void Ghost_Play_Frame(void)
 				level.ghost->clipmask = MASK_PLAYERSOLID;
 				level.ghost->solid = SOLID_NOT;
 				//level.ghost->s.effects = EF_COLOR_SHELL;
-//				level.ghost->s.renderfx = RF_TRANSLUCENT;
+				if (mset_vars->ghost_trans == 1)
+					level.ghost->s.renderfx = RF_TRANSLUCENT;
 				VectorClear (level.ghost->mins);
 				VectorClear (level.ghost->maxs);
 //				level.ghost->model = "players/female/tris.md2";
