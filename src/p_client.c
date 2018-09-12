@@ -1823,18 +1823,24 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	}
 	// handedness
 	s = Info_ValueForKey (userinfo, "cl_maxfps");
-	if (strlen(s))
-	{
+	if (strlen(s)) {
 		ent->client->pers.fps = atoi(s);
-		if (ent->client->pers.fps>0 && ent->client->pers.fps<20)
-		{
+		if (ent->client->pers.fps>0 && ent->client->pers.fps<20) { // kick for lower than 20
             gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for lowering CL_MAXFPS below 20\n");
 			sprintf(temps,"kick %d\n",ent-g_edicts-1);
 			gi.AddCommandString(temps);
-
-//			stuffcmd(ent,"set cl_maxfps 20\n");
 		}
+
+		if (ent->client->pers.fps>0 && ent->client->pers.fps>120) { // kick for higher than 120
+            gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for raising CL_MAXFPS above 120\n");
+			sprintf(temps,"kick %d\n",ent-g_edicts-1);
+			gi.AddCommandString(temps);
+		}
+
+		// if we need to stuff something, do it like this
+		// stuffcmd(ent,"set cl_maxfps 20\n");
 	}
+
 
 	// save off the userinfo in case we want to check something later
 	strncpy (ent->client->pers.userinfo, userinfo, sizeof(ent->client->pers.userinfo)-1);
