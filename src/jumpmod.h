@@ -858,6 +858,7 @@ extern char map_skill2[10][10];
 void Jumpers_Update_Skins(edict_t *ent);
 void Jumpers_on_off(edict_t *ent);
 void Cpsound_on_off(edict_t *ent);
+void Showtimes_on_off(edict_t *ent);
 extern int number_of_jumpers_off;
 typedef struct 
 {

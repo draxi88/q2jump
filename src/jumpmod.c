@@ -9158,7 +9158,9 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 	int trecid;
 	float oldtime;
 	char penalty_str[64];
+    edict_t *cl_ent;
 	memset(penalty_str,0,sizeof(penalty_str));
+    
 
 	if (item_time_penalty) {
 		sprintf(penalty_str,"(%2.1f seconds antiglue penalty)",item_time_penalty/10);
@@ -9209,11 +9211,19 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
 		}
 
-		// didn't beat pb/1st, only show to player
+		// didn't beat pb/1st, only show to players that wants it! :D
+        for (i = 0; i < maxclients->value; i++) {
+		    cl_ent = g_edicts + 1 + i;
+		    if (!cl_ent->inuse)
+			    continue;
+		    if (cl_ent->client->resp.showtimes)
+			    gi.cprintf(cl_ent, PRINT_CHAT, "%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f)\n",
+				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
+	    } /*
 		if (time >= oldtime) {
 			gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
 				time,time-oldtime,time-level_items.stored_item_times[0].time);
-		}
+		} */
 
 		return false;
 	}
@@ -14194,6 +14204,16 @@ void Cpsound_on_off(edict_t *ent)
 	Com_sprintf(s,sizeof(s),"Checkpoint sounds are now %s",(ent->client->resp.mute_cps ? "OFF." : "ON."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
+
+void Showtimes_on_off(edict_t *ent)
+{
+	char s[255];
+	ent->client->resp.showtimes = !ent->client->resp.showtimes;
+	Com_sprintf(s,sizeof(s),"Showing other players time is now %s",(ent->client->resp.showtimes ? "OFF." : "ON."));
+	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
+}
+
+
 
 void	FS_CreatePath (char *path)
 {
