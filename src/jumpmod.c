@@ -9216,15 +9216,18 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		    cl_ent = g_edicts + 1 + i;
 		    if (!cl_ent->inuse)
 			    continue;
-		    if (cl_ent->client->resp.showtimes)
-			    gi.cprintf(cl_ent, PRINT_CHAT, "%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f)\n",
-				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
-	    } /*
-		if (time >= oldtime) {
+
+			if (cl_ent->client->resp.showtimes)
+			    gi.cprintf(cl_ent, PRINT_HIGH, "%s finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
+					ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
+	    }
+
+		// even with showtimes off, you should still see your own time
+		if (time >= oldtime && !ent->client->resp.showtimes)
 			gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
 				time,time-oldtime,time-level_items.stored_item_times[0].time);
-		} */
 
+		// something is very wrong...
 		return false;
 	}
 	else {
@@ -14209,7 +14212,7 @@ void Showtimes_on_off(edict_t *ent)
 {
 	char s[255];
 	ent->client->resp.showtimes = !ent->client->resp.showtimes;
-	Com_sprintf(s,sizeof(s),"Showing other players time is now %s",(ent->client->resp.showtimes ? "OFF." : "ON."));
+	Com_sprintf(s,sizeof(s),"Showing other players time is now %s",(ent->client->resp.showtimes ? "On." : "Off."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
