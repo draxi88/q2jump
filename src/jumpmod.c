@@ -35,6 +35,7 @@ static char *help_main[] = {
 	"replay - replay # to view replays 1-15\n",
 	"jumpers - turn on or off player models\n",
 	"cpsound - turn on or off checkpoint sounds\n",
+	"showtimes - turn on or off displaying all times\n",
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
