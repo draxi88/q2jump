@@ -1413,7 +1413,7 @@ void SetCTFStats(edict_t *ent)
 	else
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_OFF;
     if (ent->client->resp.rep_racing && !ent->client->resp.replaying){
-        itoa(ent->client->resp.rep_race_number+1,racenr,10);
+        sprintf(racenr,"%d",ent->client->resp.rep_race_number+1);
         gi.configstring (CONFIG_JUMP_RACE_ON,va("    Race: %s",HighAscii(racenr))); //draxi Ascii
         if (ent->client->resp.rep_race_number==MAX_HIGHSCORES){gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: нов");}
             ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
