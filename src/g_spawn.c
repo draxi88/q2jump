@@ -1288,7 +1288,7 @@ void SP_worldspawn (edict_t *ent)
 		gi.configstring (CONFIG_JUMP_ANTIGLUE,         "Antiglue    Ïî");			
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_OFF,     "Antiglue   ÏÆÆ");			
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_DISABLED,"Antiglue   Î¯Á");
-        itoa(mset_vars->checkpoint_total,cptotal,10);
+        sprintf(cptotal,"%d",mset_vars->checkpoint_total);
 		gi.configstring (CONFIG_CP_ON,va(              "  Chkpts: %s",HighAscii(cptotal))); //draxi ascii
 		gi.configstring (CONFIG_CP_OFF,                "              ");
         gi.configstring (CONFIG_JUMP_RACE_ON,          "    Race:     ");
