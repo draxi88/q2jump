@@ -7886,11 +7886,12 @@ void Ghost_Play_Frame(void)
 						if (ent->client->resp.ctf_team<CTF_TEAM1)
 							continue;
 					}
-					else
+					// let ghosts disappear in easy too
+					/*else
 					{
 						if (ent->client->resp.ctf_team!=CTF_TEAM2 )
 							continue;
-					}
+					}*/
 					VectorSubtract(ent->s.origin,level_items.recorded_time_data[0][level.ghost_frame].origin,myvec);
 					if (VectorLength(myvec)<distance)
 					{
