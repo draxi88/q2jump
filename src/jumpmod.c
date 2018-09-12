@@ -40,7 +40,6 @@ static char *help_main[] = {
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
 	"playerlist - list the players in game\n",
-	"idle - toggles idle status\n",
 	"\nΣτατιστιγσ\n",
 	"maptimes - view best times on a map\n",
 	"playertimes - view overall points in the server\n",
