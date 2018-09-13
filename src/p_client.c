@@ -1825,6 +1825,11 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	// fps
 	stuffcmd(ent, "set cl_maxfps $cl_maxfps u\n"); // lets do this in game code instead of q2admin
 	s = Info_ValueForKey (userinfo, "cl_maxfps");
+
+	if (!strlen(s)) { // set to 120fps on load in
+		stuffcmd(ent, "set cl_maxfps 120\n");
+	}
+
 	if (strlen(s)) {
 		ent->client->pers.fps = atoi(s);
 		if (ent->client->pers.fps>0 && ent->client->pers.fps<20) { // kick for lower than 20
@@ -1838,11 +1843,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 			sprintf(temps,"kick %d\n",ent-g_edicts-1);
 			gi.AddCommandString(temps);
 		}
-
-		// if we need to stuff something, do it like this
-		// stuffcmd(ent,"set cl_maxfps 20\n");
 	}
-
 
 	// save off the userinfo in case we want to check something later
 	strncpy (ent->client->pers.userinfo, userinfo, sizeof(ent->client->pers.userinfo)-1);
