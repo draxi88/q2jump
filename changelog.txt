@@ -1,20 +1,30 @@
 #####v1.22ger#####
 -autostore on team join now drops the ent to the floor
+
 -score format has been updated to fix multiple bugs that required scripts before:
 	-removing a time from the top 15 should now fill in the correct missing time
 	-duplicate maps in a player's file should not exist
 	-number of maps completed by a player should be accurate
+	
 -fixed buggy race and cp UI
 -race number no longer displayed while in a replay
+
 -teleporter can now take two new fields:
 	-count can be set to any value, and the player must have a MATCHING checkpoint value to use the teleporter
 	-style can be set to 1337, and the player can have any checkpoint value >= to the count to use the teleporter
+	
 -new g/mset for setting ghost semi transparent, ghost_trans
 -jumpers makes the ghost invisible on both hard and easy now, was hard only before
+
 -new toggle, showtimes, allows players to view all finish times, instead of just personal bests, defaults off
 -removed references to `idle` in some cmds
--going over 120fps now kicks instead of setting fps back to 120, THANKS APKIS :)
+
+-going over 120fps now kicks
+-going under min fps, or over max fps now sets the player back to the min/max value after the kick
 -cl_maxfps is now handled in game code instead of q2admin
+-clients are now forced to 120fps on load in
+
+-acmd remtimes is now acmd remalltimes, remtime still works the same
 
 #####v1.21ger#####
 -spawnflag 3(1+2) on trigger tele ignores destination angle
