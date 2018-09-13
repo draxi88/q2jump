@@ -19,10 +19,10 @@
 -new toggle, showtimes, allows players to view all finish times, instead of just personal bests, defaults off
 -removed references to `idle` in some cmds
 
--going over 120fps now kicks
--going under min fps, or over max fps now sets the player back to the min/max value after the kick
 -cl_maxfps is now handled in game code instead of q2admin
--clients are now forced to 120fps on load in
+	-new g/mset for toggling kicking for low/high fps, fpskick, default is on
+	-going over 120fps now kicks
+	-clients are now forced to 120fps on load in
 
 -acmd remtimes is now acmd remalltimes, remtime still works the same
 
