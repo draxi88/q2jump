@@ -328,6 +328,13 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &mset_vars->checkpoint_total,
   },
+  { 
+	0,1,1,
+    "fpskick", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->fpskick,
+  },
 
   /************************** GSET MAP **************/
 
@@ -478,6 +485,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_STRING,
     &gset_vars->mset->edited_by,
+  },
+  { 
+	0,1,1,
+    "gfpskick", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->fpskick,
   },
   { 
 	-10000,10000,800,
@@ -7068,6 +7082,7 @@ void SetDefaultValues(void)
 	gset_vars->mset->falldamage = 1;
 	gset_vars->mset->addedtimeoveride = 0;
 	gset_vars->voteextratime = 60;
+	gset_vars->mset->fpskick = 1;
 
 	aset_vars->MAX_ADMIN_LEVEL			=7;
 	aset_vars->ADMIN_ADDADMIN_LEVEL		=7;
