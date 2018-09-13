@@ -5338,7 +5338,7 @@ void List_Admin_Commands(edict_t *ent)
 		if (i == aset_vars->ACMD_RESET_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "reset ");
 		if (i == aset_vars->ADMIN_REMTIMES_LEVEL)
-			gi.cprintf(ent, PRINT_HIGH, "remtimes ");
+			gi.cprintf(ent, PRINT_HIGH, "remalltimes ");
 		if (i == aset_vars->ADMIN_UPDATESCORES_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "updatescores ");
 		if (i == aset_vars->ACMD_ADMINLEVEL_LEVEL)
