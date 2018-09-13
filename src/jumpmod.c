@@ -6524,7 +6524,7 @@ void ACMD(edict_t *ent)
 		else
 		DeleteEnts(ent);
 	}
-	else if (strcmp(gi.argv(1),"remtimes")==0)
+	else if (strcmp(gi.argv(1),"remalltimes")==0)
 	{
 		remtimes(ent);
 	}
