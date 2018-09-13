@@ -1821,7 +1821,9 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	{
 		ent->client->pers.hand = atoi(s);
 	}
-	// handedness
+
+	// fps
+	stuffcmd(ent, "set cl_maxfps $cl_maxfps u\n"); // lets do this in game code instead of q2admin
 	s = Info_ValueForKey (userinfo, "cl_maxfps");
 	if (strlen(s)) {
 		ent->client->pers.fps = atoi(s);
