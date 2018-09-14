@@ -6305,7 +6305,6 @@ void List_acmd_commands(edict_t *ent)
 		gi.cprintf(ent, PRINT_HIGH, "  deleteents <mapname>\n");
 		gi.cprintf(ent, PRINT_HIGH, "  remtimes\n");
 		gi.cprintf(ent, PRINT_HIGH, "  togglehud\n");
-		gi.cprintf(ent, PRINT_HIGH, "  lock\n");
 		gi.cprintf(ent, PRINT_HIGH, "  nextmaps <1> <2> <3>\n");
 		gi.cprintf(ent, PRINT_HIGH, "  ghost\n");
 	}
