@@ -6328,7 +6328,6 @@ void List_acmd_commands(edict_t *ent)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "  ratereset\n");
 		gi.cprintf(ent, PRINT_HIGH, "  sortmaps\n");
-//		gi.cprintf(ent, PRINT_HIGH, "  resync\n");
 	}
 
 }

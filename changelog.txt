@@ -26,7 +26,7 @@
 	
 -1st place song no longer overlaps if multiple people set a 1st
 
--`lock` is no longer listed twice in acmd
+-`lock`/`resync` is no longer listed twice in acmd
 
 -acmd remtimes is now acmd remalltimes, remtime still works the same
 
