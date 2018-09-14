@@ -23,6 +23,8 @@
 	-new g/mset for toggling kicking for low/high fps, fpskick, default is on
 	-going over 120fps now kicks
 	-clients are now forced to 120fps on load in
+	
+-1st place song no longer overlaps if multiple people set a 1st
 
 -acmd remtimes is now acmd remalltimes, remtime still works the same
 
