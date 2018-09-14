@@ -1823,22 +1823,17 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	}
 
 	// fps
-	stuffcmd(ent, "set cl_maxfps $cl_maxfps u\n"); // lets do this in game code instead of q2admin
 	s = Info_ValueForKey (userinfo, "cl_maxfps");
 
-	if (!strlen(s)) { // set to 120fps on load in
-		stuffcmd(ent, "set cl_maxfps 120\n");
-	}
-
-	if (strlen(s)) {
+	// check for the string, fpskick mset
+	if (strlen(s) && mset_vars->fpskick == 1) {
 		ent->client->pers.fps = atoi(s);
-		if (ent->client->pers.fps>0 && ent->client->pers.fps<20 && mset_vars->fpskick == 1) { // kick for lower than 20
+		if (ent->client->pers.fps>0 && ent->client->pers.fps<20) { // kick for lower than 20
             gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for lowering CL_MAXFPS below 20\n");
 			sprintf(temps,"kick %d\n",ent-g_edicts-1);
 			gi.AddCommandString(temps);
 		}
-
-		if (ent->client->pers.fps>0 && ent->client->pers.fps>120 && mset_vars->fpskick == 1) { // kick for higher than 120
+		if (ent->client->pers.fps>0 && ent->client->pers.fps>120) { // kick for higher than 120
             gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for raising CL_MAXFPS above 120\n");
 			sprintf(temps,"kick %d\n",ent-g_edicts-1);
 			gi.AddCommandString(temps);
