@@ -1827,6 +1827,25 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	CTFPlayerResetGrapple(other);
 //ZOID
 
+	/* 
+	adds a `count` value to teleporters
+	`count` is compared to the number of checkpoints a player has
+	`count` must MATCH the number of checkpoints in order for the tele to work
+	adds `style` value to teleporters
+	setting `style` to 1337 allows teles to work as long as checkpoints >= `count`
+	*/
+    if (self->count>0){
+        if (self->style == 1337){
+            if (other->client->pers.checkpoints < self->count) {
+                return;
+            }
+        } else {
+            if (other->client->pers.checkpoints != self->count) {
+                return;
+            }
+        }
+    }
+
 	// unlink to make sure it can't possibly interfere with KillBox
 	gi.unlinkentity (other);
 

@@ -1821,18 +1821,22 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	{
 		ent->client->pers.hand = atoi(s);
 	}
-	// handedness
+
+	// fps
 	s = Info_ValueForKey (userinfo, "cl_maxfps");
-	if (strlen(s))
-	{
+
+	// check for the string, fpskick mset
+	if (strlen(s) && mset_vars->fpskick == 1) {
 		ent->client->pers.fps = atoi(s);
-		if (ent->client->pers.fps>0 && ent->client->pers.fps<20)
-		{
+		if (ent->client->pers.fps>0 && ent->client->pers.fps<20) { // kick for lower than 20
             gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for lowering CL_MAXFPS below 20\n");
 			sprintf(temps,"kick %d\n",ent-g_edicts-1);
 			gi.AddCommandString(temps);
-
-//			stuffcmd(ent,"set cl_maxfps 20\n");
+		}
+		if (ent->client->pers.fps>0 && ent->client->pers.fps>120) { // kick for higher than 120
+            gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for raising CL_MAXFPS above 120\n");
+			sprintf(temps,"kick %d\n",ent-g_edicts-1);
+			gi.AddCommandString(temps);
 		}
 	}
 

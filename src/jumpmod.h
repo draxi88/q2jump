@@ -1,7 +1,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.21ger"
+#define CTF_VERSION_S		"1.22ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -48,6 +48,7 @@ typedef struct
 	int		completions;
 	qboolean fresh;
 } times_record;
+
 
 typedef struct
 {
@@ -302,6 +303,7 @@ void		remtimes(edict_t *ent);
 void		Apply_Nominated_Map(char *mapname);
 int			get_admin_id(char *givenpass,char *givenname);
 qboolean	trigger_timer(edict_t *other, int timeBetweenMessages);
+qboolean    song_timer(edict_t *other, int timeBetweenMessages);
 void		ClearCheckpoints(client_persistant_t* pers);
 
 extern cvar_t		*gametype;
@@ -436,6 +438,8 @@ typedef struct
 	unsigned int bfg;
 	unsigned int fast_firing;
 	int ghost_model;
+	int ghost_trans;
+	int fpskick;
 } mset_vars_t;
 
 typedef struct
@@ -652,6 +656,7 @@ void removeClientCommands(edict_t *ent);
 void AutoPutClientInServer (edict_t *ent);
 
 qboolean tourney_log(edict_t *ent, int uid, float time, float item_time_penalty, char *date );
+void sort_tourney_records();
 void open_tourney_file(char *filename,qboolean apply);
 void write_tourney_file(char *filename,int mapnum);
 
@@ -659,6 +664,7 @@ extern times_record tourney_record[MAX_USERS];
 void read_top10_tourney_log(char *filename);
 void UpdateThisUsersUID(edict_t *ent,char *name);
 
+void update_users_file();
 void open_users_file();
 void write_users_file(void);
 
@@ -687,11 +693,16 @@ typedef struct {
 	int maps[MAX_MAPS];
 } overall_completions_t;
 
+typedef struct {
+    char mapname[256];
+} maplist_uid_file;
+
 void append_uid_file(int uid,char *filename);
 void clear_uid_info(int num);
 void list_mapsleft(edict_t *ent);
 void open_uid_file(int uid,edict_t *ent);
 void write_uid_file(int uid,edict_t *ent);
+void removemapfrom_uid_file(int uid);
 extern overall_completions_t overall_completions[24];
 extern overall_completions_t temp_overall_completions;
 void sort_users_3( int n );
@@ -849,6 +860,7 @@ extern char map_skill2[10][10];
 void Jumpers_Update_Skins(edict_t *ent);
 void Jumpers_on_off(edict_t *ent);
 void Cpsound_on_off(edict_t *ent);
+void Showtimes_on_off(edict_t *ent);
 extern int number_of_jumpers_off;
 typedef struct 
 {
@@ -861,3 +873,4 @@ void		Cmd_1st(edict_t *ent);
 void Changename(edict_t *ent);
 void Cmd_Stats(edict_t *ent);
 extern qboolean removed_map;
+

@@ -304,7 +304,7 @@ void InitGame (void)
 	
 
 	//create dir here
-	
+	port = gi.cvar("port", "", 0);
 	sprintf (maplist_path, "%s/%s/maplist.ini", tgame->string,port->string);
 
 	sprintf(text,"==== Loading MapList ====");

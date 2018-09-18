@@ -870,7 +870,7 @@ debug_log(text);
     sort_users();
 
 	open_tourney_file(level.mapname,false);
-	Update_Highscores(10);
+	//Update_Highscores(10);
 	Load_Recording();
 
 	SetSpinnyThing();
@@ -1063,7 +1063,8 @@ void SP_worldspawn (edict_t *ent)
 	char str[2048];
 	qboolean gottype = false;
 	char temp[50];
-    const char *SpecNR[64] = {"°", "±", "²", "³", "´", "µ", "¶", "·", "¸", "¹", "±°", "±", "±²", "±³", "±´", "±µ", "±¶", "±·", "±¸", "±¹", "²°", "²±", "²²", "²³", "²´", "²µ", "²¶", "²·", "²¸", "²¹", "³°", "³±"};
+    char cptotal[2];
+    //const char *SpecNR[64] = {"°", "±", "²", "³", "´", "µ", "¶", "·", "¸", "¹", "±°", "±", "±²", "±³", "±´", "±µ", "±¶", "±·", "±¸", "±¹", "²°", "²±", "²²", "²³", "²´", "²µ", "²¶", "²·", "²¸", "²¹", "³°", "³±"};
 
 	ent->movetype = MOVETYPE_PUSH;
 	ent->solid = SOLID_BSP;
@@ -1287,7 +1288,8 @@ void SP_worldspawn (edict_t *ent)
 		gi.configstring (CONFIG_JUMP_ANTIGLUE,         "Antiglue    Ïî");			
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_OFF,     "Antiglue   ÏÆÆ");			
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_DISABLED,"Antiglue   Î¯Á");
-		gi.configstring (CONFIG_CP_ON,va(              "  Chkpts: %s",SpecNR[(int)(mset_vars->checkpoint_total)]));
+        sprintf(cptotal,"%d",mset_vars->checkpoint_total);
+		gi.configstring (CONFIG_CP_ON,va(              "  Chkpts: %s",HighAscii(cptotal))); //draxi ascii
 		gi.configstring (CONFIG_CP_OFF,                "              ");
         gi.configstring (CONFIG_JUMP_RACE_ON,          "    Race:     ");
         gi.configstring (CONFIG_JUMP_RACE_OFF,         ""); // old "    Race: ÏÆÆ"

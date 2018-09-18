@@ -7,6 +7,9 @@
 #endif
 
 #include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int curclients = 0;
 int activeclients = 0;
@@ -32,11 +35,11 @@ static char *help_main[] = {
 	"replay - replay # to view replays 1-15\n",
 	"jumpers - turn on or off player models\n",
 	"cpsound - turn on or off checkpoint sounds\n",
+	"showtimes - turn on or off displaying all times\n",
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
 	"playerlist - list the players in game\n",
-	"idle - toggles idle status\n",
 	"\nΣτατιστιγσ\n",
 	"maptimes - view best times on a map\n",
 	"playertimes - view overall points in the server\n",
@@ -257,6 +260,13 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,0,
+    "ghost_trans", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->ghost_trans,
+  },
+  { 
+	0,1,0,
     "tourney", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -317,6 +327,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
     &mset_vars->checkpoint_total,
+  },
+  { 
+	0,1,1,
+    "fpskick", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->fpskick,
   },
 
   /************************** GSET MAP **************/
@@ -450,6 +467,13 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,0,
+    "ghost_trans", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->ghost_trans,
+  },
+  { 
+	0,1,0,
     "gtourney", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
@@ -461,6 +485,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_STRING,
     &gset_vars->mset->edited_by,
+  },
+  { 
+	0,1,1,
+    "gfpskick", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->fpskick,
   },
   { 
 	-10000,10000,800,
@@ -1899,6 +1930,7 @@ void ShowMapTimes(edict_t *ent)
 		if (strcmp(maplist.mapnames[i],temp)==0)
 		{
 			mapnum = i;
+            gi.dprintf("Map: %s  id:%d\n",maplist.mapnames[i],i);
 			break;
 		}
 	}
@@ -1949,7 +1981,7 @@ def:
 					time = maplist.times[mapnum][i].time;				
 			  Com_sprintf(name,sizeof(name),maplist.users[maplist.times[mapnum][i].uid].name);
 			  Highlight_Name(name);
-		      gi.cprintf (ent, PRINT_HIGH, "%-3d %-18s   %s  %8.3f %9.3f\n",i+1,name,maplist.times[mapnum][i].date,time,maplist.times[mapnum][i].time);
+              gi.cprintf (ent, PRINT_HIGH, "%-3d %-18s   %s  %8.3f %9.3f\n",i+1,name,maplist.times[mapnum][i].date,time,maplist.times[mapnum][i].time);
 			}
 		} 
 		if (overall_completions[index].maps[mapnum]==1)
@@ -3824,11 +3856,13 @@ void BestTimesScoreboardMessage (edict_t *ent, edict_t *killer)
 	chr[0] = 13;
 	chr[1] = 0;
 	//get total completions
-	for (completions=0;completions<4096;completions++)
+    completions = 0;
+	for (i=0;i<4096;i++)
 	{
-		total_count += tourney_record[completions].completions;
-		if (!tourney_record[completions].completions)
-			break;
+        if (!tourney_record[i].completions)
+			continue;
+		total_count += tourney_record[i].completions;
+        completions++;
 	}
 	sprintf(string+strlen(string), "xv 0 yv 0 string2 \"No   Player                    Date \" ");
 	for (i=0;i<MAX_HIGHSCORES;i++)
@@ -4705,7 +4739,7 @@ void Cmd_Replay(edict_t *ent)
 //		gi.cprintf(ent,PRINT_HIGH,"You need to be an observer to replay.\n");
 //		return;
 	}
-
+    ent->client->resp.rep_racing = false;
 }
 
 void Load_Recording(void)
@@ -5318,7 +5352,7 @@ void List_Admin_Commands(edict_t *ent)
 		if (i == aset_vars->ACMD_RESET_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "reset ");
 		if (i == aset_vars->ADMIN_REMTIMES_LEVEL)
-			gi.cprintf(ent, PRINT_HIGH, "remtimes ");
+			gi.cprintf(ent, PRINT_HIGH, "remalltimes ");
 		if (i == aset_vars->ADMIN_UPDATESCORES_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "updatescores ");
 		if (i == aset_vars->ACMD_ADMINLEVEL_LEVEL)
@@ -5483,7 +5517,6 @@ void mvote(edict_t *ent)
 			gi.cprintf(ent, PRINT_HIGH, "For available levels type maplist.\n");
 			return;
 		}
-
 
 		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",gi.argv(1));
@@ -6272,7 +6305,6 @@ void List_acmd_commands(edict_t *ent)
 		gi.cprintf(ent, PRINT_HIGH, "  deleteents <mapname>\n");
 		gi.cprintf(ent, PRINT_HIGH, "  remtimes\n");
 		gi.cprintf(ent, PRINT_HIGH, "  togglehud\n");
-		gi.cprintf(ent, PRINT_HIGH, "  lock\n");
 		gi.cprintf(ent, PRINT_HIGH, "  nextmaps <1> <2> <3>\n");
 		gi.cprintf(ent, PRINT_HIGH, "  ghost\n");
 	}
@@ -6296,7 +6328,6 @@ void List_acmd_commands(edict_t *ent)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "  ratereset\n");
 		gi.cprintf(ent, PRINT_HIGH, "  sortmaps\n");
-//		gi.cprintf(ent, PRINT_HIGH, "  resync\n");
 	}
 
 }
@@ -6505,7 +6536,7 @@ void ACMD(edict_t *ent)
 		else
 		DeleteEnts(ent);
 	}
-	else if (strcmp(gi.argv(1),"remtimes")==0)
+	else if (strcmp(gi.argv(1),"remalltimes")==0)
 	{
 		remtimes(ent);
 	}
@@ -7043,11 +7074,13 @@ void SetDefaultValues(void)
 	gset_vars->mset->antiglue_allow1st = 0;
 	gset_vars->mset->target_glow = 512;
 	gset_vars->mset->ghost = 1;
+	gset_vars->mset->ghost_trans = 0;
 	gset_vars->mset->kill_delay = 2;
 	gset_vars->mset->singlespawn = 0;
 	gset_vars->mset->falldamage = 1;
 	gset_vars->mset->addedtimeoveride = 0;
 	gset_vars->voteextratime = 60;
+	gset_vars->mset->fpskick = 1;
 
 	aset_vars->MAX_ADMIN_LEVEL			=7;
 	aset_vars->ADMIN_ADDADMIN_LEVEL		=7;
@@ -7808,7 +7841,8 @@ void Ghost_Play_Frame(void)
 				level.ghost->clipmask = MASK_PLAYERSOLID;
 				level.ghost->solid = SOLID_NOT;
 				//level.ghost->s.effects = EF_COLOR_SHELL;
-//				level.ghost->s.renderfx = RF_TRANSLUCENT;
+				if (mset_vars->ghost_trans == 1)
+					level.ghost->s.renderfx = RF_TRANSLUCENT;
 				VectorClear (level.ghost->mins);
 				VectorClear (level.ghost->maxs);
 //				level.ghost->model = "players/female/tris.md2";
@@ -7865,11 +7899,12 @@ void Ghost_Play_Frame(void)
 						if (ent->client->resp.ctf_team<CTF_TEAM1)
 							continue;
 					}
-					else
+					// let ghosts disappear in easy too
+					/*else
 					{
 						if (ent->client->resp.ctf_team!=CTF_TEAM2 )
 							continue;
-					}
+					}*/
 					VectorSubtract(ent->s.origin,level_items.recorded_time_data[0][level.ghost_frame].origin,myvec);
 					if (VectorLength(myvec)<distance)
 					{
@@ -7957,6 +7992,58 @@ void shiftent (edict_t *ent)
 	}
 }
 
+void removemapfrom_uid_file(int uid){
+
+	char	buffer[128];
+	FILE	*f;
+    int     i;
+	cvar_t	*port;
+	cvar_t	*tgame;
+	char	name[256];
+    maplist_uid_file maplistinuid[MAX_MAPS];
+
+	tgame = gi.cvar("game", "", 0);
+	port = gi.cvar("port", "", 0);
+
+	if (!*tgame->string)
+	{
+		sprintf	(name, "jump/%s/%i.u", port->string,uid);
+	}
+	else
+	{
+		sprintf (name, "%s/%s/%i.u", tgame->string,port->string,uid);
+	}
+
+	f = fopen (name, "rb");
+	if (!f)
+	{
+		return;
+	}
+    i = 0;
+	while (!feof(f))
+	{
+		fscanf(f, "%s", maplistinuid[i].mapname);
+        i++;
+	}
+	fclose(f);
+
+    f = fopen(name, "wb");
+    if (!f)
+		return;
+
+	for (i=0;i<MAX_MAPS;i++)
+	{
+        if (strcmp(maplistinuid[i].mapname,level.mapname)==0){
+            continue;
+        }
+		fprintf (f, " %s", maplistinuid[i].mapname);
+        if(strlen(maplistinuid[i].mapname)<2){
+            break;
+        }
+	}
+	fclose(f);
+}
+
 void remtime(edict_t *ent)
 {
 	int remnum,i;
@@ -7994,7 +8081,7 @@ void remtime(edict_t *ent)
 			remuid = level_items.stored_item_times[remnum-1].uid;
 			if (remuid==-1)
 				return;
-
+            maplist.users[remuid].completions--; //does this work?
 			for (i=remnum-1;i<level_items.stored_item_times_count-1;i++)
 			{
 				level_items.stored_item_times[i].uid = level_items.stored_item_times[i+1].uid;
@@ -8036,17 +8123,18 @@ void remtime(edict_t *ent)
 		if (remuid==-1)
 			return;
 		trecid = FindTRecID(remuid);
-		if (trecid>=0)
+		if (trecid>=0) //clear time. completions -1 to fix update_tourney_records
 		{
 			tourney_record[trecid].fresh = false;
-			tourney_record[trecid].uid = -1;
 			tourney_record[trecid].time = 0;
-			tourney_record[trecid].completions = 0;
+            //tourney_record[trecid].uid = -1;
+			tourney_record[trecid].completions = -1;
 		}
 //		Update_Highscores(MAX_HIGHSCORES-1);
 
 		UpdateScores();
 		sort_users();
+        sort_tourney_records();
 
 		for (i = 1; i <= maxclients->value; i++) 
 		{
@@ -8055,7 +8143,7 @@ void remtime(edict_t *ent)
 				continue;
 			UpdateThisUsersUID(e2,e2->client->pers.netname);			
 		}
-
+        
 		if (remnum==1)
 		{
 			for (i=0;i<MAX_HIGHSCORES+1;i++)
@@ -8082,11 +8170,14 @@ void remtime(edict_t *ent)
 			Load_Individual_Recording(i,level_items.stored_item_times[i].uid);
 		}
 		gi.cprintf(ent,PRINT_HIGH,"Time %d removed.\n",remnum);
+        read_top10_tourney_log(level.mapname);//fix top 15..
+        removemapfrom_uid_file(remuid);
 	}
 	else
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Invalid map time.\n",remnum);
 	}
+
 }
 
 
@@ -9081,7 +9172,9 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 	int trecid;
 	float oldtime;
 	char penalty_str[64];
+    edict_t *cl_ent;
 	memset(penalty_str,0,sizeof(penalty_str));
+    
 
 	if (item_time_penalty) {
 		sprintf(penalty_str,"(%2.1f seconds antiglue penalty)",item_time_penalty/10);
@@ -9130,14 +9223,28 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		if (time < oldtime) {
 			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f)\n",
 				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
+			return false;
 		}
 
-		// didn't beat pb/1st, only show to player
-		if (time >= oldtime) {
+		// didn't beat pb/1st, only show to players that wants it! :D
+        for (i = 0; i < maxclients->value; i++) {
+		    cl_ent = g_edicts + 1 + i;
+		    if (!cl_ent->inuse)
+			    continue;
+
+			if (cl_ent->client->resp.showtimes)
+			    gi.cprintf(cl_ent, PRINT_HIGH, "%s finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
+					ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
+	    }
+
+		// even with showtimes off, you should still see your own time
+		if (time >= oldtime && !ent->client->resp.showtimes) {
 			gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
 				time,time-oldtime,time-level_items.stored_item_times[0].time);
+			return false;
 		}
 
+		// something is very wrong...
 		return false;
 	}
 	else {
@@ -9179,6 +9286,128 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		}
 	}
 	return false;
+}
+void sort_tourney_records(){
+    int i,j,swap;
+    times_record   temp;
+    swap = 0;
+
+    for(i=1; i<MAX_USERS; i++){
+        if(tourney_record[i].uid==-1){
+            break;
+        }
+        swap = 0; 
+        for(j=0; j<(MAX_USERS-i); j++){
+            if(tourney_record[j].uid==-1 || tourney_record[j+1].uid==-1) {
+                break;
+            }
+            if(tourney_record[j].time==tourney_record[j+1].time){
+                continue;
+            }
+            if(tourney_record[j].time > tourney_record[j+1].time){
+                //gi.dprintf("Swap: %d  <->  %d\n",tourney_record[j].uid,tourney_record[j+1].uid);
+                temp = tourney_record[j];
+                tourney_record[j] = tourney_record[j+1];
+                tourney_record[j+1] = temp;
+                //gi.dprintf("Swapped: %d  <->  %d\n",tourney_record[j].uid,tourney_record[j+1].uid);
+                swap = 1;
+            }
+        }
+        if(!swap){
+            break;
+        }
+    }
+}
+
+void update_tourney_records(char *filename){
+	cvar_t	*var;
+	char	buffer[128];
+	FILE	*f;
+	int i,i2,j;
+	char	name[128];
+	cvar_t	*port;
+	cvar_t	*tgame;
+	qboolean apply_date;
+	fpos_t position;
+	char temp[1024];
+	int uid;
+    times_record tempuser;
+    qboolean founduser;
+
+	tgame = gi.cvar("game", "", 0);
+	port = gi.cvar("port", "", 0);
+
+	if (!*tgame->string)    
+	{
+		sprintf	(name, "jump/%s/%s.t", port->string,filename);
+	}
+	else
+	{
+		sprintf (name, "%s/%s/%s.t", tgame->string,port->string,filename);
+	}
+
+	f = fopen (name, "rb");
+	if (!f)
+	{
+		return;
+	}	
+
+    fscanf(f,"%s",&temp);
+    if(strstr(temp,"Jump067")){
+        //gi.dprintf("Old file, better luck next time.!\n");
+	    return;
+    } else {
+        //gi.dprintf("Read new alltimes tourneyfile!\n");
+        rewind(f);
+    }
+
+	for(i2=0;i2<=MAX_USERS;i2++){
+        tempuser.uid  = -1; // so it'll go away if it's not set to anything else.
+		fscanf(f, "%s", tempuser.date);
+		fscanf(f, "%f", &tempuser.time);
+		fscanf(f, "%i", &tempuser.uid);
+		fscanf(f, "%i", &tempuser.completions);
+        if(tempuser.uid==-1){
+            break;
+        }
+        founduser = false;
+        for(i=0;i<=MAX_USERS;i++){
+            if(tempuser.uid == tourney_record[i].uid){
+                founduser = true; //not a new user..
+                if(tourney_record[i].completions==-1){ //if remtime
+                    tourney_record[i].fresh = false;
+			        tourney_record[i].time = 0;
+                    tourney_record[i].uid = -1;
+			        tourney_record[i].completions = 0;
+                    break;
+                }
+                if(tourney_record[i].time>tempuser.time){ //check if user has a better time..
+                    tourney_record[i].time = tempuser.time;
+                }
+                break;
+            }
+        }
+        if(!founduser){ //new user! 
+            for(i=0;i<=MAX_USERS;i++){
+                if(tourney_record[i].uid==-1){
+                    tourney_record[i] = tempuser;
+                    break;
+                }
+            }
+        }
+        if (feof(f)){
+            break;
+        }
+	}
+    for(i=0;i<=MAX_USERS;i++){ //check if there are any removed times left, and reset them.
+        if(tourney_record[i].completions==-1){
+            tourney_record[i].fresh = false;
+	        tourney_record[i].time = 0;
+            tourney_record[i].uid = -1;
+	        tourney_record[i].completions = 0;
+        }
+    }
+	fclose(f);
 }
 
 void open_tourney_file(char *filename,qboolean apply)
@@ -9223,26 +9452,29 @@ void open_tourney_file(char *filename,qboolean apply)
 		return;
 	}	
 
-	while (!feof(f))
-	{
-		fscanf(f,"%s",&temp);
-		if (strcmp(temp,"JUMPMOD067ALLTIMES")==0)
-		{
-			break;
-		}
-	}
+    fscanf(f,"%s",&temp);
+    if(strstr(temp,"Jump067")){
+	    while (!feof(f))
+	    {
+		    fscanf(f,"%s",&temp);
+		    if (strcmp(temp,"JUMPMOD067ALLTIMES")==0)
+		    {
+			    break;
+		    }
+	    }
+    } else {
+        //Read new alltimes tourneyfile!
+        rewind(f);
+    }
 
-
-	while (!feof(f))
-	{
-		//problem here, its reading 1 too many? - LilRed: not anymore
-		if (i>MAX_USERS)
-			break;
+    
+    for(i=0;i<=MAX_USERS;i++){
 		fscanf(f, "%s", &tourney_record[i].date);
 		fscanf(f, "%f", &tourney_record[i].time);
 		fscanf(f, "%i", &uid);
 		tourney_record[i].uid = uid;
 		fscanf(f, "%i", &tourney_record[i].completions);
+        //gi.dprintf("open UID %d  uid:%d\n",i,uid);
 		if (apply && tourney_record[i].completions)
 		{
 			//need to check its existence on the good map list first
@@ -9254,9 +9486,9 @@ void open_tourney_file(char *filename,qboolean apply)
 				}
 			}
 		}
-		//only allow MAX_USERS records
-		
-		i++;
+        if(feof(f)){
+            break;
+        }
 	}
 	fclose(f);
 }
@@ -9278,6 +9510,8 @@ void write_tourney_file(char *filename,int mapnum)
 	time_t	time_date;
 	int		month,day,year;
 
+    update_tourney_records(filename);
+    sort_tourney_records();
 	tgame = gi.cvar("game", "jump", 0);
 	port = gi.cvar("port", "27910", 0);
 	strcpy(port_d,port->string);
@@ -9306,7 +9540,7 @@ void write_tourney_file(char *filename,int mapnum)
 		year = current_date->tm_year;
 
 
-
+    /* fuck this useless shit.. Atleast I hope it's useless? :D
 	//right, we need to save the top 10 scores first
 	fprintf (f, "Jump067\n");
 
@@ -9319,6 +9553,7 @@ void write_tourney_file(char *filename,int mapnum)
 	fprintf (f, "%s\n",filename);
 	//print top10marker
 	fprintf (f, "JUMPMOD067TOP10TIMES\n");
+    
 
 	for (i=0;i<level_items.stored_item_times_count;i++)
 	{
@@ -9330,18 +9565,19 @@ void write_tourney_file(char *filename,int mapnum)
 
 	//print other marker
 	fprintf (f, "\nJUMPMOD067ALLTIMES\n");
-		
-	for (i=0;i<MAX_USERS;i++)
+	*/
+	for (i=0;i<=MAX_USERS;i++)
 	{
-		if (!tourney_record[i].completions)
-			continue;
-		Com_sprintf(buffer,sizeof(buffer), " %s %f %i %i",tourney_record[i].date,tourney_record[i].time,tourney_record[i].uid,tourney_record[i].completions);
-		fprintf (f, "%s", buffer);
+        if (tourney_record[i].uid>-1 && tourney_record[i].time>0){
+	        Com_sprintf(buffer,sizeof(buffer), "%s %f %i %i",tourney_record[i].date,tourney_record[i].time,tourney_record[i].uid,tourney_record[i].completions);
+	        fprintf (f, "%s\n", buffer);
+            //gi.dprintf("ID=%d\n",i);
+        }
 	}
 	fclose(f);
 }
 
-void open_users_file()
+void update_users_file()
 {
 	cvar_t	*var;
 	int throwaway;
@@ -9355,8 +9591,8 @@ void open_users_file()
 	int uid;
 	int score;
 	int completions;
-	//char tmp[3];
 	int tmp = maplist.version;
+    qboolean newusers;
 
 	tgame = gi.cvar("game", "", 0);
 	port = gi.cvar("port", "", 0);
@@ -9377,71 +9613,225 @@ void open_users_file()
 	}	
 	maplist.num_users = 0;
 
-
-	fscanf(f, "%s", &name);
-//	gi.dprintf("maplist version %s\n", va("%c%c%c", name[7], name[8], name[9]));
-	if (Q_stricmp(va("%c%c%c", name[7], name[8], name[9]), "084") == 0)
-	{
-//		gi.dprintf ("JumpMod084 users file\n");
+    newusers = false;
+    fscanf(f, "%s", &name);
+    if (Q_stricmp(va("%c%c%c", name[7], name[8], name[9]), "084") == 0)
+    {
+	    maplist.version = 1;
+    }
+    else if (Q_stricmp(va("%c%c%c", name[7], name[8], name[9]), "067") == 0)
+    {
+	    maplist.version = 0;
+    }
+    else
+    { 
+        rewind(f);
+        newusers = true;
+    }
+    if(!newusers){
+	    while (!feof(f))
+	    {
+		    fscanf(f, "%i", &uid);
+		    if (1 == maplist.version)
+		    {
+    //			gi.dprintf("If JumpMod067 is stated above this shouldn't be here.\n");
+			    fscanf(f, "%i", &completions);
+		    }
+		    fscanf(f, "%i", &throwaway);
+		    fscanf(f, "%i", &throwaway);
+		    fscanf(f, "%i", &throwaway);
+		    fscanf(f, "%i", &throwaway);
+		    fscanf(f, "%i", &throwaway);
+		    fscanf(f, "%i", &throwaway);
+            fscanf(f, "%i", &score);
+		    fscanf(f, "%s", &name);
+		    if ((uid>=MAX_USERS) || (uid<0))
+			    continue;
+            if(sizeof(maplist.users[uid].name)<2){ //meaning that the user is created on some other server
+                maplist.users[uid].completions = completions;
+            }
+		    strcpy(maplist.users[uid].name,name);
+            
+		    maplist.num_users++;
+	    }
+    } else { //new users.t version
+        while (!feof(f))
+	    {
+            fscanf(f, "%i", &uid);
+			fscanf(f, "%i", &completions);
+            fscanf(f, "%i", &score);
+		    fscanf(f, "%s", &name);
+            if ((uid>=MAX_USERS) || (uid<0))
+			    continue;
+            if(sizeof(maplist.users[uid].name)<2){ //meaning that the user is created on some other server
+                maplist.users[uid].completions = completions;
+            }
+            strcpy(maplist.users[uid].name,name);
+            maplist.num_users++;
+        }
+    }
+	if (1 == tmp)
 		maplist.version = 1;
+    maplist.sort_num_users = maplist.num_users;
+
+	fclose(f);
+}
+void open_users_file()
+{
+	cvar_t	*var;
+	int throwaway;
+	char	buffer[128];
+	FILE	*f;
+	int i,j;
+	char	name[128];
+	cvar_t	*port;
+	cvar_t	*tgame;
+	fpos_t position;
+	int uid;
+	int score;
+	int completions;
+	//char tmp[3];
+	int tmp = maplist.version;
+    qboolean newusers; //new users.t file ?
+
+	tgame = gi.cvar("game", "", 0);
+	port = gi.cvar("port", "", 0);
+
+	if (!*tgame->string)
+	{
+		sprintf	(name, "jump/%s/users.t", port->string);
 	}
 	else
 	{
-//		gi.dprintf ("JumpMod067 users file\n");
-		maplist.version = 0;
+		sprintf (name, "%s/%s/users.t", tgame->string,port->string);
 	}
-	//clear users file
-	for (i=0;i<MAX_USERS;i++)
-	{
-//		maplist.users[i].inuse = false;
-		maplist.users[i].name[0] = 0;
-		maplist.users[i].score = 0;
-		maplist.users[i].lastseen = 0;
-		for (j=0;j<10;j++)
-			maplist.users[i].points[j] = 0;
-	}
-//	if (1 == maplist.version)
-//		gi.dprintf("If JumpMod067 is stated above this shouldn't be here.\n");
 
-	i = 0;
-	
-	while (!feof(f))
+	f = fopen (name, "rb");
+	if (!f)
 	{
-		fscanf(f, "%i", &uid);
-		if (1 == maplist.version)
-		{
-//			gi.dprintf("If JumpMod067 is stated above this shouldn't be here.\n");
+		return;
+	}	
+	maplist.num_users = 0;
+
+    newusers = false;
+    fscanf(f, "%s", &name);
+    if (Q_stricmp(va("%c%c%c", name[7], name[8], name[9]), "084") == 0)
+    {
+	    maplist.version = 1;
+    }
+    else if (Q_stricmp(va("%c%c%c", name[7], name[8], name[9]), "067") == 0)
+    {
+	    maplist.version = 0;
+    }
+    else
+    { 
+        maplist.version = 1;
+        rewind(f);
+        newusers = true;
+    }
+    //clear users file
+    for (i=0;i<MAX_USERS;i++)
+    {
+	    maplist.users[i].name[0] = 0;
+	    maplist.users[i].score = 0;
+	    maplist.users[i].lastseen = 0;
+	    for (j=0;j<10;j++)
+		    maplist.users[i].points[j] = 0;
+    }
+
+    i = 0;
+    if(!newusers){
+	    while (!feof(f))
+	    {
+		    fscanf(f, "%i", &uid);
+		    if (1 == maplist.version)
+		    {
+    //			gi.dprintf("If JumpMod067 is stated above this shouldn't be here.\n");
+			    fscanf(f, "%i", &completions);
+		    }
+		    fscanf(f, "%i", &throwaway);
+		    fscanf(f, "%i", &throwaway);
+		    fscanf(f, "%i", &throwaway);
+		    fscanf(f, "%i", &throwaway);
+		    fscanf(f, "%i", &throwaway);
+		    fscanf(f, "%i", &throwaway);
+            fscanf(f, "%i", &score);
+		    fscanf(f, "%s", &name);
+		    if ((uid>=MAX_USERS) || (uid<0))
+			    continue;
+
+		    strcpy(maplist.users[uid].name,name);
+		    if (1 == maplist.version)
+		    {
+    //			gi.dprintf("If JumpMod067 is stated above this shouldn't be here.\n");
+			    maplist.users[uid].completions = completions;
+		    }
+		    maplist.num_users++;
+	    }
+    } else { //new users.t version..
+        while (!feof(f))
+	    {
+            fscanf(f, "%i", &uid);
 			fscanf(f, "%i", &completions);
-		}
-		fscanf(f, "%i", &score);
-		
-
-		fscanf(f, "%i", &throwaway);
-		fscanf(f, "%i", &throwaway);
-		fscanf(f, "%i", &throwaway);
-		fscanf(f, "%i", &throwaway);
-		fscanf(f, "%i", &throwaway);
-		fscanf(f, "%i", &throwaway);
-		fscanf(f, "%s", &name);
-		if ((uid>=MAX_USERS) || (uid<0))
-			continue;
-
-		strcpy(maplist.users[uid].name,name);
-		if (1 == maplist.version)
-		{
-//			gi.dprintf("If JumpMod067 is stated above this shouldn't be here.\n");
-			maplist.users[uid].completions = completions;
-		}
-		maplist.num_users++;
-	}
+            fscanf(f, "%i", &score);
+		    fscanf(f, "%s", &name);
+            if ((uid>=MAX_USERS) || (uid<0))
+			    continue;
+            strcpy(maplist.users[uid].name,name);
+		    maplist.users[uid].completions = completions;
+            maplist.num_users++;
+        }
+    }
 	if (1 == tmp)
 		maplist.version = 1;
-   maplist.sort_num_users = maplist.num_users;
+    maplist.sort_num_users = maplist.num_users;
 
 	fclose(f);
 }
 
 void write_users_file(void)
+{
+	cvar_t	*var;
+	char	buffer[1024];
+	FILE	*f, *f2;
+	char	name[256];
+	int i,i2;
+	qboolean done;
+	char port_d[32];
+	cvar_t	*port;
+	cvar_t	*tgame;
+
+    update_users_file();
+	tgame = gi.cvar("game", "jump", 0);
+	port = gi.cvar("port", "27910", 0);
+
+	strcpy(port_d,port->string);
+	if (!port_d[0])
+		strcpy(port_d,"27910");
+	if (!*tgame->string)
+	{
+		sprintf	(name, "jump/%s/users.t", port_d);
+	}
+	else
+	{
+		sprintf (name, "%s/%s/users.t", tgame->string,port_d);
+	}
+
+	f = fopen (name, "wb");
+	if (!f)
+		return;
+	done=false;
+	for (i=0;i<MAX_USERS;i++)
+	{
+        if(maplist.users[i].name[0]){
+            Com_sprintf(buffer,sizeof(buffer), " %i %i %i %s",i,maplist.users[i].completions,maplist.users[i].score,maplist.users[i].name);
+		    fprintf (f, "%s", buffer);
+        }
+	}
+	fclose(f);
+}
+
+void old_write_users_file(void)
 {
 	cvar_t	*var;
 	char	buffer[1024];
@@ -9455,7 +9845,7 @@ void write_users_file(void)
 
 	tgame = gi.cvar("game", "jump", 0);
 	port = gi.cvar("port", "27910", 0);
-
+    
 	strcpy(port_d,port->string);
 	if (!port_d[0])
 		strcpy(port_d,"27910");
@@ -9690,7 +10080,7 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 			if (level_items.stored_item_times[0].time==item_time)
 		{
 			Save_Recording(ent,uid,uid_1st);
-			if (gset_vars->playsound	)
+			if (gset_vars->playsound && song_timer(ent, 17)) // change the # to length of your 1st place song
 			{
 				gi.positioned_sound (world->s.origin, world, CHAN_AUTO | CHAN_RELIABLE, gi.soundindex(gset_vars->numberone_wav), 1, ATTN_NONE, 0);
 				played_wav = false;
@@ -9734,7 +10124,9 @@ void read_top10_tourney_log(char *filename)
 	qboolean apply_date;
 	fpos_t position;
 	int uid;
+    int completions;
 
+    sort_tourney_records();
 	//clear old times first
 	strcpy(level_items.mapname,filename);
 	ClearTimes();
@@ -9758,34 +10150,58 @@ void read_top10_tourney_log(char *filename)
 		level_items.stored_item_times_count = 0;
 		return;
 	}
-	
-	while(!feof(f))
-	{
-		fscanf(f,"%s",&temp);
-		if (strcmp(temp,"JUMPMOD067TOP10TIMES")==0)
-			break;
-	}
+    
+    fscanf(f,"%s",&temp);
+    if(!strstr(temp,"Jump067")){
+        rewind(f);
+        //gi.dprintf("Read new top 15 tourneyfile!\n");
+        for(i = 0; i < MAX_HIGHSCORES; i++){
+            fscanf(f, "%s", &temp);
+            fscanf(f, "%f", &level_items.stored_item_times[i].time);
+            fscanf(f, "%i", &uid);
+            fscanf(f, "%i", &completions);
+            if(feof(f) || strlen(temp)<2){
+                break;
+            }
+            level_items.stored_item_times[i].uid = uid;
+            
+            
+		    strcpy(level_items.stored_item_times[i].name,maplist.users[uid].name);
+		    strcpy(level_items.stored_item_times[i].owner,maplist.users[uid].name);
+            strcpy(level_items.stored_item_times[i].date,temp);
+            if (i>=MAX_HIGHSCORES)
+			    break;
+        }
+        level_items.stored_item_times_count = i;
+    } else {
+	    while(!feof(f))
+	    {
+		    fscanf(f,"%s",&temp);
+		    if (strcmp(temp,"JUMPMOD067TOP10TIMES")==0)
+			    break;
+	    }
 
-	while (!feof(f))
-	{
-		fscanf(f, "%s", &temp);
-		if (strcmp(temp,"JUMPMOD067ALLTIMES")==0)
-			break;
-		strcpy(level_items.stored_item_times[i].date,temp);
-		fscanf(f, "%f", &level_items.stored_item_times[i].time);
-		fscanf(f, "%i", &uid);
-		level_items.stored_item_times[i].uid = uid;
+	    while (!feof(f))
+	    {
+		    fscanf(f, "%s", &temp);
+		    if (strcmp(temp,"JUMPMOD067ALLTIMES")==0)
+			    break;
+		    strcpy(level_items.stored_item_times[i].date,temp);
+		    fscanf(f, "%f", &level_items.stored_item_times[i].time);
+		    fscanf(f, "%i", &uid);
+		    level_items.stored_item_times[i].uid = uid;
 
-
-		strcpy(level_items.stored_item_times[i].name,maplist.users[uid].name);
-		strcpy(level_items.stored_item_times[i].owner,maplist.users[uid].name);
-		i++;
-		if (i>MAX_HIGHSCORES)
-			break;
-	}
+		    strcpy(level_items.stored_item_times[i].name,maplist.users[uid].name);
+		    strcpy(level_items.stored_item_times[i].owner,maplist.users[uid].name);
+		    i++;
+		    if (i>=MAX_HIGHSCORES)
+			    break;
+	    }
+        level_items.stored_item_times_count = i;
+    }
 	
 	fclose(f);
-	level_items.stored_item_times_count = i;
+	
 	if (level_items.stored_item_times_count>MAX_HIGHSCORES)
 		level_items.stored_item_times_count=MAX_HIGHSCORES;
 }
@@ -9911,7 +10327,7 @@ void WriteTimes(char *filename)
 	int		month,day,year;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
+    port = gi.cvar("port", "27910", 0);
 
 	strcpy(port_d,port->string);
 	if (!port_d[0])
@@ -11416,7 +11832,7 @@ void append_uid_file(int uid,char *filename)//,edict_t *ent)
 	//index = ent-g_edicts-1;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
+    port = gi.cvar("port", "", 0);
 
 	if (!*tgame->string)
 	{
@@ -12951,7 +13367,7 @@ void Lastseen_Save(void)
 	long lSize;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
+    port = gi.cvar("port", "27910", 0);
 	
 	strcpy(port_d,port->string);
 	if (!port_d[0])
@@ -12997,7 +13413,7 @@ void Lastseen_Load(void)
 	int lastseen;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
+    port = gi.cvar("port", "27910", 0);
 	
 	strcpy(port_d,port->string);
 	if (!port_d[0])
@@ -13809,6 +14225,16 @@ void Cpsound_on_off(edict_t *ent)
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
+void Showtimes_on_off(edict_t *ent)
+{
+	char s[255];
+	ent->client->resp.showtimes = !ent->client->resp.showtimes;
+	Com_sprintf(s,sizeof(s),"Showing other players time is now %s",(ent->client->resp.showtimes ? "On." : "Off."));
+	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
+}
+
+
+
 void	FS_CreatePath (char *path)
 {
 	char	*ofs;
@@ -14122,6 +14548,20 @@ qboolean trigger_timer(edict_t *other, int timeBetweenMessages) {
 
     if (difftime(currentTime, timeOfLastTriggerMessage ) > timeBetweenMessages) {
         timeOfLastTriggerMessage = currentTime;
+		return true;
+	} else
+		return false;
+}
+
+// fxn to remove overlap of 1st place song
+static time_t timeOfLastSong = 0;
+
+qboolean song_timer(edict_t *other, int timeBetweenMessages) {
+
+	time_t currentTime = time(0);
+
+    if (difftime(currentTime, timeOfLastSong ) > timeBetweenMessages) {
+        timeOfLastSong = currentTime;
 		return true;
 	} else
 		return false;
