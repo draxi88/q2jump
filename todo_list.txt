@@ -1,0 +1,2 @@
+-show raceline during replays
+-gset the 1st place song length
