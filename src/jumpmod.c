@@ -9510,7 +9510,7 @@ void write_tourney_file(char *filename,int mapnum)
 	time_t	time_date;
 	int		month,day,year;
 
-    update_tourney_records(filename);
+    //update_tourney_records(filename); not needed unless multiserver.
     sort_tourney_records();
 	tgame = gi.cvar("game", "jump", 0);
 	port = gi.cvar("port", "27910", 0);
@@ -10413,7 +10413,7 @@ void UpdateThisUsersUID(edict_t *ent,char *name)
 		ent->client->resp.uid = uid+1;
 		UpdateThisUsersSortedUid(ent);
 		trecid = FindTRecID(uid);
-		ent->client->resp.trecid = trecid;
+		ent->client->resp.trecid = trecid; //trecidbug - need to sort first?
 		if (trecid>=0)
 		{
 			ent->client->resp.best_time = tourney_record[trecid].time;
