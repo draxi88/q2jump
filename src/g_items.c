@@ -3507,13 +3507,21 @@ void SP_jumpbox_large (edict_t *ent)
 void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf){
     int my_time;
     float my_time_decimal;
+
     // get the clients time in .xxx format
 	my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
 	my_time_decimal = (float)my_time / 1000.0f;
 
-    if (other->client->pers.cpbox_checkpoint[self->count] == 0){
-        other->client->pers.cpbox_checkpoint[self->count] = 1;
+	// check if they have it already, increase it if they don't
+    if (other->client->pers.cpbox_checkpoint[self->count] != 1) {
+		other->client->pers.cpbox_checkpoint[self->count] = 1;
         other->client->pers.checkpoints += 1;
+
+		// play a sound for it
+		if (!other->client->resp.mute_cps)
+			gi.sound(self, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+
+		// in easy give them the int, in hard give them the float
         if (other->client->resp.ctf_team==CTF_TEAM1){
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
         } else {
