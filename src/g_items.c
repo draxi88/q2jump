@@ -3508,6 +3508,10 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
     int my_time;
     float my_time_decimal;
 
+	// make sure it's a player touching it
+	if (!other->client)
+		return;
+
     // get the clients time in .xxx format
 	my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
 	my_time_decimal = (float)my_time / 1000.0f;
