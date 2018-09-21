@@ -26,8 +26,6 @@ int breakLine(char *buffer, char *buff1, char *buff2, int buff2size)
 		return 0;
 	}
 
-	dp = buff2;
-
   SKIPBLANK(cp);
 
 	if(*cp != '\"')

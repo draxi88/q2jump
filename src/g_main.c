@@ -311,9 +311,6 @@ void EndDMLevel (void)
 	edict_t		*ent;
 	char *s, *t, *f;
 	static const char *seps = " ,\n\r";
-	int			i;
-	gclient_t	*cl;
-	edict_t		*temp;
 	int			temp_r;
 	// stay on same level flag
 //	debug_log ("CHECKPOINT: Function: EndDMLevel Line: 248 File: g_main.c");
@@ -398,7 +395,6 @@ void End_Jumping(void);
 void End_Jumping(void)
 {
 	float r;
-	char text[256];
 //sprintf(text,"==== Ending Normal Jumping ====");
 //debug_log(text);
 
@@ -501,7 +497,6 @@ void End_Overtime(void)
 	int num_left1 = 0;
 	int num_left2 = 0;
 
-	char text[256];
 //sprintf(text,"==== Ending Overtime ====");
 //debug_log(text);
 	if (level.overtime)
@@ -843,9 +838,8 @@ Advances the world by 0.1 seconds
 */
 void G_RunFrame (void)
 {
-	int		i,i2;
+	int		i;
 	edict_t	*ent;
-	edict_t	*e2;
 	gclient_t	*cl;
 	edict_t		*temp;
 	  unsigned long tempf;
@@ -861,7 +855,6 @@ void G_RunFrame (void)
   unsigned long data;
   char *str;
 	time_t curr_time;	// hann
-	struct tm *local_time;	// hann
 	char *time_str;		// hann
 	cvar_t  *port;		// hann
 
