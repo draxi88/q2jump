@@ -343,6 +343,7 @@
 				ObjectFile=".\release/"
 				ProgramDataBaseFileName=".\release/"
 				BrowseInformation="1"
+				WarningLevel="4"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
