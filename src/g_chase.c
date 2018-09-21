@@ -97,7 +97,6 @@ if (!ent->client->resp.chase_ineye)
 else
 {
 	VectorCopy(targ->s.origin, ownerv);
-	VectorCopy(ent->s.origin, oldgoal);
 
 	ownerv[2] += targ->viewheight;
 

@@ -1061,7 +1061,6 @@ void SP_worldspawn (edict_t *ent)
 	int i;
 	char this_map[64];
 	char str[2048];
-	qboolean gottype = false;
 	char temp[50];
     char cptotal[2];
     //const char *SpecNR[64] = {"°", "±", "²", "³", "´", "µ", "¶", "·", "¸", "¹", "±°", "±", "±²", "±³", "±´", "±µ", "±¶", "±·", "±¸", "±¹", "²°", "²±", "²²", "²³", "²´", "²µ", "²¶", "²·", "²¸", "²¹", "³°", "³±"};

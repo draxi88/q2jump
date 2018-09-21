@@ -2006,26 +2006,6 @@ void ThrowUpNow(edict_t *self)
 	gi.WriteDir (spew_vector);
 	gi.multicast (mouth_pos, MULTICAST_PVS);
 
-	// make a painful sound
-	rnum = random();
-/*	if (rnum < 0.125)
-		gi.sound (self, CHAN_BODY, gi.soundindex("*gurp1"), 1, ATTN_NORM, 0);
-	else if (rnum < 0.25)
-		gi.sound (self, CHAN_BODY, gi.soundindex("*gurp2"), 1, ATTN_NORM, 0);
-	else if (rnum < 0.375)
-		gi.sound (self, CHAN_BODY, gi.soundindex("*pain50_1"), 1, ATTN_NORM, 0);
-	else if (rnum < 0.5)
-		gi.sound (self, CHAN_BODY, gi.soundindex("*pain50_2"), 1, ATTN_NORM, 0);
-	else if (rnum < 0.625)
-		gi.sound (self, CHAN_BODY, gi.soundindex("*pain75_1"), 1, ATTN_NORM, 0);
-	else if (rnum < 0.75)
-		gi.sound (self, CHAN_BODY, gi.soundindex("*pain75_2"), 1, ATTN_NORM, 0);
-	else if (rnum < 0.875)
-		gi.sound (self, CHAN_BODY, gi.soundindex("*pain100_1"), 1, ATTN_NORM, 0);
-	else
-		gi.sound (self, CHAN_BODY, gi.soundindex("*pain100_2"), 1, ATTN_NORM, 0);	
-*/
-
 	// also do a spewing sound
 	gi.sound (self, CHAN_VOICE, gi.soundindex("misc/udeath.wav"), 1, ATTN_NORM, 0);
 

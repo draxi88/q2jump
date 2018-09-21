@@ -311,9 +311,6 @@ void EndDMLevel (void)
 	edict_t		*ent;
 	char *s, *t, *f;
 	static const char *seps = " ,\n\r";
-	int			i;
-	gclient_t	*cl;
-	edict_t		*temp;
 	int			temp_r;
 	// stay on same level flag
 //	debug_log ("CHECKPOINT: Function: EndDMLevel Line: 248 File: g_main.c");

@@ -493,10 +493,6 @@ void CTFAssignSkin(edict_t *ent, char *s)
 
 void CTFAssignTeam(gclient_t *who)
 {
-	edict_t		*player;
-	int i;
-	int team1count = 0, team2count = 0;
-
 	who->resp.ctf_state = 0;
 
 	if (!((int)dmflags->value & DF_CTF_FORCEJOIN)) {
@@ -795,8 +791,6 @@ void CTFResetFlags(void)
 qboolean CTFPickup_Flag(edict_t *ent, edict_t *other)
 {
 	int ctf_team;
-	int i;
-	edict_t *player;
 	gitem_t *flag_item, *enemy_flag_item;
 
 	//baaaaad mmmmkay
@@ -1223,12 +1217,7 @@ static void CTFSetIDView(edict_t *ent)
 
 void SetCTFStats(edict_t *ent)
 {
-	gitem_t *tech;
-	int i;
-	int p1, p2;
-	edict_t *e;
 	int keys;
-	int fps;
     char racenr[2];
 
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
@@ -1518,9 +1507,6 @@ void CTFGrappleTouch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	PlayerNoise(self->owner, self->s.origin, PNOISE_IMPACT);
 
 	if (other->takedamage) {
-		return;
-		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, 0, MOD_GRAPPLE);
-		CTFResetGrapple(self);
 		return;
 	}
 
@@ -2999,9 +2985,7 @@ void CTFWinElection(int pvote, edict_t* pvoter);
 
 qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require_max)
 {
-	int i;
 	int count;
-	edict_t *e;
 
 	if (ent!=NULL)
 	{
@@ -3151,7 +3135,6 @@ void CTFStartMatch(void)
 {
 	int i;
 	edict_t *ent;
-	int ghost = 0;
 
 	ctfgame.match = MATCH_GAME;
 	ctfgame.matchtime = level.time + matchtime->value * 60;
@@ -4530,8 +4513,6 @@ void CTFAdmin_SettingsApply(edict_t *ent, pmenuhnd_t *p)
 
 void CTFAdmin_SettingsCancel(edict_t *ent, pmenuhnd_t *p)
 {
-	admin_settings_t *settings = p->arg;
-
 	PMenu_Close(ent);
 	CTFOpenAdminMenu(ent);
 }
@@ -4645,7 +4626,6 @@ void CTFAdmin_UpdateSettings(edict_t *ent, pmenuhnd_t *setmenu)
 */
 	sprintf(text, "Match Lock:      %s", settings->matchlock ? "Yes" : "No");
 	PMenu_UpdateEntry(setmenu->entries + i, text, PMENU_ALIGN_LEFT, CTFAdmin_ChangeMatchLock);
-	i++;
 
 	PMenu_Update(ent);
 }
@@ -4773,7 +4753,6 @@ void CTFOpenAdminMenu(edict_t *ent)
 
 void CTFAdmin(edict_t *ent)
 {
-	char text[1024];
 	int alevel;
 
 	if (!allow_admin->value) {
@@ -5492,12 +5471,7 @@ void CTFCreateVoteMenu(void)
 	int i2;
 	edict_t *e2;
 	int num = 0;
-	char text[64];
-	int time_left;
-	int skill;
 	int curmap;
-	float diff;
-	char text2[256];
 //sprintf(text2,"==== Creating Vote Menu ====");
 //debug_log(text2);
 
@@ -5660,8 +5634,6 @@ void CTFUpdateVoteMenu(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice0(edict_t *ent, pmenuhnd_t *p)
 {
-	char text[64];
-
 	if (ent->client->resp.current_vote!=0)
 	{
 		//if our vote does not equal this, update vote data
@@ -5676,8 +5648,6 @@ void CTFVoteChoice0(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice1(edict_t *ent, pmenuhnd_t *p)
 {
-	char text[64];
-
 	if (ent->client->resp.current_vote!=1)
 	{
 		//if our vote does not equal this, update vote data
@@ -5692,8 +5662,6 @@ void CTFVoteChoice1(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice2(edict_t *ent, pmenuhnd_t *p)
 {
-	char text[64];
-
 	if (ent->client->resp.current_vote!=2)
 	{
 		//if our vote does not equal this, update vote data
@@ -5708,8 +5676,6 @@ void CTFVoteChoice2(edict_t *ent, pmenuhnd_t *p)
 
 void CTFVoteChoice3(edict_t *ent, pmenuhnd_t *p)
 {
-	char text[64];
-
 	if (ent->client->resp.current_vote!=3)
 	{
 		//if our vote does not equal this, update vote data

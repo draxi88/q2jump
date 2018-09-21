@@ -80,7 +80,6 @@ void BeginIntermission (edict_t *targ)
 {
 	int		i, n;
 	edict_t	*ent, *client;
-	char	stored[128];
 
 //	debug_log ("CHECKPOINT: Function: BeginIntermission Line: 85 File: p_hud.c");
 
