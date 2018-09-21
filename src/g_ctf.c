@@ -2399,7 +2399,7 @@ void CTFSetupTechSpawn(void)
 	edict_t *ent;
 
 //	if (((int)dmflags->value & DF_CTF_NO_TECH))
-		return;
+		//return;
 
 	ent = G_Spawn();
 	ent->nextthink = level.time + 2;
@@ -3221,7 +3221,6 @@ void CTFWinElection(int pvote, edict_t* pvoter)
 	edict_t	*e2;
 	int timeleft;
 	char* msg;
-	char* msg2;
 
 	if (ctfgame.etarget==NULL)
 	{
@@ -4240,7 +4239,6 @@ qboolean CTFCheckRules(void)
 	int i, j;
 	char text[64];
 	edict_t *ent;
-	qboolean add = false;
 
 	if (ctfgame.election != ELECT_NONE && ctfgame.electtime <= level.time) {
 		
