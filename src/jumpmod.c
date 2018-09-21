@@ -1590,7 +1590,6 @@ void ShowCurrentMaplist(edict_t *ent,int offset)
   
 void Cmd_Maplist_f (edict_t *ent) 
 { 
- char * pEnd;
  int offset;
  int i;
  char mapname[255];
@@ -1640,10 +1639,8 @@ void Cmd_Maplist_f (edict_t *ent)
 
 void Cmd_Votelist_f (edict_t *ent) 
 { 
- char * pEnd;
  int offset;
  int i;
- char mapname[255];
    switch (gi.argc()) 
    { 
    case 1:  // display current maplist 
@@ -1765,7 +1762,7 @@ void ClearScores(void)
 
 void UpdateScores(void)
 {
-	int uid,i,mid;
+	int i,mid;
 	ClearScores();
 //	open_users_file();
 	for (mid=0;mid<maplist.nummaps;mid++)
@@ -1805,7 +1802,7 @@ void UpdateScores(void)
 
 void UpdateScores2()
 {
-	int uid,i,mid, tmp = maplist.version;
+	int i,mid, tmp = maplist.version;
 	ClearScores();
 	open_users_file();
 	maplist.version = 0;
@@ -1867,7 +1864,7 @@ void Generate_Highlight_List(edict_t *ent)
 
 void Highlight_Name(char *name)
 {
-	int i,ni,li,len; 
+	int ni,li,len; 
 				for (ni=0;ni<32;ni++)
 				{
 					if (!highlight_list[ni].name[0])
@@ -1886,22 +1883,23 @@ void Highlight_Name(char *name)
 
 qboolean Can_highlight_Name(char *name)
 {
-	int i,ni,li,len; 
-				for (ni=0;ni<32;ni++)
-				{
-					if (!highlight_list[ni].name[0])
-						break;
-					if (!strcmp(name,highlight_list[ni].name))
-					{
-						return true;
-					}
-				}
-				return false;
+	int ni; 
+
+	for (ni=0;ni<32;ni++)
+	{
+		if (!highlight_list[ni].name[0])
+			break;
+		if (!strcmp(name,highlight_list[ni].name))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void ShowMapTimes(edict_t *ent) 
 { 
-	int i,ni,li,len; 
+	int i; 
 	int mapnum;
 	char	temp[128];
 	char name[32];
@@ -3621,8 +3619,7 @@ void CTFNominate(edict_t *ent)
 {
 	char text[1024];
 	char temp[128];
-	int i,i2,map;
-	int	notimes[MAX_MAPS];
+	int i,map;
 	int temp_num;
 	int index;
 	if (!map_allow_voting)
@@ -4070,9 +4067,7 @@ void sort_users_2( int n )
 
 void sort_users_4( int n )
 {
-	char t_name[128];
 	int t_score;
-	int t_points[10];
 	int t_uid;
 	float t_israfel;
 	int i;
@@ -9341,10 +9336,6 @@ void write_tourney_file(char *filename,int mapnum)
 	//set the date
 		time_date = time(NULL);                // DOS system call
 		current_date = localtime(&time_date);  // DOS system call
-		month = current_date->tm_mon + 1;
-		day = current_date->tm_mday;
-		year = current_date->tm_year;
-
 
     /* fuck this useless shit.. Atleast I hope it's useless? :D
 	//right, we need to save the top 10 scores first
@@ -10335,9 +10326,6 @@ void AddMap(edict_t *ent)
 	//set the date
 		time_date = time(NULL);                // DOS system call
 		current_date = localtime(&time_date);  // DOS system call
-		month = current_date->tm_mon + 1;
-		day = current_date->tm_mday;
-		year = current_date->tm_year;
 	
 	strcpy(mapname,gi.argv(1));
 
