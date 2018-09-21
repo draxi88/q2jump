@@ -1941,16 +1941,15 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	char	entry[1024];
 	char	string[1400];
 	int		stringlength;
-	int		i, j, k,n;
+	int		i, j, k;
 	int		sorted[MAX_CLIENTS];
 	float		sortedscores[MAX_CLIENTS];
 	float	score;
 	int		total;
 	int		picnum;
-	int		x, y;
+	int		y;
 	gclient_t	*cl;
 	edict_t		*cl_ent;
-	char	*tag;
 	char status[32];
 	int trecid;
 	int total_easy;

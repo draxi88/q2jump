@@ -1981,7 +1981,6 @@ void ThrowUpNow(edict_t *self)
 	// use some local vector variables to work with
 	vec3_t	forward, right;
 	vec3_t	mouth_pos, spew_vector;
-	float rnum;
 	int i;
 
 	if (self->client->resp.admin<aset_vars->ADMIN_THROWUP_LEVEL)

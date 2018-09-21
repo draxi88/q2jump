@@ -502,8 +502,6 @@ player_die
 */
 void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
-	int		n;
-
 	if (self->client->resp.playtag)
 		TagLeave(self);
 	VectorClear (self->avelocity);
@@ -1851,7 +1849,6 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 {
 	char	*value;
 	int i;
-	char userip[16];
 
 	// check to see if they are on the banned IP list
 	value = Info_ValueForKey (userinfo, "ip");

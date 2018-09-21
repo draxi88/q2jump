@@ -484,8 +484,7 @@ G_SetStats
 */
 void G_SetStats (edict_t *ent)
 {
-	gitem_t		*item;
-	int			index, cells;
+	int			cells;
 	int			power_armor_type;
 	int temp,temp2;
 	float gottime;

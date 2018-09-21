@@ -1113,11 +1113,6 @@ G_RunEntity
 */
 void G_RunEntity (edict_t *ent)
 {
-	gclient_t	*cl;
-	edict_t		*temp;
-	int i;
-//pooy
-
 	if (ent->prethink)
 		ent->prethink (ent);
 
