@@ -4739,7 +4739,7 @@ void Cmd_Replay(edict_t *ent)
 //		gi.cprintf(ent,PRINT_HIGH,"You need to be an observer to replay.\n");
 //		return;
 	}
-    ent->client->resp.rep_racing = false;
+    //ent->client->resp.rep_racing = false;
 }
 
 void Load_Recording(void)
@@ -9290,7 +9290,9 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 void sort_tourney_records(){
     int i,j,swap;
     times_record   temp;
+
     swap = 0;
+    
 
     for(i=1; i<MAX_USERS; i++){
         if(tourney_record[i].uid==-1){
@@ -9300,11 +9302,11 @@ void sort_tourney_records(){
         for(j=0; j<(MAX_USERS-i); j++){
             if(tourney_record[j].uid==-1 || tourney_record[j+1].uid==-1) {
                 break;
-            }
+            } /*
             if(tourney_record[j].time==tourney_record[j+1].time){
                 continue;
-            }
-            if(tourney_record[j].time > tourney_record[j+1].time){
+            }*/
+            if (tourney_record[j].time >= tourney_record[j+1].time){
                 //gi.dprintf("Swap: %d  <->  %d\n",tourney_record[j].uid,tourney_record[j+1].uid);
                 temp = tourney_record[j];
                 tourney_record[j] = tourney_record[j+1];
@@ -9361,7 +9363,7 @@ void update_tourney_records(char *filename){
         rewind(f);
     }
 
-	for(i2=0;i2<=MAX_USERS;i2++){
+	for(i2=0;i2<MAX_USERS;i2++){
         tempuser.uid  = -1; // so it'll go away if it's not set to anything else.
 		fscanf(f, "%s", tempuser.date);
 		fscanf(f, "%f", &tempuser.time);
@@ -9371,7 +9373,7 @@ void update_tourney_records(char *filename){
             break;
         }
         founduser = false;
-        for(i=0;i<=MAX_USERS;i++){
+        for(i=0;i<MAX_USERS;i++){
             if(tempuser.uid == tourney_record[i].uid){
                 founduser = true; //not a new user..
                 if(tourney_record[i].completions==-1){ //if remtime
@@ -9388,7 +9390,7 @@ void update_tourney_records(char *filename){
             }
         }
         if(!founduser){ //new user! 
-            for(i=0;i<=MAX_USERS;i++){
+            for(i=0;i<MAX_USERS;i++){
                 if(tourney_record[i].uid==-1){
                     tourney_record[i] = tempuser;
                     break;
@@ -9399,7 +9401,7 @@ void update_tourney_records(char *filename){
             break;
         }
 	}
-    for(i=0;i<=MAX_USERS;i++){ //check if there are any removed times left, and reset them.
+    for(i=0;i<MAX_USERS;i++){ //check if there are any removed times left, and reset them.
         if(tourney_record[i].completions==-1){
             tourney_record[i].fresh = false;
 	        tourney_record[i].time = 0;
@@ -9468,7 +9470,7 @@ void open_tourney_file(char *filename,qboolean apply)
     }
 
     
-    for(i=0;i<=MAX_USERS;i++){
+    for(i=0;i<MAX_USERS;i++){
 		fscanf(f, "%s", &tourney_record[i].date);
 		fscanf(f, "%f", &tourney_record[i].time);
 		fscanf(f, "%i", &uid);
@@ -9566,7 +9568,7 @@ void write_tourney_file(char *filename,int mapnum)
 	//print other marker
 	fprintf (f, "\nJUMPMOD067ALLTIMES\n");
 	*/
-	for (i=0;i<=MAX_USERS;i++)
+	for (i=0;i<MAX_USERS;i++)
 	{
         if (tourney_record[i].uid>-1 && tourney_record[i].time>0){
 	        Com_sprintf(buffer,sizeof(buffer), "%s %f %i %i",tourney_record[i].date,tourney_record[i].time,tourney_record[i].uid,tourney_record[i].completions);
@@ -9801,7 +9803,7 @@ void write_users_file(void)
 	cvar_t	*port;
 	cvar_t	*tgame;
 
-    update_users_file();
+    //update_users_file(); //multiserverthing
 	tgame = gi.cvar("game", "jump", 0);
 	port = gi.cvar("port", "27910", 0);
 
