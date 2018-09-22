@@ -502,8 +502,6 @@ player_die
 */
 void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
-	int		n;
-
 	if (self->client->resp.playtag)
 		TagLeave(self);
 	VectorClear (self->avelocity);
@@ -1101,8 +1099,6 @@ void give_item (edict_t *ent,char *name)
 
 	gitem_t		*it;
 	int			index;
-	int			i;
-	qboolean	give_all;
 	edict_t		*it_ent;
 
 	it = FindItem (name);
@@ -1146,7 +1142,6 @@ void PutClientInServer (edict_t *ent)
 	int		i;
 	client_persistant_t	saved;
 	client_respawn_t	resp;
-	char		*name;
 	gitem_t		*item;
 
 	unpause_client(ent);
@@ -1394,7 +1389,6 @@ void AutoPutClientInServer (edict_t *ent)
 	int		i;
 	client_persistant_t	saved;
 	client_respawn_t	resp;
-	char		*name;
 	gitem_t		*item;
 
 	unpause_client(ent);
@@ -1595,11 +1589,6 @@ deathmatch mode, so clear everything out before starting them.
 
 void ClientBeginDeathmatch (edict_t *ent)
 {
-	char	temp[256];
-	char *s,*sa;
-	int alevel;
-	int i;
-	int time_for_admin;
 	//int uid;
 	G_InitEdict (ent);
 
@@ -1751,10 +1740,7 @@ The game can override any of the settings in place
 void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 {
 	char	*s;
-	char	*sa;
-	char	s2[256];
 	int		playernum;
-	int		alevel;
 	  char	temps[64];
 
 	// check for malformed or illegal info strings
@@ -1828,12 +1814,12 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	// check for the string, fpskick mset
 	if (strlen(s) && mset_vars->fpskick == 1) {
 		ent->client->pers.fps = atoi(s);
-		if (ent->client->pers.fps>0 && ent->client->pers.fps<20) { // kick for lower than 20
+		if (ent->client->pers.fps<20) { // kick for lower than 20
             gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for lowering CL_MAXFPS below 20\n");
 			sprintf(temps,"kick %d\n",ent-g_edicts-1);
 			gi.AddCommandString(temps);
 		}
-		if (ent->client->pers.fps>0 && ent->client->pers.fps>120) { // kick for higher than 120
+		if (ent->client->pers.fps>120) { // kick for higher than 120
             gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for raising CL_MAXFPS above 120\n");
 			sprintf(temps,"kick %d\n",ent-g_edicts-1);
 			gi.AddCommandString(temps);
@@ -1863,7 +1849,6 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 {
 	char	*value;
 	int i;
-	char userip[16];
 
 	// check to see if they are on the banned IP list
 	value = Info_ValueForKey (userinfo, "ip");
@@ -2544,14 +2529,7 @@ void Generate_Race_Data(int race_frame,int race_this)
 void ClientBeginServerFrame (edict_t *ent)
 {
 	gclient_t	*client;
-	edict_t *temp_ent;
 	int			buttonMask;
-	vec3_t temp = {10,10,10};
-	trace_t tr;
-	float a,b;
-	int i;
-	int race_this;
-	vec3_t dir;
 
 	if (level.intermissiontime)
 		return;

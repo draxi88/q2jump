@@ -457,8 +457,6 @@ void insane_run (edict_t *self)
 
 void insane_pain (edict_t *self, edict_t *other, float kick, int damage)
 {
-	int	l,r;
-
 //	if (self->health < (self->max_health / 2))
 //		self->s.skinnum = 1;
 
@@ -466,17 +464,6 @@ void insane_pain (edict_t *self, edict_t *other, float kick, int damage)
 		return;
 
 	self->pain_debounce_time = level.time + 3;
-
-	r = 1 + (rand()&1);
-	if (self->health < 25)
-		l = 25;
-	else if (self->health < 50)
-		l = 50;
-	else if (self->health < 75)
-		l = 75;
-	else
-		l = 100;
-	//gi.sound (self, CHAN_VOICE, gi.soundindex (va("player/male/pain%i_%i.wav", l, r)), 1, ATTN_IDLE, 0);
 
 	if (skill->value == 3)
 		return;		// no pain anims in nightmare

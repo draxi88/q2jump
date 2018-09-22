@@ -195,7 +195,6 @@ void SetRespawn (edict_t *ent, float delay)
 qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 {
 	int		quantity;
-	gitem_t		*item;
 
 	if (gametype->value==GAME_CTF)
 		return false;
@@ -513,7 +512,6 @@ void	Use_Silencer (edict_t *ent, gitem_t *item)
 
 qboolean Pickup_Key (edict_t *ent, edict_t *other)
 {
-	char		item_name[128];
 	gitem_t		*item;
 	int			my_time;
 	float		my_time_decimal;
@@ -1182,8 +1180,6 @@ void Use_PowerArmor (edict_t *ent, gitem_t *item)
 qboolean Pickup_PowerArmor (edict_t *ent, edict_t *other)
 {
 	int		quantity;
-	char		item_name[128];
-	gitem_t		*item;
 
 	if (gametype->value==GAME_CTF)
 		return false;
@@ -3511,13 +3507,25 @@ void SP_jumpbox_large (edict_t *ent)
 void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf){
     int my_time;
     float my_time_decimal;
+
+	// make sure it's a player touching it
+	if (!other->client)
+		return;
+
     // get the clients time in .xxx format
 	my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
 	my_time_decimal = (float)my_time / 1000.0f;
 
-    if (other->client->pers.cpbox_checkpoint[self->count] == 0){
-        other->client->pers.cpbox_checkpoint[self->count] = 1;
+	// check if they have it already, increase it if they don't
+    if (other->client->pers.cpbox_checkpoint[self->count] != 1) {
+		other->client->pers.cpbox_checkpoint[self->count] = 1;
         other->client->pers.checkpoints += 1;
+
+		// play a sound for it
+		if (!other->client->resp.mute_cps)
+			gi.sound(self, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+
+		// in easy give them the int, in hard give them the float
         if (other->client->resp.ctf_team==CTF_TEAM1){
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
         } else {
@@ -3777,8 +3785,6 @@ void SP_jump_score (edict_t *ent)
 void SP_jump_time_think(edict_t *ent)
 {
 	int cur_time;
-	char time_str[32];
-	int time_skin;
 	int h1,h2,h3,h4;
 	cur_time = ((mset_vars->timelimit*60)+(map_added_time*60)-level.time);
 	ent->nextthink = level.time + 1;
