@@ -9121,7 +9121,7 @@ void sort_tourney_records(){
             if(tourney_record[j].time==tourney_record[j+1].time){
                 continue;
             }*/
-            if (tourney_record[j].time >= tourney_record[j+1].time){
+            if (tourney_record[j].time > tourney_record[j+1].time || tourney_record[j].time == tourney_record[j+1].time){
                 //gi.dprintf("Swap: %d  <->  %d\n",tourney_record[j].uid,tourney_record[j+1].uid);
                 temp = tourney_record[j];
                 tourney_record[j] = tourney_record[j+1];
