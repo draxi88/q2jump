@@ -302,8 +302,8 @@ void		remall(edict_t *ent);
 void		remtimes(edict_t *ent);
 void		Apply_Nominated_Map(char *mapname);
 int			get_admin_id(char *givenpass,char *givenname);
-qboolean	trigger_timer(edict_t *other, int timeBetweenMessages);
-qboolean    song_timer(edict_t *other, int timeBetweenMessages);
+qboolean	trigger_timer(int timeBetweenMessages);
+qboolean    song_timer(int timeBetweenMessages);
 void		ClearCheckpoints(client_persistant_t* pers);
 
 extern cvar_t		*gametype;

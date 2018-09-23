@@ -9865,7 +9865,7 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 			if (level_items.stored_item_times[0].time==item_time)
 		{
 			Save_Recording(ent,uid,uid_1st);
-			if (gset_vars->playsound && song_timer(ent, 17)) // change the # to length of your 1st place song
+			if (gset_vars->playsound && song_timer(17)) // change the # to length of your 1st place song
 			{
 				gi.positioned_sound (world->s.origin, world, CHAN_AUTO | CHAN_RELIABLE, gi.soundindex(gset_vars->numberone_wav), 1, ATTN_NONE, 0);
 				played_wav = false;
@@ -14258,7 +14258,7 @@ qboolean removed_map = false;
 // fxn to delay trigger messages
 static time_t timeOfLastTriggerMessage = 0;
 
-qboolean trigger_timer(edict_t *other, int timeBetweenMessages) {
+qboolean trigger_timer(int timeBetweenMessages) {
 
 	time_t currentTime = time(0);
 
@@ -14272,7 +14272,7 @@ qboolean trigger_timer(edict_t *other, int timeBetweenMessages) {
 // fxn to remove overlap of 1st place song
 static time_t timeOfLastSong = 0;
 
-qboolean song_timer(edict_t *other, int timeBetweenMessages) {
+qboolean song_timer(int timeBetweenMessages) {
 
 	time_t currentTime = time(0);
 
