@@ -2332,6 +2332,7 @@ void CTFDeadDropTech(edict_t *ent)
 
 static void SpawnTech(gitem_t *item, edict_t *spot)
 {
+	/*
 	edict_t	*ent;
 	vec3_t	forward, right;
 	vec3_t  angles;
@@ -2365,6 +2366,7 @@ static void SpawnTech(gitem_t *item, edict_t *spot)
 	ent->think = TechThink;
 
 	gi.linkentity (ent);
+	*/
 }
 
 static void SpawnTechs(edict_t *ent)
