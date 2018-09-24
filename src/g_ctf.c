@@ -2377,7 +2377,7 @@ static void SpawnTechs(edict_t *ent)
 	while (tnames[i]) {
 		if ((tech = FindItemByClassname(tnames[i])) != NULL &&
 			(spot = FindTechSpawn()) != NULL)
-			SpawnTech(tech, spot);
+			// SpawnTech(tech, spot); dont spawn tech no matter what
 		i++;
 	}
 	if (ent)
