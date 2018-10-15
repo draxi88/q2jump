@@ -585,8 +585,6 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		if (other->client->pers.checkpoints > 0)
 			gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->pers.checkpoints);
 		ClearCheckpoints(&other->client->pers);
-		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 	}
 
 	// get the clients time in .xxx format
