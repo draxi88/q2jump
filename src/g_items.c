@@ -598,7 +598,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs1_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -608,7 +608,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs2_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -618,7 +618,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs3_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -628,7 +628,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs4_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -638,7 +638,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs5_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -648,7 +648,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs6_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -658,7 +658,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs7_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -668,7 +668,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs8_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -678,7 +678,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs9_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -688,7 +688,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs10_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -698,7 +698,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs11_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -708,7 +708,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs12_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -718,7 +718,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs13_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -728,7 +728,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs14_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -738,7 +738,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs15_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -748,7 +748,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs16_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -758,7 +758,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs17_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -768,7 +768,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs18_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -778,7 +778,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs19_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -788,7 +788,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.rs20_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -798,7 +798,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.target_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -808,7 +808,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.blue_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -818,7 +818,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.cd_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -828,7 +828,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.spinner_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -838,7 +838,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.pass_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -848,7 +848,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.cube_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -858,7 +858,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.pyramid_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
@@ -868,7 +868,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
 		other->client->pers.red_checkpoint = 1;
 		if (!other->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
