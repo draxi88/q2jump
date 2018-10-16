@@ -305,6 +305,7 @@ int			get_admin_id(char *givenpass,char *givenname);
 qboolean	trigger_timer(int timeBetweenMessages);
 qboolean    song_timer(int timeBetweenMessages);
 void		ClearCheckpoints(client_persistant_t* pers);
+void		CPSoundCheck(edict_t *ent);
 
 extern cvar_t		*gametype;
 extern admin_type	admin_pass[MAX_ADMINS];

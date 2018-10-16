@@ -14330,3 +14330,22 @@ void ClearCheckpoints(client_persistant_t* pers) {
         pers->cpbox_checkpoint[i] = 0;
     }
 }
+
+
+// fxn to check for who to play sound to at checkpoints
+void CPSoundCheck(edict_t *ent) {
+
+	/*
+	edict_t *cl_ent;
+	int i;
+
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+	    if (!cl_ent->inuse)
+		    continue;
+
+		if (!cl_ent->client->resp.mute_cps)
+			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+	}
+	*/
+}
