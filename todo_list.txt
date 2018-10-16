@@ -1,4 +1,3 @@
 -show raceline during replays
 -keep race on after you watch a replay
--gset the 1st place song length
 -speedometer working and in hard mode
