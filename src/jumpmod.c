@@ -661,12 +661,19 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_STRING,
     &gset_vars->admin_model,
   },
-  { 
+    { 
 	0,0,0,
     "numberone_wav", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_STRING,
     &gset_vars->numberone_wav,
+  },
+  { 
+	0,10000,17,
+    "numberone_length", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->numberone_length,
   },
   { 
 	0,2,1,
@@ -6894,6 +6901,7 @@ void SetDefaultValues(void)
 	gset_vars->pvote_announce = 1;
 	gset_vars->cvote_announce = 1;
 	gset_vars->flashlight = 1;
+	gset_vars->numberone_length = 17;
 	gset_vars->intermission = 50;
 	gset_vars->hookspeed = 1200;
 	gset_vars->hookpull = 750;
@@ -9863,7 +9871,7 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 			if (level_items.stored_item_times[0].time==item_time)
 		{
 			Save_Recording(ent,uid,uid_1st);
-			if (gset_vars->playsound && song_timer(17)) // change the # to length of your 1st place song
+			if (gset_vars->playsound && song_timer(gset_vars->numberone_length)) // change the # to length of your 1st place song
 			{
 				gi.positioned_sound (world->s.origin, world, CHAN_AUTO | CHAN_RELIABLE, gi.soundindex(gset_vars->numberone_wav), 1, ATTN_NONE, 0);
 				played_wav = false;
