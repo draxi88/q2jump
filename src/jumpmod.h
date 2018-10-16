@@ -1,7 +1,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.22ger"
+#define CTF_VERSION_S		"1.23ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -302,9 +302,10 @@ void		remall(edict_t *ent);
 void		remtimes(edict_t *ent);
 void		Apply_Nominated_Map(char *mapname);
 int			get_admin_id(char *givenpass,char *givenname);
-qboolean	trigger_timer(edict_t *other, int timeBetweenMessages);
-qboolean    song_timer(edict_t *other, int timeBetweenMessages);
+qboolean	trigger_timer(int timeBetweenMessages);
+qboolean    song_timer(int timeBetweenMessages);
 void		ClearCheckpoints(client_persistant_t* pers);
+void		CPSoundCheck(edict_t *ent);
 
 extern cvar_t		*gametype;
 extern admin_type	admin_pass[MAX_ADMINS];
@@ -503,6 +504,7 @@ typedef struct
 	int cvote_announce;
 	unsigned int voteextratime;
 	int addtime_announce;
+	int numberone_length;
 } gset_vars_t;
 
 typedef struct

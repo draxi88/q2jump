@@ -587,20 +587,17 @@ qboolean Neuro_RedKey_Overide;
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 {
 	FILE		*fe_add;
-	FILE		*fe_rem;
 	qboolean done_spawn;
 	long		lSize;
 	char		*buffer2;
 	char		file_loc[256];
 	char		file_loc2[256];
-	char		rent[256];
 	edict_t		*ent;
 	int			inhibit;
 	char		*com_token;
 	int			i;
 	cvar_t	*game_dir;
 	int			addent_count;
-	int v;
 	char text[128];
 
 	if (removed_map)
@@ -1061,7 +1058,6 @@ void SP_worldspawn (edict_t *ent)
 	int i;
 	char this_map[64];
 	char str[2048];
-	qboolean gottype = false;
 	char temp[50];
     char cptotal[2];
     //const char *SpecNR[64] = {"°", "±", "²", "³", "´", "µ", "¶", "·", "¸", "¹", "±°", "±", "±²", "±³", "±´", "±µ", "±¶", "±·", "±¸", "±¹", "²°", "²±", "²²", "²³", "²´", "²µ", "²¶", "²·", "²¸", "²¹", "³°", "³±"};

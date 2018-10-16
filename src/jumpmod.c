@@ -661,12 +661,19 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_STRING,
     &gset_vars->admin_model,
   },
-  { 
+    { 
 	0,0,0,
     "numberone_wav", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_STRING,
     &gset_vars->numberone_wav,
+  },
+  { 
+	0,10000,17,
+    "numberone_length", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->numberone_length,
   },
   { 
 	0,2,1,
@@ -1590,7 +1597,6 @@ void ShowCurrentMaplist(edict_t *ent,int offset)
   
 void Cmd_Maplist_f (edict_t *ent) 
 { 
- char * pEnd;
  int offset;
  int i;
  char mapname[255];
@@ -1640,10 +1646,8 @@ void Cmd_Maplist_f (edict_t *ent)
 
 void Cmd_Votelist_f (edict_t *ent) 
 { 
- char * pEnd;
  int offset;
  int i;
- char mapname[255];
    switch (gi.argc()) 
    { 
    case 1:  // display current maplist 
@@ -1765,7 +1769,7 @@ void ClearScores(void)
 
 void UpdateScores(void)
 {
-	int uid,i,mid;
+	int i,mid;
 	ClearScores();
 //	open_users_file();
 	for (mid=0;mid<maplist.nummaps;mid++)
@@ -1805,7 +1809,7 @@ void UpdateScores(void)
 
 void UpdateScores2()
 {
-	int uid,i,mid, tmp = maplist.version;
+	int i,mid, tmp = maplist.version;
 	ClearScores();
 	open_users_file();
 	maplist.version = 0;
@@ -1867,7 +1871,7 @@ void Generate_Highlight_List(edict_t *ent)
 
 void Highlight_Name(char *name)
 {
-	int i,ni,li,len; 
+	int ni,li,len; 
 				for (ni=0;ni<32;ni++)
 				{
 					if (!highlight_list[ni].name[0])
@@ -1886,22 +1890,23 @@ void Highlight_Name(char *name)
 
 qboolean Can_highlight_Name(char *name)
 {
-	int i,ni,li,len; 
-				for (ni=0;ni<32;ni++)
-				{
-					if (!highlight_list[ni].name[0])
-						break;
-					if (!strcmp(name,highlight_list[ni].name))
-					{
-						return true;
-					}
-				}
-				return false;
+	int ni; 
+
+	for (ni=0;ni<32;ni++)
+	{
+		if (!highlight_list[ni].name[0])
+			break;
+		if (!strcmp(name,highlight_list[ni].name))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void ShowMapTimes(edict_t *ent) 
 { 
-	int i,ni,li,len; 
+	int i; 
 	int mapnum;
 	char	temp[128];
 	char name[32];
@@ -2002,7 +2007,6 @@ void ShowPlayerTimes(edict_t *ent)
 	char * pEnd;
 	char name[64];
 	char txt[1024];
-	int use;
 	offset = strtol(gi.argv(1),&pEnd,0);
 
 	offset--;
@@ -2042,7 +2046,6 @@ void ShowPlayerScores(edict_t *ent)
 	int temp;
 	char * pEnd;
 	char name[64];
-	int use;
 	offset = strtol(gi.argv(1),&pEnd,0);
 
 	offset--;
@@ -2085,9 +2088,7 @@ void ShowPlayerMaps(edict_t *ent)
    int i; 
 	int offset;
 	int temp;
-	char * pEnd;
 	char txt[1024];
-	int use;
 	char name[64];
 	offset = atoi(gi.argv(1));
 
@@ -2123,9 +2124,7 @@ int closest_ent(edict_t *ent)
    vec3_t closest;
    int closest_num = -1;
 	int offset;
-	int temp;
-	char * pEnd;
-	vec3_t v1, v2;
+	vec3_t v1;
 
    offset = 0;
 	
@@ -2162,9 +2161,7 @@ void show_ent_list(edict_t *ent,int page)
    vec3_t closest;
    int closest_num = 0;
 	int offset;
-	int temp;
-	char * pEnd;
-	vec3_t v1, v2;
+	vec3_t v1;
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
 		return;
@@ -2210,7 +2207,6 @@ void show_ent_list(edict_t *ent,int page)
 qboolean AddNewEnt(void)
 {
 	int i;
-	gitem_t *item;
 	for (i=0;i<MAX_ENTS;i++)
 	{
 		if (!level_items.ents[i])
@@ -2245,11 +2241,9 @@ void WriteEnts(void)
 	FILE	*f;
 	qboolean wrote;
 	char	name[256];
-	char	temp[256];
 	int i;
 	qboolean first_line;
 	cvar_t	*tgame;
-	edict_t *temp_e;
 
 	tgame = gi.cvar("game", "", 0);
 
@@ -2317,11 +2311,9 @@ void WriteEnts(void)
 void add_ent(edict_t *ent) 
 {
 	char	temp[256];
-	char	temp2[256];
 	char	action[256];
-	int i;
 	char	keyn[128],valn[128];
-	gitem_t *item;
+
 	cvar_t	*game_dir;
 	game_dir = gi.cvar("game", "", 0);
 
@@ -2447,16 +2439,13 @@ void ClearEnt(int remnum)
 
 void RemoveEnt(int remnum)
 {
-	int i;
 	ClearEnt(remnum);
 	WriteEnts();
 }
 
 void RemoveAllEnts(char *fname)
 {
-	FILE	*f;
 	char	name[256];
-	char	temp[256];
 	cvar_t	*tgame;
 	int i;
 	tgame = gi.cvar("game", "", 0);
@@ -2479,7 +2468,6 @@ void RemoveAllEnts(char *fname)
 
 void remove_ent(edict_t *ent) 
 {
-	int i;
 	int remnum;
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
 		return;
@@ -2599,11 +2587,9 @@ void Cmd_Coord_f(edict_t *ent)
 void Read_Admin_cfg(void)
 {
 	FILE	*f;
-	qboolean wrote;
 	char	name[256];
 	char	temp[256];
 	int i,i2;
-	qboolean first_line;
 	cvar_t	*tgame;
 
 	tgame = gi.cvar("game", "", 0);
@@ -2644,11 +2630,8 @@ void Read_Admin_cfg(void)
 void Write_Admin_cfg(void)
 {
 	FILE	*f;
-	qboolean wrote;
 	char	name[256];
-	char	temp[256];
 	int i;
-	qboolean first_line;
 	cvar_t	*tgame;
 
 	tgame = gi.cvar("game", "", 0);
@@ -2727,8 +2710,6 @@ void add_admin(edict_t *ent,char *name, char *pass, int alevel)
 
 void change_admin(edict_t *ent,int admin, int alevel)
 {
-	int placement = -1;
-	int i;
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDADMIN_LEVEL)
 		return;
 
@@ -2772,12 +2753,9 @@ void rem_admin(edict_t *ent,int num)
 
 void list_admins(edict_t *ent, int offset)
 {
-   int i = 0; 
-   int done = 0;
-	int temp;
-	//int num = 0;
-	char * pEnd;
-char name[64];
+   int i = 0;
+   char name[64];
+	
 	if (ent->client->resp.admin<aset_vars->ACMD_LISTADMINS_LEVEL)
 		return;
 
@@ -3050,7 +3028,6 @@ void CTFApplyRegeneration2(edict_t *ent)
 {
 	gclient_t *client;
 	int index;
-	float volume = 0.1;
 
 	client = ent->client;
 	if (!client)
@@ -3266,7 +3243,6 @@ void hook_cond_reset_think(edict_t *hook)
 void hook_service (edict_t *self)
  {
         vec3_t	hook_dir;
-		unsigned int a;
 		if (hook_cond_reset(self)) return;
 
 		if (self->enemy->client)
@@ -3280,8 +3256,6 @@ void hook_service (edict_t *self)
 void hook_track (edict_t *self)
  {
 		vec3_t	normal;
-
-		unsigned int a;
 
 		if (hook_cond_reset(self))
 			return;
@@ -3305,8 +3279,6 @@ void hook_track (edict_t *self)
 
 void hook_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	vec3_t	dir, normal;
-
 	if (other == self->owner)
 		return;
 	
@@ -3346,7 +3318,6 @@ void hook_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 void fire_hook (edict_t *owner, vec3_t start, vec3_t forward) {
 		edict_t	*hook;
 		trace_t tr;
-		unsigned int a;
         hook = G_Spawn();
         hook->movetype = MOVETYPE_FLYMISSILE;
         hook->solid = SOLID_TRIGGER;
@@ -3454,8 +3425,6 @@ void CTFSilence(edict_t *ent)
 	int i;
 	edict_t *targ;
 	char text[1024];
-	char temp[128];
-	edict_t	*e2;
 	
 	//ent->client->resp.frames_without_movement = 0;
 
@@ -3587,11 +3556,6 @@ void CTFSilence(edict_t *ent)
 void CTFRand(edict_t *ent)
 {
 	char text[1024];
-	char temp[128];
-	int i,i2,map;
-	int	notimes[MAX_MAPS];
-	int temp_num;
-	int index;
 	if (!map_allow_voting)
 		return;
 
@@ -3603,7 +3567,6 @@ void CTFRand(edict_t *ent)
 		gi.cprintf(ent,PRINT_HIGH,"You cannot randomize the map choices as an admin has set the next 3 maps\n");
 		return;
 	}
-	index = ent-g_edicts-1;
 
 	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120)
@@ -3663,8 +3626,7 @@ void CTFNominate(edict_t *ent)
 {
 	char text[1024];
 	char temp[128];
-	int i,i2,map;
-	int	notimes[MAX_MAPS];
+	int i,map;
 	int temp_num;
 	int index;
 	if (!map_allow_voting)
@@ -3793,14 +3755,11 @@ int get_admin_level(char *givenpass,char *givenname)
 
 void admin_log(edict_t *ent,char *log_this)
 {
-	char	*value;
 	struct	tm *current_date;
 	time_t	time_date;
 	char	tdate[256];
 	if ((admin_file) && (allow_admin_log->value))
-	{
-		value = Info_ValueForKey (ent->client->pers.userinfo, "ip");
-		
+	{		
 	//set the date
 		time_date = time(NULL);                // DOS system call
 		current_date = localtime(&time_date);  // DOS system call
@@ -3841,18 +3800,11 @@ void close_admin_file(void)
 void BestTimesScoreboardMessage (edict_t *ent, edict_t *killer)
 {
 	char	string[1400];
-	int		len;
 	int i;
-	float time;
-
-	int temp;
 	int completions = 0;
-	double temp2,temp3;
 	int total_count = 0;
 	char chr[2];	
 	*string = 0;
-	len = 0;
-
 	chr[0] = 13;
 	chr[1] = 0;
 	//get total completions
@@ -4099,11 +4051,8 @@ void sort_users(void)
 
 void sort_users_2( int n )
 {
-	char t_name[128];
 	int t_score;
-	int t_points[10];
 	int t_uid;
-	float t_israfel;
 	int i;
 	int j;
   for ( i = 0; i < n-1; ++i )
@@ -4125,9 +4074,7 @@ void sort_users_2( int n )
 
 void sort_users_4( int n )
 {
-	char t_name[128];
 	int t_score;
-	int t_points[10];
 	int t_uid;
 	float t_israfel;
 	int i;
@@ -4161,7 +4108,6 @@ void sort_users_3( int n )
 {
 	int t_score;
 	int t_uid;
-	float t_israfel;
 
 	int i;
 	int j;
@@ -4415,8 +4361,6 @@ void Jet_ApplyJet( edict_t *ent, usercmd_t *ucmd )
 void apply_time(edict_t *other, edict_t *ent)
 {
 	char		item_name[128];
-	int diff = 0;
-
 	ClearCheckpoints(&other->client->pers);
 
 	Stop_Recording(other);
@@ -4511,11 +4455,8 @@ void		Save_Recording(edict_t *ent,int uid,int uid_1st)
 {
 	FILE	*f;
 	char	name[256];
-	char	new_name[256];
 	int index;
-	cvar_t	*port;
 	cvar_t	*tgame;
-	int i;
 
 	index = ent-g_edicts-1;
 	if (!client_record[index].current_frame)
@@ -4523,7 +4464,6 @@ void		Save_Recording(edict_t *ent,int uid,int uid_1st)
 	client_record[index].allow_record = false;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
 	
 #ifdef ANIM_REPLAY
 	sprintf (name, "%s/jumpdemo/%s.dj2", tgame->string,level.mapname);
@@ -4572,9 +4512,7 @@ void Save_Individual_Recording(edict_t *ent)
 	FILE	*f;
 	char	name[256];
 	int index;
-	cvar_t	*port;
 	cvar_t	*tgame;
-	int i;
 
 	index = ent-g_edicts-1;
 	if (!client_record[index].current_frame)
@@ -4582,7 +4520,6 @@ void Save_Individual_Recording(edict_t *ent)
 	client_record[index].allow_record = false;
 
 	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
 	
 	sprintf (name, "%s/jumpdemo/%s_%d.dj3", tgame->string,level.mapname,ent->client->resp.uid-1);
 	f = fopen (name, "wb");
@@ -4747,15 +4684,12 @@ void Load_Recording(void)
 	//load recording using level.mapname
 	FILE	*f;
 	char	name[256];
-	int index;
-	cvar_t	*port;
 	cvar_t	*tgame;
 	int i;
 	long lSize;
 	qboolean loaded = false;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
 
 	//multireplay code, look for dj3 first via uid of player at 0
 	if (level_items.stored_item_times[0].uid>=0)
@@ -4803,10 +4737,7 @@ void Load_Individual_Recording(int num,int uid)
 	//load recording using level.mapname
 	FILE	*f;
 	char	name[256];
-	int index;
-	cvar_t	*port;
 	cvar_t	*tgame;
-	int i;
 	long lSize;
 
 	if (num<1 || num>=MAX_HIGHSCORES)
@@ -4816,7 +4747,6 @@ void Load_Individual_Recording(int num,int uid)
 	level_items.recorded_time_frames[num] = 0;
 	level_items.recorded_time_uid[num] = -1;
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
 	sprintf (name, "%s/jumpdemo/%s_%d.dj3", tgame->string,level.mapname,uid);
 	//gi.dprintf("%s\n",name);
 	f = fopen (name, "rb");
@@ -5534,9 +5464,6 @@ void mkadmin(edict_t *ent)
 {
 	int i;
 	edict_t *targ;
-	char text[1024];
-	char temp[128];
-	edict_t	*e2;
 	
 	if (ent->client->resp.admin<aset_vars->ADMIN_MKADMIN_LEVEL)
 	{
@@ -5599,9 +5526,7 @@ void mkadmin(edict_t *ent)
 
 void delete_all_times(void)
 {
-	FILE	*f;
 	char	name[256];
-	char	temp[256];
 	cvar_t	*port;
 	cvar_t	*tgame;
 	int i;
@@ -5617,14 +5542,10 @@ void delete_all_times(void)
 
 void delete_all_demos(void)
 {
-	FILE	*f;
 	char	name[256];
-	char	temp[256];
-	cvar_t	*port;
 	cvar_t	*tgame;
 	int i;
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
 
 	for (i=0;i<maplist.nummaps;i++)
 	{
@@ -5663,8 +5584,7 @@ void reset_server(edict_t *ent)
 
 void remtimes(edict_t *ent)
 {
-	int mapnum,i;
-	FILE	*f;
+	int i;
 	char	name[256];
 	cvar_t	*tgame;
 	edict_t	*e2;
@@ -5733,8 +5653,6 @@ void List_Box_Types(edict_t *ent)
 
 void Add_Box(edict_t *ent)
 {
-	char	temp[256];
-	int i;
 	int box_num;
     int cp;
     int cpsize;
@@ -5849,7 +5767,6 @@ void Box_Skin(edict_t *ent)
 
 void Move_Box(edict_t *ent)
 {
-	char	temp[256];
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDBOX_LEVEL)
 		return;
 	if (ent->client->resp.ctf_team==CTF_TEAM2 && gametype->value!=GAME_CTF)
@@ -5883,7 +5800,6 @@ void Move_Box(edict_t *ent)
 
 void Move_Ent(edict_t *ent)
 {
-	char	temp[256];
 	int i;
 	edict_t *ent_find;
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
@@ -5955,10 +5871,8 @@ void Move_Ent(edict_t *ent)
 
 void Skin_Ent(edict_t *ent)
 {
-	char	temp[256];
 	int i;
 	int snum;
-	edict_t *ent_find;
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
 		return;
 
@@ -6030,12 +5944,10 @@ void DeleteEnts(edict_t *ent)
 void Move_Client(edict_t *ent, edict_t *targ)
 {
 		gclient_t	*client;
-		vec3_t	spawn_origin, spawn_angles;
-		int i;
+		vec3_t	spawn_origin;
 
 		client = ent->client;
 		VectorCopy(targ->s.origin,spawn_origin);
-//		VectorCopy(targ->s.angles,spawn_angles);
 		VectorClear (ent->velocity);
 
 		client->ps.pmove.origin[0] = spawn_origin[0]*8;
@@ -6063,9 +5975,6 @@ void BringClient(edict_t *ent)
 {
 	int i;
 	edict_t *targ;
-	char text[1024];
-	char temp[128];
-	edict_t	*e2;
 	
 	if (ent->client->resp.admin<aset_vars->ADMIN_GOTO_LEVEL) {
 		return;
@@ -6114,9 +6023,6 @@ void GotoClient(edict_t *ent)
 {
 	int i;
 	edict_t *targ;
-	char text[1024];
-	char temp[128];
-	edict_t	*e2;
 	
 	if (ent->client->resp.admin<aset_vars->ADMIN_GOTO_LEVEL) {
 		return;
@@ -6169,7 +6075,6 @@ void Uptime(edict_t *ent)
 
 void debug_log(char *log_this)
 {
-	char	*value;
 	struct	tm *current_date;
 	time_t	time_date;
 	char	tdate[256];
@@ -6299,7 +6204,6 @@ void List_mset_commands(edict_t *ent,int offset)
 
 void List_acmd_commands(edict_t *ent)
 {
-	int i;
 	if (ent->client->resp.admin>=aset_vars->ADMIN_MSET_LEVEL)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "  deleteents <mapname>\n");
@@ -6403,10 +6307,9 @@ void List_gset_commands(edict_t *ent,int offset)
 
 void List_aset_commands(edict_t *ent,int offset)
 {
-   int i,i2; 
+   int i; 
 	int printed;
 	int listed;
-	char temp[64];
    offset--;
 	
    gi.cprintf (ent, PRINT_HIGH, "-------------------------------------------------\n"); 
@@ -6457,7 +6360,7 @@ void List_aset_commands(edict_t *ent,int offset)
 
 void MSET(edict_t *ent)
 {
-	int mapnum,i;
+	int i;
 	qboolean valid_command = false;
 	char temp[256];
 	cvar_t	*game_dir;
@@ -6517,7 +6420,6 @@ void MSET(edict_t *ent)
 
 void ACMD(edict_t *ent)
 {
-	int mapnum,i;
 	if (ent->client->resp.admin<aset_vars->ADMIN_MSET_LEVEL)
 		return;
 
@@ -6663,7 +6565,7 @@ void ACMD(edict_t *ent)
 
 void GSET(edict_t *ent)
 {
-	int mapnum,i;
+	int i;
 	qboolean valid_command = false;
 	char temp[256];
 	cvar_t	*game_dir;
@@ -6715,7 +6617,7 @@ void GSET(edict_t *ent)
 
 void ASET(edict_t *ent)
 {
-	int mapnum,i;
+	int i;
 	qboolean valid_command = false;
 	char temp[256];
 	cvar_t	*game_dir;
@@ -6768,7 +6670,6 @@ qboolean writeMapCfgFile(char *cfgfilename)
 	char	temp[256];
 	int i,i2;
 	FILE *cfg_file;
-	cvar_t	*port;
 	int comparison;
 	qboolean added_line = false;
 
@@ -6835,11 +6736,8 @@ qboolean writeMapCfgFile(char *cfgfilename)
 
 qboolean writeMainCfgFile(char *cfgfilename)
 {
-	char	temp[256];
-	int i,i2;
+	int i;
 	FILE *cfg_file;
-	cvar_t	*port;
-	int comparison;
 	qboolean added_line = false;
 
 	cfg_file = fopen (cfgfilename, "wb");
@@ -7003,6 +6901,7 @@ void SetDefaultValues(void)
 	gset_vars->pvote_announce = 1;
 	gset_vars->cvote_announce = 1;
 	gset_vars->flashlight = 1;
+	gset_vars->numberone_length = 17;
 	gset_vars->intermission = 50;
 	gset_vars->hookspeed = 1200;
 	gset_vars->hookpull = 750;
@@ -7201,19 +7100,6 @@ qboolean remall_Apply()
 	int temp = 0;
 	qboolean skip_this;
 	qboolean added_spawn;
-	//update got_spawn
-/*				added_spawn = false;
-				for (i2=0;i2<MAX_ENTS;i2++)
-				{
-					if (level_items.ents[i2])
-					{
-						if (strcmp(level_items.ents[i2]->classname,"info_player_deathmatch")==0)
-						{
-							added_spawn = true;
-							break;
-						}
-					}
-				}*/
 
 	for (i=0;i<MAX_REMOVE_ENTITIES;i++)
 	{
@@ -7261,7 +7147,7 @@ qboolean remall_Apply()
 
 void remall(edict_t *ent)
 {
-	int mapnum,i;
+	int i;
 	int temp;
 	char	buf[128];
 	if (ent->client->resp.admin<aset_vars->ADMIN_REMALL_LEVEL)
@@ -7416,7 +7302,6 @@ void Add_Old_Remove_Values(int temp)
 		i++;
 		entity_removal_list[i].inuse = true;
 		strcpy(entity_removal_list[i].compare,"func_button");
-		i++;
 	}
 }
 void Load_Remove_File(char *mapname)
@@ -7424,7 +7309,6 @@ void Load_Remove_File(char *mapname)
 	FILE	*f;
 	char	name[256];
 	int i;
-	qboolean added = false;
 	qboolean default_done = false;
 	cvar_t	*tgame;
 	char temp[100];
@@ -7596,8 +7480,6 @@ void autorecord_newtime(edict_t *ent)
 
 void autorecord(edict_t *ent)
 {
-	int temp;
-
 	if (ent->client->resp.auto_record_on)
 	{
 		ent->client->resp.auto_record_on = false;
@@ -7634,11 +7516,7 @@ void Kill_Hard(edict_t *ent)
 	vec3_t	spawn_origin, spawn_angles;
 	gclient_t	*client;
 	int		i;
-	int index;
 	gitem_t		*item;
-
-
-	index = ent-g_edicts-1;
 	client = ent->client;
 
 	ent->gravity = 1.0;
@@ -7752,7 +7630,6 @@ ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 
 void AlignEnt(edict_t *ent)
 {
-	char	temp[256];
 	int tent;
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
@@ -7941,7 +7818,6 @@ void Ghost_Play_Frame(void)
 
 void shiftent (edict_t *ent)
 {
-	char	temp[256];
 	int		tent;
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
 		return;
@@ -7994,7 +7870,6 @@ void shiftent (edict_t *ent)
 
 void removemapfrom_uid_file(int uid){
 
-	char	buffer[128];
 	FILE	*f;
     int     i;
 	cvar_t	*port;
@@ -8047,7 +7922,6 @@ void removemapfrom_uid_file(int uid){
 void remtime(edict_t *ent)
 {
 	int remnum,i;
-	FILE	*f;
 	char	name[256];
 	cvar_t	*tgame;
 	qboolean failed = false;
@@ -8183,11 +8057,8 @@ void remtime(edict_t *ent)
 
 void cmsg(edict_t *ent)
 {
-	int temp;
-
 	ent->client->resp.cmsg = !ent->client->resp.cmsg;
 	gi.cprintf(ent,PRINT_HIGH,"Centerprint messages %s\n",ent->client->resp.cmsg ? "off" : "on");
-
 }
 
 
@@ -8196,8 +8067,6 @@ void CTFUnSilence(edict_t *ent)
 	int i;
 	edict_t *targ;
 	char text[1024];
-	char temp[128];
-	edict_t	*e2;
 	
 	if (ent->client->resp.admin<aset_vars->ADMIN_SILENCE_LEVEL) {
 		return;
@@ -8261,9 +8130,6 @@ void Cmd_UnadminUser(edict_t *ent)
 {
 	int i;
 	edict_t *targ;
-	char text[1024];
-	char temp[128];
-	edict_t	*e2;
 if (ent->client->resp.admin>=aset_vars->ADMIN_MKADMIN_LEVEL)
 {
 	if (gi.argc() < 2) {
@@ -8302,14 +8168,12 @@ if (ent->client->resp.admin>=aset_vars->ADMIN_MKADMIN_LEVEL)
 void Cmd_UnadminAll(edict_t *ent)
 {
 	int		i;
-	gclient_t	*cl;
 	edict_t		*temp;
 	int count = 0;
 	if (ent->client->resp.admin>3)
 	{
 		for (i=0 ; i<maxclients->value ; i++)
 		{
-			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
 				continue;
 			temp = &g_edicts[i+1];
@@ -8378,7 +8242,6 @@ void SetSpinnyThing(void)
 {
 	vec3_t closest;
 	vec3_t v1;
-	vec3_t v2;
 	edict_t *what;
 	edict_t *closest_ent;
 	if (level_items.recorded_time_frames[0])
@@ -8555,11 +8418,7 @@ void SendFlashLight(edict_t *ent)
 
 void say_person(edict_t *ent)
 {
-	int		j;
-	edict_t	*other;
-	edict_t *comp;
 	edict_t *targ;
-	int		kicknum;
 	int		i;
 	char	*p;
 	char	text[2048];
@@ -8701,17 +8560,13 @@ void removeClientCommands(edict_t *ent)
 void Random_Teams(void)
 {
 	int		i;
-	edict_t	*ent;
-	gclient_t	*cl;
 	edict_t		*temp;
 	qboolean	team = false;
-	char text[256];
 //sprintf(text,"==== Creating Random Teams ====");
 //debug_log(text);
 
 	for (i=0 ; i<maxclients->value ; i++)
 	{
-			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
 				continue;
 			temp = &g_edicts[i+1];
@@ -8734,15 +8589,9 @@ void Random_Teams(void)
 
 void OverTime_GiveAll(edict_t *temp,qboolean rocket)
 {
-	int		i;
-	gclient_t	*cl;
-//	edict_t		*temp;
-	qboolean	team = false;
 	gclient_t *client;
 	gitem_t		*item;
-	int index;
 
-	char text[256];
 //sprintf(text,"==== Handing out the guns ====");
 //debug_log(text);
 			if (temp->client->resp.ctf_team!=CTF_NOTEAM)
@@ -8851,13 +8700,8 @@ void Overtime_Kill(edict_t *ent)
 	vec3_t	spawn_origin, spawn_angles;
 	gclient_t	*client;
 	int		i;
-	int index;
 	gitem_t		*item;
-
-
-	index = ent-g_edicts-1;
 	client = ent->client;
-
 
 	hook_reset(ent->client->hook);
 
@@ -8926,9 +8770,6 @@ void Overtime_Kill(edict_t *ent)
 void CTFApplyDegeneration(edict_t *ent)
 {
 	gclient_t *client;
-	int index;
-	float volume = 0.1;
-
 	
 	client = ent->client;
 	if (!client)
@@ -8978,13 +8819,10 @@ void	SelectSpawnPointFromDemo (edict_t *ent, vec3_t origin, vec3_t angles)
 void ForceEveryoneToHard(void)
 {
 	int		i;
-	edict_t	*ent;
-	gclient_t	*cl;
 	edict_t		*temp;
 
 	for (i=0 ; i<maxclients->value ; i++)
 	{
-			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
 				continue;
 			temp = &g_edicts[i+1];
@@ -9005,13 +8843,10 @@ void ForceEveryoneToHard(void)
 void ForceEveryoneOutOfChase(void)
 {
 	int		i;
-	edict_t	*ent;
-	gclient_t	*cl;
 	edict_t		*temp;
 
 	for (i=0 ; i<maxclients->value ; i++)
 	{
-			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
 				continue;
 			temp = &g_edicts[i+1];
@@ -9026,13 +8861,10 @@ void ForceEveryoneOutOfChase(void)
 void SendCenterToAll(char *send)
 {
 	int		i;
-	edict_t	*ent;
-	gclient_t	*cl;
 	edict_t		*temp;
 
 	for (i=0 ; i<maxclients->value ; i++)
 	{
-			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
 				continue;
 			temp = &g_edicts[i+1];
@@ -9045,10 +8877,7 @@ int CheckOverTimeRules(void)
 	int	num_team1 = 0;
 	int num_team2 = 0;
 	int ret = 0;
-	//get number of clients on either team
 	int		i;
-	edict_t	*ent;
-	gclient_t	*cl;
 	edict_t		*temp;
 
 	if (level.overtime<=gset_vars->overtimewait)
@@ -9073,7 +8902,6 @@ int CheckOverTimeRules(void)
 		return 0;
 	for (i=0 ; i<maxclients->value ; i++)
 	{
-			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
 				continue;
 			temp = &g_edicts[i+1];
@@ -9099,12 +8927,8 @@ int CheckOverTimeRules(void)
 int CheckOverTimeLastManRules(void)
 {
 	int	num_team1 = 0;
-	int num_team2 = 0;
-	int ret = 0;
 	//get number of clients on either team
 	int		i;
-	edict_t	*ent;
-	gclient_t	*cl;
 	edict_t		*temp;
 
 	if (level.overtime<=gset_vars->overtimewait)
@@ -9129,7 +8953,6 @@ int CheckOverTimeLastManRules(void)
 		return -1;
 	for (i=0 ; i<maxclients->value ; i++)
 	{
-			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
 				continue;
 			temp = &g_edicts[i+1];
@@ -9320,17 +9143,12 @@ void sort_tourney_records(){
 }
 
 void update_tourney_records(char *filename){
-	cvar_t	*var;
-	char	buffer[128];
 	FILE	*f;
-	int i,i2,j;
+	int i,i2;
 	char	name[128];
 	cvar_t	*port;
 	cvar_t	*tgame;
-	qboolean apply_date;
-	fpos_t position;
 	char temp[1024];
-	int uid;
     times_record tempuser;
     qboolean founduser;
 
@@ -9412,15 +9230,11 @@ void update_tourney_records(char *filename){
 
 void open_tourney_file(char *filename,qboolean apply)
 {
-	cvar_t	*var;
-	char	buffer[128];
 	FILE	*f;
 	int i,i2;
 	char	name[128];
 	cvar_t	*port;
 	cvar_t	*tgame;
-	qboolean apply_date;
-	fpos_t position;
 	char temp[1024];
 	int uid;
 
@@ -9495,22 +9309,18 @@ void open_tourney_file(char *filename,qboolean apply)
 
 void write_tourney_file(char *filename,int mapnum)
 {
-	cvar_t	*var;
-	char	date_marker[128];
 	char	buffer[1024];
 	FILE	*f;
 	char	name[256];
-	int i,i2;
-	qboolean done;
+	int i;
 	char port_d[32];
-
 	cvar_t	*port;
 	cvar_t	*tgame;
 	struct	tm *current_date;
 	time_t	time_date;
 	int		month,day,year;
 
-    update_tourney_records(filename);
+    //update_tourney_records(filename); not needed unless multiserver.
     sort_tourney_records();
 	tgame = gi.cvar("game", "jump", 0);
 	port = gi.cvar("port", "27910", 0);
@@ -9528,17 +9338,12 @@ void write_tourney_file(char *filename,int mapnum)
 
 	f = fopen (name, "wb");
 
-	done=false;
 	if (!f)
 		return;
 
 	//set the date
 		time_date = time(NULL);                // DOS system call
 		current_date = localtime(&time_date);  // DOS system call
-		month = current_date->tm_mon + 1;
-		day = current_date->tm_mday;
-		year = current_date->tm_year;
-
 
     /* fuck this useless shit.. Atleast I hope it's useless? :D
 	//right, we need to save the top 10 scores first
@@ -9579,15 +9384,11 @@ void write_tourney_file(char *filename,int mapnum)
 
 void update_users_file()
 {
-	cvar_t	*var;
 	int throwaway;
-	char	buffer[128];
 	FILE	*f;
-	int i,j;
 	char	name[128];
 	cvar_t	*port;
 	cvar_t	*tgame;
-	fpos_t position;
 	int uid;
 	int score;
 	int completions;
@@ -9678,15 +9479,12 @@ void update_users_file()
 }
 void open_users_file()
 {
-	cvar_t	*var;
 	int throwaway;
-	char	buffer[128];
 	FILE	*f;
 	int i,j;
 	char	name[128];
 	cvar_t	*port;
 	cvar_t	*tgame;
-	fpos_t position;
 	int uid;
 	int score;
 	int completions;
@@ -9791,12 +9589,10 @@ void open_users_file()
 
 void write_users_file(void)
 {
-	cvar_t	*var;
 	char	buffer[1024];
-	FILE	*f, *f2;
+	FILE	*f;
 	char	name[256];
-	int i,i2;
-	qboolean done;
+	int i;
 	char port_d[32];
 	cvar_t	*port;
 	cvar_t	*tgame;
@@ -9820,7 +9616,6 @@ void write_users_file(void)
 	f = fopen (name, "wb");
 	if (!f)
 		return;
-	done=false;
 	for (i=0;i<MAX_USERS;i++)
 	{
         if(maplist.users[i].name[0]){
@@ -9833,12 +9628,10 @@ void write_users_file(void)
 
 void old_write_users_file(void)
 {
-	cvar_t	*var;
 	char	buffer[1024];
 	FILE	*f;
 	char	name[256];
-	int i,i2;
-	qboolean done;
+	int i;
 	char port_d[32];
 	cvar_t	*port;
 	cvar_t	*tgame;
@@ -9861,7 +9654,6 @@ void old_write_users_file(void)
 	f = fopen (name, "wb");
 	if (!f)
 		return;
-	done=false;
 //	maplist.version = 1;
 	if (1 == maplist.version)
 		fprintf(f,"JumpMod084");
@@ -9909,7 +9701,6 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 	struct	tm *current_date;
 	time_t	time_date;
 	int		month,day,year;
-	int inserted;
 	int i2;
 	int placement;
 	char temp_owner[128],temp_name[128];
@@ -10080,7 +9871,7 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 			if (level_items.stored_item_times[0].time==item_time)
 		{
 			Save_Recording(ent,uid,uid_1st);
-			if (gset_vars->playsound && song_timer(ent, 17)) // change the # to length of your 1st place song
+			if (gset_vars->playsound && song_timer(gset_vars->numberone_length)) // change the # to length of your 1st place song
 			{
 				gi.positioned_sound (world->s.origin, world, CHAN_AUTO | CHAN_RELIABLE, gi.soundindex(gset_vars->numberone_wav), 1, ATTN_NONE, 0);
 				played_wav = false;
@@ -10112,17 +9903,12 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 
 void read_top10_tourney_log(char *filename)
 {
-	cvar_t	*var;
-	char	buffer[128];
 	FILE	*f;
 	int i;
 	char	name[128];
 	char	temp[1024];
-	int		temp2;
 	cvar_t	*port;
 	cvar_t	*tgame;
-	qboolean apply_date;
-	fpos_t position;
 	int uid;
     int completions;
 
@@ -10209,21 +9995,16 @@ void read_top10_tourney_log(char *filename)
 
 qboolean ReadTimes(char *filename)
 {
-	cvar_t	*var;
-	char	buffer[128];
 	FILE	*f;
 	int i;
 	char	name[128];
 	char	temp[128];
-	int		temp2;
 	char	path[128];
 	cvar_t	*port;
 	cvar_t	*tgame;
-	char temp_stamp[32];
 	qboolean apply_date;
 	fpos_t position;
 	int uid;
-	int len;
 
 	//clear old times first
 	strcpy(level_items.mapname,filename);
@@ -10313,11 +10094,10 @@ qboolean ReadTimes(char *filename)
 
 void WriteTimes(char *filename)
 {
-	cvar_t	*var;
 	char	buffer[1024];
 	FILE	*f;
 	char	name[256];
-	int i,i2;
+	int i;
 	qboolean done;
 	char port_d[32];
 	cvar_t	*port;
@@ -10413,7 +10193,7 @@ void UpdateThisUsersUID(edict_t *ent,char *name)
 		ent->client->resp.uid = uid+1;
 		UpdateThisUsersSortedUid(ent);
 		trecid = FindTRecID(uid);
-		ent->client->resp.trecid = trecid;
+		ent->client->resp.trecid = trecid; //trecidbug - need to sort first?
 		if (trecid>=0)
 		{
 			ent->client->resp.best_time = tourney_record[trecid].time;
@@ -10496,8 +10276,6 @@ void Add_Time(edict_t *ent)
 
 void D_Votes(edict_t *ent) 
 {
-	int i;
-	int time;
 	if (ent->client->resp.admin<aset_vars->ADMIN_DVOTE_LEVEL)
 		return;
 
@@ -10509,7 +10287,7 @@ void D_Votes(edict_t *ent)
 void WriteMapList(void)
 {
 	FILE	*f;
-	int i,i2;
+	int i;
 
 	f = fopen (maplist.path, "wb");
 
@@ -10543,7 +10321,6 @@ void AddMap(edict_t *ent)
 	time_t	time_date;
 	int		month,day,year;
 	int i;  // _h2
-	char date_marker[128];
 	
 	if (ent->client->resp.admin<gset_vars->addmaplevel)
 		return;
@@ -10557,9 +10334,6 @@ void AddMap(edict_t *ent)
 	//set the date
 		time_date = time(NULL);                // DOS system call
 		current_date = localtime(&time_date);  // DOS system call
-		month = current_date->tm_mon + 1;
-		day = current_date->tm_mday;
-		year = current_date->tm_year;
 	
 	strcpy(mapname,gi.argv(1));
 
@@ -10600,7 +10374,6 @@ void AddMap(edict_t *ent)
 void RemoveMap (edict_t* ent)
 {
 	int num;
-	int i;
 	char	maplist_path[256];
 	cvar_t	*port;
 	cvar_t	*tgame;
@@ -10873,8 +10646,6 @@ void stuff_client(edict_t *ent)
 	int i;
 	edict_t *targ;
 	char send_string[1024];
-	char temp[128];
-	edict_t	*e2;
 	if (ent->client->resp.admin<aset_vars->ADMIN_STUFF_LEVEL)
 		return;
 	if (gi.argc()>2)
@@ -11013,7 +10784,6 @@ void Slap_Him(edict_t *ent, edict_t *targ)
 
 void lock_ents(edict_t *ent)
 {
-	char	temp[256];
 	int i;
 	edict_t *e2;
 	level_items.locked = !level_items.locked;
@@ -11055,14 +10825,8 @@ void reset_map_played_count(edict_t *ent)
 
 void add_clip(edict_t *ent)
 {
-	char	temp[256];
-	char	temp2[256];
 	char	action[256];
 	int i;
-	char	keyn[128],valn[128];
-	gitem_t *item;
-	vec3_t mid;
-	vec3_t orig;
 	edict_t *tent;
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
@@ -11138,14 +10902,11 @@ void addmaps(void)
 	FILE	*f;
 	int i;
 	char	name[128];
-	cvar_t	*port;
 	cvar_t	*tgame;
 	char temp[1024];
-	int mid;
 	qboolean got_match;
 
 	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
 
 	if (!*tgame->string)
 	{
@@ -11200,11 +10961,8 @@ int num_time_votes;
 void CTFVoteTime(edict_t *ent)
 {
 	int i;
-	edict_t *targ;
 	char text[1024];
 	int diff;
-	char temp[128];
-	edict_t	*e2;
 	qboolean require_max = false;
 
 	//ent->client->resp.frames_without_movement = 0;
@@ -11640,8 +11398,6 @@ void open_uid_file(int uid,edict_t *ent)
 	char	buffer[128];
 	FILE	*f;
 	int i;
-	int j;
-	int count = 0;
 	cvar_t	*port;
 	cvar_t	*tgame;
 	char	name[256];
@@ -11713,8 +11469,6 @@ qboolean open_uid_file_compare(edict_t *ent)
 	char	buffer[128];
 	FILE	*f;
 	int i;
-	int j;
-	int count = 0;
 	cvar_t	*port;
 	cvar_t	*tgame;
 	char	name[256];
@@ -11782,7 +11536,6 @@ qboolean open_uid_file_compare(edict_t *ent)
 void write_uid_file(int uid,edict_t *ent)
 {
 	int index;
-	char	buffer[128];
 	FILE	*f;
 	int i;
 	cvar_t	*port;
@@ -11821,10 +11574,7 @@ void write_uid_file(int uid,edict_t *ent)
 
 void append_uid_file(int uid,char *filename)//,edict_t *ent)
 {
-	int index;
-	char	buffer[128];
 	FILE	*f;
-	int i;
 	cvar_t	*port;
 	cvar_t	*tgame;
 	char	name[256];
@@ -12015,12 +11765,8 @@ void list_mapsdone(edict_t *ent)
 
 void resync(qboolean overide)
 {
-	int index;
-	char	buffer[128];
 	FILE	*f;
-	edict_t *ent;
 	int i;
-	int i2;
 	cvar_t	*port;
 	cvar_t	*tgame;
 	char	name[256];
@@ -12117,7 +11863,6 @@ void append_added_ini(char *mapname)
 {
 	char	buffer[128];
 	FILE	*f;
-	int i;
 	cvar_t	*port;
 	cvar_t	*tgame;
 	char	name[256];
@@ -12156,7 +11901,6 @@ qboolean ValidateMap (char *mapname)
 	FILE* f;
 	cvar_t* tgame;
 	char* mapn;
-	int i;
 	
 	tgame = gi.cvar ("game", "", 0);
 	mapn = va ("%s/maps/%s.bsp", tgame->string, mapname); // get full path for the map if
@@ -12274,7 +12018,6 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 	//5. list of all maps
 
 	int i;
-	char *replace;
 	int i2;
 	cvar_t* tgame;
 	char buffer[256];
@@ -12643,7 +12386,6 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 void Cmd_Race (edict_t *ent)
 {
 	float delay = 0;
-	char str_delay[128];
 	int i;
 	int race_this;
 #ifndef RACESPARK
@@ -12771,9 +12513,6 @@ void Cmd_Whois(edict_t *ent)
 {
 	int i;
 	edict_t *targ;
-	char text[1024];
-	char temp[128];
-	char uip[20];
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_IP_LEVEL)
 	{
@@ -12811,11 +12550,7 @@ void Cmd_Whois(edict_t *ent)
 
 void Cmd_DummyVote(edict_t *ent)
 {
-	int i;
-	edict_t *targ;
 	char text[1024];
-	char temp[128];
-	edict_t	*e2;
 	
 	if (ent->client->resp.admin<aset_vars->ADMIN_DUMMYVOTE_LEVEL)
 	{
@@ -12912,7 +12647,6 @@ void WriteBans()
 	FILE	*f;
 	cvar_t	*tgame;
 	char name[256];
-	char temp[256];
 	int i;
 
 	tgame = gi.cvar("game", "", 0);
@@ -13184,8 +12918,7 @@ void ApplyBans(edict_t *ent,char *s)
 
 void reset_maps_completed(edict_t *ent)
 {
-	int offset;	
-	int index,i,i2;
+	int index,i;
 	int prev_uid;
 	int maps_completed;
 	int user;
@@ -13253,7 +12986,6 @@ void Update_Highscores(int start)
 	int trec;
 	int li;
 	int placement;
-	char temp_stamp[32];
 	qboolean cando;
 	if (level_items.stored_item_times_count!=start)
 		return;
@@ -13364,7 +13096,6 @@ void Lastseen_Save(void)
 	cvar_t	*tgame;
 	int i;
 	char port_d[32];
-	long lSize;
 
 	tgame = gi.cvar("game", "jump", 0);
     port = gi.cvar("port", "27910", 0);
@@ -13407,7 +13138,6 @@ void Lastseen_Load(void)
 	cvar_t	*port;
 	cvar_t	*tgame;
 	int i;
-	long lSize;
 	char port_d[32];
 	int uid;
 	int lastseen;
@@ -13460,7 +13190,6 @@ void Lastseen_Command(edict_t *ent)
 	int uid;
 	int timenow;
 	int i;
-	int use;
 	int temp;
 	int diff;
 	int days,hours,mins,secs;
@@ -13764,8 +13493,6 @@ static byte invis_pcx[900] = {
 };
 void Create_Invis_Skin(void)
 {
-	cvar_t	*tgame;
-	int i;
 	char name[255];
 	FILE	*f;
 	Com_sprintf(name,sizeof(name),"baseq2/players/female/");
@@ -13923,7 +13650,6 @@ void Compare_Users(edict_t *ent)
 	char name1[255];
 	char name2[255];
 	char txt[255];
-	int uid;
 	qboolean display1;
 	qboolean display2;
 	int offset = 0;
@@ -13931,8 +13657,6 @@ void Compare_Users(edict_t *ent)
 	int uid1;
 	int uid2;
 	int type2 = -1;
-
-	char name[255];
 
 	index = ent-g_edicts-1;
 
@@ -14326,8 +14050,6 @@ void Changename(edict_t *ent)
 	int origid;
 	int newid;
 	int i;
-	int temp_id;
-	edict_t *temp_ent;
 	if (gi.argc() < 4) 
 	{
 		gi.cprintf(ent,PRINT_HIGH,"format: acmd changename orig_name new_name\nWarning: Any name change will force the current map to be reloaded.");
@@ -14542,7 +14264,7 @@ qboolean removed_map = false;
 // fxn to delay trigger messages
 static time_t timeOfLastTriggerMessage = 0;
 
-qboolean trigger_timer(edict_t *other, int timeBetweenMessages) {
+qboolean trigger_timer(int timeBetweenMessages) {
 
 	time_t currentTime = time(0);
 
@@ -14556,7 +14278,7 @@ qboolean trigger_timer(edict_t *other, int timeBetweenMessages) {
 // fxn to remove overlap of 1st place song
 static time_t timeOfLastSong = 0;
 
-qboolean song_timer(edict_t *other, int timeBetweenMessages) {
+qboolean song_timer(int timeBetweenMessages) {
 
 	time_t currentTime = time(0);
 
@@ -14615,4 +14337,23 @@ void ClearCheckpoints(client_persistant_t* pers) {
 	for (i=0;i<sizeof(pers->cpbox_checkpoint)/sizeof(int);i++) {
         pers->cpbox_checkpoint[i] = 0;
     }
+}
+
+
+// fxn to check for who to play sound to at checkpoints
+void CPSoundCheck(edict_t *ent) {
+
+	/*
+	edict_t *cl_ent;
+	int i;
+
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+	    if (!cl_ent->inuse)
+		    continue;
+
+		if (!cl_ent->client->resp.mute_cps)
+			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+	}
+	*/
 }

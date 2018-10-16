@@ -119,7 +119,6 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 {
 	int			index;
 	gitem_t		*ammo;
-	gitem_t		*item;
 	int			pickup;
 
 	index = ITEM_INDEX(ent->item);	
@@ -143,14 +142,14 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 		if (mset_vars->checkpoint_total > 0 && pickup != 1) { // cps
 			if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
-				if (trigger_timer(other, 5))
+				if (trigger_timer(5))
 					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
 				pickup = 1;
 			}
 		}
 
 		if (pickup == 0) // no other quals
-			if (trigger_timer(other, 5))
+			if (trigger_timer(5))
 				gi.cprintf(other,PRINT_HIGH,"You would have got this weapon in %3.1f seconds.\n",other->client->resp.item_timer);
 	}
 
@@ -221,7 +220,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 		if (mset_vars->checkpoint_total > 0 && pickup != 1) { // cps
 			if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
-				if (trigger_timer(other, 5))
+				if (trigger_timer(5))
 					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
 				pickup = 1;
 			}

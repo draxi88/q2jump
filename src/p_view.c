@@ -804,7 +804,6 @@ G_SetClientEffects
 void G_SetClientEffects (edict_t *ent)
 {
 	int		pa_type;
-	int		remaining;
 
 	ent->s.effects = 0;
 	ent->s.renderfx = 0;
@@ -834,22 +833,6 @@ void G_SetClientEffects (edict_t *ent)
 //ZOID
 	CTFEffects(ent);
 //ZOID
-
-	if (ent->client->quad_framenum > level.framenum)
-	{
-		remaining = ent->client->quad_framenum - level.framenum;
-		//if (remaining > 30 || (remaining & 4) )
-//			ent->s.effects |= EF_QUAD;
-//			CTFSetPowerUpEffect(ent, EF_QUAD);
-	}
-
-	if (ent->client->invincible_framenum > level.framenum)
-	{
-		remaining = ent->client->invincible_framenum - level.framenum;
-		//if (remaining > 30 || (remaining & 4) )
-//			ent->s.effects |= EF_PENT;
-//			CTFSetPowerUpEffect(ent, EF_PENT);
-	}
 
 	// show cheaters!!!
 	if (ent->flags & FL_GODMODE)
