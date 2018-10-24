@@ -6207,7 +6207,7 @@ void List_acmd_commands(edict_t *ent)
 	if (ent->client->resp.admin>=aset_vars->ADMIN_MSET_LEVEL)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "  deleteents <mapname>\n");
-		gi.cprintf(ent, PRINT_HIGH, "  remtimes\n");
+		gi.cprintf(ent, PRINT_HIGH, "  remalltimes\n");
 		gi.cprintf(ent, PRINT_HIGH, "  togglehud\n");
 		gi.cprintf(ent, PRINT_HIGH, "  nextmaps <1> <2> <3>\n");
 		gi.cprintf(ent, PRINT_HIGH, "  ghost\n");
@@ -7997,11 +7997,11 @@ void remtime(edict_t *ent)
 		if (remuid==-1)
 			return;
 		trecid = FindTRecID(remuid);
-		if (trecid>=0) //clear time. completions -1 to fix update_tourney_records
+		if (trecid>=0) //clear time. 
 		{
 			tourney_record[trecid].fresh = false;
 			tourney_record[trecid].time = 0;
-            //tourney_record[trecid].uid = -1;
+            tourney_record[trecid].uid = -1;
 			tourney_record[trecid].completions = -1;
 		}
 //		Update_Highscores(MAX_HIGHSCORES-1);
@@ -8976,7 +8976,6 @@ int FindTRecID(int uid)
 	if (uid==-1)
 		return -1;
 
-
 	for (i=0;i<MAX_USERS;i++)
 	{
 		if (tourney_record[i].uid==uid)
@@ -9074,8 +9073,11 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		if (time>0)
 		for (i=0;i<MAX_USERS;i++)
 		{
-			if (!tourney_record[i].completions) {
+			if (tourney_record[i].completions<=0) {
 				//found a spare record, use it
+				if(tourney_record[i].completions==-1){
+					tourney_record[i].completions = 0;
+				}
 				tourney_record[i].uid = uid;
 				tourney_record[i].time = time;
 				strcpy(tourney_record[i].date,date);
@@ -9086,7 +9088,7 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 				}
 				tourney_record[i].completions++;
 				tourney_record[i].fresh = true;
-				ent->client->resp.trecid =i;
+				ent->client->resp.trecid = i;
 				ent->client->resp.best_time = time;
 
 				// 1st comp AND 1st place
@@ -9116,7 +9118,7 @@ void sort_tourney_records(){
     swap = 0;
 
     for(i=1; i<MAX_USERS; i++){
-        if(tourney_record[i].uid==-1){
+        if(tourney_record[i].completions==-1){
             break;
         }
         swap = 0; 

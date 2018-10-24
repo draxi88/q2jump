@@ -1954,6 +1954,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	int trecid;
 	int total_easy;
 	int total_specs;
+	char teamstring[16];
 
 
 	// sort the clients by score
@@ -1970,7 +1971,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 		else
 		{
-			if (cl_ent->client->resp.ctf_team!=CTF_TEAM2)
+			if (cl_ent->client->resp.ctf_team<CTF_TEAM1) //!=CTF_TEAM2
 				continue;
 		}
 		if (cl_ent->client->resp.uid>0)
@@ -2006,16 +2007,17 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 
 	Com_sprintf (entry, sizeof(entry),
-	"xv -16 yv 0 string2 \"Ping Pos Player          Best Comp Maps     %%\" "); 
+	"xv -16 yv 0 string2 \"Ping Pos Player      Team     Best Comp Maps     %%\" "); 
 	j = strlen(entry);
 	strcpy (string + stringlength, entry);
 	stringlength += j;
-
 
 	for (i=0 ; i<total ; i++)
 	{
 		cl = &game.clients[sorted[i]];
 		cl_ent = g_edicts + 1 + sorted[i];	
+		if (cl_ent->client->resp.ctf_team==CTF_NOTEAM)
+			continue;
 
 		picnum = gi.imageindex ("i_fixme");
 		y = 16 + 8 * i;
@@ -2026,12 +2028,17 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			trecid = cl->resp.trecid;		
 		}
 
+		if(cl_ent->client->resp.ctf_team == CTF_TEAM2){
+			sprintf(teamstring,"HARD");
+		} else if(cl_ent->client->resp.ctf_team == CTF_TEAM1){
+			sprintf(teamstring,"EASY");
+		} 
 		// send the layout
 		if (cl->resp.best_time)
 		{
 			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv 152 string \"%8.3f %4i %4i  %4.1f\"",
-			-8,y,sorted[i],cl->ping,cl->resp.suid+1,
+			"ctf %d %d %d %d %d xv 152 string \"%s %8.3f %4i %4i  %4.1f\"",
+			-8,y,sorted[i],cl->ping,cl->resp.suid+1,teamstring,
 			tourney_record[trecid].time, 
 			tourney_record[trecid].completions, 
 
@@ -2045,8 +2052,8 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			if (cl->resp.uid>0)
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"  ------ ---- %4i  %4.1f\"",
-				-8,y,sorted[i],cl->ping,cl->resp.suid+1,
+				"ctf %d %d %d %d %d xv 152 string \"%s   ------ ---- %4i  %4.1f\"",
+				-8,y,sorted[i],cl->ping,cl->resp.suid+1,teamstring,
 				maplist.sorted_completions[cl->resp.suid].score,
 				(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100				
 				); 
@@ -2055,8 +2062,8 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			else
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"------ ----\"",
-				-8,y,sorted[i],cl->ping,1000
+				"ctf %d %d %d %d %d xv 152 string \"%s      ------ ----\"",
+				-8,y,sorted[i],cl->ping,1000,teamstring
 				); 
 
 			}
@@ -2069,7 +2076,6 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 
 	}
-
 	//easy team
 	total_easy = 0;
 	total_specs = 0;
@@ -2084,7 +2090,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		{
 			total_specs++;
 			continue;
-		}
+		}/*
 		if (cl_ent->client->resp.ctf_team!=CTF_TEAM1)
 			continue;
 	
@@ -2119,9 +2125,8 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			break;
 		strcpy (string + stringlength, entry);
 		stringlength += j;
-		total_easy++;
+		total_easy++;*/
 	}
-
 	//spectators
 
 	if ((total) && (total_easy))
