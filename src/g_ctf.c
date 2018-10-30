@@ -4998,12 +4998,14 @@ void CTFWarp(edict_t *ent)
 	if (gi.argc() < 2) {
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		gi.cprintf(ent, PRINT_HIGH, "Type maplist for a list of maps.\n");
-		gi.cprintf(ent, PRINT_HIGH, "You may also use mapvote random \n");
-		gi.cprintf(ent, PRINT_HIGH, "to have a map chosen for you.    \n");		
+		gi.cprintf(ent, PRINT_HIGH, "mapvote [mapname] - a specific map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote [#] - a specific map by id.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote random - a random map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote notime - a random map with no times.\n");		
+		gi.cprintf(ent, PRINT_HIGH, "mapvote todo - a map you have not done.\n");
 		gi.cprintf(ent, PRINT_HIGH, "mapvote next - the next map.\n");		
-		gi.cprintf(ent, PRINT_HIGH, "mapvote prev - the previous map.\n");		
-		gi.cprintf(ent, PRINT_HIGH, "mapvote notime - a random map with no time set.\n");		
-		gi.cprintf(ent, PRINT_HIGH, "mapvote todo - the next map you have not done.\n");		
+		gi.cprintf(ent, PRINT_HIGH, "mapvote prev - the previous map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote new - the newest map.\n");	
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		return;
 	}
@@ -5074,6 +5076,22 @@ void CTFWarp(edict_t *ent)
 		}
 
 		sprintf(text, "%s has requested changing to level %s.", 
+				ent->client->pers.netname, maplist.mapnames[map]);
+		if (CTFBeginElection(ent, ELECT_MAP, text,false))
+		{
+			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
+			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[map]));
+			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
+			if (ctfgame.needvotes==0)
+				CTFWinElection(0, NULL);
+		}
+	}
+	else
+	if ((strcmp(temp,"NEW")==0) || (strcmp(temp,"new")==0))
+	{
+		map = maplist.nummaps - 1;
+
+		sprintf(text, "%s has requested changing to level %s. (Newest Map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
