@@ -2996,13 +2996,13 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 	if (ent!=NULL)
 	{
 		if (electpercentage->value == 0) {
-			gi.cprintf(ent, PRINT_HIGH, "Elections are disabled, only an admin can process this action.\n");
+			gi.cprintf(ent, PRINT_HIGH, "Voting is disabled.\n");
 			return false;
 		}
 
 
 		if (ctfgame.election != ELECT_NONE) {
-			gi.cprintf(ent, PRINT_HIGH, "Election already in progress.\n");
+			gi.cprintf(ent, PRINT_HIGH, "Vote already in progress.\n");
 			return false;
 		}
 	}
@@ -3011,20 +3011,18 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 	count = Get_Voting_Clients();
 
 	if (ent!=NULL && count < 2) {
-		//gi.cprintf(ent, PRINT_HIGH, "Not enough players for election.\n");
 		ctfgame.etarget = ent;
 		ctfgame.election = type;
 		ctfgame.evotes = 1;
 		ctfgame.needvotes = 0;
-		ctfgame.electtime = level.time + 30; // twenty seconds for election
+		ctfgame.electtime = level.time + 30;
 		ctfgame.electframe = level.framenum;
 		strncpy(ctfgame.emsg, msg, sizeof(ctfgame.emsg) - 1);
 
 	// tell everyone
 		gi.bprintf(PRINT_CHAT, "%s\n", ctfgame.emsg);
-		gi.bprintf(PRINT_HIGH, "Type YES or NO to vote on this request.\n");
-		gi.bprintf(PRINT_HIGH, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes,
-			(int)(ctfgame.electtime - level.time));
+		gi.bprintf(PRINT_HIGH, "Vote YES or NO on this request.\n");
+		gi.bprintf(PRINT_HIGH, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes, (int)(ctfgame.electtime - level.time));
 		
 
 		return true;
@@ -3055,7 +3053,7 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 	if (require_max)
 		gi.bprintf(PRINT_HIGH, "This is a MAX vote, so everyone not idle must vote YES for it to pass.\n");
 	else
-		gi.bprintf(PRINT_HIGH, "Type YES or NO to vote on this request.\n");
+		gi.bprintf(PRINT_HIGH, "Vote YES or NO on this request.\n");
 	gi.bprintf(PRINT_HIGH, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes,
 		(int)(ctfgame.electtime - level.time));
 
@@ -3275,7 +3273,7 @@ void CTFWinElection(int pvote, edict_t* pvoter)
 			//gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
 			//	ctfgame.etarget->client->pers.netname, ctfgame.elevel);
 		//	msg = va("%s's vote has passed
-		gi.bprintf(PRINT_HIGH, "%s Level changing to %s.\n", msg, ctfgame.elevel);
+		gi.bprintf(PRINT_HIGH, "%s Map changing to %s.\n", msg, ctfgame.elevel);
 		strncpy(level.forcemap, ctfgame.elevel, sizeof(level.forcemap) - 1);
 		EndDMLevel();
 		break;
