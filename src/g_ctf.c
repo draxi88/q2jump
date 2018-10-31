@@ -4953,15 +4953,14 @@ void CTFWarp(edict_t *ent)
 
 	if (ent->client->resp.silence)
 		return;
-	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
-	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120)
-	{
-		if (Get_Voting_Clients()>1)
-		{
+/*	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
+	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120){
+		if (Get_Voting_Clients()>1) {
 			gi.cprintf(ent,PRINT_HIGH,"You cannot initiate a vote of this kind when timeleft is under 2 minutes\n");
 			return;
 		}
 	}
+*/
 
 
 	index = ent-g_edicts-1;
