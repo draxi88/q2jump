@@ -5103,6 +5103,42 @@ void CTFWarp(edict_t *ent)
 		}
 	}
 	else
+	if ((strcmp(temp,"NEWTODO")==0) || (strcmp(temp,"newtodo")==0))
+	{
+		if (ent->client->resp.uid<=0) { // check for id
+			gi.cprintf(ent,PRINT_HIGH,"Join HARD team to load your identity.\n");
+			return;
+		}
+
+		if (!overall_completions[index].loaded) { // open their file
+			write_tourney_file(level.mapname,level.mapnum);
+			open_uid_file(ent->client->resp.uid-1,ent);
+		}
+
+		map = maplist.nummaps - 1;
+		for (i=maplist.nummaps-1; i>=1; i--) { // find the todo maps
+			if (overall_completions[index].maps[i]!=1) {
+				notimes[map] = i;
+				break;
+			}
+		}
+
+		if (!map) { // check if all maps are done
+			gi.cprintf(ent,PRINT_HIGH,"All maps been completed\n");
+			return;
+		}
+
+		sprintf(text, "%s has requested changing to level %s. (Newest todo by %s.)", ent->client->pers.netname, maplist.mapnames[notimes[map]], ent->client->pers.netname);
+
+		if (CTFBeginElection(ent, ELECT_MAP, text,false)) {
+			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
+			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[notimes[map]]));
+			strncpy(ctfgame.elevel, maplist.mapnames[notimes[map]], sizeof(ctfgame.elevel) - 1);
+			if (ctfgame.needvotes==0)
+				CTFWinElection(0, NULL);
+		}
+	}
+	else
 	if ((strcmp(temp,"TODO")==0) || (strcmp(temp,"todo")==0))
 	{
 		if (ent->client->resp.uid<=0)
