@@ -1744,31 +1744,22 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	  char	temps[64];
 
 	// check for malformed or illegal info strings
-	if (!Info_Validate(userinfo))
-	{
+	if (!Info_Validate(userinfo)) {
 		strcpy (userinfo, "\\name\\badinfo\\skin\\male/grunt");
 	}
+
 	// set name
 	s = Info_ValueForKey (userinfo, "name");
-/*	if (strcmp(s,"")==0)
-	{	
-		strcpy (s2,"Player");
-		strncpy (ent->client->pers.netname, s2, sizeof(ent->client->pers.netname)-1);
-	} else*/
-	if (strcmp(s,ent->client->pers.netname))
-	{
-		//name changed
+	if (strcmp(s,ent->client->pers.netname)) { //name changed
 		UpdateThisUsersUID(ent,s);
 		overall_completions[ent-g_edicts-1].loaded = false;
-
 		ent->client->pers.banlevel = GetBanLevel(ent,userinfo);
-		ApplyBans(ent,s);		
-		
+		ApplyBans(ent,s);
+		gi.bprintf(PRINT_HIGH, "%s changed their name to %s\n", ent->client->pers.netname, s);
 	}
 
-		strncpy (ent->client->pers.netname, s, sizeof(ent->client->pers.netname)-1);
+	strncpy (ent->client->pers.netname, s, sizeof(ent->client->pers.netname)-1);
 	
-
 	// set skin
 	s = Info_ValueForKey (userinfo, "skin");
 
