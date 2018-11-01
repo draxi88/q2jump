@@ -1205,13 +1205,6 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &aset_vars->ADMIN_NOCLIP_LEVEL
 	},
-/*  { 
-	1,20,1,
-    "ADMIN_HOOK_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_HOOK_LEVEL
-	},*/
   { 
 	1,20,7,
     "ADMIN_BAN_LEVEL", 
@@ -5206,8 +5199,6 @@ void List_Admin_Commands(edict_t *ent)
 			gi.cprintf(ent, PRINT_HIGH, "addmap ");
 		if (i == aset_vars->ADMIN_NOCLIP_LEVEL )
 			gi.cprintf(ent,PRINT_HIGH,"noclip ");
-//		if (i == aset_vars->ADMIN_HOOK_LEVEL)
-//			gi.cprintf(ent,PRINT_HIGH,"hook ");
 		if (i == aset_vars->ADMIN_GIVE_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"give ");
 		if (i == aset_vars->ADMIN_SILENCE_LEVEL)
@@ -7006,7 +6997,6 @@ void SetDefaultValues(void)
 	aset_vars->ADMIN_SILENCE_LEVEL		=2;
 	aset_vars->ADMIN_GIVE_LEVEL			=1;
 	aset_vars->ADMIN_NOCLIP_LEVEL		=1;
-//	aset_vars->ADMIN_HOOK_LEVEL			=1;
 	aset_vars->ADMIN_BAN_LEVEL			=7;
 	aset_vars->ADMIN_IP_LEVEL			=5;
 	aset_vars->ADMIN_DUMMYVOTE_LEVEL	=4;
