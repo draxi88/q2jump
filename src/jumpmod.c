@@ -867,6 +867,13 @@ zbotcmd_t zbotCommands[] =
 	&gset_vars->notimevotetime,
   },
   {
+	0,1,0,
+	"nameannounce",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->nameannounce,
+  },
+  {
 	0,MAX_MAPMEM,7,
 	"maps_pass",
 	CMDWHERE_CFGFILE | CMD_GSET, 
@@ -6953,6 +6960,7 @@ void SetDefaultValues(void)
 	gset_vars->maps_pass = 5;
 	gset_vars->nomapvote = 300;
 	gset_vars->notimevotetime = 300;
+	gset_vars->nameannounce = 0;
 	gset_vars->allow_admin_boot = 1;
 	gset_vars->adminmaxaddtime = 0;
 	gset_vars->ghost_glow = 0;

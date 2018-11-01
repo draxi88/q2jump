@@ -1755,7 +1755,8 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 		overall_completions[ent-g_edicts-1].loaded = false;
 		ent->client->pers.banlevel = GetBanLevel(ent,userinfo);
 		ApplyBans(ent,s);
-		gi.bprintf(PRINT_HIGH, "%s changed their name to %s\n", ent->client->pers.netname, s);
+		if (gset_vars->nameannounce)
+			gi.bprintf(PRINT_HIGH, "%s changed their name to %s\n", ent->client->pers.netname, s);
 	}
 
 	strncpy (ent->client->pers.netname, s, sizeof(ent->client->pers.netname)-1);
