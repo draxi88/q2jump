@@ -98,14 +98,14 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->best_time_glow,
   },
   { 
-	0,1,1,
+	0,1,0,
     "blaster", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
     &mset_vars->blaster,
   },
   { 
-	0,1,1,
+	0,1,0,
     "weapons", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -341,13 +341,6 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,1,
-    "gblaster", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->blaster,
-  },
-  { 
-	0,1,1,
     "gweapons", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
@@ -422,20 +415,6 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->regen,
-  },
-  { 
-	0,1,0,
-    "grocket", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->rocket,
-  },
-  { 
-	0,1,0,
-    "gbfg", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->bfg,
   },
   { 
 	0,2147483647,8388608,
@@ -6862,6 +6841,9 @@ void SetDefaultValues(void)
 	mset_vars->allowsrj = 0;
 	mset_vars->checkpoint_total = 0;
 	mset_vars->fast_firing = 0;
+	mset_vars->bfg = 0;
+	mset_vars->blaster = 0;
+	mset_vars->rocket = 0;
 
 
 	// gset only
@@ -6931,9 +6913,7 @@ void SetDefaultValues(void)
 	gset_vars->mset->gravity = 800;
 	gset_vars->mset->playtag = 0;
 	gset_vars->mset->cmsg = 0;
-	gset_vars->mset->rocket = 0;
 	gset_vars->mset->tourney = 0;
-	gset_vars->mset->blaster = 1;
 	gset_vars->mset->damage = 1;
 	gset_vars->mset->fastdoors = 0;	
 	gset_vars->mset->slowdoors = 0;	

@@ -406,11 +406,10 @@ typedef struct
 
 extern zbotcmd_t zbotCommands[];
 
+// mset only
 typedef struct
 {
 	unsigned int	timelimit;
-	unsigned int	blaster;
-	unsigned int	weapons;
 	unsigned int	slowdoors;	
 	unsigned int	fastdoors;	
 	unsigned int	fasttele;
@@ -425,7 +424,6 @@ typedef struct
 	unsigned int antiglue_allow1st;
 	unsigned int target_glow;
 	unsigned int tourney;
-	unsigned int rocket;
 	unsigned int cmsg;
 	unsigned int playtag;
 	char edited_by[256];
@@ -434,14 +432,19 @@ typedef struct
 	unsigned int singlespawn;
 	unsigned int falldamage;
 	unsigned int addedtimeoveride;	
+	unsigned int ghost_model;
+	unsigned int fpskick;
+
 	unsigned int allowsrj;
 	unsigned int checkpoint_total;
 	unsigned int bfg;
 	unsigned int fast_firing;
-	int ghost_model;
-	int fpskick;
+	unsigned int rocket;
+	unsigned int weapons;
+	unsigned int blaster;
 } mset_vars_t;
 
+// gset only
 typedef struct
 {
 	mset_vars_t mset[1];
