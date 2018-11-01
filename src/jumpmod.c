@@ -438,13 +438,6 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->bfg,
   },
   { 
-	0,1,0,
-    "gfast_firing", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->fast_firing,
-  },
-  { 
 	0,2147483647,8388608,
     "gtarget_glow", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
@@ -6868,6 +6861,7 @@ void SetDefaultValues(void)
 	// mset only
 	mset_vars->allowsrj = 0;
 	mset_vars->checkpoint_total = 0;
+	mset_vars->fast_firing = 0;
 
 
 	// gset only
