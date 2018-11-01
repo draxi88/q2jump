@@ -6969,7 +6969,7 @@ void SetDefaultValues(void)
 	gset_vars->mset->antiglue_allow1st = 0;
 	gset_vars->mset->target_glow = 512;
 	gset_vars->mset->ghost = 1;
-	gset_vars->mset->kill_delay = 2;
+	gset_vars->mset->kill_delay = 1;
 	gset_vars->mset->singlespawn = 0;
 	gset_vars->mset->falldamage = 1;
 	gset_vars->mset->addedtimeoveride = 0;
