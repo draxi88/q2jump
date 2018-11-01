@@ -340,13 +340,6 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->best_time_glow,
   },
   { 
-	0,1,1,
-    "gweapons", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->weapons,
-  },
-  { 
 	0,1,0,
     "gcmsg", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
