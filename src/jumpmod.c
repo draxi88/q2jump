@@ -6864,6 +6864,13 @@ int num_mset_commands = 0;
 void SetDefaultValues(void)
 {	
 	int i;
+
+	// mset only
+	mset_vars->allowsrj = 0;
+	mset_vars->checkpoint_total = 0;
+
+
+	// gset only
 	strcpy(gset_vars->model_store,"models/monsters/commandr/head/tris.md2");
 	strcpy(gset_vars->admin_model,"guard");
 	strcpy(gset_vars->numberone_wav,"numberone.wav");
@@ -6923,6 +6930,8 @@ void SetDefaultValues(void)
 	gset_vars->tempbanonkick = 0;
 //	gset_vars->updated = 0;
 
+
+	// gset and mset
 	gset_vars->mset->ghost_model = 0;
 	gset_vars->mset->droptofloor = 1;
 	gset_vars->mset->gravity = 800;
@@ -6951,6 +6960,8 @@ void SetDefaultValues(void)
 	gset_vars->voteextratime = 60;
 	gset_vars->mset->fpskick = 1;
 
+
+	// aset only
 	aset_vars->MAX_ADMIN_LEVEL			=7;
 	aset_vars->ADMIN_ADDADMIN_LEVEL		=7;
 	aset_vars->ADMIN_ADDMAP_LEVEL		=7;
