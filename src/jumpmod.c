@@ -788,13 +788,6 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->hideghost,
   },
   { 
-	1,10,7,
-    "addmaplevel", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->addmaplevel,
-  },
-  { 
 	1,99999,500,
     "weapon_fire_min_delay", 
     CMDWHERE_CFGFILE | CMD_GSET, 
@@ -6927,7 +6920,6 @@ void SetDefaultValues(void)
 	gset_vars->numsoundwavs = 1;
 	gset_vars->store_safe = 1;
 	gset_vars->addedtimemap = 15;
-	gset_vars->addmaplevel = 7;
 	gset_vars->weapon_fire_min_delay = 500;
 	gset_vars->html_create = 0;
 	gset_vars->html_profile = 1;
@@ -10317,8 +10309,10 @@ void AddMap(edict_t *ent)
 	int		month,day,year;
 	int i;  // _h2
 	
-	if (ent->client->resp.admin<gset_vars->addmaplevel)
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADDMAP_LEVEL) {
+		gi.cprintf(ent,PRINT_HIGH,"You must be a level %i admin to add maps.\n", aset_vars->ADMIN_ADDMAP_LEVEL);
 		return;
+	}
 
 	if (gi.argc() < 2) {
 		gi.cprintf(ent,PRINT_HIGH,"addmap <mapname> - use remmap <nr> to remove maps\n");

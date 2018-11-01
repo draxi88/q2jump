@@ -477,7 +477,6 @@ typedef struct
 	int store_safe;
 	int intermission;
 	int addedtimemap;
-	int addmaplevel;
 	int weapon_fire_min_delay;
 	int html_profile;
 	int html_create;
