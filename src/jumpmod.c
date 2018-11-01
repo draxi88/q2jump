@@ -514,13 +514,6 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &gset_vars->mset->addedtimeoveride,
   },
-   { 
-	0,28,0,
-    "gcheckpoint_total", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,  
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->checkpoint_total,
-  },
   { 
 	0,120,60,
     "voteextratime", 
