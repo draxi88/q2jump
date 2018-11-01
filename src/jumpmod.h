@@ -491,7 +491,6 @@ typedef struct
 	int allow_admin_boot;
 	int adminmaxaddtime;
 	int ghost_glow;
-	int admin_model_level;
 	char admin_model[255];
 	int map_end_warn_sounds;   // hann
 	int max_votes;   // _h2
@@ -553,6 +552,7 @@ typedef struct
 	int ACMD_LOCK_LEVEL			;
 	int ADMIN_UPDATESCORES_LEVEL;
 	int ACMD_RESYNC_LEVEL		;
+	int ADMIN_MODEL_LEVEL		;
 } aset_vars_t;
 
 extern mset_vars_t mset_vars[1];

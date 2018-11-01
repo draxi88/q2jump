@@ -873,13 +873,6 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
 	&gset_vars->ghost_glow,
   },
-  {
-	2,50,5,
-	"admin_model_level",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->admin_model_level,
-  },
   {						// hann
         0,1,1,					// hann
         "map_end_warn_sounds",			// hann
@@ -1079,7 +1072,7 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &aset_vars->ADMIN_TOGGLEHUD_LEVEL
 	},
-	{ 
+  { 
 	1,20,7,
     "ACMD_RESYNC_LEVEL", 
     CMDWHERE_CFGFILE | CMD_ASET, 
@@ -1093,6 +1086,13 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &aset_vars->ADMIN_ADDENT_LEVEL
 	},
+  {
+	1,20,5,
+	"ADMIN_MODEL_LEVEL",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_MODEL_LEVEL,
+  },
   { 
 	1,20,5,
     "ADMIN_DVOTE_LEVEL", 
@@ -6934,7 +6934,6 @@ void SetDefaultValues(void)
 	gset_vars->allow_admin_boot = 1;
 	gset_vars->adminmaxaddtime = 0;
 	gset_vars->ghost_glow = 0;
-	gset_vars->admin_model_level = 5;
 	gset_vars->map_end_warn_sounds = 1;  // hann
 	gset_vars->max_votes = 3; 	     // _h2
 	gset_vars->tempbanonkick = 0;
@@ -7014,6 +7013,7 @@ void SetDefaultValues(void)
 	aset_vars->ADMIN_NOMAXVOTES_LEVEL	=2;  // _h2
 	aset_vars->ADMIN_UPDATESCORES_LEVEL =7;
 	aset_vars->ACMD_RESYNC_LEVEL		=7;
+	aset_vars->ADMIN_MODEL_LEVEL        =5;
 
 	num_gset_commands = 0;
     for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
@@ -13599,7 +13599,7 @@ void SkinList(edict_t *ent)
 {
 	int i;
 	char txt[255];
-	if (ent->client->resp.admin<gset_vars->admin_model_level)
+	if (ent->client->resp.admin<aset_vars->ADMIN_MODEL_LEVEL)
 		return;
 
 	if (!model_list_count)

@@ -427,7 +427,7 @@ void CTFAssignSkin(edict_t *ent, char *s)
 	}	
 
 	
-	if (ent->client->resp.admin>=gset_vars->admin_model_level)
+	if (ent->client->resp.admin>=aset_vars->ADMIN_MODEL_LEVEL)
 	{
 		got = false;
 		if (ent->client->resp.model_number)
@@ -1074,7 +1074,7 @@ void CTFEffects(edict_t *player)
 		player->s.modelindex2 = 0;
 	}
 	else
-	if (gset_vars->transparent && player->client->resp.admin<gset_vars->admin_model_level)
+	if (gset_vars->transparent && player->client->resp.admin<aset_vars->ADMIN_MODEL_LEVEL)
 	{
 		player->s.renderfx |= RF_TRANSLUCENT;
 		player->s.modelindex2 = 255;
