@@ -536,7 +536,7 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->debug,
   },
   { 
-	0,15,5,
+	0,100,10,
     "autotime",
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
@@ -6891,7 +6891,7 @@ void SetDefaultValues(void)
 //	gset_vars->glow_fastest = 1;
 	gset_vars->respawn_sound = 1;
 //	gset_vars->glow_time = 0;
-	gset_vars->autotime = 5;
+	gset_vars->autotime = 10;
 	gset_vars->hook = 1;
 	gset_vars->hideghost = 300;
 	gset_vars->invis = 0;
