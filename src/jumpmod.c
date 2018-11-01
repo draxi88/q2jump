@@ -5322,8 +5322,8 @@ void mvote(edict_t *ent)
 	int i,i2,map;
 	int	notimes[MAX_MAPS];
 
-	if (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL)
-	{
+	if (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL) {
+		gi.cprintf(ent, PRINT_HIGH, "Please login to use mvote.\n");
 		return;
 	}
 
