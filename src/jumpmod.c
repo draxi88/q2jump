@@ -5330,41 +5330,39 @@ void mvote(edict_t *ent)
 	if (gi.argc() < 2) {
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		gi.cprintf(ent, PRINT_HIGH, "Type maplist for a list of maps.\n");
-		gi.cprintf(ent, PRINT_HIGH, "You may also use mvote random \n");
-		gi.cprintf(ent, PRINT_HIGH, "to have a map chosen for you.    \n");		
-		gi.cprintf(ent, PRINT_HIGH, "mvote next could also be used.\n");		
+		gi.cprintf(ent, PRINT_HIGH, "mvote [mapname] - a specific map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mvote random - a random map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mvote notime - a random map with no times.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mvote next - the next map.\n");		
+		gi.cprintf(ent, PRINT_HIGH, "mvote prev - the previous map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mvote new - the newest map.\n");
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		return;
 	}
 
-	if (maplist.nummaps<=0)
-	{
+	// check for empty maplist
+	if (maplist.nummaps<=0) {
 		gi.cprintf(ent, PRINT_HIGH, "No maps in maplist\n");
 		return;
 	}
-
 	map = -1;
 
 	strncpy(temp,gi.argv(1),sizeof(temp)-1);
 
-	if ((strcmp(temp,"RANDOM")==0) || (strcmp(temp,"random")==0))
-	{
-		map = rand() % maplist.nummaps;
-		
+	if ((strcmp(temp,"RANDOM")==0) || (strcmp(temp,"random")==0)) {
+		map = rand() % maplist.nummaps;	
 		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
 			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's random map vote has passed. Level changing to %s.\n", 
+			gi.bprintf(PRINT_HIGH, "%s's mvote(random) has passed. Map changing to %s.\n", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
 			EndDMLevel();
 			return;
 		}
-
 	}
 	else
-	if ((strcmp(temp,"NEXT")==0) || (strcmp(temp,"next")==0))
-	{
+	if ((strcmp(temp,"NEXT")==0) || (strcmp(temp,"next")==0)) {
 		map = level.mapnum;
 		map++;
 		if (map>=maplist.nummaps)
@@ -5373,13 +5371,12 @@ void mvote(edict_t *ent)
 		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
 			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
+			gi.bprintf(PRINT_HIGH, "%s's mvote(next) has passed. Map changing to %s.\n", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
 			EndDMLevel();
 			return;
 		}
-
 	}
 	else
 	if ((strcmp(temp,"notime")==0) || (strcmp(temp,"NOTIME")==0))
@@ -5403,13 +5400,12 @@ void mvote(edict_t *ent)
 		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
 			sprintf(text,"changed level to %s (no time set).",maplist.mapnames[notimes[map]]);
 			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s (no time set).\n", 
+			gi.bprintf(PRINT_HIGH, "%s's mvote(notime) has passed. Map changing to %s.\n", 
 				ent->client->pers.netname, maplist.mapnames[notimes[map]]);
 			strncpy(level.forcemap, maplist.mapnames[notimes[map]], sizeof(level.forcemap) - 1);
 			EndDMLevel();
 			return;
 		}
-
 	}
 	else
 	if ((strcmp(temp,"PREV")==0) || (strcmp(temp,"prev")==0))
@@ -5422,13 +5418,27 @@ void mvote(edict_t *ent)
 		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
 			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
+			gi.bprintf(PRINT_HIGH, "%s's mvote(prev) has passed. Map changing to %s.\n", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
 			EndDMLevel();
 			return;
 		}
+	}
+	else
+	if ((strcmp(temp,"NEW")==0) || (strcmp(temp,"new")==0))
+	{
+		map = maplist.nummaps - 1;
 
+		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
+			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
+			admin_log(ent,text);
+			gi.bprintf(PRINT_HIGH, "%s's mvote(new) has passed. Map changing to %s.\n", 
+				ent->client->pers.netname, maplist.mapnames[map]);
+			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
+			EndDMLevel();
+			return;
+		}
 	}
 	else
 	{
@@ -5451,7 +5461,7 @@ void mvote(edict_t *ent)
 		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",gi.argv(1));
 			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
+			gi.bprintf(PRINT_HIGH, "%s's mvote has passed. Map changing to %s.\n", 
 				ent->client->pers.netname, gi.argv(1));
 			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
 			EndDMLevel();
