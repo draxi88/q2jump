@@ -1089,7 +1089,7 @@ zbotcmd_t zbotCommands[] =
   {
 	1,20,5,
 	"ADMIN_MODEL_LEVEL",
-	CMDWHERE_CFGFILE | CMD_GSET, 
+	CMDWHERE_CFGFILE | CMD_ASET, 
     CMDTYPE_NUMBER,
 	&aset_vars->ADMIN_MODEL_LEVEL,
   },
