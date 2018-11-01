@@ -489,7 +489,6 @@ typedef struct
 #endif
 	int nomapvote;
 	int notimevotetime;
-	int nameannounce;
 	int maps_pass;
 	int allow_admin_boot;
 	int adminmaxaddtime;
