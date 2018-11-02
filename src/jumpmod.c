@@ -354,27 +354,6 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->damage,
   },
   { 
-	0,1,0,
-    "gfastdoors", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->fastdoors,
-  },
-  { 
-	0,1,0,
-    "gslowdoors", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->slowdoors,
-  },
-  { 
-	0,1,0,
-    "gfasttele", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->fasttele,
-  },
-  { 
 	0,1,1,
     "gghost",
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
@@ -6837,6 +6816,9 @@ void SetDefaultValues(void)
 	mset_vars->bfg = 0;
 	mset_vars->blaster = 0;
 	mset_vars->rocket = 0;
+	mset_vars->fastdoors = 0;	
+	mset_vars->slowdoors = 0;	
+	mset_vars->fasttele = 0;
 
 
 	// gset only
@@ -6908,9 +6890,6 @@ void SetDefaultValues(void)
 	gset_vars->mset->cmsg = 0;
 	gset_vars->mset->tourney = 0;
 	gset_vars->mset->damage = 1;
-	gset_vars->mset->fastdoors = 0;	
-	gset_vars->mset->slowdoors = 0;	
-	gset_vars->mset->fasttele = 0;
 	gset_vars->mset->health = 400;
 	gset_vars->mset->regen = 5;
 	gset_vars->mset->timelimit = 20;

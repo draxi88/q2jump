@@ -410,9 +410,6 @@ extern zbotcmd_t zbotCommands[];
 typedef struct
 {
 	unsigned int	timelimit;
-	unsigned int	slowdoors;	
-	unsigned int	fastdoors;	
-	unsigned int	fasttele;
 	unsigned int	damage;
 	unsigned int	health;
 	unsigned int	regen;
@@ -442,6 +439,9 @@ typedef struct
 	unsigned int rocket;
 	unsigned int weapons;
 	unsigned int blaster;
+	unsigned int slowdoors;	
+	unsigned int fastdoors;	
+	unsigned int fasttele;
 } mset_vars_t;
 
 // gset only
