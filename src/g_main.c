@@ -677,7 +677,7 @@ void CheckDMRules (void)
 				} // hann
 
 
-				if (mset_vars->playtag)
+				if (gset_vars->playtag)
 				{
 					//playtag
 					for (i=0 ; i<maxclients->value ; i++)
@@ -1033,7 +1033,7 @@ void G_RunFrame (void)
 				SendFlashLight(ent);
 
 			//tag
-			if (mset_vars->playtag)
+			if (gset_vars->playtag)
 			if (ent->client->resp.tagged)
 				PassTag(ent);
 

@@ -2188,13 +2188,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (ent->client->resp.antiglue)
 		{
 			//antiglue is enabled or we are on easy team
-			if (mset_vars->antiglue || ent->client->resp.ctf_team==CTF_TEAM1)
-			//if (!(mset_vars->antiglue==0 && ent->client->resp.ctf_team!=CTF_TEAM1))
+			if (gset_vars->antiglue || ent->client->resp.ctf_team==CTF_TEAM1)
+			//if (!(gset_vars->antiglue==0 && ent->client->resp.ctf_team!=CTF_TEAM1))
 			{
 				pm.s.pm_flags &= ~(PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_TELEPORT);
 				pm.s.pm_time = 0;
 				//apply a penalty if available
-				if (mset_vars->antiglue_penalty)
+				if (gset_vars->antiglue_penalty)
 				{
 					//penalty delay
 					if (ent->client->resp.item_timer_penalty_delay<level.framenum)
@@ -2206,8 +2206,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 						}
 						else
 						{
-							ent->client->resp.item_timer += (mset_vars->antiglue_penalty/10);
-							ent->client->resp.item_timer_penalty += mset_vars->antiglue_penalty;
+							ent->client->resp.item_timer += (gset_vars->antiglue_penalty/10);
+							ent->client->resp.item_timer_penalty += gset_vars->antiglue_penalty;
 						}
 						ent->client->resp.item_timer_penalty_delay = level.framenum + 5;
 					}

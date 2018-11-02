@@ -406,54 +406,58 @@ typedef struct
 
 extern zbotcmd_t zbotCommands[];
 
-// msets
+// mset only
 typedef struct
 {
-	unsigned int	timelimit;
-	unsigned int	damage;
-	unsigned int	health;
-	unsigned int	regen;
-	unsigned int ghost;
-	unsigned int best_time_glow;
-	unsigned int antiglue;
-	unsigned int antiglue_penalty;
-	unsigned int antiglue_allow1st;
-	unsigned int tourney;
-	unsigned int cmsg;
-	unsigned int playtag;
+	int addedtimeoverride;
+	int allowsrj;
+	int bfg;
+	int blaster;
+	int checkpoint_total;
+	int cmsg;
+	int damage;
+	int droptofloor;
 	char edited_by[256];
-	unsigned int gravity;
-	unsigned int droptofloor;
-	unsigned int singlespawn;
-	unsigned int falldamage;
-	unsigned int addedtimeoveride;	
-	unsigned int ghost_model;
-
-	unsigned int allowsrj;
-	unsigned int checkpoint_total;
-	unsigned int bfg;
-	unsigned int fast_firing;
-	unsigned int rocket;
-	unsigned int weapons;
-	unsigned int blaster;
-	unsigned int slowdoors;	
-	unsigned int fastdoors;	
-	unsigned int fasttele;
+	int falldamage;
+	int fast_firing;
+	int fastdoors;	
+	int fasttele;
+	int ghost;
+	int ghost_model;
+	int gravity;
+	int health;
+	int regen;
+	int rocket;
+	int singlespawn;
+	int slowdoors;	
+	int timelimit;
+	int weapons;
 } mset_vars_t;
 
-// gset only
+// gsets that aren't msets
 typedef struct
 {
-	mset_vars_t mset[1];
+	mset_vars_t mset[1]; // includes the mset only cmds
+	int addedtimemap;
+	int addtime_announce;
+	int admin_max_addtime;
+	char admin_model[255];
+	int allow_admin_boot;
+	int antiglue;
+	int antiglue_allow1st;
+	int antiglue_penalty;
+	int autotime;
+	int best_time_glow;
+
 	int flashlight;
 	int hookspeed;
 	int hookpull;
 	int respawn_sound;
-	int autotime;
 	int glow_admin;
 	int glow_multi;
 	int time_adjust;
 	int hook;
+	int playtag;
 	int invis;
 	int jetpack;
 	int transparent;
@@ -474,7 +478,6 @@ typedef struct
 	int numsoundwavs;
 	int store_safe;
 	int intermission;
-	int addedtimemap;
 	int weapon_fire_min_delay;
 	int html_profile;
 	int html_create;
@@ -486,23 +489,20 @@ typedef struct
 	int nomapvotetime;
 	int notimevotetime;
 	int maps_pass;
-	int allow_admin_boot;
-	int adminmaxaddtime;
 	int ghost_glow;
-	char admin_model[255];
 	int map_end_warn_sounds;   // hann
 	int max_votes;   // _h2
-	int tempbanonkick;
+	int temp_ban_on_kick;
 	int holdtime;
 	int pvote_announce;
 	unsigned int	hideghost;
 	int cvote_announce;
 	unsigned int voteextratime;
-	int addtime_announce;
 	int numberone_length;
 	unsigned int fpskick;
 	unsigned int kill_delay;
 	unsigned int target_glow;
+	unsigned int tourney;
 } gset_vars_t;
 
 typedef struct

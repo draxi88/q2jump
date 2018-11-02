@@ -90,12 +90,30 @@ char zbbuffer2[256];
 
 zbotcmd_t zbotCommands[] = 
 {
+
+  //----------------------------
+  //         mset's
+  //----------------------------
   { 
-	0,2147483647,16384,
-    "best_time_glow", 
+	0,1,0,
+    "addedtimeoverride", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->best_time_glow,
+    &mset_vars->addedtimeoverride,
+  },
+  { 
+	0,1,0,
+    "allowsrj", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->allowsrj,
+  },
+  { 
+	0,1,0,
+    "bfg", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->bfg,
   },
   { 
 	0,1,0,
@@ -105,11 +123,11 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->blaster,
   },
   { 
-	0,1,0,
-    "weapons", 
+	0,28,0,
+    "checkpoint_total", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->weapons,
+    &mset_vars->checkpoint_total,
   },
   { 
 	0,1,0,
@@ -126,18 +144,39 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->damage,
   },
   { 
+	0,1,1,
+    "droptofloor", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->droptofloor,
+  },
+  { 
+	0,0,0,
+    "edited_by", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_STRING,
+    &mset_vars->edited_by,
+  },
+  { 
+	0,1,1,
+    "falldamage", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->falldamage,
+  },
+  { 
+	0,1,0,
+    "fast_firing", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->fast_firing,
+  },
+  { 
 	0,1,0,
     "fastdoors", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
     &mset_vars->fastdoors,
-  },
-  { 
-	0,1,0,
-    "slowdoors", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->slowdoors,
   },
   { 
 	0,1,0,
@@ -154,6 +193,20 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->ghost,
   },
   { 
+	0,128,0,
+    "ghosty_model", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->ghost_model,
+  },
+  { 
+	-10000,10000,800,
+    "gravity", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->gravity,
+  },
+  { 
 	0,999,400,
     "health", 
     CMDWHERE_CFGFILE | CMD_MSET, 
@@ -161,14 +214,7 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->health,
   },
   { 
-	0,1,0,
-    "playtag", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->playtag,
-  },
-  { 
-	-100,100,5,
+	-100,100,100,
     "regen",
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -183,38 +229,17 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,0,
-    "bfg", 
+    "singlespawn", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->bfg,
+    &mset_vars->singlespawn,
   },
   { 
 	0,1,0,
-    "fast_firing", 
+    "slowdoors", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->fast_firing,
-  },
-  { 
-	0,2,0,
-    "antiglue", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->antiglue,
-  },
-  { 
-	0,100,2,
-    "antiglue_penalty", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->antiglue_penalty,
-  },
-  { 
-	0,1,0,
-    "antiglue_allow1st", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->antiglue_allow1st,
+    &mset_vars->slowdoors,
   },
   { 
 	0,999,20,
@@ -225,103 +250,93 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,0,
-    "tourney", 
+    "weapons", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->tourney,
+    &mset_vars->weapons,
+  },
+
+  //----------------------------
+  //         gset's
+  //----------------------------
+  { 
+	0,999,10,
+    "addedtimemap", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->addedtimemap,
+  },
+  {
+	0,1,1,
+	"addtime_announce",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->addtime_announce,
+  },
+  {
+	0,1,0,
+	"admin_max_addtime",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->admin_max_addtime,
   },
   { 
 	0,0,0,
-    "edited_by", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
+    "admin_model", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_STRING,
-    &mset_vars->edited_by,
+    &gset_vars->admin_model,
   },
-  { 
-	-10000,10000,800,
-    "gravity", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->gravity,
-  },
-  { 
+  {
 	0,1,1,
-    "droptofloor", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
+	"allow_admin_boot",
+	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->droptofloor,
+	&gset_vars->allow_admin_boot,
   },
-  { 
-	0,1,0,
-    "singlespawn", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->singlespawn,
-  },
-  { 
+#ifdef RACESPARK
+  {
 	0,1,1,
-    "falldamage", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
+	"allow_race_spark",
+	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->falldamage,
+	&gset_vars->allow_race_spark,
   },
-  { 
-	0,999,0,
-    "addedtimeoveride", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->addedtimeoveride,
-  },
-  { 
-	0,1,0,
-    "allowsrj", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->allowsrj,
-  },
-  { 
-	0,28,0,
-    "checkpoint_total", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->checkpoint_total,
-  },
-  { 
-	0,128,0,
-    "ghosty_model", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->ghost_model,
-  },
-
-  // gset AND mset
-  { 
-	0,2147483647,16384,
-    "gbest_time_glow", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->best_time_glow,
-  },
+#endif
   { 
 	0,1,1,
     "gantiglue", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->antiglue,
-  },
-  { 
-	0,100,1,
-    "gantiglue_penalty", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->antiglue_penalty,
+    &gset_vars->antiglue,
   },
   { 
 	0,1,0,
     "gantiglue_allow1st", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->antiglue_allow1st,
+    &gset_vars->antiglue_allow1st,
+  },
+  { 
+	0,100,1,
+    "gantiglue_penalty", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->antiglue_penalty,
+  },
+  { 
+	0,100,10,
+    "autotime",
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->autotime,
+  },
+  { 
+	0,2147483647,0,
+    "gbest_time_glow", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->best_time_glow,
   },
   { 
 	0,1,0,
@@ -329,6 +344,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->cmsg,
+  },
+  {
+	0,1,1,
+	"cvote_announce",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->cvote_announce,
   },
   { 
 	0,1,1,
@@ -339,117 +361,45 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,1,
-    "gghost",
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->ghost,
-  },
-  { 
-	0,999,400,
-    "ghealth", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->health,
-  },
-  { 
-	0,1,0,
-    "gplaytag", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->playtag,
-  },
-  { 
-	-100,100,5,
-    "gregen",
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->regen,
-  },
-  { 
-	0,999,20,
-    "gtimelimit", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->timelimit,
-  },
-  { 
-	0,1,0,
-    "gtourney", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->tourney,
-  },
-  { 
-	0,0,0,
-    "gedited_by", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_STRING,
-    &gset_vars->mset->edited_by,
-  },
-  { 
-	-10000,10000,800,
-    "ggravity", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->gravity,
-  },
-  { 
-	0,1,1,
-    "gdroptofloor", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->droptofloor,
-  },
-  { 
-	0,1,0,
-    "gsinglespawn", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->singlespawn,
-  },
-  { 
-	0,1,1,
-    "gfalldamage", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->falldamage,
-  },
-  { 
-	0,1,1,
-    "gaddedtimeoveride", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->addedtimeoveride,
-  },
-
-  // gset only
-  { 
-	0,1,1,
-    "gfpskick", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->fpskick,
-  },
-  { 
-	0,120,60,
-    "voteextratime", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->voteextratime,
-  },
-  { 
-	0,1,1,
     "debug",
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
     &gset_vars->debug,
   },
   { 
-	0,100,10,
-    "autotime",
+	0,2,1,
+    "flashlight", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->autotime,
+    &gset_vars->flashlight,
+  },
+  { 
+	0,1,1,
+    "fpskick", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->fpskick,
+  },
+  { 
+	0,1,1,
+    "gghost",
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->ghost,
+  },
+  {
+	0,2147483647,0,
+	"ghost_glow",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->ghost_glow,
+  },
+  { 
+	0,128,0,
+    "gghosty_model", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->ghost_model,
   },
   { 
 	0,9999999,0,
@@ -466,11 +416,32 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->glow_multi,
   },
   { 
-	0,1000,0,
-    "time_adjust", 
+	-10000,10000,800,
+    "ggravity", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->gravity,
+  },
+  { 
+	0,999,400,
+    "ghealth", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->health,
+  },
+  { 
+	0,2000,300,
+    "hideghost", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->time_adjust,
+    &gset_vars->hideghost,
+  },
+  {
+	0,1,1,
+	"holdtime",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->holdtime,
   },
   { 
 	0,1,1,
@@ -478,6 +449,55 @@ zbotcmd_t zbotCommands[] =
 	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
     &gset_vars->hook,
+  },
+  { 
+	1,10000,750,
+    "hookpull", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->hookpull,
+  },
+  { 
+	1,10000,1200,
+    "hookspeed", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->hookspeed,
+  },
+  { 
+	0,50,8,
+    "html_bestscores", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->html_bestscores,
+  },
+  { 
+	0,1,1,
+    "html_create", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->html_create,
+  },
+  { 
+	0,20,10,
+    "html_firstplaces", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->html_firstplaces,
+  },
+  { 
+	1,9,1,
+    "html_profile", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->html_profile,
+  },
+  { 
+	1,999,50,
+    "intermission", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->intermission,
   },
   { 
 	0,1,0,
@@ -494,39 +514,39 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->jetpack,
   },
   { 
+	0,500,1,
+    "kill_delay", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->kill_delay,
+  },
+  {
+    0,1,1,
+    "map_end_warn_sounds",
+    CMDWHERE_CFGFILE | CMD_GSET,
+    CMDTYPE_NUMBER,
+    &gset_vars->map_end_warn_sounds,
+  },
+  { 
 	0,1,0,
-    "transparent", 
+    "maplist_times", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->transparent,
+    &gset_vars->maplist_times,
   },
-  { 
-	0,1,1,
-    "walkthru", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
+  {
+	0,MAX_MAPMEM,7,
+	"maps_pass",
+	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->walkthru,
+	&gset_vars->maps_pass,
   },
-  { 
-	0,1,1,
-    "respawn_sound", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
+  {
+    0,10,3,
+    "max_votes",
+    CMDWHERE_CFGFILE | CMD_GSET,
     CMDTYPE_NUMBER,
-    &gset_vars->respawn_sound,
-  },
-  { 
-	0,2147483647,2,
-    "gtarget_glow", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->target_glow,
-  },
-  { 
-	0,128,0,
-    "gghosty_model", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->ghost_model,
+    &gset_vars->max_votes,
   },
   { 
 	0,0,0,
@@ -535,19 +555,19 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_STRING,
     &gset_vars->model_store,
   },
-  { 
-	0,0,0,
-    "admin_model", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_STRING,
-    &gset_vars->admin_model,
+  {
+	0,10800,300,
+	"nomapvotetime",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->nomapvotetime,
   },
-    { 
-	0,0,0,
-    "numberone_wav", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_STRING,
-    &gset_vars->numberone_wav,
+  {
+	0,10800,300,
+	"notimevotetime",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->notimevotetime,
   },
   { 
 	0,10000,17,
@@ -557,25 +577,32 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->numberone_length,
   },
   { 
-	0,2,1,
-    "flashlight", 
+	0,0,0,
+    "numberone_wav", 
     CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->flashlight,
+    CMDTYPE_STRING,
+    &gset_vars->numberone_wav,
   },
   { 
-	1,10000,1200,
-    "hookspeed", 
+	1,9,1,
+    "numsoundwavs", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->hookspeed,
+    &gset_vars->numsoundwavs,
   },
   { 
-	1,10000,750,
-    "hookpull", 
+	1,999,25,
+    "overtimegainedhealth", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->hookpull,
+    &gset_vars->overtimegainedhealth,
+  },
+  { 
+	1,999,150,
+    "overtimehealth", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->overtimehealth,
   },
   { 
 	1,60,3,
@@ -592,13 +619,6 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->overtimerandom,
   },
   { 
-	1,60,20,
-    "votingtime", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->votingtime,
-  },
-  { 
 	0,4,2,
     "overtimetype", 
     CMDWHERE_CFGFILE | CMD_GSET, 
@@ -613,32 +633,102 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->overtimewait,
   },
   { 
-	1,999,150,
-    "overtimehealth", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->overtimehealth,
-  },
-  { 
-	1,999,25,
-    "overtimegainedhealth", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->overtimegainedhealth,
-  },
-  { 
-	0,1,0,
-    "maplist_times", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->maplist_times,
-  },
-  { 
 	0,999,1,
     "playsound", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
     &gset_vars->playsound,
+  },
+  { 
+	0,1,0,
+    "playtag", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->playtag,
+  },
+  {
+	0,1,1,
+	"pvote_announce",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->pvote_announce,
+  },
+  { 
+	-100,100,100,
+    "gregen",
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->regen,
+  },
+  { 
+	0,1,1,
+    "respawn_sound", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->respawn_sound,
+  },
+  { 
+	0,1,0,
+    "store_safe", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->store_safe,
+  },
+  { 
+	0,1,0,
+    "gsinglespawn", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->singlespawn,
+  },
+  { 
+	0,2147483647,2,
+    "target_glow", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->target_glow,
+  },
+  {
+	0,1,1,
+	"temp_ban_on_kick",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->temp_ban_on_kick,
+  },
+  { 
+	0,1000,0,
+    "time_adjust", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->time_adjust,
+  },
+  { 
+	0,999,20,
+    "gtimelimit", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->timelimit,
+  },
+  { 
+	0,1,0,
+    "gtourney", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->tourney,
+  },
+  { 
+	0,1,0,
+    "transparent", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->transparent,
+  },
+  { 
+	0,120,60,
+    "voteextratime", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->voteextratime,
   },
   { 
 	0,1000,20,
@@ -648,39 +738,18 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->voteseed,
   },
   { 
-	1,9,1,
-    "numsoundwavs", 
+	1,60,20,
+    "votingtime", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->numsoundwavs,
+    &gset_vars->votingtime,
   },
   { 
 	0,1,1,
-    "safe_store", 
+    "walkthru", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->store_safe,
-  },
-  { 
-	1,999,50,
-    "intermission", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->intermission,
-  },
-  { 
-	0,999,10,
-    "addedtimemap", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->addedtimemap,
-  },
-  { 
-	0,2000,300,
-    "hideghost", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->hideghost,
+    &gset_vars->walkthru,
   },
   { 
 	1,99999,500,
@@ -689,136 +758,10 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &gset_vars->weapon_fire_min_delay,
   },
-  { 
-	0,1,1,
-    "html_create", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_create,
-  },
-  { 
-	1,9,1,
-    "html_profile", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_profile,
-  },
-  { 
-	0,50,8,
-    "html_bestscores", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_bestscores,
-  },
-  { 
-	0,20,10,
-    "html_firstplaces", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_firstplaces,
-  },
-#ifdef RACESPARK
-  {
-	0,1,1,
-	"allow_race_spark",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->allow_race_spark,
-  },
-#endif
-  {
-	0,10800,300,
-	"nomapvotetime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->nomapvotetime,
-  },
-  {
-	0,10800,300,
-	"notimevotetime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->notimevotetime,
-  },
-  {
-	0,MAX_MAPMEM,7,
-	"maps_pass",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->maps_pass,
-  },
-  {
-	0,1,1,
-	"allow_admin_boot",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->allow_admin_boot,
-  },
-  {
-	0,1,0,
-	"adminmaxaddtime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->adminmaxaddtime,
-  },
-  {
-	0,2147483647,0,
-	"ghost_glow",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->ghost_glow,
-  },
-  {						// hann
-        0,1,1,					// hann
-        "map_end_warn_sounds",			// hann
-        CMDWHERE_CFGFILE | CMD_GSET,		// hann
-    CMDTYPE_NUMBER,				// hann
-        &gset_vars->map_end_warn_sounds,	// hann
-  },
-  {						// _h2
-        0,10,3,					// _h2
-        "max_votes",				// _h2
-        CMDWHERE_CFGFILE | CMD_GSET,		// _h2
-    CMDTYPE_NUMBER,				// _h2
-        &gset_vars->max_votes,			// _h2
-  },						// _h2
-  {
-	0,1,1,
-	"tempbanonkick",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->tempbanonkick,
-  },
-  {
-	0,1,1,
-	"holdtime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->holdtime,
-  },
-  {
-	0,1,1,
-	"cvote_announce",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->cvote_announce,
-  },
-  {
-	0,1,1,
-	"pvote_announce",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->pvote_announce,
-  },
-  {
-	0,1,1,
-	"addtime_announce",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->addtime_announce,
-  },
 
-  // aset's
+  //----------------------------
+  //         aset's
+  //----------------------------
   { 
 	1,20,7,
     "MAX_ADMIN_LEVEL", 
@@ -6765,102 +6708,93 @@ void SetDefaultValues(void)
 {	
 	int i;
 
-	// mset only
-	mset_vars->allowsrj = 0;
-	mset_vars->checkpoint_total = 0;
-	mset_vars->fast_firing = 0;
-	mset_vars->bfg = 0;
-	mset_vars->blaster = 0;
-	mset_vars->rocket = 0;
-	mset_vars->fastdoors = 0;	
-	mset_vars->slowdoors = 0;	
-	mset_vars->fasttele = 0;
-
-
-	// gset only
-	strcpy(gset_vars->model_store,"models/monsters/commandr/head/tris.md2");
-	strcpy(gset_vars->admin_model,"guard");
-	strcpy(gset_vars->numberone_wav,"numberone.wav");
-	strcpy(gset_vars->mset->edited_by,"noone");
-	gset_vars->debug =0;
-	gset_vars->addtime_announce = 1;
-	gset_vars->holdtime = 1;
-	gset_vars->pvote_announce = 1;
-	gset_vars->cvote_announce = 1;
-	gset_vars->flashlight = 1;
-	gset_vars->numberone_length = 17;
-	gset_vars->intermission = 50;
-	gset_vars->hookspeed = 1200;
-	gset_vars->hookpull = 750;
-	gset_vars->glow_admin = 0;
-	gset_vars->glow_multi = 1;
-	gset_vars->time_adjust = 0;
-//	gset_vars->glow_fastest = 1;
-	gset_vars->respawn_sound = 1;
-//	gset_vars->glow_time = 0;
-	gset_vars->autotime = 10;
-	gset_vars->hook = 1;
-	gset_vars->hideghost = 300;
-	gset_vars->invis = 0;
-	gset_vars->jetpack = 1;
-	gset_vars->transparent = 0;
-	gset_vars->walkthru = 1;
-	gset_vars->overtimelimit = 3;
-	gset_vars->overtimerandom = 1;
-	gset_vars->votingtime = 20;
-	gset_vars->overtimetype = 1;
-	gset_vars->overtimewait = 20;
-	gset_vars->overtimegainedhealth = 25;
-	gset_vars->overtimehealth = 150;
-	gset_vars->maplist_times = 0;
-	gset_vars->playsound = 10;
-	gset_vars->voteseed = 20;
-	gset_vars->numsoundwavs = 1;
-	gset_vars->store_safe = 1;
+	// msets/gsets
 	gset_vars->addedtimemap = 15;
-	gset_vars->weapon_fire_min_delay = 500;
-	gset_vars->html_create = 0;
-	gset_vars->html_profile = 1;
-	gset_vars->html_bestscores = 8;
-	gset_vars->html_firstplaces = 10;
+	mset_vars->addedtimeoverride = 0;
+	gset_vars->addtime_announce = 1;
+	gset_vars->admin_max_addtime = 0;
+	strcpy(gset_vars->admin_model,"guard");
+	gset_vars->allow_admin_boot = 1;
 #ifdef RACESPARK
 	gset_vars->allow_race_spark = 1;
 #endif
+	mset_vars->allowsrj = 0;
+	gset_vars->antiglue = 0;
+	gset_vars->antiglue_allow1st = 0;
+	gset_vars->antiglue_penalty = 2;
+	gset_vars->autotime = 10;
+	gset_vars->best_time_glow = 0;
+	mset_vars->bfg = 0;
+	mset_vars->blaster = 0;
+	mset_vars->checkpoint_total = 0;
+	gset_vars->mset->cmsg = 0;
+	gset_vars->cvote_announce = 1;
+	gset_vars->mset->damage = 1;
+	gset_vars->debug =0;
+	mset_vars->droptofloor = 1;
+	strcpy(mset_vars->edited_by,"NA");
+	mset_vars->falldamage = 1;
+	mset_vars->fast_firing = 0;
+	mset_vars->fastdoors = 0;
+	mset_vars->fasttele = 0;
+	gset_vars->flashlight = 1;
+	gset_vars->fpskick = 1;
+	gset_vars->mset->ghost = 1;
+	gset_vars->ghost_glow = 0;
+	gset_vars->mset->ghost_model = 0;
+	gset_vars->glow_admin = 0;
+	gset_vars->glow_multi = 1;
+	gset_vars->mset->gravity = 800;
+	gset_vars->mset->health = 400;
+	gset_vars->hideghost = 300;
+	gset_vars->holdtime = 1;
+	gset_vars->hook = 1;
+	gset_vars->hookpull = 750;
+	gset_vars->hookspeed = 1200;
+	gset_vars->html_bestscores = 8;
+	gset_vars->html_create = 0;
+	gset_vars->html_firstplaces = 10;
+	gset_vars->html_profile = 1;
+	gset_vars->intermission = 50;
+	gset_vars->invis = 0;
+	gset_vars->jetpack = 1;
+	gset_vars->kill_delay = 1;
+	gset_vars->map_end_warn_sounds = 1;
+	gset_vars->maplist_times = 0;
 	gset_vars->maps_pass = 5;
+	gset_vars->max_votes = 3;
+	strcpy(gset_vars->model_store,"models/monsters/commandr/head/tris.md2");
 	gset_vars->nomapvotetime = 300;
 	gset_vars->notimevotetime = 300;
-	gset_vars->allow_admin_boot = 1;
-	gset_vars->adminmaxaddtime = 0;
-	gset_vars->ghost_glow = 0;
-	gset_vars->map_end_warn_sounds = 1;  // hann
-	gset_vars->max_votes = 3; 	     // _h2
-	gset_vars->tempbanonkick = 0;
-	gset_vars->fpskick = 1;
-	gset_vars->kill_delay = 1;
-	gset_vars->target_glow = 2;
-
-
-	// gset and mset
-	gset_vars->mset->ghost_model = 0;
-	gset_vars->mset->droptofloor = 1;
-	gset_vars->mset->gravity = 800;
-	gset_vars->mset->playtag = 0;
-	gset_vars->mset->cmsg = 0;
-	gset_vars->mset->tourney = 0;
-	gset_vars->mset->damage = 1;
-	gset_vars->mset->health = 400;
-	gset_vars->mset->regen = 5;
-	gset_vars->mset->timelimit = 20;
-	gset_vars->mset->best_time_glow = 0;
-	gset_vars->mset->antiglue = 0;
-	gset_vars->mset->antiglue_penalty = 2;
-	gset_vars->mset->antiglue_allow1st = 0;
-	gset_vars->mset->ghost = 1;
+	gset_vars->numberone_length = 17;
+	strcpy(gset_vars->numberone_wav,"numberone.wav");
+	gset_vars->numsoundwavs = 1;
+	gset_vars->overtimegainedhealth = 25;
+	gset_vars->overtimehealth = 150;
+	gset_vars->overtimelimit = 3;
+	gset_vars->overtimerandom = 1;
+	gset_vars->overtimetype = 1;
+	gset_vars->overtimewait = 20;
+	gset_vars->playsound = 10;
+	gset_vars->playtag = 0;
+	gset_vars->pvote_announce = 1;
+	gset_vars->mset->regen = 100;
+	gset_vars->respawn_sound = 1;
+	mset_vars->rocket = 0;
+	gset_vars->store_safe = 0;
 	gset_vars->mset->singlespawn = 0;
-	gset_vars->mset->falldamage = 1;
-	gset_vars->mset->addedtimeoveride = 0;
+	mset_vars->slowdoors = 0;
+	gset_vars->target_glow = 2;
+	gset_vars->temp_ban_on_kick = 0;
+	gset_vars->time_adjust = 0;
+	gset_vars->mset->timelimit = 20;
+	gset_vars->tourney = 0;
+	gset_vars->transparent = 0;
 	gset_vars->voteextratime = 60;
-
+	gset_vars->voteseed = 20;
+	gset_vars->votingtime = 20;
+	gset_vars->walkthru = 1;
+	gset_vars->weapon_fire_min_delay = 500;
 
 	// aset only
 	aset_vars->MAX_ADMIN_LEVEL			=7;
@@ -6891,7 +6825,6 @@ void SetDefaultValues(void)
 	aset_vars->ADMIN_SLAP_LEVEL			=4;
 	aset_vars->ADMIN_ADDTIME_LEVEL		=4;
 	aset_vars->ADMIN_THROWUP_LEVEL		=4;
-//	aset_vars->ADMIN_FORCETEAM_LEVEL	=4;
 	aset_vars->ADMIN_BRING_LEVEL		=4;
 	aset_vars->ADMIN_GOTO_LEVEL			=4;
 	aset_vars->ADMIN_CVOTE_LEVEL		=4;
@@ -6905,7 +6838,7 @@ void SetDefaultValues(void)
 	aset_vars->ADMIN_BAN_LEVEL			=7;
 	aset_vars->ADMIN_IP_LEVEL			=5;
 	aset_vars->ADMIN_DUMMYVOTE_LEVEL	=4;
-	aset_vars->ADMIN_NOMAXVOTES_LEVEL	=2;  // _h2
+	aset_vars->ADMIN_NOMAXVOTES_LEVEL	=2;
 	aset_vars->ADMIN_UPDATESCORES_LEVEL =7;
 	aset_vars->ACMD_RESYNC_LEVEL		=7;
 	aset_vars->ADMIN_MODEL_LEVEL        =5;
@@ -8196,7 +8129,7 @@ void AntiGlue(edict_t *ent)
 	ent->client->resp.antiglue = !ent->client->resp.antiglue;
 	if (ent->client->resp.antiglue)
 	{
-		if (mset_vars->antiglue)
+		if (gset_vars->antiglue)
 			gi.cprintf(ent,PRINT_HIGH,"Antiglue is on (for both EASY and HARD).\n");
 		else
 			gi.cprintf(ent,PRINT_HIGH,"Antiglue is on (for EASY only).\n");
@@ -8210,14 +8143,14 @@ void AntiGlue(edict_t *ent)
 		}
 		else
 		{
-			penalty = (float)mset_vars->antiglue_penalty/10;
+			penalty = (float)gset_vars->antiglue_penalty/10;
 			Com_sprintf(txt,sizeof(txt),"Warning: using antiglue will prevent you from setting a 1st place. Also, all jumps antiglued will have a %1.1f second penalty.",(penalty));
 			gi.cprintf (ent, PRINT_HIGH,"%s\n",HighAscii(txt));
 		}
 	}
 	else
 	{
-		if (mset_vars->antiglue)
+		if (gset_vars->antiglue)
 			gi.cprintf(ent,PRINT_HIGH,"Antiglue is off (for EASY and HARD).\n");
 		else
 			gi.cprintf(ent,PRINT_HIGH,"Antiglue is off (for EASY only).\n");
@@ -9642,7 +9575,7 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 	if ((item_time+0.0001) < level_items.stored_item_times[0].time)
 	{
 		//antiglue fix
-		if (mset_vars->antiglue && !mset_vars->antiglue_allow1st && ent->client->resp.item_timer_penalty>=1)
+		if (gset_vars->antiglue && !gset_vars->antiglue_allow1st && ent->client->resp.item_timer_penalty>=1)
 		{
 			diff = (level_items.stored_item_times[0].time-item_time)*2;
 			if (diff<1)
@@ -10116,11 +10049,11 @@ void Add_Time(edict_t *ent)
 		return;
 	}
 
-	if (gset_vars->adminmaxaddtime)
+	if (gset_vars->admin_max_addtime)
 	{
-		if (mset_vars->addedtimeoveride)
+		if (mset_vars->addedtimeoverride)
 		{
-			if (map_added_time+i>=mset_vars->addedtimeoveride)
+			if (map_added_time+i>=mset_vars->addedtimeoverride)
 			{
 				gi.cprintf(ent,PRINT_HIGH,"Added Time is currently at %i maximum for this level is %i\n",map_added_time,gset_vars->addedtimemap);
 				return;
@@ -10907,11 +10840,11 @@ void CTFVoteTime(edict_t *ent)
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDTIME_LEVEL)
 	{
-		if (mset_vars->addedtimeoveride)
+		if (mset_vars->addedtimeoverride)
 		{
-			if (map_added_time+i>=mset_vars->addedtimeoveride)
+			if (map_added_time+i>=mset_vars->addedtimeoverride)
 			{
-				diff = mset_vars->addedtimeoveride - map_added_time;
+				diff = mset_vars->addedtimeoverride - map_added_time;
 				if (gset_vars->voteextratime)			
 					require_max = true;
 				else

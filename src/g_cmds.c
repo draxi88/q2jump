@@ -1187,7 +1187,7 @@ void ClientCommand (edict_t *ent)
 		}
 		else if (Q_stricmp (cmd, "store") == 0)
 		{
-			if (mset_vars->tourney)
+			if (gset_vars->tourney)
 			{
 				return;
 			}
@@ -1198,7 +1198,7 @@ void ClientCommand (edict_t *ent)
 			Cmd_Kill_f (ent);
 		else if (Q_stricmp (cmd, "recall") == 0)
 		{
-			if (mset_vars->tourney)
+			if (gset_vars->tourney)
 			{
 				return;
 			}
@@ -1273,7 +1273,7 @@ void ClientCommand (edict_t *ent)
 			CTFNominate(ent);
 		else if (Q_stricmp (cmd, "mvote") == 0)
 		{
-			if (mset_vars->tourney)
+			if (gset_vars->tourney)
 			{
 				return;
 			}
@@ -1326,7 +1326,7 @@ void ClientCommand (edict_t *ent)
 	// ========================================
 	else if (Q_stricmp (cmd, "playtag") == 0)
 	{
-		if (mset_vars->playtag)
+		if (gset_vars->playtag)
 			PlayTag (ent);
 	}
 	else if (Q_stricmp (cmd, "score") == 0)
@@ -1358,7 +1358,7 @@ void ClientCommand (edict_t *ent)
 		Uptime(ent);
 	else if (Q_stricmp (cmd, "replay") == 0)
 	{
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			return;
 		}
@@ -1387,7 +1387,7 @@ void ClientCommand (edict_t *ent)
 		Compare_Users(ent);
 	else if (Q_stricmp (cmd, "reset") == 0)
 	{
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			return;
 		}
@@ -1401,7 +1401,7 @@ void ClientCommand (edict_t *ent)
 	}
 	else if (Q_stricmp (cmd, "noclip") == 0)
 	{
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			return;
 		}
@@ -1410,7 +1410,7 @@ void ClientCommand (edict_t *ent)
 	}
 	else if (Q_stricmp (cmd, "hook") == 0)
 	{
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			return;
 		}
@@ -1418,7 +1418,7 @@ void ClientCommand (edict_t *ent)
 	}
 	else if (Q_stricmp (cmd, "unhook") == 0)
 	{
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			return;
 		}
@@ -1444,13 +1444,13 @@ void ClientCommand (edict_t *ent)
 	} else if (Q_stricmp(cmd, "id") == 0) {
 		CTFID_f (ent);
 	} else if (Q_stricmp(cmd, "yes") == 0) {
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			return;
 		}
 		CTFVoteYes(ent);
 	} else if (Q_stricmp(cmd, "no") == 0) {
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			return;
 		}
@@ -1462,13 +1462,13 @@ void ClientCommand (edict_t *ent)
 	} else if (Q_stricmp(cmd, "stats") == 0) {
 		CTFStats(ent);
 	} else if (Q_stricmp(cmd, "mapvote") == 0) {
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			return;
 		}
 		CTFWarp(ent);
 	} else if (Q_stricmp(cmd, "boot") == 0) {
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			return;
 		}
@@ -1489,7 +1489,7 @@ void ClientCommand (edict_t *ent)
 	} else if (Q_stricmp (cmd, "coord") == 0) {
       Cmd_Coord_f (ent); 
 	} else if (Q_stricmp (cmd, "silence") == 0) {
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			return;
 		}

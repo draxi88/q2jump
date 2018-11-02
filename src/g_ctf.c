@@ -1121,8 +1121,8 @@ void CTFEffects(edict_t *player)
 				player->s.effects |= EF_COLOR_SHELL; // red
 				player->s.renderfx |= RF_SHELL_RED;
 			}*/
-			if (mset_vars->best_time_glow)
-				player->s.effects |= mset_vars->best_time_glow;
+			if (gset_vars->best_time_glow)
+				player->s.effects |= gset_vars->best_time_glow;
 		}
 	}
 }
@@ -1228,7 +1228,7 @@ void SetCTFStats(edict_t *ent)
 	{
 		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
-		if (mset_vars->antiglue==0)
+		if (gset_vars->antiglue==0)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
 		else
 		if (ent->client->resp.antiglue)
@@ -1260,7 +1260,7 @@ void SetCTFStats(edict_t *ent)
 			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		}
 		
-		if (mset_vars->antiglue==0)
+		if (gset_vars->antiglue==0)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
 		else
 		if (ent->client->resp.antiglue)
@@ -1863,7 +1863,7 @@ void CTFTeam_f (edict_t *ent)
 
 	if (!level.status)
 	{
-		if ((mset_vars->tourney) && (desired_team==CTF_TEAM1))
+		if ((gset_vars->tourney) && (desired_team==CTF_TEAM1))
 		{
 			gi.cprintf(ent,PRINT_HIGH,"You may only join the HARD team during tournaments\n");
 			return;
@@ -3919,7 +3919,7 @@ void CTFJoinTeam1(edict_t *ent, pmenuhnd_t *p)
 	}
 	else
 	{
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			gi.cprintf(ent,PRINT_HIGH,"You may only join the HARD team during tournaments\n");
 			return;
