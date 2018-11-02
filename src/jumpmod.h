@@ -430,7 +430,6 @@ typedef struct
 	unsigned int falldamage;
 	unsigned int addedtimeoveride;	
 	unsigned int ghost_model;
-	unsigned int fpskick;
 
 	unsigned int allowsrj;
 	unsigned int checkpoint_total;
@@ -505,6 +504,7 @@ typedef struct
 	unsigned int voteextratime;
 	int addtime_announce;
 	int numberone_length;
+	unsigned int fpskick;
 } gset_vars_t;
 
 typedef struct

@@ -321,13 +321,6 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &mset_vars->checkpoint_total,
   },
-  { 
-	0,1,1,
-    "fpskick", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->fpskick,
-  },
 
   /************************** GSET MAP **************/
 
@@ -6885,6 +6878,7 @@ void SetDefaultValues(void)
 	gset_vars->map_end_warn_sounds = 1;  // hann
 	gset_vars->max_votes = 3; 	     // _h2
 	gset_vars->tempbanonkick = 0;
+	gset_vars->fpskick = 1;
 //	gset_vars->updated = 0;
 
 
@@ -6910,7 +6904,6 @@ void SetDefaultValues(void)
 	gset_vars->mset->falldamage = 1;
 	gset_vars->mset->addedtimeoveride = 0;
 	gset_vars->voteextratime = 60;
-	gset_vars->mset->fpskick = 1;
 
 
 	// aset only
