@@ -217,34 +217,6 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->antiglue_allow1st,
   },
   { 
-	0,1,1,
-    "gantiglue", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->antiglue,
-  },
-  { 
-	0,100,1,
-    "gantiglue_penalty", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->antiglue_penalty,
-  },
-  { 
-	0,1,0,
-    "gantiglue_allow1st", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->antiglue_allow1st,
-  },
-  { 
-	0,2147483647,8388608,
-    "target_glow", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->target_glow,
-  },
-  { 
 	0,999,20,
     "timelimit", 
     CMDWHERE_CFGFILE | CMD_MSET, 
@@ -314,16 +286,42 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &mset_vars->checkpoint_total,
   },
+  { 
+	0,128,0,
+    "ghosty_model", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->ghost_model,
+  },
 
-  /************************** GSET MAP **************/
-
-
+  // gset AND mset
   { 
 	0,2147483647,16384,
     "gbest_time_glow", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->best_time_glow,
+  },
+  { 
+	0,1,1,
+    "gantiglue", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->antiglue,
+  },
+  { 
+	0,100,1,
+    "gantiglue_penalty", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->antiglue_penalty,
+  },
+  { 
+	0,1,0,
+    "gantiglue_allow1st", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->antiglue_allow1st,
   },
   { 
 	0,1,0,
@@ -366,13 +364,6 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->regen,
-  },
-  { 
-	0,2147483647,8388608,
-    "gtarget_glow", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->target_glow,
   },
   { 
 	0,999,20,
@@ -460,20 +451,6 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &gset_vars->autotime,
   },
-/*  { 
-	0,1,1,
-    "glow_fastest",
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->glow_fastest,
-  },*/
-/*  { 
-	0,1,0,
-    "glow_time", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->glow_time,
-  },*/
   { 
 	0,9999999,0,
     "glow_admin", 
@@ -538,18 +515,18 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->respawn_sound,
   },
   { 
+	0,2147483647,2,
+    "gtarget_glow", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->target_glow,
+  },
+  { 
 	0,128,0,
     "gghosty_model", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->ghost_model,
-  },
-  { 
-	0,128,0,
-    "ghosty_model", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->ghost_model,
   },
   { 
 	0,0,0,
@@ -840,15 +817,8 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
 	&gset_vars->addtime_announce,
   },
-/*  {
-	0,1,0,
-	"updated",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->updated,
-  },*/
 
-  //ASET
+  // aset's
   { 
 	1,20,7,
     "MAX_ADMIN_LEVEL", 
@@ -856,7 +826,6 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &aset_vars->MAX_ADMIN_LEVEL,
   },
-
   { 
 	1,20,7,
     "ADMIN_ADDADMIN_LEVEL", 
@@ -6868,6 +6837,7 @@ void SetDefaultValues(void)
 	gset_vars->tempbanonkick = 0;
 	gset_vars->fpskick = 1;
 	gset_vars->kill_delay = 1;
+	gset_vars->target_glow = 2;
 
 
 	// gset and mset
@@ -6885,7 +6855,6 @@ void SetDefaultValues(void)
 	gset_vars->mset->antiglue = 0;
 	gset_vars->mset->antiglue_penalty = 2;
 	gset_vars->mset->antiglue_allow1st = 0;
-	gset_vars->mset->target_glow = 512;
 	gset_vars->mset->ghost = 1;
 	gset_vars->mset->singlespawn = 0;
 	gset_vars->mset->falldamage = 1;
@@ -8193,7 +8162,7 @@ void SetSpinnyThing(void)
 
 			level.spinnything->svflags = 0;
 			level.spinnything->s.renderfx |= RF_FULLBRIGHT;
-			level.spinnything->s.effects = mset_vars->target_glow;
+			level.spinnything->s.effects = gset_vars->target_glow;
 			VectorClear (level.spinnything->mins);
 			VectorClear (level.spinnything->maxs);
 			level.spinnything->s.modelindex = gi.modelindex ("models/jump/smallmodel/tris.md2");

@@ -406,7 +406,7 @@ typedef struct
 
 extern zbotcmd_t zbotCommands[];
 
-// mset only
+// msets
 typedef struct
 {
 	unsigned int	timelimit;
@@ -418,7 +418,6 @@ typedef struct
 	unsigned int antiglue;
 	unsigned int antiglue_penalty;
 	unsigned int antiglue_allow1st;
-	unsigned int target_glow;
 	unsigned int tourney;
 	unsigned int cmsg;
 	unsigned int playtag;
@@ -503,6 +502,7 @@ typedef struct
 	int numberone_length;
 	unsigned int fpskick;
 	unsigned int kill_delay;
+	unsigned int target_glow;
 } gset_vars_t;
 
 typedef struct
