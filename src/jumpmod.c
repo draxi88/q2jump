@@ -3713,6 +3713,7 @@ void BestTimesScoreboardMessage (edict_t *ent, edict_t *killer)
 	int completions = 0;
 	int total_count = 0;
 	char chr[2];	
+	char	colorstring[16];
 	*string = 0;
 	chr[0] = 13;
 	chr[1] = 0;
@@ -3728,18 +3729,23 @@ void BestTimesScoreboardMessage (edict_t *ent, edict_t *killer)
 	sprintf(string+strlen(string), "xv 0 yv 0 string2 \"No   Player                    Date \" ");
 	for (i=0;i<MAX_HIGHSCORES;i++)
 	{
+		if(i % 2 == 0){
+			sprintf(colorstring,"string");
+		} else {
+			sprintf(colorstring,"string2");
+		}
 		//015 sort floating point thing
 		if (level_items.stored_item_times[i].name[0])
 		{
 				if (level_items.stored_item_times[i].fresh)
 				{
 					
-					sprintf(string+strlen(string), "yv %d string \"%2d%s *%-16s%8.3f  %s\" ", i*8+16,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
+					sprintf(string+strlen(string), "yv %d %s \"%2d%s *%-16s%8.3f  %s\" ", i*8+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
 						level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time
 						,level_items.stored_item_times[i].date
 						);
 				} else {
-					sprintf(string+strlen(string), "yv %d string \"%2d%s  %-16s%8.3f  %s\" ", i*8+16,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
+					sprintf(string+strlen(string), "yv %d %s \"%2d%s  %-16s%8.3f  %s\" ", i*8+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
 						level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time
 						,level_items.stored_item_times[i].date
 						);
