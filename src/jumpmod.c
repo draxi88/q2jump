@@ -494,7 +494,7 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->glow_admin,
   },
   { 
-	0,1,0,
+	0,1,1,
     "glow_multi", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
