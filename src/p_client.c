@@ -1802,7 +1802,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	s = Info_ValueForKey (userinfo, "cl_maxfps");
 
 	// check for the string, fpskick mset
-	if (strlen(s) && mset_vars->fpskick == 1) {
+	if (strlen(s) && gset_vars->fpskick == 1) {
 		ent->client->pers.fps = atoi(s);
 		if (ent->client->pers.fps<20) { // kick for lower than 20
             gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for lowering CL_MAXFPS below 20\n");

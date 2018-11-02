@@ -414,7 +414,7 @@ zbotcmd_t zbotCommands[] =
     "gfpskick", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->fpskick,
+    &gset_vars->fpskick,
   },
   { 
 	-10000,10000,800,
