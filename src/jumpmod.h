@@ -484,7 +484,7 @@ typedef struct
 #ifdef RACESPARK
 	int allow_race_spark;
 #endif
-	int nomapvote;
+	int nomapvotetime;
 	int notimevotetime;
 	int maps_pass;
 	int allow_admin_boot;
