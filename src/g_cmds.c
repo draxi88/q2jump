@@ -749,7 +749,7 @@ void Cmd_Kill_f (edict_t *ent)
 	if (ent->solid == SOLID_NOT)
 		return;
 //ZOID
-	if((level.framenum - ent->client->respawn_time) < mset_vars->kill_delay)
+	if((level.framenum - ent->client->respawn_time) < gset_vars->kill_delay)
 		return;
 
 	if (level.status == LEVEL_STATUS_OVERTIME)
@@ -758,7 +758,7 @@ void Cmd_Kill_f (edict_t *ent)
 		{
 			//kill, but dont reset counter
 			Overtime_Kill(ent);
-			ent->client->respawn_time = level.framenum + mset_vars->kill_delay;
+			ent->client->respawn_time = level.framenum + gset_vars->kill_delay;
 		}
 		else
 		{
@@ -787,7 +787,7 @@ void Cmd_Kill_f (edict_t *ent)
 			return;
 		}
 		Kill_Hard(ent);
-		ent->client->respawn_time = level.framenum + mset_vars->kill_delay;
+		ent->client->respawn_time = level.framenum + gset_vars->kill_delay;
 		return;
 	}
 	if ((ent->client->resp.ctf_team==CTF_TEAM1) && (ent->client->resp.store))

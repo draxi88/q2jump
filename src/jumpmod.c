@@ -161,13 +161,6 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->health,
   },
   { 
-	1,500,1,
-    "kill_delay",
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->kill_delay,
-  },
-  { 
 	0,1,0,
     "playtag", 
     CMDWHERE_CFGFILE | CMD_MSET, 
@@ -361,13 +354,6 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->health,
   },
   { 
-	1,500,1,
-    "gkill_delay",
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->kill_delay,
-  },
-  { 
 	0,1,0,
     "gplaytag", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
@@ -410,13 +396,6 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->edited_by,
   },
   { 
-	0,1,1,
-    "gfpskick", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->fpskick,
-  },
-  { 
 	-10000,10000,800,
     "ggravity", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
@@ -450,6 +429,15 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->addedtimeoveride,
+  },
+
+  // gset only
+  { 
+	0,1,1,
+    "gfpskick", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->fpskick,
   },
   { 
 	0,120,60,
@@ -766,7 +754,7 @@ zbotcmd_t zbotCommands[] =
 	"nomapvotetime",
 	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-	&gset_vars->nomapvote,
+	&gset_vars->nomapvotetime,
   },
   {
 	0,10800,300,
@@ -3480,9 +3468,9 @@ void CTFRand(edict_t *ent)
 		}
 	}
 
-	if ((gset_vars->nomapvote >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL) && curclients > 2) // 0.84wp_h1
+	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL) && curclients > 2) // 0.84wp_h1
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvote);
+		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvotetime);
 		return;
 	}
 
@@ -3560,9 +3548,9 @@ void CTFNominate(edict_t *ent)
 
 	index = ent-g_edicts-1;
 
-	if ((gset_vars->nomapvote >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL) && curclients > 2) // 0.84wp_h1
+	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL) && curclients > 2) // 0.84wp_h1
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvote);
+		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvotetime);
 		return;
 	}
 
@@ -6870,7 +6858,7 @@ void SetDefaultValues(void)
 	gset_vars->allow_race_spark = 1;
 #endif
 	gset_vars->maps_pass = 5;
-	gset_vars->nomapvote = 300;
+	gset_vars->nomapvotetime = 300;
 	gset_vars->notimevotetime = 300;
 	gset_vars->allow_admin_boot = 1;
 	gset_vars->adminmaxaddtime = 0;
@@ -6879,7 +6867,7 @@ void SetDefaultValues(void)
 	gset_vars->max_votes = 3; 	     // _h2
 	gset_vars->tempbanonkick = 0;
 	gset_vars->fpskick = 1;
-//	gset_vars->updated = 0;
+	gset_vars->kill_delay = 1;
 
 
 	// gset and mset
@@ -6899,7 +6887,6 @@ void SetDefaultValues(void)
 	gset_vars->mset->antiglue_allow1st = 0;
 	gset_vars->mset->target_glow = 512;
 	gset_vars->mset->ghost = 1;
-	gset_vars->mset->kill_delay = 1;
 	gset_vars->mset->singlespawn = 0;
 	gset_vars->mset->falldamage = 1;
 	gset_vars->mset->addedtimeoveride = 0;

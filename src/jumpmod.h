@@ -414,7 +414,6 @@ typedef struct
 	unsigned int	health;
 	unsigned int	regen;
 	unsigned int ghost;
-	unsigned int kill_delay;
 	unsigned int best_time_glow;
 	unsigned int antiglue;
 	unsigned int antiglue_penalty;
@@ -448,11 +447,9 @@ typedef struct
 {
 	mset_vars_t mset[1];
 	int flashlight;
-//	int glow_fastest;
 	int hookspeed;
 	int hookpull;
 	int respawn_sound;
-//	int glow_time;
 	int autotime;
 	int glow_admin;
 	int glow_multi;
@@ -505,6 +502,7 @@ typedef struct
 	int addtime_announce;
 	int numberone_length;
 	unsigned int fpskick;
+	unsigned int kill_delay;
 } gset_vars_t;
 
 typedef struct
