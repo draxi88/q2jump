@@ -1955,6 +1955,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	int total_easy;
 	int total_specs;
 	char teamstring[16];
+	char colorstring[16];
 
 
 	// sort the clients by score
@@ -2007,7 +2008,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 
 	Com_sprintf (entry, sizeof(entry),
-	"xv -16 yv 0 string2 \"Ping Pos Player      Team     Best Comp Maps     %%\" "); 
+		"xv -88 yv 0 string2 \"Ping  Team  Player      Time(Comp)  Score   Maps(pos)(%%)\" "); 
 	j = strlen(entry);
 	strcpy (string + stringlength, entry);
 	stringlength += j;
@@ -2029,41 +2030,63 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 
 		if(cl_ent->client->resp.ctf_team == CTF_TEAM2){
-			sprintf(teamstring,"HARD");
+			sprintf(teamstring,"Hard");
 		} else if(cl_ent->client->resp.ctf_team == CTF_TEAM1){
-			sprintf(teamstring,"EASY");
+			sprintf(teamstring,"Easy");
 		} 
+		if(cl->resp.uid==ent->client->resp.uid){
+			sprintf(colorstring,"string2");
+		} else {
+			sprintf(colorstring,"string");
+		}
 		// send the layout
 		if (cl->resp.best_time)
 		{
 			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv 152 string \"%s %8.3f %4i %4i  %4.1f\"",
-			-8,y,sorted[i],cl->ping,cl->resp.suid+1,teamstring,
+			"xv -64 yv %i %s \"%d  %s  %s\" xv 80 yv %i %s \"%8.3f(%i)\" xv 200 yv %i %s \"%5i\" xv 264 yv %i %s \"%4i(%i)(%4.1f)\" ",
+			y,colorstring,cl->ping,teamstring,cl->pers.netname,
+			y,colorstring,
 			tourney_record[trecid].time, 
 			tourney_record[trecid].completions, 
 
+			//scores
+			y,colorstring,
+			maplist.users[cl->resp.uid-1].score, //no idea why it works if uid-1, and not uid... 
+
+			//maps completion
+			y,colorstring,
 			maplist.sorted_completions[cl->resp.suid].score,
+			cl->resp.suid+1,
 			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100
 			); 
-
 		}
 		else
 		{
 			if (cl->resp.uid>0)
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"%s   ------ ---- %4i  %4.1f\"",
-				-8,y,sorted[i],cl->ping,cl->resp.suid+1,teamstring,
-				maplist.sorted_completions[cl->resp.suid].score,
-				(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100				
-				); 
+			"xv -64 yv %i %s \"%d  %s  %s\" xv 104 yv %i %s \"----(0)     %5i\" xv 264 yv %i %s \"%4i(%i)(%4.1f)\" ",
+			y,colorstring,cl->ping,teamstring,cl->pers.netname,
+			
+			//scores
+			y,colorstring,
+			maplist.users[cl->resp.uid-1].score, //no idea why it works if uid-1, and not uid... 
+			
+			//maps completion
+			y,colorstring,
+			maplist.sorted_completions[cl->resp.suid].score,
+			cl->resp.suid+1,
+			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100
+			); 
 
 			}
 			else
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"%s      ------ ----\"",
-				-8,y,sorted[i],cl->ping,1000,teamstring
+				"xv -64 yv %i %s \"%d  %s  %s\" xv 104 yv %i %s \"N/A\"",
+				y,colorstring,
+				cl->ping,teamstring,cl->pers.netname,
+				y,colorstring
 				); 
 
 			}
@@ -2219,7 +2242,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	j = strlen(entry);
 	strcpy (string + stringlength, entry);
 	stringlength += j;
-
+	//gi.cprintf(ent, PRINT_HIGH, "%s\n",string); //Debug of the scoreboardstring..
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
 }
