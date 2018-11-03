@@ -3920,15 +3920,13 @@ void SP_jump_time (edict_t *ent)
 	gi.linkentity (next_ent);
 }
 
-
 void SP_jump_clip (edict_t *ent)
 {
 	ent->classname = "jump_clip";
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_BBOX;
-	
-	ent->s.modelindex = gi.modelindex ("models/jump/smallmodel/tris.md2");
-	ent->dmg = 0;
+	ent->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
+	//ent->s.modelindex = gi.modelindex ("models/jump/largebox3/tris.md2");
 	gi.linkentity (ent);
 }
 
