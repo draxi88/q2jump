@@ -9214,9 +9214,6 @@ void update_users_file()
 		    fscanf(f, "%s", &name);
 		    if ((uid>=MAX_USERS) || (uid<0))
 			    continue;
-            if(sizeof(maplist.users[uid].name)<2){ //meaning that the user is created on some other server
-                maplist.users[uid].completions = completions;
-            }
 		    strcpy(maplist.users[uid].name,name);
             
 		    maplist.num_users++;
@@ -9230,9 +9227,6 @@ void update_users_file()
 		    fscanf(f, "%s", &name);
             if ((uid>=MAX_USERS) || (uid<0))
 			    continue;
-            if(sizeof(maplist.users[uid].name)<2){ //meaning that the user is created on some other server
-                maplist.users[uid].completions = completions;
-            }
             strcpy(maplist.users[uid].name,name);
             maplist.num_users++;
         }
@@ -10596,6 +10590,7 @@ void add_clip(edict_t *ent)
 	char	action[256];
 	int i;
 	edict_t *tent;
+	vec3_t center;
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
 		return;
@@ -10617,29 +10612,45 @@ void add_clip(edict_t *ent)
 	if (strcmp(action,"mark1")==0)
 	{
 		VectorCopy(ent->s.origin,level_items.clip1);
+		gi.dprintf("Mark 1 added at: %f - %f - %f\n",level_items.clip1[0],level_items.clip1[1],level_items.clip1[2]);
 	}
 	else if (strcmp(action,"mark2")==0)
 	{
 		VectorCopy(ent->s.origin,level_items.clip2);
+		gi.dprintf("Mark 2 added at: %f - %f - %f\n",level_items.clip2[0],level_items.clip2[1],level_items.clip2[2]);
 	}
 	else if (strcmp(action,"create")==0)
 	{
 		//siz of bound box
 		tent = G_Spawn();
-		tent->mins[0] = (level_items.clip1[0]-level_items.clip2[0])/2;
-		tent->mins[1] = (level_items.clip1[1]-level_items.clip2[1])/2;
-		tent->mins[2] = (level_items.clip1[2]-level_items.clip2[2])/2;
-		tent->maxs[0] = -tent->mins[0];
-		tent->maxs[1] = -tent->mins[1];
-		tent->maxs[2] = -tent->mins[2];
-		tent->s.origin[0] = level_items.clip1[0] - level_items.clip2[0];
-		tent->s.origin[2] = level_items.clip1[1] - level_items.clip2[1];
-		tent->s.origin[1] = level_items.clip1[2] - level_items.clip2[2];
+		if(level_items.clip1[0]>level_items.clip2[0])
+			tent->maxs[0] = (level_items.clip1[0]-level_items.clip2[0])/2;
+		else
+			tent->maxs[0] = (level_items.clip2[0]-level_items.clip1[0])/2;
+
+		if(level_items.clip1[1]>level_items.clip2[1])
+			tent->maxs[1] = (level_items.clip1[1]-level_items.clip2[1])/2;
+		else
+			tent->maxs[1] = (level_items.clip2[1]-level_items.clip1[1])/2;
+
+		if(level_items.clip1[2]>level_items.clip2[2])
+			tent->maxs[2] = (level_items.clip1[2]-level_items.clip2[2])/2;
+		else
+			tent->maxs[2] = (level_items.clip2[2]-level_items.clip1[2])/2;
+
+		tent->mins[0] = -tent->maxs[0];
+		tent->mins[1] = -tent->maxs[1];
+		tent->mins[2] = -tent->maxs[2];
+
+		VectorSubtract(level_items.clip2,level_items.clip1,center);
+		VectorScale(center,0.5,center);
+		VectorAdd(center,level_items.clip1,center);
+		VectorCopy(center,tent->s.origin);
 		VectorCopy (tent->s.origin, tent->s.old_origin);
 		tent->classname = "jump_clip";
 		tent->movetype = MOVETYPE_NONE;
 		tent->solid = SOLID_BBOX;
-	
+		tent->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
 		tent->s.modelindex = gi.modelindex ("models/jump/smallmodel/tris.md2");
 		tent->dmg = 0;
 		gi.linkentity (tent);
@@ -10655,6 +10666,7 @@ void add_clip(edict_t *ent)
 			}
 		}
 		WriteEnts();
+		gi.dprintf("Jump_clip created.");
 	}
 	else
 	{

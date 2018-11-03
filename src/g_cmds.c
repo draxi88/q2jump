@@ -1231,8 +1231,8 @@ void ClientCommand (edict_t *ent)
 			D_Votes (ent);
 		else if (Q_stricmp (cmd, "addbox") == 0)
 			Add_Box(ent);
-/*		else if (Q_stricmp (cmd, "addclip") == 0)
-			add_clip(ent);*/
+		else if (Q_stricmp (cmd, "addclip") == 0)
+			add_clip(ent);
 		else if (Q_stricmp (cmd, "skinent") == 0)
 			Skin_Ent(ent);
 		else if (Q_stricmp (cmd, "skinbox") == 0)
