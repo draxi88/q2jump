@@ -3954,7 +3954,12 @@ void SP_jump_clip (edict_t *ent)
 {
 	ent->classname = "jump_clip";
 	ent->movetype = MOVETYPE_NONE;
-	ent->solid = SOLID_BBOX;
+	if(ent->message && strcmp(ent->message,"checkpoint")==0){
+		ent->solid = SOLID_TRIGGER;
+		ent->touch = cpbox_touch;
+	} else {
+		ent->solid = SOLID_BBOX;
+	}
 	ent->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
 	//ent->s.modelindex = gi.modelindex ("models/jump/largebox3/tris.md2");
 	gi.linkentity (ent);

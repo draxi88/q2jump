@@ -2076,6 +2076,10 @@ void WriteEnts(void)
 		}
 		if (strstr(level_items.ents[i]->classname,"jump_clip"))
 		{
+			if(level_items.ents[i]->message && strstr(level_items.ents[i]->message,"checkpoint")){
+				fprintf (f, "\"count\" \"%d\"\n",level_items.ents[i]->count);
+				fprintf (f, "\"message\" \"%s\"\n",level_items.ents[i]->message);
+			}
 			fprintf (f, "\"mins\" \"%f %f %f\"\n",level_items.ents[i]->mins[0],level_items.ents[i]->mins[1],level_items.ents[i]->mins[2]);
 			fprintf (f, "\"maxs\" \"%f %f %f\"\n",level_items.ents[i]->maxs[0],level_items.ents[i]->maxs[1],level_items.ents[i]->maxs[2]);
 		}
@@ -10587,15 +10591,19 @@ void reset_map_played_count(edict_t *ent)
 
 void add_clip(edict_t *ent)
 {
-	char	action[256];
+	char	action[16];
+	char	type[16];
 	int i;
+	int cp;
 	edict_t *tent;
 	vec3_t center;
 
-	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL){
 		return;
-	if (ent->client->resp.ctf_team==CTF_TEAM2 && gametype->value!=GAME_CTF)
+	}
+	if (ent->client->resp.ctf_team==CTF_TEAM2 && gametype->value!=GAME_CTF){
 		return;
+	}
 
 	if ((level_items.locked) && (level_items.locked_by!=ent))
 	{
@@ -10619,9 +10627,16 @@ void add_clip(edict_t *ent)
 		VectorCopy(ent->s.origin,level_items.clip2);
 		gi.dprintf("Mark 2 added at: %f - %f - %f\n",level_items.clip2[0],level_items.clip2[1],level_items.clip2[2]);
 	}
-	else if (strcmp(action,"create")==0)
+	//"addclip create" will create a clip between mark1 and mark2..
+	//"addclip checkpoint id" (id = 1,2,3 etc) will create a checkpoint between mark1 and mark2..
+	else if (strcmp(action,"create")==0 || strcmp(action,"checkpoint")==0)
 	{
-		//siz of bound box
+		if(strcmp(action,"checkpoint")==0 && gi.argc() < 3){
+			gi.dprintf("You need to give your checkpoint an ID (Ex: addclip checkpoint 1)\n");
+			return;
+		}
+
+		//size of bound box
 		tent = G_Spawn();
 		if(level_items.clip1[0]>level_items.clip2[0])
 			tent->maxs[0] = (level_items.clip1[0]-level_items.clip2[0])/2;
@@ -10649,7 +10664,14 @@ void add_clip(edict_t *ent)
 		VectorCopy (tent->s.origin, tent->s.old_origin);
 		tent->classname = "jump_clip";
 		tent->movetype = MOVETYPE_NONE;
-		tent->solid = SOLID_BBOX;
+		if(strcmp(action,"checkpoint")==0){
+			cp = atoi(gi.argv(2));
+			tent->message = action;
+			tent->solid = SOLID_TRIGGER;
+			tent->count = cp;
+		} else{
+			tent->solid = SOLID_BBOX;
+		}
 		tent->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
 		tent->s.modelindex = gi.modelindex ("models/jump/smallmodel/tris.md2");
 		tent->dmg = 0;
@@ -10666,7 +10688,11 @@ void add_clip(edict_t *ent)
 			}
 		}
 		WriteEnts();
-		gi.dprintf("Jump_clip created.");
+		if(strcmp(action,"checkpoint")==0){
+			gi.dprintf("Checkpoint created.\n");
+		} else {
+			gi.dprintf("Jump_clip created.\n");
+		}
 	}
 	else
 	{
