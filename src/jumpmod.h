@@ -507,10 +507,11 @@ typedef struct
 
 typedef struct
 {
-	int MAX_ADMIN_LEVEL;
+	int ADMIN_MAX_LEVEL;
 	int ADMIN_ADDADMIN_LEVEL	;
 	int ADMIN_ADDMAP_LEVEL		;
 	int ADMIN_GSET_LEVEL		;
+	int ACMD_NEXTMAPS_LEVEL		;
 	int ADMIN_ACMD_LEVEL		;
 	int ADMIN_STUFF_LEVEL		;
 	
@@ -528,7 +529,6 @@ typedef struct
 	int ADMIN_SLAP_LEVEL		;
 	int ADMIN_ADDTIME_LEVEL		;
 	int ADMIN_THROWUP_LEVEL		;
-//	int ADMIN_FORCETEAM_LEVEL	;
 	int ADMIN_BRING_LEVEL		;
 	int ADMIN_GOTO_LEVEL		;
 	int ADMIN_CVOTE_LEVEL		;
@@ -545,8 +545,7 @@ typedef struct
 	int ADMIN_NOMAXVOTES_LEVEL;  // _h2
 	int ACMD_ADDADMIN_LEVEL		;
 	int ACMD_REMADMIN_LEVEL		;
-	int ACMD_RESET_LEVEL		;
-	int ACMD_ADMINLEVEL_LEVEL	;
+	int ACMD_CHANGEADMIN_LEVEL	;
 	int ACMD_LISTADMINS_LEVEL	;
 	int ADMIN_REMMAP_LEVEL		;
 	int ACMD_LOCK_LEVEL			;
@@ -786,7 +785,6 @@ void ApplyBans(edict_t *ent,char *s);
 qboolean IsBannedName(char *name);
 
 void reset_maps_completed(edict_t *ent);
-void cmd_test(edict_t *ent);
 
 #define RECORD_KEY_SHIFT   16
 #define RECORD_KEY_UP       1 << RECORD_KEY_SHIFT

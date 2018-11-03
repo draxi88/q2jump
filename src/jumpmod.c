@@ -764,10 +764,10 @@ zbotcmd_t zbotCommands[] =
   //----------------------------
   { 
 	1,20,7,
-    "MAX_ADMIN_LEVEL", 
+    "ADMIN_MAX_LEVEL", 
     CMDWHERE_CFGFILE | CMD_ASET, 
     CMDTYPE_NUMBER,
-    &aset_vars->MAX_ADMIN_LEVEL,
+    &aset_vars->ADMIN_MAX_LEVEL,
   },
   { 
 	1,20,7,
@@ -792,10 +792,10 @@ zbotcmd_t zbotCommands[] =
 	},
 	{ 
 	1,20,7,
-    "ACMD_ADMINLEVEL_LEVEL", 
+    "ACMD_CHANGEADMIN_LEVEL", 
     CMDWHERE_CFGFILE | CMD_ASET, 
     CMDTYPE_NUMBER,
-    &aset_vars->ACMD_ADMINLEVEL_LEVEL
+    &aset_vars->ACMD_CHANGEADMIN_LEVEL
 	},
 	{ 
 	1,20,7,
@@ -803,13 +803,6 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_ASET, 
     CMDTYPE_NUMBER,
     &aset_vars->ACMD_ADDADMIN_LEVEL
-	},
-	{ 
-	1,20,7,
-    "ACMD_RESET_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ACMD_RESET_LEVEL
 	},
   { 
 	1,20,7,
@@ -825,13 +818,20 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &aset_vars->ADMIN_REMMAP_LEVEL
 	},
-	{ 
+  { 
 	1,20,7,
     "ACMD_LOCK_LEVEL", 
     CMDWHERE_CFGFILE | CMD_ASET, 
     CMDTYPE_NUMBER,
     &aset_vars->ACMD_LOCK_LEVEL
-	},
+  },
+  { 
+	1,20,7,
+    "ACMD_NEXTMAPS_LEVEL", 
+    CMDWHERE_CFGFILE | CMD_ASET, 
+    CMDTYPE_NUMBER,
+    &aset_vars->ACMD_NEXTMAPS_LEVEL
+  },
   { 
 	1,20,7,
     "ADMIN_GSET_LEVEL", 
@@ -2469,7 +2469,7 @@ void add_admin(edict_t *ent,char *name, char *pass, int alevel)
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDADMIN_LEVEL)
 		return;
 
-	if ((alevel<0) || (alevel>aset_vars->MAX_ADMIN_LEVEL))
+	if ((alevel<0) || (alevel>aset_vars->ADMIN_MAX_LEVEL))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Invalid admin level\n");
 		return;
@@ -2515,7 +2515,7 @@ void change_admin(edict_t *ent,int admin, int alevel)
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDADMIN_LEVEL)
 		return;
 
-	if ((alevel<=0) || (alevel>aset_vars->MAX_ADMIN_LEVEL))
+	if ((alevel<=0) || (alevel>aset_vars->ADMIN_MAX_LEVEL))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Invalid admin level\n");
 		return;
@@ -5022,7 +5022,7 @@ void List_Admin_Commands(edict_t *ent)
 {
 	int i;
 	int j = 0;
-	for (i = 1;i <= aset_vars->MAX_ADMIN_LEVEL;i++)
+	for (i = 1;i <= aset_vars->ADMIN_MAX_LEVEL;i++)
 	{
 		if (ent->client->resp.admin < i)
 			return;
@@ -5085,13 +5085,11 @@ void List_Admin_Commands(edict_t *ent)
 			gi.cprintf(ent,PRINT_HIGH,"addban remban listbans ");
 		if (i == aset_vars->ADMIN_REMMAP_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH, "remmap ");
-		if (i == aset_vars->ACMD_RESET_LEVEL)
-			gi.cprintf(ent, PRINT_HIGH, "reset ");
 		if (i == aset_vars->ADMIN_REMTIMES_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "remalltimes ");
 		if (i == aset_vars->ADMIN_UPDATESCORES_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "updatescores ");
-		if (i == aset_vars->ACMD_ADMINLEVEL_LEVEL)
+		if (i == aset_vars->ACMD_CHANGEADMIN_LEVEL)
 		{
 			j = 1;
 			gi.cprintf(ent, PRINT_HIGH, "admin account ");
@@ -5372,30 +5370,6 @@ void delete_all_demos(void)
 #endif
 		remove(name);	
 	}
-}
-
-void reset_server(edict_t *ent)
-{
-	int alevel;
-	char text[1024];
-
-	if (gi.argc() > 1 && (ent->client->resp.admin==aset_vars->MAX_ADMIN_LEVEL)) 
-	{
-		alevel = get_admin_level(gi.argv(3),gi.argv(2));
-		if (alevel==aset_vars->MAX_ADMIN_LEVEL)
-		{
-			sprintf(text,"is reseting the server.");
-			admin_log(ent,text);
-			//delete all files here
-			delete_all_times();
-			delete_all_demos();
-			remove_times(level.mapnum);
-			gi.cprintf(ent,PRINT_HIGH,"Server has been reset\n");
-			gi.AddCommandString("set sv_allow_map 1\n");
-			gi.AddCommandString("map forkjumping\n");
-		}
-	}
-
 }
 
 void remtimes(edict_t *ent)
@@ -6025,9 +5999,10 @@ void List_acmd_commands(edict_t *ent)
 		gi.cprintf(ent, PRINT_HIGH, "  deleteents <mapname>\n");
 		gi.cprintf(ent, PRINT_HIGH, "  remalltimes\n");
 		gi.cprintf(ent, PRINT_HIGH, "  togglehud\n");
-		gi.cprintf(ent, PRINT_HIGH, "  nextmaps <1> <2> <3>\n");
 		gi.cprintf(ent, PRINT_HIGH, "  ghost\n");
 	}
+	if (ent->client->resp.admin>=aset_vars->ACMD_NEXTMAPS_LEVEL)
+		gi.cprintf(ent, PRINT_HIGH, "  nextmaps <1> <2> <3>\n");
 	if (ent->client->resp.admin>=aset_vars->ACMD_LOCK_LEVEL)
 		gi.cprintf(ent, PRINT_HIGH, "  lock\n");
 	if (ent->client->resp.admin>=aset_vars->ACMD_LISTADMINS_LEVEL)
@@ -6038,10 +6013,8 @@ void List_acmd_commands(edict_t *ent)
 		gi.cprintf(ent, PRINT_HIGH, "  addadmin\n");
 	if (ent->client->resp.admin>=aset_vars->ACMD_ADDADMIN_LEVEL)
 		gi.cprintf(ent, PRINT_HIGH, "  changename\n");
-	if (ent->client->resp.admin>=aset_vars->ACMD_ADMINLEVEL_LEVEL)
+	if (ent->client->resp.admin>=aset_vars->ACMD_CHANGEADMIN_LEVEL)
 		gi.cprintf(ent, PRINT_HIGH, "  adminlevel\n");
-	if (ent->client->resp.admin>=aset_vars->ACMD_RESET_LEVEL)
-		gi.cprintf(ent, PRINT_HIGH, "  reset\n");
 	if (ent->client->resp.admin>=aset_vars->ACMD_RESYNC_LEVEL)
 		gi.cprintf(ent, PRINT_HIGH, "  resync\n");
 	if (ent->client->resp.admin>=aset_vars->ADMIN_ACMD_LEVEL)
@@ -6277,29 +6250,6 @@ void ACMD(edict_t *ent)
 		else
 		remtime(ent);
 	}
-	else if (strcmp(gi.argv(1),"completions")==0)
-	{
-		if (ent->client->resp.admin<aset_vars->ACMD_RESET_LEVEL)
-		return;
-		reset_maps_completed(ent);
-	}
-	else if (strcmp(gi.argv(1),"test")==0)
-	{
-		if (ent->client->resp.admin<aset_vars->ACMD_RESET_LEVEL)
-		return;
-		cmd_test(ent);
-	}
-	else if (strcmp(gi.argv(1),"reset")==0)
-	{
-	if (ent->client->resp.admin<aset_vars->ACMD_RESET_LEVEL)
-		return;
-		if (gi.argc() < 4)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Please provide a level %i username and password.\n", aset_vars->ACMD_RESET_LEVEL);
-			return;
-		}
-		reset_server(ent);
-	}
 	else if (strcmp(gi.argv(1),"addadmin")==0)
 	{
 	if (ent->client->resp.admin<aset_vars->ACMD_ADDADMIN_LEVEL)
@@ -6326,7 +6276,7 @@ void ACMD(edict_t *ent)
 	}
 	else if (strcmp(gi.argv(1),"adminlevel")==0)
 	{
-	if (ent->client->resp.admin<aset_vars->ACMD_ADMINLEVEL_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ACMD_CHANGEADMIN_LEVEL)
 		return;
 		if (gi.argc() < 4)
 		{
@@ -6439,7 +6389,7 @@ void ASET(edict_t *ent)
 	cvar_t	*game_dir;
 	game_dir = gi.cvar("game", "", 0);
 
-	if (ent->client->resp.admin<aset_vars->MAX_ADMIN_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_MAX_LEVEL)
 		return;
 
 	if (gi.argc() < 2) {
@@ -6797,18 +6747,20 @@ void SetDefaultValues(void)
 	gset_vars->weapon_fire_min_delay = 500;
 
 	// aset only
-	aset_vars->MAX_ADMIN_LEVEL			=7;
+	aset_vars->ADMIN_ACMD_LEVEL			=7;
+	aset_vars->ACMD_ADDADMIN_LEVEL		=7;
+	aset_vars->ACMD_CHANGEADMIN_LEVEL	=7;
+	aset_vars->ACMD_LISTADMINS_LEVEL	=7;
+	aset_vars->ACMD_LOCK_LEVEL			=7;
+	aset_vars->ACMD_REMADMIN_LEVEL		=7;
+	aset_vars->ACMD_RESYNC_LEVEL		=7;
+	aset_vars->ACMD_NEXTMAPS_LEVEL		=7;
+
+	aset_vars->ADMIN_MAX_LEVEL			=7;
 	aset_vars->ADMIN_ADDADMIN_LEVEL		=7;
 	aset_vars->ADMIN_ADDMAP_LEVEL		=7;
 	aset_vars->ADMIN_GSET_LEVEL			=7;
 	aset_vars->ADMIN_STUFF_LEVEL		=7;
-	aset_vars->ADMIN_ACMD_LEVEL			=7;
-	aset_vars->ACMD_REMADMIN_LEVEL		=7;
-	aset_vars->ACMD_RESET_LEVEL			=7;
-	aset_vars->ACMD_LISTADMINS_LEVEL	=7;
-	aset_vars->ACMD_ADMINLEVEL_LEVEL	=7;
-	aset_vars->ACMD_ADDADMIN_LEVEL		=7;
-	aset_vars->ACMD_LOCK_LEVEL			=7;
 
 	aset_vars->ADMIN_ADDBOX_LEVEL		=6;
 	aset_vars->ADMIN_ADDBALL_LEVEL		=6;
@@ -6817,7 +6769,7 @@ void SetDefaultValues(void)
 	aset_vars->ADMIN_GIVEALL_LEVEL		=5;
 	aset_vars->ADMIN_REMALL_LEVEL		=5;
 	aset_vars->ADMIN_REMTIMES_LEVEL		=5;
-	aset_vars->ADMIN_TOGGLEHUD_LEVEL		=7;
+	aset_vars->ADMIN_TOGGLEHUD_LEVEL	=7;
 	aset_vars->ADMIN_ADDENT_LEVEL		=5;
 	aset_vars->ADMIN_DVOTE_LEVEL		=5;
 	aset_vars->ADMIN_REMMAP_LEVEL		=6;
@@ -6840,7 +6792,6 @@ void SetDefaultValues(void)
 	aset_vars->ADMIN_DUMMYVOTE_LEVEL	=4;
 	aset_vars->ADMIN_NOMAXVOTES_LEVEL	=2;
 	aset_vars->ADMIN_UPDATESCORES_LEVEL =7;
-	aset_vars->ACMD_RESYNC_LEVEL		=7;
 	aset_vars->ADMIN_MODEL_LEVEL        =5;
 
 	num_gset_commands = 0;
@@ -11033,7 +10984,7 @@ void Create_Tower(edict_t *us)
 	vec3_t	maxs = {16, 16, 32};
 	int type,size;
 
-	if (us->client->resp.admin<aset_vars->MAX_ADMIN_LEVEL)
+	if (us->client->resp.admin<aset_vars->ADMIN_MAX_LEVEL)
 	{
 		//return;
 	}
@@ -12767,11 +12718,6 @@ void reset_maps_completed(edict_t *ent)
 	if (prev_uid>=0)
 		open_uid_file(prev_uid,ent);
 
-}
-
-void cmd_test(edict_t *ent)
-{
-	gi.bprintf(PRINT_HIGH,"%d\n",sizeof(record_data));
 }
 
 void Update_Added_Time(void)

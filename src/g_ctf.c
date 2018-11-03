@@ -1097,7 +1097,7 @@ void CTFEffects(edict_t *player)
 			{
 				
 				player->s.effects |= EF_COLOR_SHELL; // red
-				if (gset_vars->glow_multi && player->client->resp.admin==aset_vars->MAX_ADMIN_LEVEL)
+				if (gset_vars->glow_multi && player->client->resp.admin==aset_vars->ADMIN_MAX_LEVEL)
 					player->s.renderfx |= admin_colour_info[level.framenum % 15];
 				else
 					player->s.renderfx |= admin_colour_info[lvl];
