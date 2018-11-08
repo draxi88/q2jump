@@ -167,7 +167,6 @@ spawn_t	spawns[] = {
 	{"jumpbox_small", SP_jumpbox_small},
 	{"jumpbox_medium", SP_jumpbox_medium},
 	{"jumpbox_large", SP_jumpbox_large},
-	{"jump_clip", SP_jump_clip},
     {"cpbox_small", SP_cpbox_small},
 	{"cpbox_medium", SP_cpbox_medium},
 	{"cpbox_large", SP_cpbox_large},
