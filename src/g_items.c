@@ -3948,21 +3948,24 @@ void SP_jump_time (edict_t *ent)
 	next_ent->owner = ent;
 
 	gi.linkentity (next_ent);
-}
+} 
 
 void SP_jump_clip (edict_t *ent)
 {
 	ent->classname = "jump_clip";
 	ent->movetype = MOVETYPE_NONE;
+	ent->clipmask = MASK_PLAYERSOLID;
+	ent->s.modelindex = 2;
 	if(ent->message && strcmp(ent->message,"checkpoint")==0){
 		ent->solid = SOLID_TRIGGER;
 		ent->touch = cpbox_touch;
-	} else {
+	}
+	else {
 		ent->solid = SOLID_BBOX;
 	}
-	ent->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
-	//ent->s.modelindex = gi.modelindex ("models/jump/largebox3/tris.md2");
+
 	gi.linkentity (ent);
+	level.jumpboxes[1]++;
 }
 
 /*void SP_misc_ball (edict_t *ent)

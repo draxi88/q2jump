@@ -1993,7 +1993,9 @@ void show_ent_list(edict_t *ent,int page)
 			}
             if (strstr(level_items.ents[i]->classname,"cpbox_")){
                 gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s ID:%d \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,(level_items.ents[i]->count+1),level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
-            } else {
+            } else if(level_items.ents[i]->message && strstr(level_items.ents[i]->message,"checkpoint")) {
+				gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s ID:%d \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,(level_items.ents[i]->count+1),level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
+			} else {
                 gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
             }
         }
@@ -10589,14 +10591,55 @@ void reset_map_played_count(edict_t *ent)
 
 }
 
+void remove_maxsmins_boundary() {
+	edict_t *ent;
+
+	ent = g_edicts;
+	while (ent = G_Find(ent,FOFS(classname),"maxsmins_boundary"))
+	{
+			G_FreeEdict(ent);
+	}
+}
+
+void addclip_laser_think (edict_t *self){
+	gi.WriteByte(svc_temp_entity);
+	gi.WriteByte(TE_BUBBLETRAIL2);
+	gi.WritePosition(self->pos1);
+	gi.WritePosition(self->pos2);
+	gi.multicast(self->s.origin, MULTICAST_PVS);
+
+	self->nextthink = level.time + FRAMETIME;
+}
+
+void maxsmins_boundary(vec3_t start, vec3_t end){
+	edict_t		*laser; //? or something
+
+	laser = G_Spawn();
+	VectorCopy(start,laser->pos1);
+	VectorCopy(end,laser->pos2);
+	laser->movetype = MOVETYPE_NONE;
+    laser->solid = SOLID_NOT;
+	laser->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
+	laser->s.modelindex = 1;
+	laser->classname = "maxsmins_boundary";
+	laser->s.frame = 2;
+	laser->s.skinnum = 0xf2f2f0f0;
+	laser->think = addclip_laser_think;
+	
+	gi.linkentity(laser);
+
+	laser->nextthink = level.time + 2;
+}
+
 void add_clip(edict_t *ent)
 {
 	char	action[16];
-	char	type[16];
 	int i;
 	int cp;
 	edict_t *tent;
 	vec3_t center;
+	vec3_t start;
+	vec3_t end;
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL){
 		return;
@@ -10615,27 +10658,69 @@ void add_clip(edict_t *ent)
 		show_ent_list(ent,0);
 		return;
 	}
-
+	
 	strcpy(action,gi.argv(1));
 	if (strcmp(action,"mark1")==0)
 	{
 		VectorCopy(ent->s.origin,level_items.clip1);
+		level_items.clip1[2] -= 10;
 		gi.dprintf("Mark 1 added at: %f - %f - %f\n",level_items.clip1[0],level_items.clip1[1],level_items.clip1[2]);
+		remove_maxsmins_boundary(); //remove old boundary
 	}
 	else if (strcmp(action,"mark2")==0)
 	{
 		VectorCopy(ent->s.origin,level_items.clip2);
+		level_items.clip2[2] -= 10;
 		gi.dprintf("Mark 2 added at: %f - %f - %f\n",level_items.clip2[0],level_items.clip2[1],level_items.clip2[2]);
+		remove_maxsmins_boundary(); //remove old boundary
 	}
+
+	if(level_items.clip1[0]!=0.0 && level_items.clip2[0]!=0.0){ 
+		//Boundary?
+		VectorCopy(level_items.clip1,start);
+		VectorSet(end,start[0],start[1],level_items.clip2[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,start[0],level_items.clip2[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,level_items.clip2[0],start[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(start,level_items.clip2[0],level_items.clip1[1],level_items.clip1[2]);
+		VectorSet(end,start[0],level_items.clip2[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,start[0],start[1],level_items.clip2[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(start,level_items.clip1[0],level_items.clip1[1],level_items.clip2[2]);
+		VectorSet(end,level_items.clip2[0],start[1],start[2]);
+		maxsmins_boundary(start,end);
+		
+		VectorCopy(level_items.clip2,start);
+		VectorSet(end,start[0],start[1],level_items.clip1[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,start[0],level_items.clip1[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,level_items.clip1[0],start[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(start,level_items.clip1[0],level_items.clip2[1],level_items.clip2[2]);
+		VectorSet(end,start[0],level_items.clip1[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,start[0],start[1],level_items.clip1[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(start,level_items.clip2[0],level_items.clip2[1],level_items.clip1[2]);
+		VectorSet(end,level_items.clip1[0],start[1],start[2]);
+		maxsmins_boundary(start,end);
+	}
+
 	//"addclip create" will create a clip between mark1 and mark2..
 	//"addclip checkpoint id" (id = 1,2,3 etc) will create a checkpoint between mark1 and mark2..
-	else if (strcmp(action,"create")==0 || strcmp(action,"checkpoint")==0)
+	//"addclip teleporter target" will create a trigger_teleporter between mark1 and mark2..
+	if (strcmp(action,"create")==0 || strcmp(action,"checkpoint")==0)
 	{
 		if(strcmp(action,"checkpoint")==0 && gi.argc() < 3){
 			gi.dprintf("You need to give your checkpoint an ID (Ex: addclip checkpoint 1)\n");
 			return;
 		}
 
+		remove_maxsmins_boundary(); //remove old boundary
 		//size of bound box
 		tent = G_Spawn();
 		if(level_items.clip1[0]>level_items.clip2[0])
@@ -10669,13 +10754,13 @@ void add_clip(edict_t *ent)
 			tent->message = action;
 			tent->solid = SOLID_TRIGGER;
 			tent->count = cp;
-		} else{
+		} else {
 			tent->solid = SOLID_BBOX;
 		}
-		tent->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
-		tent->s.modelindex = gi.modelindex ("models/jump/smallmodel/tris.md2");
-		tent->dmg = 0;
+		tent->s.modelindex = 1;
 		gi.linkentity (tent);
+
+		gi.linkentity (ent);
 
 
 		for (i=0;i<MAX_ENTS;i++)
@@ -10690,13 +10775,17 @@ void add_clip(edict_t *ent)
 		WriteEnts();
 		if(strcmp(action,"checkpoint")==0){
 			gi.dprintf("Checkpoint created.\n");
-		} else {
+		}
+		else {
 			gi.dprintf("Jump_clip created.\n");
 		}
-	}
-	else
-	{
-		show_ent_list(ent,0);
+		level_items.clip1[0] = 0;
+		level_items.clip1[1] = 0;
+		level_items.clip1[2] = 0;
+		level_items.clip2[0] = 0;
+		level_items.clip2[1] = 0;
+		level_items.clip2[2] = 0;
+		return;
 	}
 
 }
