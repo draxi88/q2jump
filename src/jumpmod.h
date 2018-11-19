@@ -55,7 +55,9 @@ typedef struct
 	float israfel;
 	int	score;
 	int	uid;
+	int pos;
 } users_sort_record;
+
 
 typedef struct 
 { 
