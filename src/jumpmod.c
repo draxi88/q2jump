@@ -3849,7 +3849,6 @@ void sort_users(void)
 		{
 			maplist.sorted_users[i].score = maplist.users[i].score;
 			maplist.sorted_users[i].uid = i;
-			maplist.sorted_users[i].pos = i;
 
 			maplist.sorted_israfel[i].score = maplist.users[i].score;
 			maplist.sorted_israfel[i].israfel = maplist.users[i].israfel;
@@ -3884,7 +3883,6 @@ void sort_users_2( int n )
 
         maplist.sorted_users[j].uid = t_uid;
         maplist.sorted_users[j].score = t_score;
-		maplist.sorted_users[j].pos = i;
 	  }
 }
 
@@ -8884,7 +8882,6 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 	}
 	return false;
 }
-
 void sort_tourney_records(){
     int i,j,swap;
     times_record   temp;
