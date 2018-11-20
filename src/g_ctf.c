@@ -1219,7 +1219,6 @@ void SetCTFStats(edict_t *ent)
 {
 	int keys;
 	char racenr[2];
-	char racestring[32];
 
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
@@ -1408,7 +1407,6 @@ void SetCTFStats(edict_t *ent)
 			ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
 		} else {
 			sprintf(racenr,"%d",ent->client->resp.rep_race_number+1);
-			sprintf(racestring,"    Race: %s",HighAscii(racenr));
 			if(ent->client->resp.rep_race_number==0) {
 				gi.configstring (CONFIG_JUMP_RACE_1,va("    Race: %s",HighAscii(racenr)));
 				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_1;
