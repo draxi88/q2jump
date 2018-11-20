@@ -4490,7 +4490,6 @@ void Cmd_Replay(edict_t *ent)
 //		gi.cprintf(ent,PRINT_HIGH,"You need to be an observer to replay.\n");
 //		return;
 	}
-    ent->client->resp.rep_racing = false;
 }
 
 void Load_Recording(void)
@@ -12360,7 +12359,6 @@ void Cmd_Race (edict_t *ent)
 	else
 		gi.cprintf(ent,PRINT_CHAT,"Replay racing is ON for demo %d\n",(int)(race_this+1));
 	gi.cprintf(ent,PRINT_HIGH,"Other options: race delay <num>, race off, race now, race <demonumber>\n");
-
 
 #endif
 }

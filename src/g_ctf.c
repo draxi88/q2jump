@@ -1218,7 +1218,8 @@ static void CTFSetIDView(edict_t *ent)
 void SetCTFStats(edict_t *ent)
 {
 	int keys;
-    char racenr[2];
+	char racenr[2];
+	char racestring[32];
 
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
@@ -1401,14 +1402,63 @@ void SetCTFStats(edict_t *ent)
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_ON;
 	else
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_OFF;
-    if (ent->client->resp.rep_racing && !ent->client->resp.replaying){
-        sprintf(racenr,"%d",ent->client->resp.rep_race_number+1);
-        gi.configstring (CONFIG_JUMP_RACE_ON,va("    Race: %s",HighAscii(racenr))); //draxi Ascii
-        if (ent->client->resp.rep_race_number==MAX_HIGHSCORES){gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: нов");}
-            ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
-    }
-	else
+	if (ent->client->resp.rep_racing && !ent->client->resp.replaying){
+		if (ent->client->resp.rep_race_number==MAX_HIGHSCORES){
+			gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: нов"); //race now.
+			ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
+		} else {
+			sprintf(racenr,"%d",ent->client->resp.rep_race_number+1);
+			sprintf(racestring,"    Race: %s",HighAscii(racenr));
+			if(ent->client->resp.rep_race_number==0) {
+				gi.configstring (CONFIG_JUMP_RACE_1,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_1;
+			} else if(ent->client->resp.rep_race_number==1) {
+				gi.configstring (CONFIG_JUMP_RACE_2,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_2;
+			} else if(ent->client->resp.rep_race_number==2) {
+				gi.configstring (CONFIG_JUMP_RACE_3,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_3;
+			} else if(ent->client->resp.rep_race_number==3) {
+				gi.configstring (CONFIG_JUMP_RACE_4,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_4;
+			} else if(ent->client->resp.rep_race_number==4) {
+				gi.configstring (CONFIG_JUMP_RACE_5,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_5;
+			} else if(ent->client->resp.rep_race_number==5) {
+				gi.configstring (CONFIG_JUMP_RACE_6,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_6;
+			} else if(ent->client->resp.rep_race_number==6) {
+				gi.configstring (CONFIG_JUMP_RACE_7,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_7;
+			} else if(ent->client->resp.rep_race_number==7) {
+				gi.configstring (CONFIG_JUMP_RACE_8,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_8;
+			} else if(ent->client->resp.rep_race_number==8) {
+				gi.configstring (CONFIG_JUMP_RACE_9,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_9;
+			} else if(ent->client->resp.rep_race_number==9) {
+				gi.configstring (CONFIG_JUMP_RACE_10,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_10;
+			} else if(ent->client->resp.rep_race_number==10) {
+				gi.configstring (CONFIG_JUMP_RACE_11,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_11;
+			} else if(ent->client->resp.rep_race_number==11) {
+				gi.configstring (CONFIG_JUMP_RACE_12,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_12;
+			} else if(ent->client->resp.rep_race_number==12) {
+				gi.configstring (CONFIG_JUMP_RACE_13,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_13;
+			} else if(ent->client->resp.rep_race_number==13) {
+				gi.configstring (CONFIG_JUMP_RACE_14,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_14;
+			} else if(ent->client->resp.rep_race_number==14) {
+				gi.configstring (CONFIG_JUMP_RACE_15,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_15;
+			}
+		}
+	} else {
 		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_OFF;
+	}
 	if (ent->client->resp.ctf_team==CTF_TEAM1)
 		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_EASY;
 	else
