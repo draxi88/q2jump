@@ -266,6 +266,13 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &gset_vars->addedtimemap,
   },
+  { 
+	0,1,0,
+    "gaddedtimeoverride", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->addedtimeoverride,
+  },
   {
 	0,1,1,
 	"addtime_announce",
@@ -304,6 +311,13 @@ zbotcmd_t zbotCommands[] =
   },
 #endif
   { 
+	0,1,0,
+    "gallowsrj", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->allowsrj,
+  },
+  { 
 	0,1,1,
     "gantiglue", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
@@ -340,6 +354,27 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,0,
+    "gbfg", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->bfg,
+  },
+  { 
+	0,1,0,
+    "gblaster", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->blaster,
+  },
+  { 
+	0,28,0,
+    "gcheckpoint_total", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->checkpoint_total,
+  },
+  { 
+	0,1,0,
     "gcmsg", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
@@ -365,6 +400,48 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
     &gset_vars->debug,
+  },
+  { 
+	0,1,1,
+    "gdroptofloor", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->droptofloor,
+  },
+  { 
+	0,0,0,
+    "gedited_by", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_STRING,
+    &gset_vars->mset->edited_by,
+  },
+  { 
+	0,1,1,
+    "gfalldamage", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->falldamage,
+  },
+  { 
+	0,1,0,
+    "gfast_firing", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->fast_firing,
+  },
+  { 
+	0,1,0,
+    "gfastdoors", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->fastdoors,
+  },
+  { 
+	0,1,0,
+    "gfasttele", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->fasttele,
   },
   { 
 	0,2,1,
@@ -669,8 +746,15 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,0,
+    "grocket", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->rocket,
+  },
+  { 
+	0,1,0,
     "store_safe", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDWHERE_CFGFILE | CMD_GSET,
     CMDTYPE_NUMBER,
     &gset_vars->store_safe,
   },
@@ -680,6 +764,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->singlespawn,
+  },
+  { 
+	0,1,0,
+    "gslowdoors", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->slowdoors,
   },
   { 
 	0,2147483647,2,
@@ -6665,7 +6756,7 @@ void SetDefaultValues(void)
 
 	// msets/gsets
 	gset_vars->addedtimemap = 15;
-	mset_vars->addedtimeoverride = 0;
+	gset_vars->mset->addedtimeoverride = 0;//
 	gset_vars->addtime_announce = 1;
 	gset_vars->admin_max_addtime = 0;
 	strcpy(gset_vars->admin_model,"guard");
@@ -6673,25 +6764,25 @@ void SetDefaultValues(void)
 #ifdef RACESPARK
 	gset_vars->allow_race_spark = 1;
 #endif
-	mset_vars->allowsrj = 0;
+	gset_vars->mset->allowsrj = 0;//
 	gset_vars->antiglue = 0;
 	gset_vars->antiglue_allow1st = 0;
 	gset_vars->antiglue_penalty = 2;
 	gset_vars->autotime = 10;
 	gset_vars->best_time_glow = 0;
-	mset_vars->bfg = 0;
-	mset_vars->blaster = 0;
-	mset_vars->checkpoint_total = 0;
+	gset_vars->mset->bfg = 0;//
+	gset_vars->mset->blaster = 0;//
+	gset_vars->mset->checkpoint_total = 0;//
 	gset_vars->mset->cmsg = 0;
 	gset_vars->cvote_announce = 1;
 	gset_vars->mset->damage = 1;
 	gset_vars->debug =0;
-	mset_vars->droptofloor = 1;
-	strcpy(mset_vars->edited_by,"NA");
-	mset_vars->falldamage = 1;
-	mset_vars->fast_firing = 0;
-	mset_vars->fastdoors = 0;
-	mset_vars->fasttele = 0;
+	gset_vars->mset->droptofloor = 1;//
+	strcpy(gset_vars->mset->edited_by,"NA");
+	gset_vars->mset->falldamage = 1;//
+	gset_vars->mset->fast_firing = 0;//
+	gset_vars->mset->fastdoors = 0;//
+	gset_vars->mset->fasttele = 0;//
 	gset_vars->flashlight = 1;
 	gset_vars->fpskick = 1;
 	gset_vars->mset->ghost = 1;
@@ -6735,10 +6826,10 @@ void SetDefaultValues(void)
 	gset_vars->pvote_announce = 1;
 	gset_vars->mset->regen = 100;
 	gset_vars->respawn_sound = 1;
-	mset_vars->rocket = 0;
+	gset_vars->mset->rocket = 0;//
 	gset_vars->store_safe = 0;
 	gset_vars->mset->singlespawn = 0;
-	mset_vars->slowdoors = 0;
+	gset_vars->mset->slowdoors = 0;//
 	gset_vars->target_glow = 2;
 	gset_vars->temp_ban_on_kick = 0;
 	gset_vars->time_adjust = 0;
@@ -6751,7 +6842,7 @@ void SetDefaultValues(void)
 	gset_vars->walkthru = 1;
 	gset_vars->weapon_fire_min_delay = 500;
 
-	// aset only
+	// asets
 	aset_vars->ADMIN_ACMD_LEVEL			=7;
 	aset_vars->ACMD_ADDADMIN_LEVEL		=7;
 	aset_vars->ACMD_CHANGEADMIN_LEVEL	=7;

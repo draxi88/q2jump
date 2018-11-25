@@ -406,7 +406,7 @@ typedef struct
 
 extern zbotcmd_t zbotCommands[];
 
-// mset only
+// msets
 typedef struct
 {
 	int addedtimeoverride;
@@ -448,7 +448,6 @@ typedef struct
 	int antiglue_penalty;
 	int autotime;
 	int best_time_glow;
-
 	int flashlight;
 	int hookspeed;
 	int hookpull;
