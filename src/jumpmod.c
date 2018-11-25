@@ -992,14 +992,7 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_ASET, 
     CMDTYPE_NUMBER,
     &aset_vars->ADMIN_TOGGLEHUD_LEVEL
-	},
-  { 
-	1,20,7,
-    "ACMD_RESYNC_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ACMD_RESYNC_LEVEL
-	},
+  },
   { 
 	1,20,5,
     "ADMIN_ADDENT_LEVEL", 
@@ -5125,8 +5118,6 @@ void List_Admin_Commands(edict_t *ent)
 		gi.cprintf(ent,PRINT_HIGH,"Level %d - ", i);
 		if (i == aset_vars->ADMIN_STUFF_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "stuff ");
-//		if (i == aset_vars->ACMD_RESYNC_LEVEL)
-//			gi.cprintf(ent, PRINT_HIGH, "resync ");
 		if (i == aset_vars->ADMIN_ADDMAP_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "addmap ");
 		if (i == aset_vars->ADMIN_NOCLIP_LEVEL )
@@ -6111,8 +6102,6 @@ void List_acmd_commands(edict_t *ent)
 		gi.cprintf(ent, PRINT_HIGH, "  changename\n");
 	if (ent->client->resp.admin>=aset_vars->ACMD_CHANGEADMIN_LEVEL)
 		gi.cprintf(ent, PRINT_HIGH, "  adminlevel\n");
-	if (ent->client->resp.admin>=aset_vars->ACMD_RESYNC_LEVEL)
-		gi.cprintf(ent, PRINT_HIGH, "  resync\n");
 	if (ent->client->resp.admin>=aset_vars->ADMIN_ACMD_LEVEL)
 	{
 		gi.cprintf(ent, PRINT_HIGH, "  ratereset\n");
@@ -6410,12 +6399,6 @@ void ACMD(edict_t *ent)
 		if (ent->client->resp.admin<aset_vars->ADMIN_GSET_LEVEL)
 			return;
 		sort_maps(ent);
-	}
-	else if (strcmp(gi.argv(1),"resync")==0)
-	{
-		if (ent->client->resp.admin<aset_vars->ACMD_RESYNC_LEVEL)
-			return;
-		resync(true);
 	}
 	else 
 	{
@@ -6849,7 +6832,6 @@ void SetDefaultValues(void)
 	aset_vars->ACMD_LISTADMINS_LEVEL	=7;
 	aset_vars->ACMD_LOCK_LEVEL			=7;
 	aset_vars->ACMD_REMADMIN_LEVEL		=7;
-	aset_vars->ACMD_RESYNC_LEVEL		=7;
 	aset_vars->ACMD_NEXTMAPS_LEVEL		=7;
 
 	aset_vars->ADMIN_MAX_LEVEL			=7;

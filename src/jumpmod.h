@@ -549,7 +549,6 @@ typedef struct
 	int ADMIN_REMMAP_LEVEL		;
 	int ACMD_LOCK_LEVEL			;
 	int ADMIN_UPDATESCORES_LEVEL;
-	int ACMD_RESYNC_LEVEL		;
 	int ADMIN_MODEL_LEVEL		;
 } aset_vars_t;
 
