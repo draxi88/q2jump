@@ -1041,14 +1041,7 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_ASET, 
     CMDTYPE_NUMBER,
     &aset_vars->ADMIN_THROWUP_LEVEL
-	},
-/*  { 
-	1,20,4,
-    "ADMIN_FORCETEAM_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_FORCETEAM_LEVEL
-	},*/
+  },
   { 
 	1,20,4,
     "ADMIN_BRING_LEVEL", 
@@ -5146,8 +5139,6 @@ void List_Admin_Commands(edict_t *ent)
 			gi.cprintf(ent,PRINT_HIGH,"goto ");
 		if (i == aset_vars->ADMIN_ADDTIME_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"addtime ");
-//		if (i == aset_vars->ADMIN_FORCETEAM_LEVEL)
-//			gi.cprintf(ent,PRINT_HIGH,"forceteam ");
 		if (i == aset_vars->ADMIN_ADDENT_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"addent rement moveent alignent shiftent listents ");
 		if (i == aset_vars->ADMIN_MSET_LEVEL)
@@ -7221,75 +7212,6 @@ qboolean Can_Remove_Entity(char *entity_name)
 	return false;
 }
 
-/*void forceteam(edict_t *ent)
-{
-	int i;
-	edict_t *targ;
-	char temp[128];
-	edict_t	*e2;
-
-	if (ent->client->resp.admin<aset_vars->ADMIN_FORCETEAM_LEVEL)
-		return;
-
-	if (gi.argc() < 2)
-	{
-		CTFPlayerList(ent);
-		gi.cprintf(ent,PRINT_HIGH,"Pick a player to forceteam\n");
-		return;
-	}
-	if (gi.argc() < 3)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"use : forceteam <number> <team>\nexample : forceteam 1 easy\n");
-		return;
-	}
-
-	if (*gi.argv(1) < '0' && *gi.argv(1) > '9') {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "Specify the player number to force.\n");
-		return;
-	}
-
-	i = atoi(gi.argv(1));
-	if (i < 1 || i > maxclients->value) {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "Invalid player number.\n");
-		return;
-	}
-
-	targ = g_edicts + i;
-	if (!targ->inuse) {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "That player number is not connected.\n");
-		return;
-	}
-
-	if (ent->client->resp.admin<=targ->client->resp.admin)
-	{
-		gi.cprintf(ent, PRINT_HIGH, "You may not forceteam someone with admin greater than or equal to yours.\n");
-	}
-	
-	if (strcmp(gi.argv(2),"easy")==0)
-	{
-		strcpy(temp,"team easy\n");
-	}
-	else if (strcmp(gi.argv(2),"hard")==0)
-	{
-		strcpy(temp,"team hard\n");
-	}
-	else if (strcmp(gi.argv(2),"observer")==0)
-	{
-		strcpy(temp,"observer\n");
-	}
-	else
-	{
-		gi.cprintf(ent, PRINT_HIGH, "Invalid team.\n");
-		return;
-	}
-	gi.bprintf(PRINT_HIGH, "%s transferred to team '%s' by %s.\n", targ->client->pers.netname,
-		gi.argv(2), ent->client->pers.netname);
-	stuffcmd(targ,temp);
-}
-*/
 void autorecord_stop(edict_t *ent)
 {
 	stuffcmd(ent,"stop\n");
