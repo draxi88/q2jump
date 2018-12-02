@@ -3967,6 +3967,104 @@ void SP_jump_clip (edict_t *ent)
 	gi.linkentity (ent);
 	level.jumpboxes[1]++;
 }
+void cpwall_think (edict_t *self){
+	edict_t *temp_ent;
+	int i;
+
+	for (i=0 ; i<maxclients->value ; i++) {
+		temp_ent = g_edicts + 1 + i;
+		if (!temp_ent->inuse || !temp_ent->client)
+			continue;
+		if(temp_ent->client->pers.checkpoints>=self->count)
+			continue;
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_FORCEWALL);
+		gi.WritePosition (self->pos1);
+		gi.WritePosition (self->pos2);
+		gi.WriteByte (self->s.skinnum);
+		gi.unicast(temp_ent,true);
+	}
+	self->nextthink = level.time + FRAMETIME;
+	
+}
+
+void cpwall_touch (edict_t *self, edict_t *other)
+{
+	vec3_t	forward, zvec={0,0,0};
+	trace_t	tr;
+	qboolean XXX;
+	
+	XXX = false;
+	if(self->size[0]<self->size[1]){
+		XXX = true;
+	}
+	if (strcmp(other->classname, "player") == 0){
+		if(other->client->pers.checkpoints < self->count){
+			if(XXX){
+				if(other->s.origin[0]<self->s.origin[0])
+					other->s.origin[0] += 50;
+				else
+					other->s.origin[0] -= 50;
+			} else {
+				if(other->s.origin[1]<self->s.origin[1])
+					other->s.origin[1] += 50;
+				else
+					other->s.origin[1] -= 50;
+			}
+			VectorClear(other->velocity);
+			if (trigger_timer(5))
+					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s) to pass this barrier.\n", self->count);
+		}
+	}
+}
+
+void SP_jump_cpwall (edict_t *ent) {
+	vec3_t center;
+
+	ent->classname = "jump_cpwall";
+	ent->touch = cpwall_touch;
+	ent->solid = SOLID_TRIGGER;
+	ent->movetype = MOVETYPE_NONE;
+	ent->svflags |= SVF_NOCLIENT;
+	ent->s.modelindex = 1;
+	gi.setmodel (ent, ent->model);
+
+	//color
+	if (ent->spawnflags &  1)
+		ent->s.skinnum = 0xc0c0c0c0;//0xf2f2f0f0; //RED
+	else if (ent->spawnflags &  2)
+		ent->s.skinnum = 0xd0d1d2d3;//GREEN
+	else if (ent->spawnflags &  4)
+		ent->s.skinnum = 0xf3f3f1f1;//BLUE
+	else if (ent->spawnflags &  8)
+		ent->s.skinnum = 0xdcdddedf;//YELLOW
+	else if (ent->spawnflags &  16)
+		ent->s.skinnum = 0xe0e1e2e3;//ORANGE
+
+	VectorSubtract(ent->absmax,ent->absmin,center);
+	VectorScale(center,0.5,center);
+	VectorAdd(center,ent->absmin,center);
+	VectorCopy(center,ent->pos1);
+	VectorCopy(center,ent->pos2);
+	if(ent->size[0]>ent->size[1]){
+		ent->pos1[0] -= ent->size[0]/2;
+		ent->pos1[2] += ent->size[2]/2;
+
+		ent->pos2[0] += ent->size[0]/2;
+		ent->pos2[2] += ent->size[2]/2;
+	} else if(ent->size[0]<ent->size[1]){
+		ent->pos1[1] -= ent->size[1]/2;
+		ent->pos1[2] += ent->size[2]/2;
+
+		ent->pos2[1] += ent->size[1]/2;
+		ent->pos2[2] += ent->size[2]/2;
+	}
+
+	ent->think = cpwall_think;
+	ent->nextthink = level.time + 1; 
+
+	gi.linkentity(ent);
+}
 
 /*void SP_misc_ball (edict_t *ent)
 {

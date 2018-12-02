@@ -10602,7 +10602,7 @@ void remove_maxsmins_boundary() {
 
 void addclip_laser_think (edict_t *self){
 	gi.WriteByte(svc_temp_entity);
-	gi.WriteByte(TE_BUBBLETRAIL2);
+	gi.WriteByte(TE_RAILTRAIL);
 	gi.WritePosition(self->pos1);
 	gi.WritePosition(self->pos2);
 	gi.multicast(self->s.origin, MULTICAST_PVS);
