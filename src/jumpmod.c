@@ -854,221 +854,238 @@ zbotcmd_t zbotCommands[] =
   //         aset's
   //----------------------------
 
+	{
+	1,20,1,
+	"ADMIN_ADDBALL_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_ADDBALL_LEVEL
+	},
 
+	{
+	1,20,3,
+	"ADMIN_ADDENT_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_ADDENT_LEVEL
+	},
 
-  { 
-	1,20,7,
-    "ADMIN_ADMINEDIT_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADMINEDIT_LEVEL
-  },
-  { 
-	1,20,7,
-    "ADMIN_NEXTMAPS_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_NEXTMAPS_LEVEL
-  },
-  { 
-	1,20,7,
-    "ADMIN_SORTMAPS_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_SORTMAPS_LEVEL
-  },
-  { 
-	1,20,7,
-    "ADMIN_ACMD_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_GSET_LEVEL
-  },
-  { 
-	1,20,7,
-    "ADMIN_CHANGENAME_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_CHANGENAME_LEVEL
-  },
+	{
+	1,20,5,
+	"ADMIN_ADDMAP_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_ADDMAP_LEVEL
+	},
 
+	{
+	1,20,2,
+	"ADMIN_ADDTIME_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_ADDTIME_LEVEL
+	},
 
+	{
+	1,20,5,
+	"ADMIN_ADMINEDIT_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_ADMINEDIT_LEVEL
+	},
 
-  { 
-	1,20,7,
-    "ADMIN_MAX_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_MAX_LEVEL,
-  },
-  { 
-	1,20,7,
-    "ADMIN_ADDMAP_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADDMAP_LEVEL
-	},
-  { 
-	1,20,7,
-    "ADMIN_GSET_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_GSET_LEVEL
-	},
-  { 
-	1,20,7,
-    "ADMIN_STUFF_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_STUFF_LEVEL
-	},
-  { 
-	1,20,6,
-    "ADMIN_ADDBALL_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADDBALL_LEVEL
-	},
-  { 
+	{
 	1,20,5,
-    "ADMIN_MSET_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_MSET_LEVEL
+	"ADMIN_BAN_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_BAN_LEVEL
 	},
-  { 
+
+	{
+	1,20,2,
+	"ADMIN_BOOT_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_BOOT_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_BRING_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_BRING_LEVEL
+	},
+
+	{
 	1,20,5,
-    "ADMIN_GIVEALL_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_GIVEALL_LEVEL
+	"ADMIN_CHANGENAME_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_CHANGENAME_LEVEL
 	},
-  { 
+
+	{
+	1,20,1,
+	"ADMIN_DUMMYVOTE_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_DUMMYVOTE_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_GIVE_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_GIVE_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_GIVEALL_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_GIVEALL_LEVEL
+	},
+
+	{
 	1,20,5,
-    "ADMIN_REMTIMES_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_REMTIMES_LEVEL
+	"ADMIN_GSET_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_GSET_LEVEL
 	},
-  { 
-	1,20,7,
-    "ADMIN_TOGGLEHUD_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_TOGGLEHUD_LEVEL
-    },
-  { 
+
+	{
 	1,20,5,
-    "ADMIN_ADDENT_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADDENT_LEVEL
+	"ADMIN_IP_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_IP_LEVEL
 	},
-  { 
+
+	{
 	1,20,5,
-    "ADMIN_RATERESET_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_RATERESET_LEVEL
+	"ADMIN_MAX_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_MAX_LEVEL
 	},
-  {
+
+	{
 	1,20,5,
 	"ADMIN_MODEL_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_MODEL_LEVEL,
-  },
-  { 
-	1,20,4,
-    "ADMIN_SLAP_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_SLAP_LEVEL
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_MODEL_LEVEL
 	},
-  { 
+
+	{
 	1,20,4,
-    "ADMIN_ADDTIME_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADDTIME_LEVEL
+	"ADMIN_MSET_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_MSET_LEVEL
 	},
-	{ 
-	1,20,4,
-    "ADMIN_UPDATESCORES_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_UPDATESCORES_LEVEL
-	},
-  { 
-	1,20,4,
-    "ADMIN_THROWUP_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_THROWUP_LEVEL
-  },
-  { 
-	1,20,4,
-    "ADMIN_BRING_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_BRING_LEVEL
-	},
-  { 
-	1,20,4,
-    "ADMIN_VOTE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_VOTE_LEVEL
-	},
-  { 
-	1,20,3,
-    "ADMIN_BOOT_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_BOOT_LEVEL
-	},
-  { 
+
+	{
 	1,20,2,
-    "ADMIN_SILENCE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_SILENCE_LEVEL
+	"ADMIN_NEXTMAPS_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_NEXTMAPS_LEVEL
 	},
-  { 
-	1,20,1,
-    "ADMIN_GIVE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_GIVE_LEVEL
+
+	{
+	1,20,2,
+	"ADMIN_NOMAXVOTES_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_NOMAXVOTES_LEVEL
 	},
-  { 
-	1,20,7,
-    "ADMIN_BAN_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_BAN_LEVEL
-	},
-  { 
+
+	{
 	1,20,5,
-    "ADMIN_IP_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_IP_LEVEL
+	"ADMIN_RATERESET_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_RATERESET_LEVEL
 	},
-  { 
+
+	{
 	1,20,4,
-    "ADMIN_DUMMYVOTE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_DUMMYVOTE_LEVEL
+	"ADMIN_REMTIMES_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_REMTIMES_LEVEL
 	},
-  {   					  // _h2
-	1,20,2,				  // _h2
-    "ADMIN_NOMAXVOTES_LEVEL",		  // _h2
-    CMDWHERE_CFGFILE | CMD_ASET,	  // _h2
-    CMDTYPE_NUMBER, 			  // _h2
-    &aset_vars->ADMIN_NOMAXVOTES_LEVEL	  // _h2
-	},				  // _h2
+
+	{
+	1,20,1,
+	"ADMIN_SILENCE_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_SILENCE_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_SLAP_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_SLAP_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_SORTMAPS_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_SORTMAPS_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_STUFF_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_STUFF_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_THROWUP_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_THROWUP_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_TOGGLEHUD_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_TOGGLEHUD_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_UPDATESCORES_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_UPDATESCORES_LEVEL
+	},
+
+	{
+	1,20,2,
+	"ADMIN_VOTE_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_VOTE_LEVEL
+	}
+
 };
 
 #define ZBOTCOMMANDSSIZE    (sizeof(zbotCommands) / sizeof(zbotCommands[0]))
@@ -2596,6 +2613,7 @@ void rem_admin(edict_t *ent)
 	if ((num<=0) || (num>num_admins))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Invalid number\n");
+		return;
 	}
 	num--;
 	if (admin_pass[num].level)
@@ -2605,7 +2623,7 @@ void rem_admin(edict_t *ent)
 	Write_Admin_cfg();
 	Read_Admin_cfg();
 
-	gi.cprintf(ent,PRINT_HIGH,"Admin %s has been removed.\n",admin_pass[num]);
+	gi.cprintf(ent,PRINT_HIGH,"Admin %i has been removed.\n",num+1);
 }
 
 void list_admins(edict_t *ent)
@@ -5075,12 +5093,14 @@ void List_Admin_Commands(edict_t *ent)
 	int i;
 	int j;
 
+	gi.cprintf(ent, PRINT_HIGH, "\n-----------------------------------------------------------------------------------");
+
 	for (i = 1;i <= aset_vars->ADMIN_MAX_LEVEL;i++)
 	{
 		if (ent->client->resp.admin < i)
-			return;
+			break;
 
-		gi.cprintf(ent,PRINT_HIGH,"Level %d - ", i);
+		gi.cprintf(ent,PRINT_HIGH,"\nLevel %d - ", i);
 		if (i == aset_vars->ADMIN_STUFF_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "stuff ");
 		if (i == aset_vars->ADMIN_ADDMAP_LEVEL)
@@ -5096,7 +5116,7 @@ void List_Admin_Commands(edict_t *ent)
 		if (i == aset_vars->ADMIN_ADDTIME_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"addtime ");
 		if (i == aset_vars->ADMIN_ADDENT_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"addent rement remallents moveent alignent shiftent listents addbox movebox skinbox lock");
+			gi.cprintf(ent,PRINT_HIGH,"addent rement moveent alignent shiftent listents addbox movebox skinbox lock");
 		if (i == aset_vars->ADMIN_MSET_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"mset ");
 		if (i == aset_vars->ADMIN_GSET_LEVEL)
@@ -5123,6 +5143,7 @@ void List_Admin_Commands(edict_t *ent)
 			gi.cprintf(ent, PRINT_HIGH, "sortmaps ");
 		gi.cprintf(ent,PRINT_HIGH,"\n");
 	}
+	gi.cprintf(ent, PRINT_HIGH, "-----------------------------------------------------------------------------------\n\n");
 }
 void mvote(edict_t *ent)
 {
