@@ -6432,7 +6432,7 @@ void SetDefaultValues(void)
 
 	// msets/gsets
 	gset_vars->addedtimemap = 15;
-	gset_vars->mset->addedtimeoverride = 0;//
+	gset_vars->mset->addedtimeoverride = 0;
 	gset_vars->addtime_announce = 1;
 	gset_vars->admin_max_addtime = 0;
 	strcpy(gset_vars->admin_model,"guard");
@@ -6440,25 +6440,25 @@ void SetDefaultValues(void)
 #ifdef RACESPARK
 	gset_vars->allow_race_spark = 1;
 #endif
-	gset_vars->mset->allowsrj = 0;//
+	gset_vars->mset->allowsrj = 0;
 	gset_vars->antiglue = 0;
 	gset_vars->antiglue_allow1st = 0;
 	gset_vars->antiglue_penalty = 2;
 	gset_vars->autotime = 10;
 	gset_vars->best_time_glow = 0;
-	gset_vars->mset->bfg = 0;//
-	gset_vars->mset->blaster = 0;//
-	gset_vars->mset->checkpoint_total = 0;//
+	gset_vars->mset->bfg = 0;
+	gset_vars->mset->blaster = 0;
+	gset_vars->mset->checkpoint_total = 0;
 	gset_vars->mset->cmsg = 0;
 	gset_vars->cvote_announce = 1;
 	gset_vars->mset->damage = 1;
 	gset_vars->debug =0;
-	gset_vars->mset->droptofloor = 1;//
+	gset_vars->mset->droptofloor = 1;
 	strcpy(gset_vars->mset->edited_by,"NA");
-	gset_vars->mset->falldamage = 1;//
-	gset_vars->mset->fast_firing = 0;//
-	gset_vars->mset->fastdoors = 0;//
-	gset_vars->mset->fasttele = 0;//
+	gset_vars->mset->falldamage = 1;
+	gset_vars->mset->fast_firing = 0;
+	gset_vars->mset->fastdoors = 0;
+	gset_vars->mset->fasttele = 0;
 	gset_vars->flashlight = 1;
 	gset_vars->fpskick = 1;
 	gset_vars->mset->ghost = 1;
@@ -6502,10 +6502,10 @@ void SetDefaultValues(void)
 	gset_vars->pvote_announce = 1;
 	gset_vars->mset->regen = 100;
 	gset_vars->respawn_sound = 1;
-	gset_vars->mset->rocket = 0;//
+	gset_vars->mset->rocket = 0;
 	gset_vars->store_safe = 0;
 	gset_vars->mset->singlespawn = 0;
-	gset_vars->mset->slowdoors = 0;//
+	gset_vars->mset->slowdoors = 0;
 	gset_vars->target_glow = 2;
 	gset_vars->temp_ban_on_kick = 0;
 	gset_vars->time_adjust = 0;
