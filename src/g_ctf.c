@@ -4085,7 +4085,7 @@ void CTFRequestMatch(edict_t *ent, pmenuhnd_t *p)
 {
 	char text[1024];
 
-	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
+	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120)
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You cannot initiate a vote of this kind when timeleft is under 2 minutes\n");
@@ -5022,7 +5022,7 @@ void CTFWarp(edict_t *ent)
 
 	if (ent->client->resp.silence)
 		return;
-/*	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
+/*	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120){
 		if (Get_Voting_Clients()>1) {
 			gi.cprintf(ent,PRINT_HIGH,"You cannot initiate a vote of this kind when timeleft is under 2 minutes\n");
@@ -5033,13 +5033,13 @@ void CTFWarp(edict_t *ent)
 
 
 	index = ent-g_edicts-1;
-/*	if ((level.time<20) && (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL))
+/*	if ((level.time<20) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Please wait %2.1f seconds before calling a vote\n",20.0-level.time);
 		return;
 	}*/
 
-	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL) && curclients > 2) // 0.84wp_h1
+	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL) && curclients > 2) // 0.84wp_h1
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvotetime);
 		return;
@@ -5051,7 +5051,7 @@ void CTFWarp(edict_t *ent)
 		return;
 	}
 
-	if ((ClientIsBanned(ent,BAN_MAPVOTE)) && (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL))
+	if ((ClientIsBanned(ent,BAN_MAPVOTE)) && (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You are not allowed to mapvote.\n");
 		return;
@@ -5093,7 +5093,7 @@ void CTFWarp(edict_t *ent)
 	{
 		map = rand() % maplist.nummaps;
 		
-/*		if (ent->client->resp.admin>=ADMIN_MAPVOTE_LEVEL) {
+/*		if (ent->client->resp.admin>=ADMIN_VOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
 			admin_log(ent,text);
 			gi.bprintf(PRINT_HIGH, "%s's random map vote has passed. Level changing to %s.\n", 
@@ -5301,7 +5301,7 @@ void CTFWarp(edict_t *ent)
 		if (map<0)
 			map = maplist.nummaps-1;
 		
-/*		if (ent->client->resp.admin>=ADMIN_MAPVOTE_LEVEL) {
+/*		if (ent->client->resp.admin>=ADMIN_VOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
 			admin_log(ent,text);
 			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
@@ -5423,7 +5423,7 @@ void CTFBoot(edict_t *ent)
 		return;
 	}
 
-	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
+	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120)
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You cannot initiate a vote of this kind when timeleft is under 2 minutes\n");
