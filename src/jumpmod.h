@@ -570,6 +570,7 @@ extern char zbbuffer2[256];
 
 void KillMyRox(edict_t *ent);
 void Cmd_Race (edict_t *ent);
+void Cmd_Raceline (edict_t *ent);
 void stuffcmd(edict_t *e, char *s);
 int Q_stricmp (char *s1, char *s2);
 char *Info_ValueForKey (char *s, char *key);
