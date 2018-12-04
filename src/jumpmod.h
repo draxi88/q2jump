@@ -226,15 +226,15 @@ void		DeleteRemFile(void);
 void		Write_Jump_cfg(void);
 void		Read_Jump_cfg(void);
 void		MSET(edict_t *ent);
-void		ACMD(edict_t *ent);
 void		GSET(edict_t *ent);
 void		Cmd_Chaseme(edict_t *ent);
 void		Cmd_Coord_f(edict_t *ent);
 void		Read_Admin_cfg(void);
 void		Write_Admin_cfg(void);
-void		add_admin(edict_t *ent,char *name, char *pass, int alevel);
-void		rem_admin(edict_t *ent,int num);
-void		list_admins(edict_t *ent, int offset);
+void		add_admin(edict_t *ent);
+void		rem_admin(edict_t *ent);
+void		change_admin(edict_t *ent);
+void		list_admins(edict_t *ent);
 void		Cmd_Commands_f (edict_t *ent);
 void		Cmd_Store_f (edict_t *ent);
 void		Cmd_Time_f (edict_t *ent);
@@ -294,7 +294,6 @@ void		Cmd_Recall(edict_t *ent);
 void		List_Admin_Commands(edict_t *ent);
 void		Save_Current_Recording(edict_t *ent);
 void		mvote(edict_t *ent);
-void		mkadmin(edict_t *ent);
 void		reset_server(edict_t *ent);
 void		delete_all_demos(void);
 void		delete_all_times(void);
@@ -348,7 +347,6 @@ void Add_Box(edict_t *plyr);
 void Move_Box(edict_t *ent);
 void Move_Ent(edict_t *ent);
 void Box_Skin(edict_t *ent);
-void DeleteEnts(edict_t *ent);
 void GotoClient(edict_t *ent);
 void BringClient(edict_t *ent);
 void ForceEveryoneOutOfChase(void);
@@ -506,50 +504,36 @@ typedef struct
 
 typedef struct
 {
-	int ADMIN_MAX_LEVEL;
-	int ADMIN_ADDADMIN_LEVEL	;
-	int ADMIN_ADDMAP_LEVEL		;
-	int ADMIN_GSET_LEVEL		;
-	int ACMD_NEXTMAPS_LEVEL		;
-	int ADMIN_ACMD_LEVEL		;
-	int ADMIN_STUFF_LEVEL		;
-	
-	int ADMIN_ADDBOX_LEVEL		;
-	int ADMIN_ADDBALL_LEVEL		;
-
-	int ADMIN_MSET_LEVEL		;
-	int ADMIN_GIVEALL_LEVEL		;
-	int ADMIN_REMALL_LEVEL		;
-	int ADMIN_REMTIMES_LEVEL	;
-	int ADMIN_TOGGLEHUD_LEVEL	;
-	int ADMIN_ADDENT_LEVEL		;
-	int ADMIN_DVOTE_LEVEL		;
-
-	int ADMIN_SLAP_LEVEL		;
-	int ADMIN_ADDTIME_LEVEL		;
-	int ADMIN_THROWUP_LEVEL		;
-	int ADMIN_BRING_LEVEL		;
-	int ADMIN_GOTO_LEVEL		;
-	int ADMIN_CVOTE_LEVEL		;
-	int ADMIN_PVOTE_LEVEL		;
-	int ADMIN_MAPVOTE_LEVEL		;
-	int ADMIN_BOOT_LEVEL		;
-	int ADMIN_MKADMIN_LEVEL		;
-	int ADMIN_SILENCE_LEVEL		;
-	int ADMIN_GIVE_LEVEL		;
-	int ADMIN_NOCLIP_LEVEL		;
+	int ADMIN_ADDBALL_LEVEL;
+	int ADMIN_ADDENT_LEVEL;
+	int ADMIN_ADDMAP_LEVEL;
+	int ADMIN_ADDTIME_LEVEL;
+	int ADMIN_ADMINEDIT_LEVEL;
 	int ADMIN_BAN_LEVEL;
-	int ADMIN_IP_LEVEL;
+	int ADMIN_BOOT_LEVEL;
+	int ADMIN_BRING_LEVEL;
+	int ADMIN_CHANGENAME_LEVEL;
 	int ADMIN_DUMMYVOTE_LEVEL;
-	int ADMIN_NOMAXVOTES_LEVEL;  // _h2
-	int ACMD_ADDADMIN_LEVEL		;
-	int ACMD_REMADMIN_LEVEL		;
-	int ACMD_CHANGEADMIN_LEVEL	;
-	int ACMD_LISTADMINS_LEVEL	;
-	int ADMIN_REMMAP_LEVEL		;
-	int ACMD_LOCK_LEVEL			;
+	int ADMIN_GIVE_LEVEL;
+	int ADMIN_GIVEALL_LEVEL;
+	int ADMIN_GSET_LEVEL;
+	int ADMIN_IP_LEVEL;
+	int ADMIN_MAX_LEVEL;
+	int ADMIN_MODEL_LEVEL;
+	int ADMIN_MSET_LEVEL;
+	int ADMIN_NEXTMAPS_LEVEL;
+	int ADMIN_NOMAXVOTES_LEVEL;
+	int ADMIN_RATERESET_LEVEL;
+	int ADMIN_REMTIMES_LEVEL;
+	int ADMIN_SILENCE_LEVEL;
+	int ADMIN_SLAP_LEVEL;
+	int ADMIN_SORTMAPS_LEVEL;
+	int ADMIN_STUFF_LEVEL;
+	int ADMIN_THROWUP_LEVEL;
+	int ADMIN_TOGGLEHUD_LEVEL;
 	int ADMIN_UPDATESCORES_LEVEL;
-	int ADMIN_MODEL_LEVEL		;
+	int ADMIN_VOTE_LEVEL;
+
 } aset_vars_t;
 
 extern mset_vars_t mset_vars[1];
@@ -618,8 +602,6 @@ void remtime(edict_t *ent);
 #define MAX_ENTS 50
 void CTFUnSilence(edict_t *ent);
 void Notify_Of_Team_Commands(edict_t *ent);
-
-void Cmd_UnadminUser(edict_t *ent);
 void JumpChase(edict_t *ent);
 
 char *HighAscii(char *str);

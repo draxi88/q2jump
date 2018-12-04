@@ -404,8 +404,6 @@ void Cmd_Noclip_f (edict_t *ent)
 
 	if ((ent->client->resp.ctf_team==CTF_TEAM1))
 	{
-		if (ent->client->resp.admin<aset_vars->ADMIN_NOCLIP_LEVEL)
-			return;
 		if (ent->movetype == MOVETYPE_NOCLIP)
 		{
 			ent->movetype = MOVETYPE_WALK;
@@ -1241,7 +1239,7 @@ void ClientCommand (edict_t *ent)
 			Move_Box(ent);
 		else if (Q_stricmp (cmd, "moveent") == 0)
 			Move_Ent(ent);
-		else if (Q_stricmp (cmd, "remall") == 0)
+		else if (Q_stricmp (cmd, "remallents") == 0)
 			remall(ent);
 		else if (Q_stricmp (cmd, "mapsleft") == 0)
 			list_mapsleft(ent);
@@ -1278,20 +1276,43 @@ void ClientCommand (edict_t *ent)
 	
 			mvote(ent);
 		}	
-		else if (Q_stricmp (cmd, "mkadmin") == 0)
-			mkadmin(ent);
 		else if (Q_stricmp (cmd, "changepass") == 0)
 			change_admin_pass(ent);
 		else if (Q_stricmp (cmd, "unadmin") == 0)
 			Cmd_Unadmin(ent);
 		else if (Q_stricmp (cmd, "mset") == 0)
 			MSET (ent);
-		else if (Q_stricmp (cmd, "acmd") == 0)
-			ACMD (ent);
 		else if (Q_stricmp (cmd, "gset") == 0)
 			GSET (ent);
 		else if (Q_stricmp (cmd, "aset") == 0)
 			ASET (ent);
+
+		// these used to be acmds
+		else if (Q_stricmp (cmd, "lock") ==0)
+			lock_ents(ent);
+		else if (Q_stricmp (cmd, "remtime") ==0)
+			remtime(ent);
+		else if (Q_stricmp (cmd, "remalltimes") ==0)
+			remtimes(ent);
+		else if (Q_stricmp (cmd, "togglehud") ==0)
+			ToggleHud(ent);
+		else if (Q_stricmp (cmd, "nextmaps") ==0)
+			Overide_Vote_Maps(ent);
+		else if (Q_stricmp (cmd, "changename") ==0)
+			Changename(ent);
+		else if (Q_stricmp (cmd, "addadmin") ==0)
+			add_admin(ent);
+		else if (Q_stricmp (cmd, "remadmin") ==0)
+			rem_admin(ent);
+		else if (Q_stricmp (cmd, "changeadmin") ==0)
+			change_admin(ent);
+		else if (Q_stricmp (cmd, "listadmin") ==0)
+			list_admins(ent);
+		else if (Q_stricmp (cmd, "ratereset") ==0)
+			reset_map_played_count(ent);
+		else if (Q_stricmp (cmd, "sortmaps") ==0)
+			sort_maps(ent);
+
 		else if (Q_stricmp (cmd, "addent") == 0)
 			add_ent (ent);
 		else if (Q_stricmp (cmd, "alignent") == 0)
@@ -1309,19 +1330,20 @@ void ClientCommand (edict_t *ent)
 	
 	else if (Q_stricmp (cmd, "use") == 0)
 		Cmd_Use_f (ent);
-	// ========================================
-	// added by lilred
+
+	// replay stuff
 	else if (Q_stricmp (cmd, "rstop") == 0)
 		ent->client->resp.replaying = 0;
 	else if (Q_stricmp (cmd, "rep_repeat") == 0)
 		Cmd_RepRepeat (ent);
+
 	else if (Q_stricmp (cmd, "remmap") == 0)
 		RemoveMap(ent);
 	else if (Q_stricmp (cmd, "debug") == 0)
 		Cmd_Debug(ent);
 	else if (Q_stricmp (cmd, "updatescores") == 0)
 		Cmd_UpdateScores(ent);
-	// ========================================
+
 	else if (Q_stricmp (cmd, "playtag") == 0)
 	{
 		if (gset_vars->playtag)
@@ -1494,12 +1516,7 @@ void ClientCommand (edict_t *ent)
       CTFSilence (ent); 
 	} else if (Q_stricmp (cmd, "unsilence") == 0) {
       CTFUnSilence (ent); 
-	} else if (Q_stricmp (cmd, "unadminuser") == 0) {
-       Cmd_UnadminUser(ent); 
-	} else if (Q_stricmp (cmd, "unadminall") == 0) {
-       Cmd_UnadminAll(ent); 
-	}
-	else if (Q_stricmp (cmd, "race") == 0)
+	} else if (Q_stricmp (cmd, "race") == 0)
 		Cmd_Race (ent);
 	else if (Q_stricmp (cmd, "whois") == 0)
 		Cmd_Whois (ent);
