@@ -1828,21 +1828,17 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 //ZOID
 
 	/* 
-	adds a `count` value to teleporters
 	`count` is compared to the number of checkpoints a player has
 	`count` must MATCH the number of checkpoints in order for the tele to work
-	adds `style` value to teleporters
-	setting `style` to 1337 allows teles to work as long as checkpoints >= `count`
+	`style` set to 1337 allows teles to work as long as checkpoints >= `count`
 	*/
-    if (self->count>0){
-        if (self->style == 1337){
-            if (other->client->pers.checkpoints < self->count) {
+    if (self->count > 0) {
+        if (self->style == 1337) {
+            if (other->client->pers.checkpoints < self->count)
                 return;
-            }
         } else {
-            if (other->client->pers.checkpoints != self->count) {
+            if (other->client->pers.checkpoints != self->count)
                 return;
-            }
         }
     }
 
@@ -1912,6 +1908,8 @@ void SP_misc_teleporter (edict_t *ent)
 	trig->target = ent->target;
 	trig->spawnflags = ent->spawnflags;
 	trig->owner = ent;
+	trig->count = ent->count;
+	trig->style = ent->style;
 	VectorCopy (ent->s.origin, trig->s.origin);
 	VectorSet (trig->mins, -8, -8, 8);
 	VectorSet (trig->maxs, 8, 8, 24);
