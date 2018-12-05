@@ -3483,6 +3483,13 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 	if (!other->client)
 		return;
 
+	// check for retard mappers
+	if (self->count >= sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int)) {
+		if (trigger_timer(5))
+			gi.dprintf ("Your count of %i is higher than the max value of %i, you are a shit mapper.\n", self->count, sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int)-1);
+		return;
+	}
+
 	//check if cpbox has a target...
 	if(self->target){
 
