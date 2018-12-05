@@ -2056,7 +2056,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 
 	Com_sprintf (entry, sizeof(entry),
-		"xv -88 yv 0 string2 \"Ping  Team  Player      Time(Comp)  Score   Maps(pos)(%%)\" "); 
+		"xv -88 yv 0 string2 \"Ping Team Player            Time<Comp.>  Score<Pos.>  Maps<Pos.><%%>\" "); 
 	j = strlen(entry);
 	strcpy (string + stringlength, entry);
 	stringlength += j;
@@ -2091,7 +2091,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		if (cl->resp.best_time)
 		{
 			Com_sprintf (entry, sizeof(entry),
-			"xv -64 yv %i %s \"%d  %s  %s\" xv 80 yv %i %s \"%8.3f(%i)\" xv 200 yv %i %s \"%5i\" xv 264 yv %i %s \"%4i(%i)(%4.1f)\" ",
+			"xv -80 yv %i %s \"%3d %s %s\" xv 136 yv %i %s \"%8.3f<%i>\" xv 240 yv %i %s \"%5i<%4i>\" xv 344 yv %i %s \"%4i<%i><%4.1f>\" ",
 			y,colorstring,cl->ping,teamstring,cl->pers.netname,
 			y,colorstring,
 			tourney_record[trecid].time, 
@@ -2099,13 +2099,14 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 			//scores
 			y,colorstring,
-			maplist.users[cl->resp.uid-1].score, //no idea why it works if uid-1, and not uid... 
+			maplist.sorted_users[cl->resp.uid].score,
+			maplist.sorted_users[cl->resp.uid].pos,
 
 			//maps completion
 			y,colorstring,
 			maplist.sorted_completions[cl->resp.suid].score,
 			cl->resp.suid+1,
-			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100
+			((float)maplist.nummaps / 100)*(float)maplist.sorted_completions[cl->resp.suid].score
 			); 
 		}
 		else
@@ -2113,12 +2114,13 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			if (cl->resp.uid>0)
 			{
 				Com_sprintf (entry, sizeof(entry),
-			"xv -64 yv %i %s \"%d  %s  %s\" xv 104 yv %i %s \"----(0)     %5i\" xv 264 yv %i %s \"%4i(%i)(%4.1f)\" ",
+			"xv -80 yv %i %s \"%3d %s %s\" xv 136 yv %i %s \"----     %5i<%5i>\" xv 344 yv %i %s \"%4i<%i><%4.1f>\" ",
 			y,colorstring,cl->ping,teamstring,cl->pers.netname,
 			
 			//scores
 			y,colorstring,
-			maplist.users[cl->resp.uid-1].score, //no idea why it works if uid-1, and not uid... 
+			maplist.sorted_users[cl->resp.uid].score,
+			maplist.sorted_users[cl->resp.uid].pos,
 			
 			//maps completion
 			y,colorstring,
@@ -2131,7 +2133,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			else
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"xv -64 yv %i %s \"%d  %s  %s\" xv 104 yv %i %s \"N/A\"",
+				"xv -80 yv %i %s \"%3d %s %s\" xv 136 yv %i %s \"N/A\"",
 				y,colorstring,
 				cl->ping,teamstring,cl->pers.netname,
 				y,colorstring
