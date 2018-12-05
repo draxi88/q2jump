@@ -1816,22 +1816,11 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 
 	if (!other->client)
 		return;
+
 	dest = G_Find (NULL, FOFS(targetname), self->target);
-	if (!dest)
-	{
-//		gi.dprintf ("Couldn't find destination\n");
-		return;
-	}
-
-//ZOID
 	CTFPlayerResetGrapple(other);
-//ZOID
 
-	/* 
-	`count` is compared to the number of checkpoints a player has
-	`count` must MATCH the number of checkpoints in order for the tele to work
-	`style` set to 1337 allows teles to work as long as checkpoints >= `count`
-	*/
+	// check for cp count
     if (self->count > 0) {
         if (self->style == 1337) {
             if (other->client->pers.checkpoints < self->count)
@@ -1841,6 +1830,19 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
                 return;
         }
     }
+
+	// check for specific checkpoints
+	if (self->style > 0) {
+		for (i=0; i < sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int); i++) {
+			if (self->style == i+1000) {
+				if (other->client->pers.cpbox_checkpoint[i] == 1) {
+					if (trigger_timer(5))
+						gi.dprintf ("You already grabbed checkpoint %i, can't tele!\n", i);
+					return;
+				}
+			}
+		}
+	}
 
 	// unlink to make sure it can't possibly interfere with KillBox
 	gi.unlinkentity (other);
