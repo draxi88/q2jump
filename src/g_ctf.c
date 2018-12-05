@@ -5094,17 +5094,6 @@ void CTFWarp(edict_t *ent)
 	if ((strcmp(temp,"RANDOM")==0) || (strcmp(temp,"random")==0))
 	{
 		map = rand() % maplist.nummaps;
-		
-/*		if (ent->client->resp.admin>=ADMIN_VOTE_LEVEL) {
-			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
-			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's random map vote has passed. Level changing to %s.\n", 
-				ent->client->pers.netname, maplist.mapnames[map]);
-			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
-			EndDMLevel();
-			return;
-		}*/
-
 
 		for (i=0;i < gset_vars->maps_pass;i++)
 		{
@@ -5114,7 +5103,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s: Request to change map to %s (Random map)", 
+		sprintf(text, "%s: Request to change map to %s (Random)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{			
@@ -5146,7 +5135,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s: Request to change map to %s (Next map)", 
+		sprintf(text, "%s: Request to change map to %s (Next)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5162,7 +5151,7 @@ void CTFWarp(edict_t *ent)
 	{
 		map = maplist.nummaps - 1;
 
-		sprintf(text, "%s: Request to change map to %s (Newest map)", 
+		sprintf(text, "%s: Request to change map to %s (Newest)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5199,7 +5188,8 @@ void CTFWarp(edict_t *ent)
 			return;
 		}
 
-		sprintf(text, "%s: Request to change map to %s (Newest to do)", ent->client->pers.netname, maplist.mapnames[notimes[map]]);
+		sprintf(text, "%s: Request to change map to %s (Newest Unfinished)",
+			ent->client->pers.netname, maplist.mapnames[notimes[map]]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false)) {
 			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[notimes[map]]));
@@ -5241,7 +5231,7 @@ void CTFWarp(edict_t *ent)
 		}
 		map = rand() % i2;
 
-		sprintf(text, "%s: Request to change map to %s (To do)", 
+		sprintf(text, "%s: Request to change map to %s (To Do)", 
 				ent->client->pers.netname, maplist.mapnames[notimes[map]]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5284,7 +5274,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s: Request to change map to %s (No time set)", 
+		sprintf(text, "%s: Request to change map to %s (No Time)", 
 				ent->client->pers.netname, maplist.mapnames[notimes[map]]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5327,7 +5317,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s: Request to change map to %s (Previous map)", 
+		sprintf(text, "%s: Request to change map to %s (Previous)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
