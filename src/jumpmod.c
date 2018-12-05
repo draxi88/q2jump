@@ -5439,13 +5439,13 @@ void Add_Box(edict_t *ent)
          if ((box_num>3) && (box_num<7)){
             if (gi.argc() > 2){
                 if ((cp<1) || (cp>cpsize)) {
-                    gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
+                    gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 0 to %d (Ex: Addbox 4 1).\n",cpsize-1);
                     return;
                 } else {
                     cp = atoi(gi.argv(2)) - 1;
                 }
             } else {
-                gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
+                gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 0 to %d (Ex: Addbox 4 1).\n",cpsize-1);
                 return;
             }
         }
@@ -5500,13 +5500,13 @@ void Box_Skin(edict_t *ent)
 		return;
 	if (gi.argc() < 2)
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10");
+		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10\n");
 		return;
 	}
 	snum = atoi(gi.argv(1));
 	if ((snum<1) || (snum>10))
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10");
+		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10\n");
 		return;
 	}
 	snum--;
@@ -10229,7 +10229,7 @@ void remove_maxsmins_boundary() {
 
 void addclip_laser_think (edict_t *self){
 	gi.WriteByte(svc_temp_entity);
-	gi.WriteByte(TE_BUBBLETRAIL2);
+	gi.WriteByte(TE_RAILTRAIL);
 	gi.WritePosition(self->pos1);
 	gi.WritePosition(self->pos2);
 	gi.multicast(self->s.origin, MULTICAST_PVS);
