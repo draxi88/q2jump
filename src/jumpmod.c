@@ -5500,13 +5500,13 @@ void Box_Skin(edict_t *ent)
 		return;
 	if (gi.argc() < 2)
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10");
+		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10\n");
 		return;
 	}
 	snum = atoi(gi.argv(1));
 	if ((snum<1) || (snum>10))
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10");
+		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10\n");
 		return;
 	}
 	snum--;
