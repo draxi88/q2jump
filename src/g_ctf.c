@@ -1989,21 +1989,21 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	char	entry[1024];
 	char	string[1400];
 	int		stringlength;
-	int		i, j, k;
+	int		i, j, k,n;
 	int		sorted[MAX_CLIENTS];
 	float		sortedscores[MAX_CLIENTS];
 	float	score;
 	int		total;
 	int		picnum;
-	int		y;
+	int		x, y;
 	gclient_t	*cl;
 	edict_t		*cl_ent;
+	char	*tag;
 	char status[32];
 	int trecid;
 	int total_easy;
 	int total_specs;
-	char teamstring[16];
-	char colorstring[16];
+	char teamstring[4];
 
 
 	// sort the clients by score
@@ -2020,7 +2020,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 		else
 		{
-			if (cl_ent->client->resp.ctf_team<CTF_TEAM1) //!=CTF_TEAM2
+			if (cl_ent->client->resp.ctf_team!=CTF_TEAM2)
 				continue;
 		}
 		if (cl_ent->client->resp.uid>0)
@@ -2056,20 +2056,19 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 
 	Com_sprintf (entry, sizeof(entry),
-		"xv -88 yv 0 string2 \"Ping Team Player            Time<Comp.>  Score<Pos.>  Maps<Pos.><%%>\" "); 
+	"xv -16 yv 0 string2 \"Ping Pos Player          Best Comp Maps     %%  Team\" "); 
 	j = strlen(entry);
 	strcpy (string + stringlength, entry);
 	stringlength += j;
 
+	strcpy(teamstring,"Hard");
 	for (i=0 ; i<total ; i++)
 	{
 		cl = &game.clients[sorted[i]];
 		cl_ent = g_edicts + 1 + sorted[i];	
-		if (cl_ent->client->resp.ctf_team==CTF_NOTEAM)
-			continue;
 
 		picnum = gi.imageindex ("i_fixme");
-		y = 16 + 8 * i;
+		y = 16 + 10 * i;
 
 		trecid = -1;
 		if (cl->resp.uid>0)
@@ -2077,66 +2076,39 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			trecid = cl->resp.trecid;		
 		}
 
-		if(cl_ent->client->resp.ctf_team == CTF_TEAM2){
-			sprintf(teamstring,"Hard");
-		} else if(cl_ent->client->resp.ctf_team == CTF_TEAM1){
-			sprintf(teamstring,"Easy");
-		} 
-		if(cl->resp.uid==ent->client->resp.uid){
-			sprintf(colorstring,"string2");
-		} else {
-			sprintf(colorstring,"string");
-		}
 		// send the layout
 		if (cl->resp.best_time)
 		{
 			Com_sprintf (entry, sizeof(entry),
-			"xv -80 yv %i %s \"%3d %s %s\" xv 136 yv %i %s \"%8.3f<%i>\" xv 240 yv %i %s \"%5i<%4i>\" xv 344 yv %i %s \"%4i<%i><%4.1f>\" ",
-			y,colorstring,cl->ping,teamstring,cl->pers.netname,
-			y,colorstring,
+			"ctf %d %d %d %d %d xv 152 string \"%8.3f %4i %4i  %4.1f  %s\"",
+			-8,y,sorted[i],cl->ping,cl->resp.suid+1,
 			tourney_record[trecid].time, 
 			tourney_record[trecid].completions, 
 
-			//scores
-			y,colorstring,
-			maplist.sorted_users[cl->resp.uid].score,
-			maplist.sorted_users[cl->resp.uid].pos,
-
-			//maps completion
-			y,colorstring,
 			maplist.sorted_completions[cl->resp.suid].score,
-			cl->resp.suid+1,
-			((float)maplist.nummaps / 100)*(float)maplist.sorted_completions[cl->resp.suid].score
+			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
+			teamstring
 			); 
+
 		}
 		else
 		{
 			if (cl->resp.uid>0)
 			{
 				Com_sprintf (entry, sizeof(entry),
-			"xv -80 yv %i %s \"%3d %s %s\" xv 136 yv %i %s \"----     %5i<%5i>\" xv 344 yv %i %s \"%4i<%i><%4.1f>\" ",
-			y,colorstring,cl->ping,teamstring,cl->pers.netname,
-			
-			//scores
-			y,colorstring,
-			maplist.sorted_users[cl->resp.uid].score,
-			maplist.sorted_users[cl->resp.uid].pos,
-			
-			//maps completion
-			y,colorstring,
-			maplist.sorted_completions[cl->resp.suid].score,
-			cl->resp.suid+1,
-			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100
-			); 
+				"ctf %d %d %d %d %d xv 152 string \"  ------ ---- %4i  %4.1f  %s\"",
+				-8,y,sorted[i],cl->ping,cl->resp.suid+1,
+				maplist.sorted_completions[cl->resp.suid].score,
+				(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
+				teamstring
+				); 
 
 			}
 			else
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"xv -80 yv %i %s \"%3d %s %s\" xv 136 yv %i %s \"N/A\"",
-				y,colorstring,
-				cl->ping,teamstring,cl->pers.netname,
-				y,colorstring
+				"ctf %d %d %d %d %d xv 152 string \"------ ----               %s\"",
+				-8,y,sorted[i],cl->ping,1000,teamstring
 				); 
 
 			}
@@ -2149,9 +2121,11 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 
 	}
+
 	//easy team
 	total_easy = 0;
 	total_specs = 0;
+	strcpy(teamstring,"Easy");
 	if (gametype->value!=GAME_CTF)
 	for (i=0 ; i<maxclients->value ; i++)
 	{
@@ -2163,33 +2137,74 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		{
 			total_specs++;
 			continue;
-		}/*
+		}
 		if (cl_ent->client->resp.ctf_team!=CTF_TEAM1)
 			continue;
 	
 		if (total)
 		{
 			//if hard team has players, increase gap
-			y = 24 + (8 * (total_easy+total));
+			y = 24 + (10 * (total_easy+total));
 		}
 		else
 		{
-			y = 16 + (8 * (total_easy));
+			y = 16 + (10 * (total_easy));
+		}
+		trecid = -1;
+		if (cl->resp.uid>0)
+		{
+			trecid = cl->resp.trecid;		
 		}
 
 		if (cl->resp.frames_without_movement>60000)
 		{	
 			strcpy(status,"(idle)");
+			Com_sprintf (entry, sizeof(entry),
+			"ctf %d %d %d %d %d xv 168 string \"%s\"",
+			-8,y,i,cl->ping,0,status
+			); 
 		}
 		else 
 		{
-			strcpy(status,"EASY");
+			if (cl->resp.best_time)
+		{
+			Com_sprintf (entry, sizeof(entry),
+			"ctf %d %d %d %d %d xv 152 string \"%8.3f %4i %4i  %4.1f  %s\"",
+			-8,y,i,cl->ping,cl->resp.suid+1,
+			tourney_record[trecid].time, 
+			tourney_record[trecid].completions, 
+
+			maplist.sorted_completions[cl->resp.suid].score,
+			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
+			teamstring
+			); 
+
+		}
+		else
+		{
+			if (cl->resp.uid>0)
+			{
+				Com_sprintf (entry, sizeof(entry),
+				"ctf %d %d %d %d %d xv 152 string \"  ------ ---- %4i  %4.1f  %s\"",
+				-8,y,i,cl->ping,cl->resp.suid+1,
+				maplist.sorted_completions[cl->resp.suid].score,
+				(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
+				teamstring
+				); 
+
+			}
+			else
+			{
+				Com_sprintf (entry, sizeof(entry),
+				"ctf %d %d %d %d %d xv 152 string \"------ ----                %s\"",
+				-8,y,i,cl->ping,1000,teamstring
+				); 
+
+			}
+		}
 		}
 
-		Com_sprintf (entry, sizeof(entry),
-		"ctf %d %d %d %d %d xv 168 string \"%s\"",
-		-8,y,i,cl->ping,0,status
-		); 
+		
 
 
 
@@ -2198,8 +2213,9 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			break;
 		strcpy (string + stringlength, entry);
 		stringlength += j;
-		total_easy++;*/
+		total_easy++;
 	}
+
 	//spectators
 
 	if ((total) && (total_easy))
@@ -2292,7 +2308,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	j = strlen(entry);
 	strcpy (string + stringlength, entry);
 	stringlength += j;
-	//gi.cprintf(ent, PRINT_HIGH, "%s\n",string); //Debug of the scoreboardstring..
+
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
 }
@@ -5094,6 +5110,17 @@ void CTFWarp(edict_t *ent)
 	if ((strcmp(temp,"RANDOM")==0) || (strcmp(temp,"random")==0))
 	{
 		map = rand() % maplist.nummaps;
+		
+/*		if (ent->client->resp.admin>=ADMIN_VOTE_LEVEL) {
+			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
+			admin_log(ent,text);
+			gi.bprintf(PRINT_HIGH, "%s's random map vote has passed. Level changing to %s.\n", 
+				ent->client->pers.netname, maplist.mapnames[map]);
+			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
+			EndDMLevel();
+			return;
+		}*/
+
 
 		for (i=0;i < gset_vars->maps_pass;i++)
 		{
@@ -5103,7 +5130,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s: Request to change map to %s (Random)", 
+		sprintf(text, "%s: Request to change map to %s (Random map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{			
@@ -5135,7 +5162,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s: Request to change map to %s (Next)", 
+		sprintf(text, "%s: Request to change map to %s (Next map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5151,7 +5178,7 @@ void CTFWarp(edict_t *ent)
 	{
 		map = maplist.nummaps - 1;
 
-		sprintf(text, "%s: Request to change map to %s (Newest)", 
+		sprintf(text, "%s: Request to change map to %s (Newest map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5188,8 +5215,7 @@ void CTFWarp(edict_t *ent)
 			return;
 		}
 
-		sprintf(text, "%s: Request to change map to %s (Newest Unfinished)",
-			ent->client->pers.netname, maplist.mapnames[notimes[map]]);
+		sprintf(text, "%s: Request to change map to %s (Newest to do)", ent->client->pers.netname, maplist.mapnames[notimes[map]]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false)) {
 			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[notimes[map]]));
@@ -5231,7 +5257,7 @@ void CTFWarp(edict_t *ent)
 		}
 		map = rand() % i2;
 
-		sprintf(text, "%s: Request to change map to %s (To Do)", 
+		sprintf(text, "%s: Request to change map to %s (To do)", 
 				ent->client->pers.netname, maplist.mapnames[notimes[map]]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5274,7 +5300,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s: Request to change map to %s (No Time)", 
+		sprintf(text, "%s: Request to change map to %s (No time set)", 
 				ent->client->pers.netname, maplist.mapnames[notimes[map]]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5317,7 +5343,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s: Request to change map to %s (Previous)", 
+		sprintf(text, "%s: Request to change map to %s (Previous map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
