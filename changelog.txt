@@ -1,3 +1,52 @@
+#####v1.24ger#####
+-mapvote and mvote changes, added a few new ways to vote maps:
+	-mapvote new - the newest map.
+	-mapvote newtodo - the newest map you haven't done.
+	-mapvote no longer disabled under 2 minutes
+	-mapvote phrasing is changed, more consistent
+-scoreboard changes:
+	-display bug where you get another player's time is gone
+	-top 15 now alternates white/green row by row
+	-team is displayed as a column
+	-spacing is better
+-teleporter changes:
+	-styles 1000-1063 added
+		-each one matches the corresponding count on a cpbox of 0-63
+		-if you have the SPECIFIC checkpoint, you CAN'T use the teleporter
+	-styles 2000-2063 added
+		-each one matches the corresponding count on a cpbox of 0-63
+		-if you have the SPECIFIC checkpoint, you CAN use the teleporter
+-cpbox changes:
+	-cpbox limit is now 0-63, up from 0-15
+		-cpbox now correctly checks for the limit
+	-cp_clear and start_line added to cpboxes
+		-set target = cp_clear or start_line to enable it
+-admin changes:
+	-rearranged admin levels to be more reasonable
+	-all cmd defaults are now 1-5
+	-admin login is now more readable
+	-some lesser used commands are no longer listed (addball, throwup, etc)
+	-removed several useless or broken commands (reset, resync, etc)
+	-removed forceteam
+-mset/gset/aset completely changed:
+	-fully alphabetized in menu now
+	-removed or merged the majority into more coherent names
+	-removed acmd completely, all former commands work without acmd prefix
+	-many old mset are now gset only
+	-made defaults match descriptions
+	-decreased min values, increased max values for many settings
+	-hook is no longer an admin cmd
+	-goto is no longer an admin cmd
+	-fixed a few mset commands not saving on map change
+-jump_clip now works:
+	-in game only editing
+	-creates a clipping plane based on 3 points you set
+	-to use:
+		-addclip mark1, addclip mark2, addclip create
+	-can also make them a checkpoint:
+		-addclip mark1, addclip mark2, addclip checkpoint #
+-race number display should display correctly now
+
 #####v1.23ger#####
 -removed around 400 useless variables
 -removed redundant check in fps checking
