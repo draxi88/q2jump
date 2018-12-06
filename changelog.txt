@@ -8,7 +8,7 @@
 	-display bug where you get another player's time is gone
 	-top 15 now alternates white/green row by row
 	-team is displayed as a column
-	-spacing is better
+	-spacing is improved
 -teleporter changes:
 	-styles 1000-1063 added
 		-each one matches the corresponding count on a cpbox of 0-63
@@ -39,8 +39,8 @@
 	-goto is no longer an admin cmd
 	-fixed a few mset commands not saving on map change
 -jump_clip now works:
-	-in game only editing
-	-creates a clipping plane based on 3 points you set
+	-in game only editing, using the addclip cmd
+	-creates a clipping plane based on 2 points you set
 	-to use:
 		-addclip mark1, addclip mark2, addclip create
 	-can also make them a checkpoint:
