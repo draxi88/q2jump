@@ -1744,31 +1744,21 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	  char	temps[64];
 
 	// check for malformed or illegal info strings
-	if (!Info_Validate(userinfo))
-	{
+	if (!Info_Validate(userinfo)) {
 		strcpy (userinfo, "\\name\\badinfo\\skin\\male/grunt");
 	}
+
 	// set name
 	s = Info_ValueForKey (userinfo, "name");
-/*	if (strcmp(s,"")==0)
-	{	
-		strcpy (s2,"Player");
-		strncpy (ent->client->pers.netname, s2, sizeof(ent->client->pers.netname)-1);
-	} else*/
-	if (strcmp(s,ent->client->pers.netname))
-	{
-		//name changed
+	if (strcmp(s,ent->client->pers.netname)) { //name changed
 		UpdateThisUsersUID(ent,s);
 		overall_completions[ent-g_edicts-1].loaded = false;
-
 		ent->client->pers.banlevel = GetBanLevel(ent,userinfo);
-		ApplyBans(ent,s);		
-		
+		ApplyBans(ent,s);
 	}
 
-		strncpy (ent->client->pers.netname, s, sizeof(ent->client->pers.netname)-1);
+	strncpy (ent->client->pers.netname, s, sizeof(ent->client->pers.netname)-1);
 	
-
 	// set skin
 	s = Info_ValueForKey (userinfo, "skin");
 
@@ -1812,7 +1802,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	s = Info_ValueForKey (userinfo, "cl_maxfps");
 
 	// check for the string, fpskick mset
-	if (strlen(s) && mset_vars->fpskick == 1) {
+	if (strlen(s) && gset_vars->fpskick == 1) {
 		ent->client->pers.fps = atoi(s);
 		if (ent->client->pers.fps<20) { // kick for lower than 20
             gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for lowering CL_MAXFPS below 20\n");
@@ -2198,13 +2188,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (ent->client->resp.antiglue)
 		{
 			//antiglue is enabled or we are on easy team
-			if (mset_vars->antiglue || ent->client->resp.ctf_team==CTF_TEAM1)
-			//if (!(mset_vars->antiglue==0 && ent->client->resp.ctf_team!=CTF_TEAM1))
+			if (gset_vars->antiglue || ent->client->resp.ctf_team==CTF_TEAM1)
+			//if (!(gset_vars->antiglue==0 && ent->client->resp.ctf_team!=CTF_TEAM1))
 			{
 				pm.s.pm_flags &= ~(PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_TELEPORT);
 				pm.s.pm_time = 0;
 				//apply a penalty if available
-				if (mset_vars->antiglue_penalty)
+				if (gset_vars->antiglue_penalty)
 				{
 					//penalty delay
 					if (ent->client->resp.item_timer_penalty_delay<level.framenum)
@@ -2216,8 +2206,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 						}
 						else
 						{
-							ent->client->resp.item_timer += (mset_vars->antiglue_penalty/10);
-							ent->client->resp.item_timer_penalty += mset_vars->antiglue_penalty;
+							ent->client->resp.item_timer += (gset_vars->antiglue_penalty/10);
+							ent->client->resp.item_timer_penalty += gset_vars->antiglue_penalty;
 						}
 						ent->client->resp.item_timer_penalty_delay = level.framenum + 5;
 					}

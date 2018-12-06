@@ -427,7 +427,7 @@ void CTFAssignSkin(edict_t *ent, char *s)
 	}	
 
 	
-	if (ent->client->resp.admin>=gset_vars->admin_model_level)
+	if (ent->client->resp.admin>=aset_vars->ADMIN_MODEL_LEVEL)
 	{
 		got = false;
 		if (ent->client->resp.model_number)
@@ -1074,7 +1074,7 @@ void CTFEffects(edict_t *player)
 		player->s.modelindex2 = 0;
 	}
 	else
-	if (gset_vars->transparent && player->client->resp.admin<gset_vars->admin_model_level)
+	if (gset_vars->transparent && player->client->resp.admin<aset_vars->ADMIN_MODEL_LEVEL)
 	{
 		player->s.renderfx |= RF_TRANSLUCENT;
 		player->s.modelindex2 = 255;
@@ -1097,7 +1097,7 @@ void CTFEffects(edict_t *player)
 			{
 				
 				player->s.effects |= EF_COLOR_SHELL; // red
-				if (gset_vars->glow_multi && player->client->resp.admin==aset_vars->MAX_ADMIN_LEVEL)
+				if (gset_vars->glow_multi && player->client->resp.admin==aset_vars->ADMIN_MAX_LEVEL)
 					player->s.renderfx |= admin_colour_info[level.framenum % 15];
 				else
 					player->s.renderfx |= admin_colour_info[lvl];
@@ -1121,8 +1121,8 @@ void CTFEffects(edict_t *player)
 				player->s.effects |= EF_COLOR_SHELL; // red
 				player->s.renderfx |= RF_SHELL_RED;
 			}*/
-			if (mset_vars->best_time_glow)
-				player->s.effects |= mset_vars->best_time_glow;
+			if (gset_vars->best_time_glow)
+				player->s.effects |= gset_vars->best_time_glow;
 		}
 	}
 }
@@ -1218,7 +1218,7 @@ static void CTFSetIDView(edict_t *ent)
 void SetCTFStats(edict_t *ent)
 {
 	int keys;
-    char racenr[2];
+	char racenr[2];
 
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
@@ -1228,7 +1228,7 @@ void SetCTFStats(edict_t *ent)
 	{
 		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
-		if (mset_vars->antiglue==0)
+		if (gset_vars->antiglue==0)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
 		else
 		if (ent->client->resp.antiglue)
@@ -1260,7 +1260,7 @@ void SetCTFStats(edict_t *ent)
 			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		}
 		
-		if (mset_vars->antiglue==0)
+		if (gset_vars->antiglue==0)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
 		else
 		if (ent->client->resp.antiglue)
@@ -1401,14 +1401,62 @@ void SetCTFStats(edict_t *ent)
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_ON;
 	else
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_OFF;
-    if (ent->client->resp.rep_racing && !ent->client->resp.replaying){
-        sprintf(racenr,"%d",ent->client->resp.rep_race_number+1);
-        gi.configstring (CONFIG_JUMP_RACE_ON,va("    Race: %s",HighAscii(racenr))); //draxi Ascii
-        if (ent->client->resp.rep_race_number==MAX_HIGHSCORES){gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: нов");}
-            ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
-    }
-	else
+	if (ent->client->resp.rep_racing && !ent->client->resp.replaying){
+		if (ent->client->resp.rep_race_number==MAX_HIGHSCORES){
+			gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: нов"); //race now.
+			ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
+		} else {
+			sprintf(racenr,"%d",ent->client->resp.rep_race_number+1);
+			if(ent->client->resp.rep_race_number==0) {
+				gi.configstring (CONFIG_JUMP_RACE_1,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_1;
+			} else if(ent->client->resp.rep_race_number==1) {
+				gi.configstring (CONFIG_JUMP_RACE_2,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_2;
+			} else if(ent->client->resp.rep_race_number==2) {
+				gi.configstring (CONFIG_JUMP_RACE_3,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_3;
+			} else if(ent->client->resp.rep_race_number==3) {
+				gi.configstring (CONFIG_JUMP_RACE_4,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_4;
+			} else if(ent->client->resp.rep_race_number==4) {
+				gi.configstring (CONFIG_JUMP_RACE_5,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_5;
+			} else if(ent->client->resp.rep_race_number==5) {
+				gi.configstring (CONFIG_JUMP_RACE_6,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_6;
+			} else if(ent->client->resp.rep_race_number==6) {
+				gi.configstring (CONFIG_JUMP_RACE_7,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_7;
+			} else if(ent->client->resp.rep_race_number==7) {
+				gi.configstring (CONFIG_JUMP_RACE_8,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_8;
+			} else if(ent->client->resp.rep_race_number==8) {
+				gi.configstring (CONFIG_JUMP_RACE_9,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_9;
+			} else if(ent->client->resp.rep_race_number==9) {
+				gi.configstring (CONFIG_JUMP_RACE_10,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_10;
+			} else if(ent->client->resp.rep_race_number==10) {
+				gi.configstring (CONFIG_JUMP_RACE_11,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_11;
+			} else if(ent->client->resp.rep_race_number==11) {
+				gi.configstring (CONFIG_JUMP_RACE_12,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_12;
+			} else if(ent->client->resp.rep_race_number==12) {
+				gi.configstring (CONFIG_JUMP_RACE_13,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_13;
+			} else if(ent->client->resp.rep_race_number==13) {
+				gi.configstring (CONFIG_JUMP_RACE_14,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_14;
+			} else if(ent->client->resp.rep_race_number==14) {
+				gi.configstring (CONFIG_JUMP_RACE_15,va("    Race: %s",HighAscii(racenr)));
+				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_15;
+			}
+		}
+	} else {
 		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_OFF;
+	}
 	if (ent->client->resp.ctf_team==CTF_TEAM1)
 		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_EASY;
 	else
@@ -1863,7 +1911,7 @@ void CTFTeam_f (edict_t *ent)
 
 	if (!level.status)
 	{
-		if ((mset_vars->tourney) && (desired_team==CTF_TEAM1))
+		if ((gset_vars->tourney) && (desired_team==CTF_TEAM1))
 		{
 			gi.cprintf(ent,PRINT_HIGH,"You may only join the HARD team during tournaments\n");
 			return;
@@ -1941,19 +1989,21 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	char	entry[1024];
 	char	string[1400];
 	int		stringlength;
-	int		i, j, k;
+	int		i, j, k,n;
 	int		sorted[MAX_CLIENTS];
 	float		sortedscores[MAX_CLIENTS];
 	float	score;
 	int		total;
 	int		picnum;
-	int		y;
+	int		x, y;
 	gclient_t	*cl;
 	edict_t		*cl_ent;
+	char	*tag;
 	char status[32];
 	int trecid;
 	int total_easy;
 	int total_specs;
+	char teamstring[4];
 
 
 	// sort the clients by score
@@ -2006,19 +2056,19 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 
 	Com_sprintf (entry, sizeof(entry),
-	"xv -16 yv 0 string2 \"Ping Pos Player          Best Comp Maps     %%\" "); 
+	"xv -16 yv 0 string2 \"Ping Pos Player          Best Comp Maps     %%  Team\" "); 
 	j = strlen(entry);
 	strcpy (string + stringlength, entry);
 	stringlength += j;
 
-
+	strcpy(teamstring,"Hard");
 	for (i=0 ; i<total ; i++)
 	{
 		cl = &game.clients[sorted[i]];
 		cl_ent = g_edicts + 1 + sorted[i];	
 
 		picnum = gi.imageindex ("i_fixme");
-		y = 16 + 8 * i;
+		y = 16 + 10 * i;
 
 		trecid = -1;
 		if (cl->resp.uid>0)
@@ -2030,13 +2080,14 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		if (cl->resp.best_time)
 		{
 			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv 152 string \"%8.3f %4i %4i  %4.1f\"",
+			"ctf %d %d %d %d %d xv 152 string \"%8.3f %4i %4i  %4.1f  %s\"",
 			-8,y,sorted[i],cl->ping,cl->resp.suid+1,
 			tourney_record[trecid].time, 
 			tourney_record[trecid].completions, 
 
 			maplist.sorted_completions[cl->resp.suid].score,
-			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100
+			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
+			teamstring
 			); 
 
 		}
@@ -2045,18 +2096,19 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			if (cl->resp.uid>0)
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"  ------ ---- %4i  %4.1f\"",
+				"ctf %d %d %d %d %d xv 152 string \"  ------ ---- %4i  %4.1f  %s\"",
 				-8,y,sorted[i],cl->ping,cl->resp.suid+1,
 				maplist.sorted_completions[cl->resp.suid].score,
-				(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100				
+				(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
+				teamstring
 				); 
 
 			}
 			else
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"------ ----\"",
-				-8,y,sorted[i],cl->ping,1000
+				"ctf %d %d %d %d %d xv 152 string \"------ ----               %s\"",
+				-8,y,sorted[i],cl->ping,1000,teamstring
 				); 
 
 			}
@@ -2073,6 +2125,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	//easy team
 	total_easy = 0;
 	total_specs = 0;
+	strcpy(teamstring,"Easy");
 	if (gametype->value!=GAME_CTF)
 	for (i=0 ; i<maxclients->value ; i++)
 	{
@@ -2091,26 +2144,67 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		if (total)
 		{
 			//if hard team has players, increase gap
-			y = 24 + (8 * (total_easy+total));
+			y = 24 + (10 * (total_easy+total));
 		}
 		else
 		{
-			y = 16 + (8 * (total_easy));
+			y = 16 + (10 * (total_easy));
+		}
+		trecid = -1;
+		if (cl->resp.uid>0)
+		{
+			trecid = cl->resp.trecid;		
 		}
 
 		if (cl->resp.frames_without_movement>60000)
 		{	
 			strcpy(status,"(idle)");
+			Com_sprintf (entry, sizeof(entry),
+			"ctf %d %d %d %d %d xv 168 string \"%s\"",
+			-8,y,i,cl->ping,0,status
+			); 
 		}
 		else 
 		{
-			strcpy(status,"EASY");
+			if (cl->resp.best_time)
+		{
+			Com_sprintf (entry, sizeof(entry),
+			"ctf %d %d %d %d %d xv 152 string \"%8.3f %4i %4i  %4.1f  %s\"",
+			-8,y,i,cl->ping,cl->resp.suid+1,
+			tourney_record[trecid].time, 
+			tourney_record[trecid].completions, 
+
+			maplist.sorted_completions[cl->resp.suid].score,
+			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
+			teamstring
+			); 
+
+		}
+		else
+		{
+			if (cl->resp.uid>0)
+			{
+				Com_sprintf (entry, sizeof(entry),
+				"ctf %d %d %d %d %d xv 152 string \"  ------ ---- %4i  %4.1f  %s\"",
+				-8,y,i,cl->ping,cl->resp.suid+1,
+				maplist.sorted_completions[cl->resp.suid].score,
+				(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
+				teamstring
+				); 
+
+			}
+			else
+			{
+				Com_sprintf (entry, sizeof(entry),
+				"ctf %d %d %d %d %d xv 152 string \"------ ----                %s\"",
+				-8,y,i,cl->ping,1000,teamstring
+				); 
+
+			}
+		}
 		}
 
-		Com_sprintf (entry, sizeof(entry),
-		"ctf %d %d %d %d %d xv 168 string \"%s\"",
-		-8,y,i,cl->ping,0,status
-		); 
+		
 
 
 
@@ -2991,13 +3085,13 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 	if (ent!=NULL)
 	{
 		if (electpercentage->value == 0) {
-			gi.cprintf(ent, PRINT_HIGH, "Elections are disabled, only an admin can process this action.\n");
+			gi.cprintf(ent, PRINT_HIGH, "Voting is disabled.\n");
 			return false;
 		}
 
 
 		if (ctfgame.election != ELECT_NONE) {
-			gi.cprintf(ent, PRINT_HIGH, "Election already in progress.\n");
+			gi.cprintf(ent, PRINT_HIGH, "Vote already in progress.\n");
 			return false;
 		}
 	}
@@ -3006,20 +3100,18 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 	count = Get_Voting_Clients();
 
 	if (ent!=NULL && count < 2) {
-		//gi.cprintf(ent, PRINT_HIGH, "Not enough players for election.\n");
 		ctfgame.etarget = ent;
 		ctfgame.election = type;
 		ctfgame.evotes = 1;
 		ctfgame.needvotes = 0;
-		ctfgame.electtime = level.time + 30; // twenty seconds for election
+		ctfgame.electtime = level.time + 30;
 		ctfgame.electframe = level.framenum;
 		strncpy(ctfgame.emsg, msg, sizeof(ctfgame.emsg) - 1);
 
 	// tell everyone
 		gi.bprintf(PRINT_CHAT, "%s\n", ctfgame.emsg);
-		gi.bprintf(PRINT_HIGH, "Type YES or NO to vote on this request.\n");
-		gi.bprintf(PRINT_HIGH, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes,
-			(int)(ctfgame.electtime - level.time));
+		gi.bprintf(PRINT_HIGH, "Vote YES or NO on this request.\n");
+		gi.bprintf(PRINT_HIGH, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes, (int)(ctfgame.electtime - level.time));
 		
 
 		return true;
@@ -3050,7 +3142,7 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 	if (require_max)
 		gi.bprintf(PRINT_HIGH, "This is a MAX vote, so everyone not idle must vote YES for it to pass.\n");
 	else
-		gi.bprintf(PRINT_HIGH, "Type YES or NO to vote on this request.\n");
+		gi.bprintf(PRINT_HIGH, "Vote YES or NO on this request.\n");
 	gi.bprintf(PRINT_HIGH, "Votes: %d  Needed: %d  Time left: %ds\n", ctfgame.evotes, ctfgame.needvotes,
 		(int)(ctfgame.electtime - level.time));
 
@@ -3270,7 +3362,7 @@ void CTFWinElection(int pvote, edict_t* pvoter)
 			//gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
 			//	ctfgame.etarget->client->pers.netname, ctfgame.elevel);
 		//	msg = va("%s's vote has passed
-		gi.bprintf(PRINT_HIGH, "%s Level changing to %s.\n", msg, ctfgame.elevel);
+		gi.bprintf(PRINT_HIGH, "%s Map changing to %s.\n", msg, ctfgame.elevel);
 		strncpy(level.forcemap, ctfgame.elevel, sizeof(level.forcemap) - 1);
 		EndDMLevel();
 		break;
@@ -3916,7 +4008,7 @@ void CTFJoinTeam1(edict_t *ent, pmenuhnd_t *p)
 	}
 	else
 	{
-		if (mset_vars->tourney)
+		if (gset_vars->tourney)
 		{
 			gi.cprintf(ent,PRINT_HIGH,"You may only join the HARD team during tournaments\n");
 			return;
@@ -4011,7 +4103,7 @@ void CTFRequestMatch(edict_t *ent, pmenuhnd_t *p)
 {
 	char text[1024];
 
-	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
+	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120)
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You cannot initiate a vote of this kind when timeleft is under 2 minutes\n");
@@ -4948,27 +5040,26 @@ void CTFWarp(edict_t *ent)
 
 	if (ent->client->resp.silence)
 		return;
-	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
-	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120)
-	{
-		if (Get_Voting_Clients()>1)
-		{
+/*	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
+	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120){
+		if (Get_Voting_Clients()>1) {
 			gi.cprintf(ent,PRINT_HIGH,"You cannot initiate a vote of this kind when timeleft is under 2 minutes\n");
 			return;
 		}
 	}
+*/
 
 
 	index = ent-g_edicts-1;
-/*	if ((level.time<20) && (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL))
+/*	if ((level.time<20) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Please wait %2.1f seconds before calling a vote\n",20.0-level.time);
 		return;
 	}*/
 
-	if ((gset_vars->nomapvote >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL) && curclients > 2) // 0.84wp_h1
+	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL) && curclients > 2) // 0.84wp_h1
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvote);
+		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvotetime);
 		return;
 	}
 
@@ -4978,7 +5069,7 @@ void CTFWarp(edict_t *ent)
 		return;
 	}
 
-	if ((ClientIsBanned(ent,BAN_MAPVOTE)) && (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL))
+	if ((ClientIsBanned(ent,BAN_MAPVOTE)) && (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You are not allowed to mapvote.\n");
 		return;
@@ -4993,19 +5084,22 @@ void CTFWarp(edict_t *ent)
 	if (gi.argc() < 2) {
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		gi.cprintf(ent, PRINT_HIGH, "Type maplist for a list of maps.\n");
-		gi.cprintf(ent, PRINT_HIGH, "You may also use mapvote random \n");
-		gi.cprintf(ent, PRINT_HIGH, "to have a map chosen for you.    \n");		
+		gi.cprintf(ent, PRINT_HIGH, "mapvote [mapname] - a specific map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote [#] - a specific map by id.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote random - a random map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote notime - a random map with no times.\n");		
+		gi.cprintf(ent, PRINT_HIGH, "mapvote todo - a map you have not done.\n");
 		gi.cprintf(ent, PRINT_HIGH, "mapvote next - the next map.\n");		
-		gi.cprintf(ent, PRINT_HIGH, "mapvote prev - the previous map.\n");		
-		gi.cprintf(ent, PRINT_HIGH, "mapvote notime - a random map with no time set.\n");		
-		gi.cprintf(ent, PRINT_HIGH, "mapvote todo - the next map you have not done.\n");		
+		gi.cprintf(ent, PRINT_HIGH, "mapvote prev - the previous map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote new - the newest map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote newtodo - the newest map you haven't done.\n");
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		return;
 	}
 
 	if (maplist.nummaps<=0)
 	{
-		gi.cprintf(ent, PRINT_HIGH, "No maps in maplist\n");
+		gi.cprintf(ent, PRINT_HIGH, "Maplist is empty.\n");
 		return;
 	}
 
@@ -5017,7 +5111,7 @@ void CTFWarp(edict_t *ent)
 	{
 		map = rand() % maplist.nummaps;
 		
-/*		if (ent->client->resp.admin>=ADMIN_MAPVOTE_LEVEL) {
+/*		if (ent->client->resp.admin>=ADMIN_VOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
 			admin_log(ent,text);
 			gi.bprintf(PRINT_HIGH, "%s's random map vote has passed. Level changing to %s.\n", 
@@ -5036,7 +5130,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s has requested changing to random level %s.", 
+		sprintf(text, "%s: Request to change map to %s (Random map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{			
@@ -5068,13 +5162,64 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s has requested changing to level %s.", 
+		sprintf(text, "%s: Request to change map to %s (Next map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
 			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[map]));
 			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
+			if (ctfgame.needvotes==0)
+				CTFWinElection(0, NULL);
+		}
+	}
+	else
+	if ((strcmp(temp,"NEW")==0) || (strcmp(temp,"new")==0))
+	{
+		map = maplist.nummaps - 1;
+
+		sprintf(text, "%s: Request to change map to %s (Newest map)", 
+				ent->client->pers.netname, maplist.mapnames[map]);
+		if (CTFBeginElection(ent, ELECT_MAP, text,false))
+		{
+			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
+			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[map]));
+			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
+			if (ctfgame.needvotes==0)
+				CTFWinElection(0, NULL);
+		}
+	}
+	else
+	if ((strcmp(temp,"NEWTODO")==0) || (strcmp(temp,"newtodo")==0))
+	{
+		if (ent->client->resp.uid<=0) { // check for id
+			gi.cprintf(ent,PRINT_HIGH,"Join HARD team to load your identity.\n");
+			return;
+		}
+
+		if (!overall_completions[index].loaded) { // open their file
+			write_tourney_file(level.mapname,level.mapnum);
+			open_uid_file(ent->client->resp.uid-1,ent);
+		}
+
+		map = maplist.nummaps - 1;
+		for (i=maplist.nummaps-1; i>=1; i--) { // find the todo maps
+			if (overall_completions[index].maps[i]!=1) {
+				notimes[map] = i;
+				break;
+			}
+		}
+
+		if (!map) { // check if all maps are done
+			gi.cprintf(ent,PRINT_HIGH,"All maps been completed\n");
+			return;
+		}
+
+		sprintf(text, "%s: Request to change map to %s (Newest to do)", ent->client->pers.netname, maplist.mapnames[notimes[map]]);
+		if (CTFBeginElection(ent, ELECT_MAP, text,false)) {
+			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
+			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[notimes[map]]));
+			strncpy(ctfgame.elevel, maplist.mapnames[notimes[map]], sizeof(ctfgame.elevel) - 1);
 			if (ctfgame.needvotes==0)
 				CTFWinElection(0, NULL);
 		}
@@ -5112,7 +5257,7 @@ void CTFWarp(edict_t *ent)
 		}
 		map = rand() % i2;
 
-		sprintf(text, "%s has requested changing to level %s.", 
+		sprintf(text, "%s: Request to change map to %s (To do)", 
 				ent->client->pers.netname, maplist.mapnames[notimes[map]]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5155,7 +5300,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s has requested changing to level %s (no time set).", 
+		sprintf(text, "%s: Request to change map to %s (No time set)", 
 				ent->client->pers.netname, maplist.mapnames[notimes[map]]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5174,7 +5319,7 @@ void CTFWarp(edict_t *ent)
 		if (map<0)
 			map = maplist.nummaps-1;
 		
-/*		if (ent->client->resp.admin>=ADMIN_MAPVOTE_LEVEL) {
+/*		if (ent->client->resp.admin>=ADMIN_VOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
 			admin_log(ent,text);
 			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
@@ -5198,7 +5343,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s has requested changing to level %s.", 
+		sprintf(text, "%s: Request to change map to %s (Previous map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5232,8 +5377,7 @@ void CTFWarp(edict_t *ent)
 			}
 			else
 			{
-				gi.cprintf(ent, PRINT_HIGH, "Unknown Jump map.\n");
-				gi.cprintf(ent, PRINT_HIGH, "For available levels type maplist.\n");
+				gi.cprintf(ent, PRINT_HIGH, "Unknown map, for available maps type maplist.\n");
 				return;
 			}
 		}
@@ -5251,7 +5395,7 @@ void CTFWarp(edict_t *ent)
 			}
 		}
 
-		sprintf(text, "%s has requested changing level to %s.", 
+		sprintf(text, "%s: Request to change map to %s", 
 				ent->client->pers.netname, temp);
 		if (CTFBeginElection(ent, ELECT_MAP, text,false))
 		{
@@ -5297,7 +5441,7 @@ void CTFBoot(edict_t *ent)
 		return;
 	}
 
-	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
+	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120)
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You cannot initiate a vote of this kind when timeleft is under 2 minutes\n");

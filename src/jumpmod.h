@@ -1,7 +1,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.23ger"
+#define CTF_VERSION_S		"1.24ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -55,7 +55,9 @@ typedef struct
 	float israfel;
 	int	score;
 	int	uid;
+	int pos;
 } users_sort_record;
+
 
 typedef struct 
 { 
@@ -226,15 +228,15 @@ void		DeleteRemFile(void);
 void		Write_Jump_cfg(void);
 void		Read_Jump_cfg(void);
 void		MSET(edict_t *ent);
-void		ACMD(edict_t *ent);
 void		GSET(edict_t *ent);
 void		Cmd_Chaseme(edict_t *ent);
 void		Cmd_Coord_f(edict_t *ent);
 void		Read_Admin_cfg(void);
 void		Write_Admin_cfg(void);
-void		add_admin(edict_t *ent,char *name, char *pass, int alevel);
-void		rem_admin(edict_t *ent,int num);
-void		list_admins(edict_t *ent, int offset);
+void		add_admin(edict_t *ent);
+void		rem_admin(edict_t *ent);
+void		change_admin(edict_t *ent);
+void		list_admins(edict_t *ent);
 void		Cmd_Commands_f (edict_t *ent);
 void		Cmd_Store_f (edict_t *ent);
 void		Cmd_Time_f (edict_t *ent);
@@ -294,7 +296,6 @@ void		Cmd_Recall(edict_t *ent);
 void		List_Admin_Commands(edict_t *ent);
 void		Save_Current_Recording(edict_t *ent);
 void		mvote(edict_t *ent);
-void		mkadmin(edict_t *ent);
 void		reset_server(edict_t *ent);
 void		delete_all_demos(void);
 void		delete_all_times(void);
@@ -348,7 +349,6 @@ void Add_Box(edict_t *plyr);
 void Move_Box(edict_t *ent);
 void Move_Ent(edict_t *ent);
 void Box_Skin(edict_t *ent);
-void DeleteEnts(edict_t *ent);
 void GotoClient(edict_t *ent);
 void BringClient(edict_t *ent);
 void ForceEveryoneOutOfChase(void);
@@ -406,57 +406,57 @@ typedef struct
 
 extern zbotcmd_t zbotCommands[];
 
+// msets
 typedef struct
 {
-	unsigned int	timelimit;
-	unsigned int	blaster;
-	unsigned int	weapons;
-	unsigned int	slowdoors;	
-	unsigned int	fastdoors;	
-	unsigned int	fasttele;
-	unsigned int	damage;
-	unsigned int	health;
-	unsigned int	regen;
-	unsigned int ghost;
-	unsigned int kill_delay;
-	unsigned int best_time_glow;
-	unsigned int antiglue;
-	unsigned int antiglue_penalty;
-	unsigned int antiglue_allow1st;
-	unsigned int target_glow;
-	unsigned int tourney;
-	unsigned int rocket;
-	unsigned int cmsg;
-	unsigned int playtag;
+	int addedtimeoverride;
+	int allowsrj;
+	int bfg;
+	int blaster;
+	int checkpoint_total;
+	int cmsg;
+	int damage;
+	int droptofloor;
 	char edited_by[256];
-	unsigned int gravity;
-	unsigned int droptofloor;
-	unsigned int singlespawn;
-	unsigned int falldamage;
-	unsigned int addedtimeoveride;	
-	unsigned int allowsrj;
-	unsigned int checkpoint_total;
-	unsigned int bfg;
-	unsigned int fast_firing;
+	int falldamage;
+	int fast_firing;
+	int fastdoors;	
+	int fasttele;
+	int ghost;
 	int ghost_model;
-	int ghost_trans;
-	int fpskick;
+	int gravity;
+	int health;
+	int regen;
+	int rocket;
+	int singlespawn;
+	int slowdoors;	
+	int timelimit;
+	int weapons;
 } mset_vars_t;
 
+// gsets that aren't msets
 typedef struct
 {
-	mset_vars_t mset[1];
+	mset_vars_t mset[1]; // includes the mset only cmds
+	int addedtimemap;
+	int addtime_announce;
+	int admin_max_addtime;
+	char admin_model[255];
+	int allow_admin_boot;
+	int antiglue;
+	int antiglue_allow1st;
+	int antiglue_penalty;
+	int autotime;
+	int best_time_glow;
 	int flashlight;
-//	int glow_fastest;
 	int hookspeed;
 	int hookpull;
 	int respawn_sound;
-//	int glow_time;
-	int autotime;
 	int glow_admin;
 	int glow_multi;
 	int time_adjust;
 	int hook;
+	int playtag;
 	int invis;
 	int jetpack;
 	int transparent;
@@ -477,8 +477,6 @@ typedef struct
 	int numsoundwavs;
 	int store_safe;
 	int intermission;
-	int addedtimemap;
-	int addmaplevel;
 	int weapon_fire_min_delay;
 	int html_profile;
 	int html_create;
@@ -487,74 +485,57 @@ typedef struct
 #ifdef RACESPARK
 	int allow_race_spark;
 #endif
-	int nomapvote;
+	int nomapvotetime;
 	int notimevotetime;
 	int maps_pass;
-	int allow_admin_boot;
-	int adminmaxaddtime;
 	int ghost_glow;
-	int admin_model_level;
-	char admin_model[255];
 	int map_end_warn_sounds;   // hann
 	int max_votes;   // _h2
-	int tempbanonkick;
+	int temp_ban_on_kick;
 	int holdtime;
 	int pvote_announce;
 	unsigned int	hideghost;
 	int cvote_announce;
 	unsigned int voteextratime;
-	int addtime_announce;
 	int numberone_length;
+	unsigned int fpskick;
+	unsigned int kill_delay;
+	unsigned int target_glow;
+	unsigned int tourney;
 } gset_vars_t;
 
 typedef struct
 {
-	int MAX_ADMIN_LEVEL;
-	int ADMIN_ADDADMIN_LEVEL	;
-	int ADMIN_ADDMAP_LEVEL		;
-	int ADMIN_GSET_LEVEL		;
-	int ADMIN_ACMD_LEVEL		;
-	int ADMIN_STUFF_LEVEL		;
-	
-	int ADMIN_ADDBOX_LEVEL		;
-	int ADMIN_ADDBALL_LEVEL		;
-
-	int ADMIN_MSET_LEVEL		;
-	int ADMIN_GIVEALL_LEVEL		;
-	int ADMIN_REMALL_LEVEL		;
-	int ADMIN_REMTIMES_LEVEL	;
-	int ADMIN_TOGGLEHUD_LEVEL	;
-	int ADMIN_ADDENT_LEVEL		;
-	int ADMIN_DVOTE_LEVEL		;
-
-	int ADMIN_SLAP_LEVEL		;
-	int ADMIN_ADDTIME_LEVEL		;
-	int ADMIN_THROWUP_LEVEL		;
-//	int ADMIN_FORCETEAM_LEVEL	;
-	int ADMIN_BRING_LEVEL		;
-	int ADMIN_GOTO_LEVEL		;
-	int ADMIN_CVOTE_LEVEL		;
-	int ADMIN_PVOTE_LEVEL		;
-	int ADMIN_MAPVOTE_LEVEL		;
-	int ADMIN_BOOT_LEVEL		;
-	int ADMIN_MKADMIN_LEVEL		;
-	int ADMIN_SILENCE_LEVEL		;
-	int ADMIN_GIVE_LEVEL		;
-	int ADMIN_NOCLIP_LEVEL		;
-//	int ADMIN_HOOK_LEVEL;
+	int ADMIN_ADDBALL_LEVEL;
+	int ADMIN_ADDENT_LEVEL;
+	int ADMIN_ADDMAP_LEVEL;
+	int ADMIN_ADDTIME_LEVEL;
+	int ADMIN_ADMINEDIT_LEVEL;
 	int ADMIN_BAN_LEVEL;
-	int ADMIN_IP_LEVEL;
+	int ADMIN_BOOT_LEVEL;
+	int ADMIN_BRING_LEVEL;
+	int ADMIN_CHANGENAME_LEVEL;
 	int ADMIN_DUMMYVOTE_LEVEL;
-	int ADMIN_NOMAXVOTES_LEVEL;  // _h2
-	int ACMD_ADDADMIN_LEVEL		;
-	int ACMD_REMADMIN_LEVEL		;
-	int ACMD_RESET_LEVEL		;
-	int ACMD_ADMINLEVEL_LEVEL	;
-	int ACMD_LISTADMINS_LEVEL	;
-	int ADMIN_REMMAP_LEVEL		;
-	int ACMD_LOCK_LEVEL			;
+	int ADMIN_GIVE_LEVEL;
+	int ADMIN_GIVEALL_LEVEL;
+	int ADMIN_GSET_LEVEL;
+	int ADMIN_IP_LEVEL;
+	int ADMIN_MAX_LEVEL;
+	int ADMIN_MODEL_LEVEL;
+	int ADMIN_MSET_LEVEL;
+	int ADMIN_NEXTMAPS_LEVEL;
+	int ADMIN_NOMAXVOTES_LEVEL;
+	int ADMIN_RATERESET_LEVEL;
+	int ADMIN_REMTIMES_LEVEL;
+	int ADMIN_SILENCE_LEVEL;
+	int ADMIN_SLAP_LEVEL;
+	int ADMIN_SORTMAPS_LEVEL;
+	int ADMIN_STUFF_LEVEL;
+	int ADMIN_THROWUP_LEVEL;
+	int ADMIN_TOGGLEHUD_LEVEL;
 	int ADMIN_UPDATESCORES_LEVEL;
-	int ACMD_RESYNC_LEVEL		;
+	int ADMIN_VOTE_LEVEL;
+
 } aset_vars_t;
 
 extern mset_vars_t mset_vars[1];
@@ -623,8 +604,6 @@ void remtime(edict_t *ent);
 #define MAX_ENTS 50
 void CTFUnSilence(edict_t *ent);
 void Notify_Of_Team_Commands(edict_t *ent);
-
-void Cmd_UnadminUser(edict_t *ent);
 void JumpChase(edict_t *ent);
 
 char *HighAscii(char *str);
@@ -788,7 +767,6 @@ void ApplyBans(edict_t *ent,char *s);
 qboolean IsBannedName(char *name);
 
 void reset_maps_completed(edict_t *ent);
-void cmd_test(edict_t *ent);
 
 #define RECORD_KEY_SHIFT   16
 #define RECORD_KEY_UP       1 << RECORD_KEY_SHIFT

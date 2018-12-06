@@ -90,26 +90,44 @@ char zbbuffer2[256];
 
 zbotcmd_t zbotCommands[] = 
 {
+
+  //----------------------------
+  //         mset's
+  //----------------------------
   { 
-	0,2147483647,16384,
-    "best_time_glow", 
+	0,1,0,
+    "addedtimeoverride", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->best_time_glow,
+    &mset_vars->addedtimeoverride,
   },
   { 
-	0,1,1,
+	0,1,0,
+    "allowsrj", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->allowsrj,
+  },
+  { 
+	0,1,0,
+    "bfg", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->bfg,
+  },
+  { 
+	0,1,0,
     "blaster", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
     &mset_vars->blaster,
   },
   { 
-	0,1,1,
-    "weapons", 
+	0,28,0,
+    "checkpoint_total", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->weapons,
+    &mset_vars->checkpoint_total,
   },
   { 
 	0,1,0,
@@ -126,18 +144,39 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->damage,
   },
   { 
+	0,1,1,
+    "droptofloor", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->droptofloor,
+  },
+  { 
+	0,0,0,
+    "edited_by", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_STRING,
+    &mset_vars->edited_by,
+  },
+  { 
+	0,1,1,
+    "falldamage", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->falldamage,
+  },
+  { 
+	0,1,0,
+    "fast_firing", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->fast_firing,
+  },
+  { 
 	0,1,0,
     "fastdoors", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
     &mset_vars->fastdoors,
-  },
-  { 
-	0,1,0,
-    "slowdoors", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->slowdoors,
   },
   { 
 	0,1,0,
@@ -154,6 +193,20 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->ghost,
   },
   { 
+	0,128,0,
+    "ghosty_model", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->ghost_model,
+  },
+  { 
+	-10000,10000,800,
+    "gravity", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->gravity,
+  },
+  { 
 	0,999,400,
     "health", 
     CMDWHERE_CFGFILE | CMD_MSET, 
@@ -161,21 +214,7 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->health,
   },
   { 
-	1,500,1,
-    "kill_delay",
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->kill_delay,
-  },
-  { 
-	0,1,0,
-    "playtag", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->playtag,
-  },
-  { 
-	-100,100,5,
+	-100,100,100,
     "regen",
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
@@ -190,66 +229,17 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,0,
-    "bfg", 
+    "singlespawn", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->bfg,
+    &mset_vars->singlespawn,
   },
   { 
 	0,1,0,
-    "fast_firing", 
+    "slowdoors", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->fast_firing,
-  },
-  { 
-	0,2,0,
-    "antiglue", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->antiglue,
-  },
-  { 
-	0,100,2,
-    "antiglue_penalty", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->antiglue_penalty,
-  },
-  { 
-	0,1,0,
-    "antiglue_allow1st", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->antiglue_allow1st,
-  },
-  { 
-	0,1,1,
-    "gantiglue", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->antiglue,
-  },
-  { 
-	0,100,1,
-    "gantiglue_penalty", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->antiglue_penalty,
-  },
-  { 
-	0,1,0,
-    "gantiglue_allow1st", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->antiglue_allow1st,
-  },
-  { 
-	0,2147483647,8388608,
-    "target_glow", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->target_glow,
+    &mset_vars->slowdoors,
   },
   { 
 	0,999,20,
@@ -260,105 +250,128 @@ zbotcmd_t zbotCommands[] =
   },
   { 
 	0,1,0,
-    "ghost_trans", 
+    "weapons", 
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->ghost_trans,
+    &mset_vars->weapons,
+  },
+
+  //----------------------------
+  //         gset's
+  //----------------------------
+  { 
+	0,999,10,
+    "addedtimemap", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->addedtimemap,
   },
   { 
 	0,1,0,
-    "tourney", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
+    "gaddedtimeoverride", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
     CMDTYPE_NUMBER,
-    &mset_vars->tourney,
+    &gset_vars->mset->addedtimeoverride,
+  },
+  {
+	0,1,1,
+	"addtime_announce",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->addtime_announce,
+  },
+  {
+	0,1,0,
+	"admin_max_addtime",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->admin_max_addtime,
   },
   { 
 	0,0,0,
-    "edited_by", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
+    "admin_model", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_STRING,
-    &mset_vars->edited_by,
+    &gset_vars->admin_model,
   },
-  { 
-	-10000,10000,800,
-    "gravity", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
+  {
+	0,1,1,
+	"allow_admin_boot",
+	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->gravity,
+	&gset_vars->allow_admin_boot,
+  },
+#ifdef RACESPARK
+  {
+	0,1,1,
+	"allow_race_spark",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->allow_race_spark,
+  },
+#endif
+  { 
+	0,1,0,
+    "gallowsrj", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->allowsrj,
   },
   { 
 	0,1,1,
-    "droptofloor", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
+    "gantiglue", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
-    &mset_vars->droptofloor,
+    &gset_vars->antiglue,
   },
   { 
 	0,1,0,
-    "singlespawn", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
+    "gantiglue_allow1st", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
-    &mset_vars->singlespawn,
+    &gset_vars->antiglue_allow1st,
   },
   { 
-	0,1,1,
-    "falldamage", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
+	0,100,1,
+    "gantiglue_penalty", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
-    &mset_vars->falldamage,
+    &gset_vars->antiglue_penalty,
   },
   { 
-	0,999,0,
-    "addedtimeoveride", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
+	0,100,10,
+    "autotime",
+    CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &mset_vars->addedtimeoveride,
+    &gset_vars->autotime,
   },
   { 
-	0,1,0,
-    "allowsrj", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->allowsrj,
-  },
-  { 
-	0,28,0,
-    "checkpoint_total", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->checkpoint_total,
-  },
-  { 
-	0,1,1,
-    "fpskick", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->fpskick,
-  },
-
-  /************************** GSET MAP **************/
-
-
-  { 
-	0,2147483647,16384,
+	0,2147483647,0,
     "gbest_time_glow", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->best_time_glow,
+    &gset_vars->best_time_glow,
   },
   { 
-	0,1,1,
+	0,1,0,
+    "gbfg", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->bfg,
+  },
+  { 
+	0,1,0,
     "gblaster", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->blaster,
   },
   { 
-	0,1,1,
-    "gweapons", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+	0,28,0,
+    "gcheckpoint_total", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
     CMDTYPE_NUMBER,
-    &gset_vars->mset->weapons,
+    &gset_vars->mset->checkpoint_total,
   },
   { 
 	0,1,0,
@@ -366,6 +379,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->cmsg,
+  },
+  {
+	0,1,1,
+	"cvote_announce",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->cvote_announce,
   },
   { 
 	0,1,1,
@@ -375,18 +395,46 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->damage,
   },
   { 
-	0,1,0,
-    "gfastdoors", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+	0,1,1,
+    "debug",
+    CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->fastdoors,
+    &gset_vars->debug,
+  },
+  { 
+	0,1,1,
+    "gdroptofloor", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->droptofloor,
+  },
+  { 
+	0,0,0,
+    "gedited_by", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_STRING,
+    &gset_vars->mset->edited_by,
+  },
+  { 
+	0,1,1,
+    "gfalldamage", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->falldamage,
   },
   { 
 	0,1,0,
-    "gslowdoors", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    "gfast_firing", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
     CMDTYPE_NUMBER,
-    &gset_vars->mset->slowdoors,
+    &gset_vars->mset->fast_firing,
+  },
+  { 
+	0,1,0,
+    "gfastdoors", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->fastdoors,
   },
   { 
 	0,1,0,
@@ -396,102 +444,53 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->fasttele,
   },
   { 
+	0,2,1,
+    "flashlight", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->flashlight,
+  },
+  { 
+	0,1,1,
+    "fpskick", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->fpskick,
+  },
+  { 
 	0,1,1,
     "gghost",
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
     &gset_vars->mset->ghost,
   },
-  { 
-	0,999,400,
-    "ghealth", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+  {
+	0,2147483647,0,
+	"ghost_glow",
+	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->health,
+	&gset_vars->ghost_glow,
   },
   { 
-	1,500,1,
-    "gkill_delay",
+	0,128,0,
+    "gghosty_model", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->kill_delay,
+    &gset_vars->mset->ghost_model,
   },
   { 
-	0,1,0,
-    "gplaytag", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->playtag,
-  },
-  { 
-	-100,100,5,
-    "gregen",
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->regen,
-  },
-  { 
-	0,1,0,
-    "grocket", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->rocket,
-  },
-  { 
-	0,1,0,
-    "gbfg", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->bfg,
-  },
-  { 
-	0,1,0,
-    "gfast_firing", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->fast_firing,
-  },
-  { 
-	0,2147483647,8388608,
-    "gtarget_glow", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->target_glow,
-  },
-  { 
-	0,999,20,
-    "gtimelimit", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->timelimit,
-  },
-  { 
-	0,1,0,
-    "ghost_trans", 
+	0,9999999,0,
+    "glow_admin", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->ghost_trans,
-  },
-  { 
-	0,1,0,
-    "gtourney", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->tourney,
-  },
-  { 
-	0,0,0,
-    "gedited_by", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_STRING,
-    &gset_vars->mset->edited_by,
+    &gset_vars->glow_admin,
   },
   { 
 	0,1,1,
-    "gfpskick", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    "glow_multi", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->fpskick,
+    &gset_vars->glow_multi,
   },
   { 
 	-10000,10000,800,
@@ -501,95 +500,25 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->mset->gravity,
   },
   { 
-	0,1,1,
-    "gdroptofloor", 
+	0,999,400,
+    "ghealth", 
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->droptofloor,
+    &gset_vars->mset->health,
   },
   { 
-	0,1,0,
-    "gsinglespawn", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+	0,2000,300,
+    "hideghost", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->singlespawn,
+    &gset_vars->hideghost,
   },
-  { 
+  {
 	0,1,1,
-    "gfalldamage", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+	"holdtime",
+	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->mset->falldamage,
-  },
-  { 
-	0,1,1,
-    "gaddedtimeoveride", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->addedtimeoveride,
-  },
-   { 
-	0,28,0,
-    "gcheckpoint_total", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,  
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->checkpoint_total,
-  },
-  { 
-	0,120,60,
-    "voteextratime", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->voteextratime,
-  },
-  { 
-	0,1,1,
-    "debug",
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->debug,
-  },
-  { 
-	0,15,5,
-    "autotime",
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->autotime,
-  },
-/*  { 
-	0,1,1,
-    "glow_fastest",
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->glow_fastest,
-  },*/
-/*  { 
-	0,1,0,
-    "glow_time", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->glow_time,
-  },*/
-  { 
-	0,9999999,0,
-    "glow_admin", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->glow_admin,
-  },
-  { 
-	0,1,0,
-    "glow_multi", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->glow_multi,
-  },
-  { 
-	0,1000,0,
-    "time_adjust", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->time_adjust,
+	&gset_vars->holdtime,
   },
   { 
 	0,1,1,
@@ -597,6 +526,55 @@ zbotcmd_t zbotCommands[] =
 	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
     &gset_vars->hook,
+  },
+  { 
+	1,10000,750,
+    "hookpull", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->hookpull,
+  },
+  { 
+	1,10000,1200,
+    "hookspeed", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->hookspeed,
+  },
+  { 
+	0,50,8,
+    "html_bestscores", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->html_bestscores,
+  },
+  { 
+	0,1,1,
+    "html_create", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->html_create,
+  },
+  { 
+	0,20,10,
+    "html_firstplaces", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->html_firstplaces,
+  },
+  { 
+	1,9,1,
+    "html_profile", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->html_profile,
+  },
+  { 
+	1,999,50,
+    "intermission", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->intermission,
   },
   { 
 	0,1,0,
@@ -613,39 +591,39 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->jetpack,
   },
   { 
+	0,500,1,
+    "kill_delay", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->kill_delay,
+  },
+  {
+    0,1,1,
+    "map_end_warn_sounds",
+    CMDWHERE_CFGFILE | CMD_GSET,
+    CMDTYPE_NUMBER,
+    &gset_vars->map_end_warn_sounds,
+  },
+  { 
 	0,1,0,
-    "transparent", 
+    "maplist_times", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->transparent,
+    &gset_vars->maplist_times,
   },
-  { 
-	0,1,1,
-    "walkthru", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
+  {
+	0,MAX_MAPMEM,7,
+	"maps_pass",
+	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->walkthru,
+	&gset_vars->maps_pass,
   },
-  { 
-	0,1,1,
-    "respawn_sound", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
+  {
+    0,10,3,
+    "max_votes",
+    CMDWHERE_CFGFILE | CMD_GSET,
     CMDTYPE_NUMBER,
-    &gset_vars->respawn_sound,
-  },
-  { 
-	0,128,0,
-    "gghosty_model", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->ghost_model,
-  },
-  { 
-	0,128,0,
-    "ghosty_model", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->ghost_model,
+    &gset_vars->max_votes,
   },
   { 
 	0,0,0,
@@ -654,19 +632,19 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_STRING,
     &gset_vars->model_store,
   },
-  { 
-	0,0,0,
-    "admin_model", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_STRING,
-    &gset_vars->admin_model,
+  {
+	0,10800,300,
+	"nomapvotetime",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->nomapvotetime,
   },
-    { 
-	0,0,0,
-    "numberone_wav", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_STRING,
-    &gset_vars->numberone_wav,
+  {
+	0,10800,300,
+	"notimevotetime",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->notimevotetime,
   },
   { 
 	0,10000,17,
@@ -676,25 +654,32 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->numberone_length,
   },
   { 
-	0,2,1,
-    "flashlight", 
+	0,0,0,
+    "numberone_wav", 
     CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->flashlight,
+    CMDTYPE_STRING,
+    &gset_vars->numberone_wav,
   },
   { 
-	1,10000,1200,
-    "hookspeed", 
+	1,9,1,
+    "numsoundwavs", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->hookspeed,
+    &gset_vars->numsoundwavs,
   },
   { 
-	1,10000,750,
-    "hookpull", 
+	1,999,25,
+    "overtimegainedhealth", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->hookpull,
+    &gset_vars->overtimegainedhealth,
+  },
+  { 
+	1,999,150,
+    "overtimehealth", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->overtimehealth,
   },
   { 
 	1,60,3,
@@ -711,13 +696,6 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->overtimerandom,
   },
   { 
-	1,60,20,
-    "votingtime", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->votingtime,
-  },
-  { 
 	0,4,2,
     "overtimetype", 
     CMDWHERE_CFGFILE | CMD_GSET, 
@@ -732,32 +710,116 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->overtimewait,
   },
   { 
-	1,999,150,
-    "overtimehealth", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->overtimehealth,
-  },
-  { 
-	1,999,25,
-    "overtimegainedhealth", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->overtimegainedhealth,
-  },
-  { 
-	0,1,0,
-    "maplist_times", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->maplist_times,
-  },
-  { 
 	0,999,1,
     "playsound", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
     &gset_vars->playsound,
+  },
+  { 
+	0,1,0,
+    "playtag", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->playtag,
+  },
+  {
+	0,1,1,
+	"pvote_announce",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->pvote_announce,
+  },
+  { 
+	-100,100,100,
+    "gregen",
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->regen,
+  },
+  { 
+	0,1,1,
+    "respawn_sound", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->respawn_sound,
+  },
+  { 
+	0,1,0,
+    "grocket", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->rocket,
+  },
+  { 
+	0,1,0,
+    "store_safe", 
+    CMDWHERE_CFGFILE | CMD_GSET,
+    CMDTYPE_NUMBER,
+    &gset_vars->store_safe,
+  },
+  { 
+	0,1,0,
+    "gsinglespawn", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->singlespawn,
+  },
+  { 
+	0,1,0,
+    "gslowdoors", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->slowdoors,
+  },
+  { 
+	0,2147483647,2,
+    "target_glow", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->target_glow,
+  },
+  {
+	0,1,1,
+	"temp_ban_on_kick",
+	CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+	&gset_vars->temp_ban_on_kick,
+  },
+  { 
+	0,1000,0,
+    "time_adjust", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->time_adjust,
+  },
+  { 
+	0,999,20,
+    "gtimelimit", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->timelimit,
+  },
+  { 
+	0,1,0,
+    "gtourney", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
+    CMDTYPE_NUMBER,
+    &gset_vars->tourney,
+  },
+  { 
+	0,1,0,
+    "transparent", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->transparent,
+  },
+  { 
+	0,120,60,
+    "voteextratime", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->voteextratime,
   },
   { 
 	0,1000,20,
@@ -767,46 +829,18 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->voteseed,
   },
   { 
-	1,9,1,
-    "numsoundwavs", 
+	1,60,20,
+    "votingtime", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->numsoundwavs,
+    &gset_vars->votingtime,
   },
   { 
 	0,1,1,
-    "safe_store", 
+    "walkthru", 
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
-    &gset_vars->store_safe,
-  },
-  { 
-	1,999,50,
-    "intermission", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->intermission,
-  },
-  { 
-	0,999,10,
-    "addedtimemap", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->addedtimemap,
-  },
-  { 
-	0,2000,300,
-    "hideghost", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->hideghost,
-  },
-  { 
-	1,10,7,
-    "addmaplevel", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->addmaplevel,
+    &gset_vars->walkthru,
   },
   { 
 	1,99999,500,
@@ -815,452 +849,243 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &gset_vars->weapon_fire_min_delay,
   },
-  { 
-	0,1,1,
-    "html_create", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_create,
-  },
-  { 
-	1,9,1,
-    "html_profile", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_profile,
-  },
-  { 
-	0,50,8,
-    "html_bestscores", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_bestscores,
-  },
-  { 
-	0,20,10,
-    "html_firstplaces", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_firstplaces,
-  },
-#ifdef RACESPARK
-  {
-	0,1,1,
-	"allow_race_spark",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->allow_race_spark,
-  },
-#endif
-  {
-	0,10800,300,
-	"nomapvotetime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->nomapvote,
-  },
-  {
-	0,10800,300,
-	"notimevotetime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->notimevotetime,
-  },
-  {
-	0,MAX_MAPMEM,7,
-	"maps_pass",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->maps_pass,
-  },
-  {
-	0,1,1,
-	"allow_admin_boot",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->allow_admin_boot,
-  },
-  {
-	0,1,0,
-	"adminmaxaddtime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->adminmaxaddtime,
-  },
-  {
-	0,2147483647,0,
-	"ghost_glow",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->ghost_glow,
-  },
-  {
-	2,50,5,
-	"admin_model_level",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->admin_model_level,
-  },
-  {						// hann
-        0,1,1,					// hann
-        "map_end_warn_sounds",			// hann
-        CMDWHERE_CFGFILE | CMD_GSET,		// hann
-    CMDTYPE_NUMBER,				// hann
-        &gset_vars->map_end_warn_sounds,	// hann
-  },
-  {						// _h2
-        0,10,3,					// _h2
-        "max_votes",				// _h2
-        CMDWHERE_CFGFILE | CMD_GSET,		// _h2
-    CMDTYPE_NUMBER,				// _h2
-        &gset_vars->max_votes,			// _h2
-  },						// _h2
-  {
-	0,1,1,
-	"tempbanonkick",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->tempbanonkick,
-  },
-  {
-	0,1,1,
-	"holdtime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->holdtime,
-  },
-  {
-	0,1,1,
-	"cvote_announce",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->cvote_announce,
-  },
-  {
-	0,1,1,
-	"pvote_announce",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->pvote_announce,
-  },
-  {
-	0,1,1,
-	"addtime_announce",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->addtime_announce,
-  },
-/*  {
-	0,1,0,
-	"updated",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->updated,
-  },*/
 
-  //ASET
-  { 
-	1,20,7,
-    "MAX_ADMIN_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->MAX_ADMIN_LEVEL,
-  },
+  //----------------------------
+  //         aset's
+  //----------------------------
 
-  { 
-	1,20,7,
-    "ADMIN_ADDADMIN_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADDADMIN_LEVEL
+	{
+	1,20,1,
+	"ADMIN_ADDBALL_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_ADDBALL_LEVEL
 	},
-	{ 
-	1,20,7,
-    "ACMD_LISTADMINS_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ACMD_LISTADMINS_LEVEL
-	},
-	{ 
-	1,20,7,
-    "ACMD_REMADMIN_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ACMD_REMADMIN_LEVEL
-	},
-	{ 
-	1,20,7,
-    "ACMD_ADMINLEVEL_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ACMD_ADMINLEVEL_LEVEL
-	},
-	{ 
-	1,20,7,
-    "ACMD_ADDADMIN_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ACMD_ADDADMIN_LEVEL
-	},
-	{ 
-	1,20,7,
-    "ACMD_RESET_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ACMD_RESET_LEVEL
-	},
-  { 
-	1,20,7,
-    "ADMIN_ADDMAP_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADDMAP_LEVEL
-	},
-	{ 
-	1,20,7,
-    "ADMIN_REMMAP_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_REMMAP_LEVEL
-	},
-	{ 
-	1,20,7,
-    "ACMD_LOCK_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ACMD_LOCK_LEVEL
-	},
-  { 
-	1,20,7,
-    "ADMIN_GSET_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_GSET_LEVEL
-	},
-	{ 
-	1,20,7,
-    "ADMIN_ACMD_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_GSET_LEVEL
-	},
-  { 
-	1,20,7,
-    "ADMIN_STUFF_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_STUFF_LEVEL
-	},
-  { 
-	1,20,6,
-    "ADMIN_ADDBOX_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADDBOX_LEVEL
-	},
-  { 
-	1,20,6,
-    "ADMIN_ADDBALL_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADDBALL_LEVEL
-	},
-  { 
-	1,20,5,
-    "ADMIN_MSET_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_MSET_LEVEL
-	},
-  { 
-	1,20,5,
-    "ADMIN_GIVEALL_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_GIVEALL_LEVEL
-	},
-  { 
-	1,20,5,
-    "ADMIN_REMALL_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_REMALL_LEVEL
-	},
-  { 
-	1,20,5,
-    "ADMIN_REMTIMES_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_REMTIMES_LEVEL
-	},
-  { 
-	1,20,7,
-    "ADMIN_TOGGLEHUD_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_TOGGLEHUD_LEVEL
-	},
-	{ 
-	1,20,7,
-    "ACMD_RESYNC_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ACMD_RESYNC_LEVEL
-	},
-  { 
-	1,20,5,
-    "ADMIN_ADDENT_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADDENT_LEVEL
-	},
-  { 
-	1,20,5,
-    "ADMIN_DVOTE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_DVOTE_LEVEL
-	},
-  { 
-	1,20,4,
-    "ADMIN_SLAP_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_SLAP_LEVEL
-	},
-  { 
-	1,20,4,
-    "ADMIN_ADDTIME_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_ADDTIME_LEVEL
-	},
-	{ 
-	1,20,4,
-    "ADMIN_UPDATESCORES_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_UPDATESCORES_LEVEL
-	},
-  { 
-	1,20,4,
-    "ADMIN_THROWUP_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_THROWUP_LEVEL
-	},
-/*  { 
-	1,20,4,
-    "ADMIN_FORCETEAM_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_FORCETEAM_LEVEL
-	},*/
-  { 
-	1,20,4,
-    "ADMIN_BRING_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_BRING_LEVEL
-	},
-  { 
-	1,20,4,
-    "ADMIN_GOTO_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_GOTO_LEVEL
-	},
-  { 
-	1,20,4,
-    "ADMIN_CVOTE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_CVOTE_LEVEL
-	},
-  { 
-	1,20,4,
-    "ADMIN_PVOTE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_PVOTE_LEVEL
-	},
-  { 
-	1,20,4,
-    "ADMIN_MAPVOTE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_MAPVOTE_LEVEL
-	},
-  { 
+
+	{
 	1,20,3,
-    "ADMIN_BOOT_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_BOOT_LEVEL
+	"ADMIN_ADDENT_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_ADDENT_LEVEL
 	},
-  { 
-	1,20,3,
-    "ADMIN_MKADMIN_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_MKADMIN_LEVEL
+
+	{
+	1,20,5,
+	"ADMIN_ADDMAP_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_ADDMAP_LEVEL
 	},
-  { 
+
+	{
 	1,20,2,
-    "ADMIN_SILENCE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_SILENCE_LEVEL
+	"ADMIN_ADDTIME_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_ADDTIME_LEVEL
 	},
-  { 
-	1,20,1,
-    "ADMIN_GIVE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_GIVE_LEVEL
-	},
-  { 
-	1,20,1,
-    "ADMIN_NOCLIP_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_NOCLIP_LEVEL
-	},
-/*  { 
-	1,20,1,
-    "ADMIN_HOOK_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_HOOK_LEVEL
-	},*/
-  { 
-	1,20,7,
-    "ADMIN_BAN_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_BAN_LEVEL
-	},
-  { 
+
+	{
 	1,20,5,
-    "ADMIN_IP_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_IP_LEVEL
+	"ADMIN_ADMINEDIT_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_ADMINEDIT_LEVEL
 	},
-  { 
+
+	{
+	1,20,5,
+	"ADMIN_BAN_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_BAN_LEVEL
+	},
+
+	{
+	1,20,2,
+	"ADMIN_BOOT_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_BOOT_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_BRING_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_BRING_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_CHANGENAME_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_CHANGENAME_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_DUMMYVOTE_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_DUMMYVOTE_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_GIVE_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_GIVE_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_GIVEALL_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_GIVEALL_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_GSET_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_GSET_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_IP_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_IP_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_MAX_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_MAX_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_MODEL_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_MODEL_LEVEL
+	},
+
+	{
 	1,20,4,
-    "ADMIN_DUMMYVOTE_LEVEL", 
-    CMDWHERE_CFGFILE | CMD_ASET, 
-    CMDTYPE_NUMBER,
-    &aset_vars->ADMIN_DUMMYVOTE_LEVEL
+	"ADMIN_MSET_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_MSET_LEVEL
 	},
-  {   					  // _h2
-	1,20,2,				  // _h2
-    "ADMIN_NOMAXVOTES_LEVEL",		  // _h2
-    CMDWHERE_CFGFILE | CMD_ASET,	  // _h2
-    CMDTYPE_NUMBER, 			  // _h2
-    &aset_vars->ADMIN_NOMAXVOTES_LEVEL	  // _h2
-	},				  // _h2
+
+	{
+	1,20,2,
+	"ADMIN_NEXTMAPS_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_NEXTMAPS_LEVEL
+	},
+
+	{
+	1,20,2,
+	"ADMIN_NOMAXVOTES_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_NOMAXVOTES_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_RATERESET_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_RATERESET_LEVEL
+	},
+
+	{
+	1,20,4,
+	"ADMIN_REMTIMES_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_REMTIMES_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_SILENCE_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_SILENCE_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_SLAP_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_SLAP_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_SORTMAPS_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_SORTMAPS_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_STUFF_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_STUFF_LEVEL
+	},
+
+	{
+	1,20,1,
+	"ADMIN_THROWUP_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_THROWUP_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_TOGGLEHUD_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_TOGGLEHUD_LEVEL
+	},
+
+	{
+	1,20,5,
+	"ADMIN_UPDATESCORES_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_UPDATESCORES_LEVEL
+	},
+
+	{
+	1,20,2,
+	"ADMIN_VOTE_LEVEL",
+	CMDWHERE_CFGFILE | CMD_ASET,
+	CMDTYPE_NUMBER,
+	&aset_vars->ADMIN_VOTE_LEVEL
+	}
+
 };
 
 #define ZBOTCOMMANDSSIZE    (sizeof(zbotCommands) / sizeof(zbotCommands[0]))
@@ -2191,7 +2016,9 @@ void show_ent_list(edict_t *ent,int page)
 			}
             if (strstr(level_items.ents[i]->classname,"cpbox_")){
                 gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s ID:%d \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,(level_items.ents[i]->count+1),level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
-            } else {
+            } else if(level_items.ents[i]->message && strstr(level_items.ents[i]->message,"checkpoint")) {
+				gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s ID:%d \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,(level_items.ents[i]->count+1),level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
+			} else {
                 gi.cprintf(ent,PRINT_HIGH,"%-2d %-20s \"%-3.3f %-3.3f %-3.3f\"\n",i+1,level_items.ents[i]->classname,level_items.ents[i]->s.origin[0],level_items.ents[i]->s.origin[1],level_items.ents[i]->s.origin[2]);
             }
         }
@@ -2274,6 +2101,10 @@ void WriteEnts(void)
 		}
 		if (strstr(level_items.ents[i]->classname,"jump_clip"))
 		{
+			if(level_items.ents[i]->message && strstr(level_items.ents[i]->message,"checkpoint")){
+				fprintf (f, "\"count\" \"%d\"\n",level_items.ents[i]->count);
+				fprintf (f, "\"message\" \"%s\"\n",level_items.ents[i]->message);
+			}
 			fprintf (f, "\"mins\" \"%f %f %f\"\n",level_items.ents[i]->mins[0],level_items.ents[i]->mins[1],level_items.ents[i]->mins[2]);
 			fprintf (f, "\"maxs\" \"%f %f %f\"\n",level_items.ents[i]->maxs[0],level_items.ents[i]->maxs[1],level_items.ents[i]->maxs[2]);
 		}
@@ -2660,14 +2491,32 @@ void Write_Admin_cfg(void)
 	fclose(f);
 }
 
-void add_admin(edict_t *ent,char *name, char *pass, int alevel)
+void add_admin(edict_t *ent)
 {
 	int placement = -1;
 	int i;
-	if (ent->client->resp.admin<aset_vars->ADMIN_ADDADMIN_LEVEL)
+	char *name;
+	char *pass;
+	int alevel;
+
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADMINEDIT_LEVEL)
 		return;
 
-	if ((alevel<0) || (alevel>aset_vars->MAX_ADMIN_LEVEL))
+	if (gi.argc() != 4)
+	{
+		list_admins(ent); // list current admins
+		gi.cprintf(ent,PRINT_HIGH,"Format : addadmin user pass level\n");
+		return;
+	}
+
+	name = gi.argv(1);
+	pass = gi.argv(2);
+	alevel = atoi(gi.argv(3));
+
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADMINEDIT_LEVEL)
+		return;
+
+	if ((alevel<0) || (alevel>aset_vars->ADMIN_MAX_LEVEL))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Invalid admin level\n");
 		return;
@@ -2708,12 +2557,25 @@ void add_admin(edict_t *ent,char *name, char *pass, int alevel)
 	gi.cprintf(ent,PRINT_HIGH,"Admin %s password %s with level %d added at position %d\n",name,pass,alevel,placement+1);
 }
 
-void change_admin(edict_t *ent,int admin, int alevel)
+void change_admin(edict_t *ent)
 {
-	if (ent->client->resp.admin<aset_vars->ADMIN_ADDADMIN_LEVEL)
+	int admin;
+	int alevel;
+
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADMINEDIT_LEVEL)
 		return;
 
-	if ((alevel<=0) || (alevel>aset_vars->MAX_ADMIN_LEVEL))
+	if (gi.argc() != 3)
+	{
+		list_admins(ent);
+		gi.cprintf(ent,PRINT_HIGH,"Format : changeadmin admin_id new_level\n");
+		return;
+	}
+
+	admin = atoi(gi.argv(1));
+	alevel = atoi(gi.argv(2));
+
+	if ((alevel<=0) || (alevel>aset_vars->ADMIN_MAX_LEVEL))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Invalid admin level\n");
 		return;
@@ -2732,15 +2594,26 @@ void change_admin(edict_t *ent,int admin, int alevel)
 	gi.cprintf(ent,PRINT_HIGH,"Admin %s's level has been changed to %i\n",admin_pass[admin].name,alevel);
 }
 
-void rem_admin(edict_t *ent,int num)
+void rem_admin(edict_t *ent)
 {
-	//list all admins
-	if (ent->client->resp.admin<aset_vars->ADMIN_ADDADMIN_LEVEL)
+	int num;
+
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADMINEDIT_LEVEL)
 		return;
+
+	if (gi.argc() != 2)
+	{
+		list_admins(ent);
+		gi.cprintf(ent,PRINT_HIGH,"Format : remadmin number\n");
+		return;
+	}
+
+	num = atoi(gi.argv(1));
 
 	if ((num<=0) || (num>num_admins))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Invalid number\n");
+		return;
 	}
 	num--;
 	if (admin_pass[num].level)
@@ -2749,14 +2622,17 @@ void rem_admin(edict_t *ent,int num)
 	}
 	Write_Admin_cfg();
 	Read_Admin_cfg();
+
+	gi.cprintf(ent,PRINT_HIGH,"Admin %i has been removed.\n",num+1);
 }
 
-void list_admins(edict_t *ent, int offset)
+void list_admins(edict_t *ent)
 {
    int i = 0;
+   int offset;
    char name[64];
 	
-	if (ent->client->resp.admin<aset_vars->ACMD_LISTADMINS_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADMINEDIT_LEVEL)
 		return;
 
 	if (num_admins<=0)
@@ -2765,16 +2641,13 @@ void list_admins(edict_t *ent, int offset)
 		return;
 	}
 
-	offset--;
-   if (offset<0)
-	   offset = 0;
+	offset = 1;
+	if (gi.argc() == 2)
+		offset = atoi(gi.argv(1));
 
-   //for (i = 0; i < numadmins; i++)
-  // {
-//	   if (admin_pass[i].level > ent->client->resp.admin)
-	//	   continue;
-//	   num++;
- //  }
+	offset--;
+    if (offset<0)
+		offset = 0;
 
    gi.cprintf (ent, PRINT_HIGH,  "-------------------------------------------\n"); 
 	gi.cprintf (ent, PRINT_HIGH, "No. Name             Password         Level\n"); 
@@ -3093,7 +2966,7 @@ char* FindIpAddressInUserInfo(char* userinfo)
 
 void cvote(edict_t *ent)
 {
-	if (ent->client->resp.admin<aset_vars->ADMIN_CVOTE_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL)
 		return;
 
 	if (ctfgame.election == ELECT_NONE) {
@@ -3107,7 +2980,7 @@ void cvote(edict_t *ent)
 void pvote(edict_t *ent)
 {
 	int pvote = 0;
-	if (ent->client->resp.admin<aset_vars->ADMIN_PVOTE_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL)
 		return;
 
 	if (ctfgame.election == ELECT_NONE) {
@@ -3440,7 +3313,7 @@ void CTFSilence(edict_t *ent)
 		return;
 	}
 
-	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
+	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120)
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You cannot initiate a vote of this kind when timeleft is under 2 minutes\n");
@@ -3568,7 +3441,7 @@ void CTFRand(edict_t *ent)
 		return;
 	}
 
-	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
+	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120)
 	{
 		if (Get_Voting_Clients()>1)
@@ -3578,9 +3451,9 @@ void CTFRand(edict_t *ent)
 		}
 	}
 
-	if ((gset_vars->nomapvote >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL) && curclients > 2) // 0.84wp_h1
+	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL) && curclients > 2) // 0.84wp_h1
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvote);
+		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvotetime);
 		return;
 	}
 
@@ -3590,7 +3463,7 @@ void CTFRand(edict_t *ent)
 		return;
 	}
 
-	if ((ClientIsBanned(ent,BAN_MAPVOTE)) && (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL))
+	if ((ClientIsBanned(ent,BAN_MAPVOTE)) && (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You are not allowed to call a vote of this kind.\n");
 		return;
@@ -3640,7 +3513,7 @@ void CTFNominate(edict_t *ent)
 		gi.cprintf(ent,PRINT_HIGH,"A map nomination has already been passed.\n");
 		return;
 	}
-	if (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL)
+	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120)
 	{
 		if (Get_Voting_Clients()>1)
@@ -3658,9 +3531,9 @@ void CTFNominate(edict_t *ent)
 
 	index = ent-g_edicts-1;
 
-	if ((gset_vars->nomapvote >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL) && curclients > 2) // 0.84wp_h1
+	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL) && curclients > 2) // 0.84wp_h1
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvote);
+		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvotetime);
 		return;
 	}
 
@@ -3670,7 +3543,7 @@ void CTFNominate(edict_t *ent)
 		return;
 	}
 
-	if ((ClientIsBanned(ent,BAN_MAPVOTE)) && (ent->client->resp.admin < aset_vars->ADMIN_MAPVOTE_LEVEL))
+	if ((ClientIsBanned(ent,BAN_MAPVOTE)) && (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"You are not allowed to call a vote of this kind.\n");
 		return;
@@ -3804,6 +3677,7 @@ void BestTimesScoreboardMessage (edict_t *ent, edict_t *killer)
 	int completions = 0;
 	int total_count = 0;
 	char chr[2];	
+	char	colorstring[16];
 	*string = 0;
 	chr[0] = 13;
 	chr[1] = 0;
@@ -3819,18 +3693,23 @@ void BestTimesScoreboardMessage (edict_t *ent, edict_t *killer)
 	sprintf(string+strlen(string), "xv 0 yv 0 string2 \"No   Player                    Date \" ");
 	for (i=0;i<MAX_HIGHSCORES;i++)
 	{
+		if(i % 2 == 0){
+			sprintf(colorstring,"string");
+		} else {
+			sprintf(colorstring,"string2");
+		}
 		//015 sort floating point thing
 		if (level_items.stored_item_times[i].name[0])
 		{
 				if (level_items.stored_item_times[i].fresh)
 				{
 					
-					sprintf(string+strlen(string), "yv %d string \"%2d%s *%-16s%8.3f  %s\" ", i*8+16,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
+					sprintf(string+strlen(string), "yv %d %s \"%2d%s *%-16s%8.3f  %s\" ", i*8+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
 						level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time
 						,level_items.stored_item_times[i].date
 						);
 				} else {
-					sprintf(string+strlen(string), "yv %d string \"%2d%s  %-16s%8.3f  %s\" ", i*8+16,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
+					sprintf(string+strlen(string), "yv %d %s \"%2d%s  %-16s%8.3f  %s\" ", i*8+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
 						level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time
 						,level_items.stored_item_times[i].date
 						);
@@ -4035,6 +3914,7 @@ void sort_users(void)
 		{
 			maplist.sorted_users[i].score = maplist.users[i].score;
 			maplist.sorted_users[i].uid = i;
+			maplist.sorted_users[i].pos = i;
 
 			maplist.sorted_israfel[i].score = maplist.users[i].score;
 			maplist.sorted_israfel[i].israfel = maplist.users[i].israfel;
@@ -4069,6 +3949,7 @@ void sort_users_2( int n )
 
         maplist.sorted_users[j].uid = t_uid;
         maplist.sorted_users[j].score = t_score;
+		maplist.sorted_users[j].pos = i;
 	  }
 }
 
@@ -4676,7 +4557,6 @@ void Cmd_Replay(edict_t *ent)
 //		gi.cprintf(ent,PRINT_HIGH,"You need to be an observer to replay.\n");
 //		return;
 	}
-    ent->client->resp.rep_racing = false;
 }
 
 void Load_Recording(void)
@@ -5213,107 +5093,59 @@ void Cmd_Recall(edict_t *ent)
 void List_Admin_Commands(edict_t *ent)
 {
 	int i;
-	int j = 0;
-	for (i = 1;i <= aset_vars->MAX_ADMIN_LEVEL;i++)
+	int j;
+
+	gi.cprintf(ent, PRINT_HIGH, "\n-----------------------------------------------------------------------------------");
+
+	for (i = 1;i <= aset_vars->ADMIN_MAX_LEVEL;i++)
 	{
 		if (ent->client->resp.admin < i)
-			return;
-		gi.cprintf(ent,PRINT_HIGH,"Level %d - ", i);
+			break;
+
+		gi.cprintf(ent,PRINT_HIGH,"\nLevel %d - ", i);
 		if (i == aset_vars->ADMIN_STUFF_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "stuff ");
-//		if (i == aset_vars->ACMD_RESYNC_LEVEL)
-//			gi.cprintf(ent, PRINT_HIGH, "resync ");
 		if (i == aset_vars->ADMIN_ADDMAP_LEVEL)
-			gi.cprintf(ent, PRINT_HIGH, "addmap ");
-		if (i == aset_vars->ADMIN_NOCLIP_LEVEL )
-			gi.cprintf(ent,PRINT_HIGH,"noclip ");
-//		if (i == aset_vars->ADMIN_HOOK_LEVEL)
-//			gi.cprintf(ent,PRINT_HIGH,"hook ");
-		if (i == aset_vars->ADMIN_GIVE_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"give ");
+			gi.cprintf(ent, PRINT_HIGH, "addmap remmap ");
 		if (i == aset_vars->ADMIN_SILENCE_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"silence unsilence ");
 		if (i == aset_vars->ADMIN_BOOT_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"boot ");
-		if (i == aset_vars->ADMIN_MKADMIN_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"mkadmin unadminuser ");
-		if (i == aset_vars->ADMIN_SLAP_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"slap ");
-		if (i == aset_vars->ADMIN_THROWUP_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"throwup ");
-		if (i == aset_vars->ADMIN_MAPVOTE_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"mvote ");
-		if (i == aset_vars->ADMIN_CVOTE_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"cvote ");
-		if (i == aset_vars->ADMIN_PVOTE_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"pvote ");
+		if (i == aset_vars->ADMIN_VOTE_LEVEL)
+			gi.cprintf(ent,PRINT_HIGH,"mvote pvote cvote dvotes ");
 		if (i == aset_vars->ADMIN_BRING_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"bring ");
-		if (i == aset_vars->ADMIN_GOTO_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"goto ");
 		if (i == aset_vars->ADMIN_ADDTIME_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"addtime ");
-//		if (i == aset_vars->ADMIN_FORCETEAM_LEVEL)
-//			gi.cprintf(ent,PRINT_HIGH,"forceteam ");
 		if (i == aset_vars->ADMIN_ADDENT_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"addent rement moveent alignent shiftent listents ");
+			gi.cprintf(ent,PRINT_HIGH,"addent rement moveent alignent shiftent listents addbox movebox skinbox lock");
 		if (i == aset_vars->ADMIN_MSET_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"mset acmd ");
-		if (i == aset_vars->ADMIN_REMALL_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"remall ");
-		if (i == aset_vars->ADMIN_DVOTE_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"dvotes ");
-		if (i == aset_vars->ADMIN_GIVEALL_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"give all ");
-		if (i == aset_vars->ADMIN_ADDBALL_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"addball ");
-		if (i == aset_vars->ADMIN_ADDBOX_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"addbox movebox skinbox ");
+			gi.cprintf(ent,PRINT_HIGH,"mset ");
 		if (i == aset_vars->ADMIN_GSET_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"gset ");
 		if (i == aset_vars->ADMIN_IP_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"whois ");
-		if (i == aset_vars->ADMIN_DUMMYVOTE_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"dummyvote ");
 		if (i == aset_vars->ADMIN_BAN_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"addban remban listbans ");
-		if (i == aset_vars->ADMIN_REMMAP_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH, "remmap ");
-		if (i == aset_vars->ACMD_RESET_LEVEL)
-			gi.cprintf(ent, PRINT_HIGH, "reset ");
 		if (i == aset_vars->ADMIN_REMTIMES_LEVEL)
-			gi.cprintf(ent, PRINT_HIGH, "remalltimes ");
+			gi.cprintf(ent, PRINT_HIGH, "remtime remalltimes ");
 		if (i == aset_vars->ADMIN_UPDATESCORES_LEVEL)
 			gi.cprintf(ent, PRINT_HIGH, "updatescores ");
-		if (i == aset_vars->ACMD_ADMINLEVEL_LEVEL)
-		{
-			j = 1;
-			gi.cprintf(ent, PRINT_HIGH, "admin account ");
-		}
-		if (i == aset_vars->ACMD_LISTADMINS_LEVEL)
-			gi.cprintf(ent, PRINT_HIGH, "listadmins ");
-		if (i == aset_vars->ACMD_ADDADMIN_LEVEL)
-		{
-			if (0 == j)
-			{
-				gi.cprintf(ent, PRINT_HIGH, "admin account ");
-				j = 1;
-			}
-		}
-		if (i == aset_vars->ACMD_REMADMIN_LEVEL)
-		{
-			if (0 == j)
-			{
-				gi.cprintf(ent, PRINT_HIGH, "admin account ");
-				j = 1;
-			}
-		}
-//		if (i == aset_vars->ACMD_LOCK_LEVEL)
-//			gi.cprintf(ent, PRINT_HIGH, "lock ");
-		j = 0;
-
+		if (i == aset_vars->ADMIN_ADMINEDIT_LEVEL)
+			gi.cprintf(ent, PRINT_HIGH, "listadmin addadmin remadmin changeadmin ");
+		if (i == aset_vars->ADMIN_TOGGLEHUD_LEVEL)
+			gi.cprintf(ent, PRINT_HIGH, "togglehud ");
+		if (i == aset_vars->ADMIN_NEXTMAPS_LEVEL)
+			gi.cprintf(ent, PRINT_HIGH, "nextmaps ");
+		if (i == aset_vars->ADMIN_CHANGENAME_LEVEL)
+			gi.cprintf(ent, PRINT_HIGH, "changename ");
+		if (i == aset_vars->ADMIN_RATERESET_LEVEL)
+			gi.cprintf(ent, PRINT_HIGH, "ratereset ");
+		if (i == aset_vars->ADMIN_SORTMAPS_LEVEL)
+			gi.cprintf(ent, PRINT_HIGH, "sortmaps ");
 		gi.cprintf(ent,PRINT_HIGH,"\n");
 	}
+	gi.cprintf(ent, PRINT_HIGH, "-----------------------------------------------------------------------------------\n\n");
 }
 void mvote(edict_t *ent)
 {
@@ -5322,64 +5154,61 @@ void mvote(edict_t *ent)
 	int i,i2,map;
 	int	notimes[MAX_MAPS];
 
-	if (ent->client->resp.admin<aset_vars->ADMIN_MAPVOTE_LEVEL)
-	{
+	if (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL) {
+		gi.cprintf(ent, PRINT_HIGH, "Please login to use mvote.\n");
 		return;
 	}
 
 	if (gi.argc() < 2) {
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		gi.cprintf(ent, PRINT_HIGH, "Type maplist for a list of maps.\n");
-		gi.cprintf(ent, PRINT_HIGH, "You may also use mvote random \n");
-		gi.cprintf(ent, PRINT_HIGH, "to have a map chosen for you.    \n");		
-		gi.cprintf(ent, PRINT_HIGH, "mvote next could also be used.\n");		
+		gi.cprintf(ent, PRINT_HIGH, "mvote [mapname] - a specific map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mvote random - a random map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mvote notime - a random map with no times.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mvote next - the next map.\n");		
+		gi.cprintf(ent, PRINT_HIGH, "mvote prev - the previous map.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mvote new - the newest map.\n");
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		return;
 	}
 
-	if (maplist.nummaps<=0)
-	{
+	// check for empty maplist
+	if (maplist.nummaps<=0) {
 		gi.cprintf(ent, PRINT_HIGH, "No maps in maplist\n");
 		return;
 	}
-
 	map = -1;
 
 	strncpy(temp,gi.argv(1),sizeof(temp)-1);
 
-	if ((strcmp(temp,"RANDOM")==0) || (strcmp(temp,"random")==0))
-	{
-		map = rand() % maplist.nummaps;
-		
-		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
+	if ((strcmp(temp,"RANDOM")==0) || (strcmp(temp,"random")==0)) {
+		map = rand() % maplist.nummaps;	
+		if (ent->client->resp.admin>=aset_vars->ADMIN_VOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
 			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's random map vote has passed. Level changing to %s.\n", 
+			gi.bprintf(PRINT_HIGH, "%s's mvote(random) has passed. Map changing to %s.\n", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
 			EndDMLevel();
 			return;
 		}
-
 	}
 	else
-	if ((strcmp(temp,"NEXT")==0) || (strcmp(temp,"next")==0))
-	{
+	if ((strcmp(temp,"NEXT")==0) || (strcmp(temp,"next")==0)) {
 		map = level.mapnum;
 		map++;
 		if (map>=maplist.nummaps)
 			map = 0;
 		
-		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
+		if (ent->client->resp.admin>=aset_vars->ADMIN_VOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
 			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
+			gi.bprintf(PRINT_HIGH, "%s's mvote(next) has passed. Map changing to %s.\n", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
 			EndDMLevel();
 			return;
 		}
-
 	}
 	else
 	if ((strcmp(temp,"notime")==0) || (strcmp(temp,"NOTIME")==0))
@@ -5400,16 +5229,15 @@ void mvote(edict_t *ent)
 		}
 		map = rand() % i2;
 
-		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
+		if (ent->client->resp.admin>=aset_vars->ADMIN_VOTE_LEVEL) {
 			sprintf(text,"changed level to %s (no time set).",maplist.mapnames[notimes[map]]);
 			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s (no time set).\n", 
+			gi.bprintf(PRINT_HIGH, "%s's mvote(notime) has passed. Map changing to %s.\n", 
 				ent->client->pers.netname, maplist.mapnames[notimes[map]]);
 			strncpy(level.forcemap, maplist.mapnames[notimes[map]], sizeof(level.forcemap) - 1);
 			EndDMLevel();
 			return;
 		}
-
 	}
 	else
 	if ((strcmp(temp,"PREV")==0) || (strcmp(temp,"prev")==0))
@@ -5419,16 +5247,30 @@ void mvote(edict_t *ent)
 		if (map<0)
 			map = maplist.nummaps-1;
 		
-		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
+		if (ent->client->resp.admin>=aset_vars->ADMIN_VOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
 			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
+			gi.bprintf(PRINT_HIGH, "%s's mvote(prev) has passed. Map changing to %s.\n", 
 				ent->client->pers.netname, maplist.mapnames[map]);
 			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
 			EndDMLevel();
 			return;
 		}
+	}
+	else
+	if ((strcmp(temp,"NEW")==0) || (strcmp(temp,"new")==0))
+	{
+		map = maplist.nummaps - 1;
 
+		if (ent->client->resp.admin>=aset_vars->ADMIN_VOTE_LEVEL) {
+			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
+			admin_log(ent,text);
+			gi.bprintf(PRINT_HIGH, "%s's mvote(new) has passed. Map changing to %s.\n", 
+				ent->client->pers.netname, maplist.mapnames[map]);
+			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
+			EndDMLevel();
+			return;
+		}
 	}
 	else
 	{
@@ -5448,80 +5290,16 @@ void mvote(edict_t *ent)
 			return;
 		}
 
-		if (ent->client->resp.admin>=aset_vars->ADMIN_MAPVOTE_LEVEL) {
+		if (ent->client->resp.admin>=aset_vars->ADMIN_VOTE_LEVEL) {
 			sprintf(text,"changed level to %s.",gi.argv(1));
 			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
+			gi.bprintf(PRINT_HIGH, "%s's mvote has passed. Map changing to %s.\n", 
 				ent->client->pers.netname, gi.argv(1));
 			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
 			EndDMLevel();
 			return;
 		}
 	}
-}
-
-void mkadmin(edict_t *ent)
-{
-	int i;
-	edict_t *targ;
-	
-	if (ent->client->resp.admin<aset_vars->ADMIN_MKADMIN_LEVEL)
-	{
-		return;
-	}
-
-	if (gi.argc() < 2) {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "Who do you want to make an admin?\n");
-		return;
-	}
-
-	if (strcmp(gi.argv(1),"all")==0)
-	{
-		for (i = 1; i <= maxclients->value; i++) 
-		{
-			targ = g_edicts + i;
-			if (!targ->inuse)
-				continue;
-			if (!targ->client->resp.admin)
-			{
-				targ->client->resp.admin = 1;
-				gi.bprintf(PRINT_HIGH, "%s has become a temp level 1 admin.\n", targ->client->pers.netname);
-				List_Admin_Commands(targ);
-			}
-		}
-		return;
-	}
-
-	if (*gi.argv(1) < '0' && *gi.argv(1) > '9') {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "Specify the player number to make admin.\n");
-		return;
-	}
-
-	i = atoi(gi.argv(1));
-	if (i < 1 || i > maxclients->value) {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "Invalid player number.\n");
-		return;
-	}
-
-	targ = g_edicts + i;
-	if (!targ->inuse) {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "That player number is not connected.\n");
-		return;
-	}
-
-	if (targ->client->resp.admin)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"That player is already an admin.\n");
-		return;
-	}
-
-	targ->client->resp.admin = 1;
-	gi.bprintf(PRINT_HIGH, "%s has become a temp level 1 admin.\n", targ->client->pers.netname);
-	List_Admin_Commands(targ);
 }
 
 void delete_all_times(void)
@@ -5556,30 +5334,6 @@ void delete_all_demos(void)
 #endif
 		remove(name);	
 	}
-}
-
-void reset_server(edict_t *ent)
-{
-	int alevel;
-	char text[1024];
-
-	if (gi.argc() > 1 && (ent->client->resp.admin==aset_vars->MAX_ADMIN_LEVEL)) 
-	{
-		alevel = get_admin_level(gi.argv(3),gi.argv(2));
-		if (alevel==aset_vars->MAX_ADMIN_LEVEL)
-		{
-			sprintf(text,"is reseting the server.");
-			admin_log(ent,text);
-			//delete all files here
-			delete_all_times();
-			delete_all_demos();
-			remove_times(level.mapnum);
-			gi.cprintf(ent,PRINT_HIGH,"Server has been reset\n");
-			gi.AddCommandString("set sv_allow_map 1\n");
-			gi.AddCommandString("map forkjumping\n");
-		}
-	}
-
 }
 
 void remtimes(edict_t *ent)
@@ -5657,7 +5411,7 @@ void Add_Box(edict_t *ent)
     int cp;
     int cpsize;
 
-	if (ent->client->resp.admin<aset_vars->ADMIN_ADDBOX_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
 		return;
 	if (ent->client->resp.ctf_team==CTF_TEAM2 && gametype->value!=GAME_CTF)
 		return;
@@ -5684,14 +5438,14 @@ void Add_Box(edict_t *ent)
         cpsize = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);
          if ((box_num>3) && (box_num<7)){
             if (gi.argc() > 2){
-                if ((cp<1) || (cp>cpsize)) {
-                    gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
+                if ((cp<0) || (cp>cpsize-1)) {
+                    gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 0 to %d (Ex: Addbox 4 1).\n",cpsize-1);
                     return;
                 } else {
                     cp = atoi(gi.argv(2)) - 1;
                 }
             } else {
-                gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 1 to %d (Ex: Addbox 4 1).\n",cpsize);
+                gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 0 to %d (Ex: Addbox 4 1).\n",cpsize-1);
                 return;
             }
         }
@@ -5740,19 +5494,19 @@ void Add_Box(edict_t *ent)
 void Box_Skin(edict_t *ent)
 {
 	int snum;
-	if (ent->client->resp.admin<aset_vars->ADMIN_ADDBOX_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
 		return;
 	if (ent->client->resp.ctf_team==CTF_TEAM2 && gametype->value!=GAME_CTF)
 		return;
 	if (gi.argc() < 2)
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10");
+		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10\n");
 		return;
 	}
 	snum = atoi(gi.argv(1));
 	if ((snum<1) || (snum>10))
 	{
-		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10");
+		gi.cprintf(ent,PRINT_HIGH,"Please provide a valid skin number between 1 and 10\n");
 		return;
 	}
 	snum--;
@@ -5767,7 +5521,7 @@ void Box_Skin(edict_t *ent)
 
 void Move_Box(edict_t *ent)
 {
-	if (ent->client->resp.admin<aset_vars->ADMIN_ADDBOX_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
 		return;
 	if (ent->client->resp.ctf_team==CTF_TEAM2 && gametype->value!=GAME_CTF)
 		return;
@@ -5912,35 +5666,6 @@ void Skin_Ent(edict_t *ent)
 	}
 }
 
-void DeleteEnts(edict_t *ent)
-{
-	int mapnum,i;
-	if (ent->client->resp.admin<aset_vars->ADMIN_REMTIMES_LEVEL)
-		return;
-
-	if (gi.argc() < 3)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Please supply the mapname.\n");
-		return;
-	}
-	mapnum = -1;
-	for (i=0;i<maplist.nummaps;i++)
-	{
-		if (strcmp(maplist.mapnames[i],gi.argv(2))==0)
-		{
-			mapnum = i;
-			break;
-		}
-	}
-	if (mapnum<0)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Invalid mapname\n");
-		return;
-	}
-	RemoveAllEnts(maplist.mapnames[mapnum]);
-	gi.cprintf(ent,PRINT_HIGH,"Entities for %s removed.\n",maplist.mapnames[mapnum]);
-}
-
 void Move_Client(edict_t *ent, edict_t *targ)
 {
 		gclient_t	*client;
@@ -5976,7 +5701,7 @@ void BringClient(edict_t *ent)
 	int i;
 	edict_t *targ;
 	
-	if (ent->client->resp.admin<aset_vars->ADMIN_GOTO_LEVEL) {
+	if (ent->client->resp.admin<aset_vars->ADMIN_BRING_LEVEL) {
 		return;
 	}
 	if (gi.argc() < 2) {
@@ -6024,9 +5749,6 @@ void GotoClient(edict_t *ent)
 	int i;
 	edict_t *targ;
 	
-	if (ent->client->resp.admin<aset_vars->ADMIN_GOTO_LEVEL) {
-		return;
-	}
 	if (gi.argc() < 2) {
 		CTFPlayerList(ent);
 		gi.cprintf(ent, PRINT_HIGH, "Who do you want to goto?\n");
@@ -6059,10 +5781,7 @@ void GotoClient(edict_t *ent)
 		return;
 	}
 
-	if (ent->client->resp.admin>=aset_vars->ADMIN_GOTO_LEVEL) {
-		Move_Client(ent,targ);
-		return;
-	}
+	Move_Client(ent,targ);
 }
 
 void Uptime(edict_t *ent)
@@ -6200,40 +5919,6 @@ void List_mset_commands(edict_t *ent,int offset)
    gi.cprintf (ent, PRINT_HIGH, "Page %d/%1.0f (%i commands).\n",(offset+1),ceil(num_mset_commands/20.0),num_mset_commands); 
 
    gi.cprintf (ent, PRINT_HIGH, "-------------------------------------------------\n"); 
-}
-
-void List_acmd_commands(edict_t *ent)
-{
-	if (ent->client->resp.admin>=aset_vars->ADMIN_MSET_LEVEL)
-	{
-		gi.cprintf(ent, PRINT_HIGH, "  deleteents <mapname>\n");
-		gi.cprintf(ent, PRINT_HIGH, "  remtimes\n");
-		gi.cprintf(ent, PRINT_HIGH, "  togglehud\n");
-		gi.cprintf(ent, PRINT_HIGH, "  nextmaps <1> <2> <3>\n");
-		gi.cprintf(ent, PRINT_HIGH, "  ghost\n");
-	}
-	if (ent->client->resp.admin>=aset_vars->ACMD_LOCK_LEVEL)
-		gi.cprintf(ent, PRINT_HIGH, "  lock\n");
-	if (ent->client->resp.admin>=aset_vars->ACMD_LISTADMINS_LEVEL)
-		gi.cprintf(ent, PRINT_HIGH, "  listadmins\n");
-	if (ent->client->resp.admin>=aset_vars->ACMD_REMADMIN_LEVEL)
-		gi.cprintf(ent, PRINT_HIGH, "  remadmin\n");
-	if (ent->client->resp.admin>=aset_vars->ACMD_ADDADMIN_LEVEL)
-		gi.cprintf(ent, PRINT_HIGH, "  addadmin\n");
-	if (ent->client->resp.admin>=aset_vars->ACMD_ADDADMIN_LEVEL)
-		gi.cprintf(ent, PRINT_HIGH, "  changename\n");
-	if (ent->client->resp.admin>=aset_vars->ACMD_ADMINLEVEL_LEVEL)
-		gi.cprintf(ent, PRINT_HIGH, "  adminlevel\n");
-	if (ent->client->resp.admin>=aset_vars->ACMD_RESET_LEVEL)
-		gi.cprintf(ent, PRINT_HIGH, "  reset\n");
-	if (ent->client->resp.admin>=aset_vars->ACMD_RESYNC_LEVEL)
-		gi.cprintf(ent, PRINT_HIGH, "  resync\n");
-	if (ent->client->resp.admin>=aset_vars->ADMIN_ACMD_LEVEL)
-	{
-		gi.cprintf(ent, PRINT_HIGH, "  ratereset\n");
-		gi.cprintf(ent, PRINT_HIGH, "  sortmaps\n");
-	}
-
 }
 
 void List_gset_commands(edict_t *ent,int offset)
@@ -6418,151 +6103,6 @@ void MSET(edict_t *ent)
 	}
 }
 
-void ACMD(edict_t *ent)
-{
-	if (ent->client->resp.admin<aset_vars->ADMIN_MSET_LEVEL)
-		return;
-
-	if (gi.argc() < 2) {
-		gi.cprintf(ent, PRINT_HIGH, "Available commands : \n");
-		List_acmd_commands(ent);
-		return;
-	}
-	//first get map entry
-
-	//second run command
-	if (strcmp(gi.argv(1),"deleteents")==0)
-	{
-		if (gi.argc()==2)
-			gi.cprintf(ent,PRINT_HIGH,"Please provide a map name\n");
-		else
-		DeleteEnts(ent);
-	}
-	else if (strcmp(gi.argv(1),"remalltimes")==0)
-	{
-		remtimes(ent);
-	}
-	else if (strcmp(gi.argv(1),"togglehud")==0)
-	{
-		ToggleHud(ent);
-	}
-	else if (strcmp(gi.argv(1),"nextmaps")==0)
-	{
-		Overide_Vote_Maps(ent);
-	}
-	else if (strcmp(gi.argv(1),"changename")==0)
-	{
-		Changename(ent);
-	}
-	else if (strcmp(gi.argv(1),"remtime")==0)
-	{
-		if (gi.argc()==2)
-			gi.cprintf(ent,PRINT_HIGH,"Please provide time to remove.\n");
-		else
-		remtime(ent);
-	}
-	else if (strcmp(gi.argv(1),"completions")==0)
-	{
-		if (ent->client->resp.admin<aset_vars->ACMD_RESET_LEVEL)
-		return;
-		reset_maps_completed(ent);
-	}
-	else if (strcmp(gi.argv(1),"test")==0)
-	{
-		if (ent->client->resp.admin<aset_vars->ACMD_RESET_LEVEL)
-		return;
-		cmd_test(ent);
-	}
-	else if (strcmp(gi.argv(1),"reset")==0)
-	{
-	if (ent->client->resp.admin<aset_vars->ACMD_RESET_LEVEL)
-		return;
-		if (gi.argc() < 4)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Please provide a level %i username and password.\n", aset_vars->ACMD_RESET_LEVEL);
-			return;
-		}
-		reset_server(ent);
-	}
-	else if (strcmp(gi.argv(1),"addadmin")==0)
-	{
-	if (ent->client->resp.admin<aset_vars->ACMD_ADDADMIN_LEVEL)
-		return;
-		if (gi.argc() < 5)
-		{
-			list_admins(ent,1);
-			gi.cprintf(ent,PRINT_HIGH,"Format : acmd addadmin user pass level\n");
-			return;
-		}
-		add_admin(ent,gi.argv(2),gi.argv(3),atoi(gi.argv(4)));
-	}
-	else if (strcmp(gi.argv(1),"remadmin")==0)
-	{
-	if (ent->client->resp.admin<aset_vars->ACMD_REMADMIN_LEVEL)
-		return;
-		if (gi.argc() < 3)
-		{
-			list_admins(ent,1);
-			gi.cprintf(ent,PRINT_HIGH,"Format : acmd remadmin number\n");
-			return;
-		}
-		rem_admin(ent,atoi(gi.argv(2)));
-	}
-	else if (strcmp(gi.argv(1),"adminlevel")==0)
-	{
-	if (ent->client->resp.admin<aset_vars->ACMD_ADMINLEVEL_LEVEL)
-		return;
-		if (gi.argc() < 4)
-		{
-			list_admins(ent,1);
-			gi.cprintf(ent,PRINT_HIGH,"Format : acmd adminlevel admin level\n");
-			return;
-		}
-		change_admin(ent,atoi(gi.argv(2)),atoi(gi.argv(3)));
-	}
-	else if (strcmp(gi.argv(1),"listadmins")==0)
-	{
-	if (ent->client->resp.admin<aset_vars->ACMD_LISTADMINS_LEVEL)
-		return;
-		if (gi.argc() < 3)
-		{
-			list_admins(ent,1);
-			return;
-		}
-		list_admins(ent,atoi(gi.argv(2)));
-	}
-	else if (strcmp(gi.argv(1),"lock")==0)
-	{
-		if (ent->client->resp.admin<aset_vars->ACMD_LOCK_LEVEL)
-			return;
-		lock_ents(ent);
-	}
-	else if (strcmp(gi.argv(1),"ratereset")==0)
-	{
-		if (ent->client->resp.admin<aset_vars->ADMIN_GSET_LEVEL)
-			return;
-		reset_map_played_count(ent);
-	}
-	else if (strcmp(gi.argv(1),"sortmaps")==0)
-	{
-		if (ent->client->resp.admin<aset_vars->ADMIN_GSET_LEVEL)
-			return;
-		sort_maps(ent);
-	}
-	else if (strcmp(gi.argv(1),"resync")==0)
-	{
-		if (ent->client->resp.admin<aset_vars->ACMD_RESYNC_LEVEL)
-			return;
-		resync(true);
-	}
-	else 
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Invalid command\n");
-	}
-	
-
-}
-
 void GSET(edict_t *ent)
 {
 	int i;
@@ -6623,7 +6163,7 @@ void ASET(edict_t *ent)
 	cvar_t	*game_dir;
 	game_dir = gi.cvar("game", "", 0);
 
-	if (ent->client->resp.admin<aset_vars->MAX_ADMIN_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_MAX_LEVEL)
 		return;
 
 	if (gi.argc() < 2) {
@@ -6891,142 +6431,125 @@ int num_mset_commands = 0;
 void SetDefaultValues(void)
 {	
 	int i;
-	strcpy(gset_vars->model_store,"models/monsters/commandr/head/tris.md2");
-	strcpy(gset_vars->admin_model,"guard");
-	strcpy(gset_vars->numberone_wav,"numberone.wav");
-	strcpy(gset_vars->mset->edited_by,"noone");
-	gset_vars->debug =0;
-	gset_vars->addtime_announce = 1;
-	gset_vars->holdtime = 1;
-	gset_vars->pvote_announce = 1;
-	gset_vars->cvote_announce = 1;
-	gset_vars->flashlight = 1;
-	gset_vars->numberone_length = 17;
-	gset_vars->intermission = 50;
-	gset_vars->hookspeed = 1200;
-	gset_vars->hookpull = 750;
-	gset_vars->glow_admin = 0;
-	gset_vars->glow_multi = 1;
-	gset_vars->time_adjust = 0;
-//	gset_vars->glow_fastest = 1;
-	gset_vars->respawn_sound = 1;
-//	gset_vars->glow_time = 0;
-	gset_vars->autotime = 5;
-	gset_vars->hook = 1;
-	gset_vars->hideghost = 300;
-	gset_vars->invis = 0;
-	gset_vars->jetpack = 1;
-	gset_vars->transparent = 0;
-	gset_vars->walkthru = 1;
-	gset_vars->overtimelimit = 3;
-	gset_vars->overtimerandom = 1;
-	gset_vars->votingtime = 20;
-	gset_vars->overtimetype = 1;
-	gset_vars->overtimewait = 20;
-	gset_vars->overtimegainedhealth = 25;
-	gset_vars->overtimehealth = 150;
-	gset_vars->maplist_times = 0;
-	gset_vars->playsound = 10;
-	gset_vars->voteseed = 20;
-	gset_vars->numsoundwavs = 1;
-	gset_vars->store_safe = 1;
+
+	// msets/gsets
 	gset_vars->addedtimemap = 15;
-	gset_vars->addmaplevel = 7;
-	gset_vars->weapon_fire_min_delay = 500;
-	gset_vars->html_create = 0;
-	gset_vars->html_profile = 1;
-	gset_vars->html_bestscores = 8;
-	gset_vars->html_firstplaces = 10;
+	gset_vars->mset->addedtimeoverride = 0;
+	gset_vars->addtime_announce = 1;
+	gset_vars->admin_max_addtime = 0;
+	strcpy(gset_vars->admin_model,"guard");
+	gset_vars->allow_admin_boot = 1;
 #ifdef RACESPARK
 	gset_vars->allow_race_spark = 1;
 #endif
-	gset_vars->maps_pass = 5;
-	gset_vars->nomapvote = 300;
-	gset_vars->notimevotetime = 300;
-	gset_vars->allow_admin_boot = 1;
-	gset_vars->adminmaxaddtime = 0;
-	gset_vars->ghost_glow = 0;
-	gset_vars->admin_model_level = 5;
-	gset_vars->map_end_warn_sounds = 1;  // hann
-	gset_vars->max_votes = 3; 	     // _h2
-	gset_vars->tempbanonkick = 0;
-//	gset_vars->updated = 0;
-
-	gset_vars->mset->ghost_model = 0;
-	gset_vars->mset->droptofloor = 1;
-	gset_vars->mset->gravity = 800;
-	gset_vars->mset->playtag = 0;
+	gset_vars->mset->allowsrj = 0;
+	gset_vars->antiglue = 0;
+	gset_vars->antiglue_allow1st = 0;
+	gset_vars->antiglue_penalty = 2;
+	gset_vars->autotime = 10;
+	gset_vars->best_time_glow = 0;
+	gset_vars->mset->bfg = 0;
+	gset_vars->mset->blaster = 0;
+	gset_vars->mset->checkpoint_total = 0;
 	gset_vars->mset->cmsg = 0;
-	gset_vars->mset->rocket = 0;
-	gset_vars->mset->tourney = 0;
-	gset_vars->mset->blaster = 1;
+	gset_vars->cvote_announce = 1;
 	gset_vars->mset->damage = 1;
-	gset_vars->mset->fastdoors = 0;	
-	gset_vars->mset->slowdoors = 0;	
-	gset_vars->mset->fasttele = 0;
-	gset_vars->mset->health = 400;
-	gset_vars->mset->regen = 5;
-	gset_vars->mset->timelimit = 20;
-	gset_vars->mset->best_time_glow = 0;
-	gset_vars->mset->antiglue = 0;
-	gset_vars->mset->antiglue_penalty = 2;
-	gset_vars->mset->antiglue_allow1st = 0;
-	gset_vars->mset->target_glow = 512;
-	gset_vars->mset->ghost = 1;
-	gset_vars->mset->ghost_trans = 0;
-	gset_vars->mset->kill_delay = 2;
-	gset_vars->mset->singlespawn = 0;
+	gset_vars->debug =0;
+	gset_vars->mset->droptofloor = 1;
+	strcpy(gset_vars->mset->edited_by,"NA");
 	gset_vars->mset->falldamage = 1;
-	gset_vars->mset->addedtimeoveride = 0;
+	gset_vars->mset->fast_firing = 0;
+	gset_vars->mset->fastdoors = 0;
+	gset_vars->mset->fasttele = 0;
+	gset_vars->flashlight = 1;
+	gset_vars->fpskick = 1;
+	gset_vars->mset->ghost = 1;
+	gset_vars->ghost_glow = 0;
+	gset_vars->mset->ghost_model = 0;
+	gset_vars->glow_admin = 0;
+	gset_vars->glow_multi = 1;
+	gset_vars->mset->gravity = 800;
+	gset_vars->mset->health = 400;
+	gset_vars->hideghost = 300;
+	gset_vars->holdtime = 1;
+	gset_vars->hook = 1;
+	gset_vars->hookpull = 750;
+	gset_vars->hookspeed = 1200;
+	gset_vars->html_bestscores = 8;
+	gset_vars->html_create = 0;
+	gset_vars->html_firstplaces = 10;
+	gset_vars->html_profile = 1;
+	gset_vars->intermission = 50;
+	gset_vars->invis = 0;
+	gset_vars->jetpack = 1;
+	gset_vars->kill_delay = 1;
+	gset_vars->map_end_warn_sounds = 1;
+	gset_vars->maplist_times = 0;
+	gset_vars->maps_pass = 5;
+	gset_vars->max_votes = 3;
+	strcpy(gset_vars->model_store,"models/monsters/commandr/head/tris.md2");
+	gset_vars->nomapvotetime = 300;
+	gset_vars->notimevotetime = 300;
+	gset_vars->numberone_length = 17;
+	strcpy(gset_vars->numberone_wav,"numberone.wav");
+	gset_vars->numsoundwavs = 1;
+	gset_vars->overtimegainedhealth = 25;
+	gset_vars->overtimehealth = 150;
+	gset_vars->overtimelimit = 3;
+	gset_vars->overtimerandom = 1;
+	gset_vars->overtimetype = 1;
+	gset_vars->overtimewait = 20;
+	gset_vars->playsound = 10;
+	gset_vars->playtag = 0;
+	gset_vars->pvote_announce = 1;
+	gset_vars->mset->regen = 100;
+	gset_vars->respawn_sound = 1;
+	gset_vars->mset->rocket = 0;
+	gset_vars->store_safe = 0;
+	gset_vars->mset->singlespawn = 0;
+	gset_vars->mset->slowdoors = 0;
+	gset_vars->target_glow = 2;
+	gset_vars->temp_ban_on_kick = 0;
+	gset_vars->time_adjust = 0;
+	gset_vars->mset->timelimit = 20;
+	gset_vars->tourney = 0;
+	gset_vars->transparent = 0;
 	gset_vars->voteextratime = 60;
-	gset_vars->mset->fpskick = 1;
+	gset_vars->voteseed = 20;
+	gset_vars->votingtime = 20;
+	gset_vars->walkthru = 1;
+	gset_vars->weapon_fire_min_delay = 500;
 
-	aset_vars->MAX_ADMIN_LEVEL			=7;
-	aset_vars->ADMIN_ADDADMIN_LEVEL		=7;
-	aset_vars->ADMIN_ADDMAP_LEVEL		=7;
-	aset_vars->ADMIN_GSET_LEVEL			=7;
-	aset_vars->ADMIN_STUFF_LEVEL		=7;
-	aset_vars->ADMIN_ACMD_LEVEL			=7;
-	aset_vars->ACMD_REMADMIN_LEVEL		=7;
-	aset_vars->ACMD_RESET_LEVEL			=7;
-	aset_vars->ACMD_LISTADMINS_LEVEL	=7;
-	aset_vars->ACMD_ADMINLEVEL_LEVEL	=7;
-	aset_vars->ACMD_ADDADMIN_LEVEL		=7;
-	aset_vars->ACMD_LOCK_LEVEL			=7;
-
-	aset_vars->ADMIN_ADDBOX_LEVEL		=6;
-	aset_vars->ADMIN_ADDBALL_LEVEL		=6;
-
-	aset_vars->ADMIN_MSET_LEVEL			=5;
-	aset_vars->ADMIN_GIVEALL_LEVEL		=5;
-	aset_vars->ADMIN_REMALL_LEVEL		=5;
-	aset_vars->ADMIN_REMTIMES_LEVEL		=5;
-	aset_vars->ADMIN_TOGGLEHUD_LEVEL		=7;
-	aset_vars->ADMIN_ADDENT_LEVEL		=5;
-	aset_vars->ADMIN_DVOTE_LEVEL		=5;
-	aset_vars->ADMIN_REMMAP_LEVEL		=6;
-
-	aset_vars->ADMIN_SLAP_LEVEL			=4;
-	aset_vars->ADMIN_ADDTIME_LEVEL		=4;
-	aset_vars->ADMIN_THROWUP_LEVEL		=4;
-//	aset_vars->ADMIN_FORCETEAM_LEVEL	=4;
-	aset_vars->ADMIN_BRING_LEVEL		=4;
-	aset_vars->ADMIN_GOTO_LEVEL			=4;
-	aset_vars->ADMIN_CVOTE_LEVEL		=4;
-	aset_vars->ADMIN_PVOTE_LEVEL		=4;
-	aset_vars->ADMIN_MAPVOTE_LEVEL		=4;
-	aset_vars->ADMIN_BOOT_LEVEL			=3;
-	aset_vars->ADMIN_MKADMIN_LEVEL		=3;
-	aset_vars->ADMIN_SILENCE_LEVEL		=2;
-	aset_vars->ADMIN_GIVE_LEVEL			=1;
-	aset_vars->ADMIN_NOCLIP_LEVEL		=1;
-//	aset_vars->ADMIN_HOOK_LEVEL			=1;
-	aset_vars->ADMIN_BAN_LEVEL			=7;
-	aset_vars->ADMIN_IP_LEVEL			=5;
-	aset_vars->ADMIN_DUMMYVOTE_LEVEL	=4;
-	aset_vars->ADMIN_NOMAXVOTES_LEVEL	=2;  // _h2
-	aset_vars->ADMIN_UPDATESCORES_LEVEL =7;
-	aset_vars->ACMD_RESYNC_LEVEL		=7;
+	// asets
+	aset_vars->ADMIN_ADDBALL_LEVEL=1;
+	aset_vars->ADMIN_ADDENT_LEVEL=3;
+	aset_vars->ADMIN_ADDMAP_LEVEL=5;
+	aset_vars->ADMIN_ADDTIME_LEVEL=2;
+	aset_vars->ADMIN_ADMINEDIT_LEVEL=5;
+	aset_vars->ADMIN_BAN_LEVEL=5;
+	aset_vars->ADMIN_BOOT_LEVEL=2;
+	aset_vars->ADMIN_BRING_LEVEL=1;
+	aset_vars->ADMIN_CHANGENAME_LEVEL=5;
+	aset_vars->ADMIN_DUMMYVOTE_LEVEL=1;
+	aset_vars->ADMIN_GIVE_LEVEL=1;
+	aset_vars->ADMIN_GIVEALL_LEVEL=1;
+	aset_vars->ADMIN_GSET_LEVEL=5;
+	aset_vars->ADMIN_IP_LEVEL=5;
+	aset_vars->ADMIN_MAX_LEVEL=5;
+	aset_vars->ADMIN_MODEL_LEVEL=5;
+	aset_vars->ADMIN_MSET_LEVEL=4;
+	aset_vars->ADMIN_NEXTMAPS_LEVEL=2;
+	aset_vars->ADMIN_NOMAXVOTES_LEVEL=2;
+	aset_vars->ADMIN_RATERESET_LEVEL=5;
+	aset_vars->ADMIN_REMTIMES_LEVEL=4;
+	aset_vars->ADMIN_SILENCE_LEVEL=1;
+	aset_vars->ADMIN_SLAP_LEVEL=1;
+	aset_vars->ADMIN_SORTMAPS_LEVEL=5;
+	aset_vars->ADMIN_STUFF_LEVEL=5;
+	aset_vars->ADMIN_THROWUP_LEVEL=1;
+	aset_vars->ADMIN_TOGGLEHUD_LEVEL=5;
+	aset_vars->ADMIN_UPDATESCORES_LEVEL=5;
+	aset_vars->ADMIN_VOTE_LEVEL=2;
 
 	num_gset_commands = 0;
     for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
@@ -7150,7 +6673,7 @@ void remall(edict_t *ent)
 	int i;
 	int temp;
 	char	buf[128];
-	if (ent->client->resp.admin<aset_vars->ADMIN_REMALL_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
 		return;
 
 	if (gi.argc() < 2)
@@ -7377,75 +6900,6 @@ qboolean Can_Remove_Entity(char *entity_name)
 	return false;
 }
 
-/*void forceteam(edict_t *ent)
-{
-	int i;
-	edict_t *targ;
-	char temp[128];
-	edict_t	*e2;
-
-	if (ent->client->resp.admin<aset_vars->ADMIN_FORCETEAM_LEVEL)
-		return;
-
-	if (gi.argc() < 2)
-	{
-		CTFPlayerList(ent);
-		gi.cprintf(ent,PRINT_HIGH,"Pick a player to forceteam\n");
-		return;
-	}
-	if (gi.argc() < 3)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"use : forceteam <number> <team>\nexample : forceteam 1 easy\n");
-		return;
-	}
-
-	if (*gi.argv(1) < '0' && *gi.argv(1) > '9') {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "Specify the player number to force.\n");
-		return;
-	}
-
-	i = atoi(gi.argv(1));
-	if (i < 1 || i > maxclients->value) {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "Invalid player number.\n");
-		return;
-	}
-
-	targ = g_edicts + i;
-	if (!targ->inuse) {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "That player number is not connected.\n");
-		return;
-	}
-
-	if (ent->client->resp.admin<=targ->client->resp.admin)
-	{
-		gi.cprintf(ent, PRINT_HIGH, "You may not forceteam someone with admin greater than or equal to yours.\n");
-	}
-	
-	if (strcmp(gi.argv(2),"easy")==0)
-	{
-		strcpy(temp,"team easy\n");
-	}
-	else if (strcmp(gi.argv(2),"hard")==0)
-	{
-		strcpy(temp,"team hard\n");
-	}
-	else if (strcmp(gi.argv(2),"observer")==0)
-	{
-		strcpy(temp,"observer\n");
-	}
-	else
-	{
-		gi.cprintf(ent, PRINT_HIGH, "Invalid team.\n");
-		return;
-	}
-	gi.bprintf(PRINT_HIGH, "%s transferred to team '%s' by %s.\n", targ->client->pers.netname,
-		gi.argv(2), ent->client->pers.netname);
-	stuffcmd(targ,temp);
-}
-*/
 void autorecord_stop(edict_t *ent)
 {
 	stuffcmd(ent,"stop\n");
@@ -7718,8 +7172,6 @@ void Ghost_Play_Frame(void)
 				level.ghost->clipmask = MASK_PLAYERSOLID;
 				level.ghost->solid = SOLID_NOT;
 				//level.ghost->s.effects = EF_COLOR_SHELL;
-				if (mset_vars->ghost_trans == 1)
-					level.ghost->s.renderfx = RF_TRANSLUCENT;
 				VectorClear (level.ghost->mins);
 				VectorClear (level.ghost->maxs);
 //				level.ghost->model = "players/female/tris.md2";
@@ -7931,16 +7383,15 @@ void remtime(edict_t *ent)
 
 	tgame = gi.cvar("game", "", 0);
 
-
 	if (ent->client->resp.admin<aset_vars->ADMIN_REMTIMES_LEVEL)
 		return;
 
-	if (gi.argc() < 3)
+	if (gi.argc() != 2)
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Please supply the time value to remove.\n");
 		return;
 	}
-	remnum = atoi(gi.argv(2));
+	remnum = atoi(gi.argv(1));
 	if ((remnum<1) || (remnum>MAX_HIGHSCORES))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Please supply the time value to remove.\n");
@@ -7997,11 +7448,11 @@ void remtime(edict_t *ent)
 		if (remuid==-1)
 			return;
 		trecid = FindTRecID(remuid);
-		if (trecid>=0) //clear time. completions -1 to fix update_tourney_records
+		if (trecid>=0) //clear time. 
 		{
 			tourney_record[trecid].fresh = false;
 			tourney_record[trecid].time = 0;
-            //tourney_record[trecid].uid = -1;
+            tourney_record[trecid].uid = -1;
 			tourney_record[trecid].completions = -1;
 		}
 //		Update_Highscores(MAX_HIGHSCORES-1);
@@ -8126,69 +7577,6 @@ void Notify_Of_Team_Commands(edict_t *ent)
 	}
 }
 
-void Cmd_UnadminUser(edict_t *ent)
-{
-	int i;
-	edict_t *targ;
-if (ent->client->resp.admin>=aset_vars->ADMIN_MKADMIN_LEVEL)
-{
-	if (gi.argc() < 2) {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "Who do you want to unadmin?\n");
-		return;
-	}
-
-	if (*gi.argv(1) < '0' && *gi.argv(1) > '9') {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "Specify the player number to unadmin.\n");
-		return;
-	}
-
-	i = atoi(gi.argv(1));
-	if (i < 1 || i > maxclients->value) {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "Invalid player number.\n");
-		return;
-	}
-
-	targ = g_edicts + i;
-	if (!targ->inuse) {
-		CTFPlayerList(ent);
-		gi.cprintf(ent, PRINT_HIGH, "That player number is not connected.\n");
-		return;
-	}
-
-	if (targ->client->resp.admin<ent->client->resp.admin) {
-		targ->client->resp.admin = 0;
-		gi.cprintf(targ,PRINT_HIGH,"You are no longer an admin.\n");
-	}
-}
-}
-
-void Cmd_UnadminAll(edict_t *ent)
-{
-	int		i;
-	edict_t		*temp;
-	int count = 0;
-	if (ent->client->resp.admin>3)
-	{
-		for (i=0 ; i<maxclients->value ; i++)
-		{
-			if (!g_edicts[i+1].inuse)
-				continue;
-			temp = &g_edicts[i+1];
-			if (temp->client->resp.admin<ent->client->resp.admin)
-			{
-				temp->client->resp.admin = 0;
-				gi.cprintf(temp,PRINT_HIGH,"You are no longer an admin.\n");
-				count++;
-			}
-		}
-
-	}
-	gi.cprintf(ent,PRINT_HIGH,"Applied to %i admins.\n",count);
-}
-
 void JumpChase(edict_t *ent)
 {
 	int i;
@@ -8282,7 +7670,7 @@ void SetSpinnyThing(void)
 
 			level.spinnything->svflags = 0;
 			level.spinnything->s.renderfx |= RF_FULLBRIGHT;
-			level.spinnything->s.effects = mset_vars->target_glow;
+			level.spinnything->s.effects = gset_vars->target_glow;
 			VectorClear (level.spinnything->mins);
 			VectorClear (level.spinnything->maxs);
 			level.spinnything->s.modelindex = gi.modelindex ("models/jump/smallmodel/tris.md2");
@@ -8316,7 +7704,7 @@ void AntiGlue(edict_t *ent)
 	ent->client->resp.antiglue = !ent->client->resp.antiglue;
 	if (ent->client->resp.antiglue)
 	{
-		if (mset_vars->antiglue)
+		if (gset_vars->antiglue)
 			gi.cprintf(ent,PRINT_HIGH,"Antiglue is on (for both EASY and HARD).\n");
 		else
 			gi.cprintf(ent,PRINT_HIGH,"Antiglue is on (for EASY only).\n");
@@ -8330,14 +7718,14 @@ void AntiGlue(edict_t *ent)
 		}
 		else
 		{
-			penalty = (float)mset_vars->antiglue_penalty/10;
+			penalty = (float)gset_vars->antiglue_penalty/10;
 			Com_sprintf(txt,sizeof(txt),"Warning: using antiglue will prevent you from setting a 1st place. Also, all jumps antiglued will have a %1.1f second penalty.",(penalty));
 			gi.cprintf (ent, PRINT_HIGH,"%s\n",HighAscii(txt));
 		}
 	}
 	else
 	{
-		if (mset_vars->antiglue)
+		if (gset_vars->antiglue)
 			gi.cprintf(ent,PRINT_HIGH,"Antiglue is off (for EASY and HARD).\n");
 		else
 			gi.cprintf(ent,PRINT_HIGH,"Antiglue is off (for EASY only).\n");
@@ -8976,7 +8364,6 @@ int FindTRecID(int uid)
 	if (uid==-1)
 		return -1;
 
-
 	for (i=0;i<MAX_USERS;i++)
 	{
 		if (tourney_record[i].uid==uid)
@@ -9074,8 +8461,11 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		if (time>0)
 		for (i=0;i<MAX_USERS;i++)
 		{
-			if (!tourney_record[i].completions) {
+			if (tourney_record[i].completions<=0) {
 				//found a spare record, use it
+				if(tourney_record[i].completions==-1){
+					tourney_record[i].completions = 0;
+				}
 				tourney_record[i].uid = uid;
 				tourney_record[i].time = time;
 				strcpy(tourney_record[i].date,date);
@@ -9086,7 +8476,7 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 				}
 				tourney_record[i].completions++;
 				tourney_record[i].fresh = true;
-				ent->client->resp.trecid =i;
+				ent->client->resp.trecid = i;
 				ent->client->resp.best_time = time;
 
 				// 1st comp AND 1st place
@@ -9110,13 +8500,14 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 	}
 	return false;
 }
+
 void sort_tourney_records(){
     int i,j,swap;
     times_record   temp;
     swap = 0;
 
     for(i=1; i<MAX_USERS; i++){
-        if(tourney_record[i].uid==-1){
+        if(tourney_record[i].completions==-1){
             break;
         }
         swap = 0; 
@@ -9448,9 +8839,6 @@ void update_users_file()
 		    fscanf(f, "%s", &name);
 		    if ((uid>=MAX_USERS) || (uid<0))
 			    continue;
-            if(sizeof(maplist.users[uid].name)<2){ //meaning that the user is created on some other server
-                maplist.users[uid].completions = completions;
-            }
 		    strcpy(maplist.users[uid].name,name);
             
 		    maplist.num_users++;
@@ -9464,9 +8852,6 @@ void update_users_file()
 		    fscanf(f, "%s", &name);
             if ((uid>=MAX_USERS) || (uid<0))
 			    continue;
-            if(sizeof(maplist.users[uid].name)<2){ //meaning that the user is created on some other server
-                maplist.users[uid].completions = completions;
-            }
             strcpy(maplist.users[uid].name,name);
             maplist.num_users++;
         }
@@ -9760,7 +9145,7 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 	if ((item_time+0.0001) < level_items.stored_item_times[0].time)
 	{
 		//antiglue fix
-		if (mset_vars->antiglue && !mset_vars->antiglue_allow1st && ent->client->resp.item_timer_penalty>=1)
+		if (gset_vars->antiglue && !gset_vars->antiglue_allow1st && ent->client->resp.item_timer_penalty>=1)
 		{
 			diff = (level_items.stored_item_times[0].time-item_time)*2;
 			if (diff<1)
@@ -10234,11 +9619,11 @@ void Add_Time(edict_t *ent)
 		return;
 	}
 
-	if (gset_vars->adminmaxaddtime)
+	if (gset_vars->admin_max_addtime)
 	{
-		if (mset_vars->addedtimeoveride)
+		if (mset_vars->addedtimeoverride)
 		{
-			if (map_added_time+i>=mset_vars->addedtimeoveride)
+			if (map_added_time+i>=mset_vars->addedtimeoverride)
 			{
 				gi.cprintf(ent,PRINT_HIGH,"Added Time is currently at %i maximum for this level is %i\n",map_added_time,gset_vars->addedtimemap);
 				return;
@@ -10276,7 +9661,7 @@ void Add_Time(edict_t *ent)
 
 void D_Votes(edict_t *ent) 
 {
-	if (ent->client->resp.admin<aset_vars->ADMIN_DVOTE_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL)
 		return;
 
 	map_allow_voting = !map_allow_voting;
@@ -10322,8 +9707,10 @@ void AddMap(edict_t *ent)
 	int		month,day,year;
 	int i;  // _h2
 	
-	if (ent->client->resp.admin<gset_vars->addmaplevel)
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADDMAP_LEVEL) {
+		gi.cprintf(ent,PRINT_HIGH,"You must be a level %i admin to add maps.\n", aset_vars->ADMIN_ADDMAP_LEVEL);
 		return;
+	}
 
 	if (gi.argc() < 2) {
 		gi.cprintf(ent,PRINT_HIGH,"addmap <mapname> - use remmap <nr> to remove maps\n");
@@ -10377,7 +9764,7 @@ void RemoveMap (edict_t* ent)
 	char	maplist_path[256];
 	cvar_t	*port;
 	cvar_t	*tgame;
-	if (ent->client->resp.admin<aset_vars->ADMIN_REMMAP_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADDMAP_LEVEL)
 		return;
 	num = atoi(gi.argv(1));
 
@@ -10788,6 +10175,9 @@ void lock_ents(edict_t *ent)
 	edict_t *e2;
 	level_items.locked = !level_items.locked;
 	
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
+		return;
+	
 	if (level_items.locked)
 	{
 		level_items.locked_by=ent;
@@ -10812,6 +10202,10 @@ void lock_ents(edict_t *ent)
 void reset_map_played_count(edict_t *ent)
 {
 	int i;
+
+	if (ent->client->resp.admin<aset_vars->ADMIN_RATERESET_LEVEL)
+		return;
+
 	if (maplist.nummaps)
 	{
 		for (i=0;i<maplist.nummaps;i++)
@@ -10823,58 +10217,189 @@ void reset_map_played_count(edict_t *ent)
 
 }
 
+void remove_maxsmins_boundary() {
+	edict_t *ent;
+
+	ent = g_edicts;
+	while (ent = G_Find(ent,FOFS(classname),"maxsmins_boundary"))
+	{
+			G_FreeEdict(ent);
+	}
+}
+
+void addclip_laser_think (edict_t *self){
+	gi.WriteByte(svc_temp_entity);
+	gi.WriteByte(TE_RAILTRAIL);
+	gi.WritePosition(self->pos1);
+	gi.WritePosition(self->pos2);
+	gi.multicast(self->s.origin, MULTICAST_PVS);
+
+	self->nextthink = level.time + FRAMETIME;
+}
+
+void maxsmins_boundary(vec3_t start, vec3_t end){
+	edict_t		*laser; //? or something
+
+	laser = G_Spawn();
+	VectorCopy(start,laser->pos1);
+	VectorCopy(end,laser->pos2);
+	laser->movetype = MOVETYPE_NONE;
+    laser->solid = SOLID_NOT;
+	laser->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
+	laser->s.modelindex = 1;
+	laser->classname = "maxsmins_boundary";
+	laser->s.frame = 2;
+	laser->s.skinnum = 0xf2f2f0f0;
+	laser->think = addclip_laser_think;
+	
+	gi.linkentity(laser);
+
+	laser->nextthink = level.time + 2;
+}
+
 void add_clip(edict_t *ent)
 {
-	char	action[256];
+	char	action[16];
 	int i;
+	int cp;
+	int cpmax;
 	edict_t *tent;
+	vec3_t center;
+	vec3_t start;
+	vec3_t end;
 
-	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL)
+	if (ent->client->resp.admin<aset_vars->ADMIN_ADDENT_LEVEL){
 		return;
-	if (ent->client->resp.ctf_team==CTF_TEAM2 && gametype->value!=GAME_CTF)
+	}
+	if (ent->client->resp.ctf_team==CTF_TEAM2 && gametype->value!=GAME_CTF){
 		return;
+	}
 
 	if ((level_items.locked) && (level_items.locked_by!=ent))
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Entity adding has been locked by %s.\n",level_items.locked_by->client->pers.netname);
 		return;
 	}
+
+	// set max cp value
+	cpmax = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int)-1;
+
 	//no args, show ent list
 	if (gi.argc() < 2) {
-		show_ent_list(ent,0);
+		gi.dprintf("Add 2 marks with addclip mark1/mark2, and create the ent with addclip create.\n");
+		gi.dprintf("Make the ent a checkpoint by using addclip checkpoint (0 - %i)\n", cpmax);
 		return;
 	}
-
+	
 	strcpy(action,gi.argv(1));
 	if (strcmp(action,"mark1")==0)
 	{
 		VectorCopy(ent->s.origin,level_items.clip1);
+		level_items.clip1[2] -= 10;
+		gi.dprintf("Mark 1 added at: %f - %f - %f\n",level_items.clip1[0],level_items.clip1[1],level_items.clip1[2]);
+		remove_maxsmins_boundary(); //remove old boundary
 	}
 	else if (strcmp(action,"mark2")==0)
 	{
 		VectorCopy(ent->s.origin,level_items.clip2);
+		level_items.clip2[2] -= 10;
+		gi.dprintf("Mark 2 added at: %f - %f - %f\n",level_items.clip2[0],level_items.clip2[1],level_items.clip2[2]);
+		remove_maxsmins_boundary(); //remove old boundary
 	}
-	else if (strcmp(action,"create")==0)
+
+	if(level_items.clip1[0]!=0.0 && level_items.clip2[0]!=0.0){ 
+		//Boundary?
+		VectorCopy(level_items.clip1,start);
+		VectorSet(end,start[0],start[1],level_items.clip2[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,start[0],level_items.clip2[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,level_items.clip2[0],start[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(start,level_items.clip2[0],level_items.clip1[1],level_items.clip1[2]);
+		VectorSet(end,start[0],level_items.clip2[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,start[0],start[1],level_items.clip2[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(start,level_items.clip1[0],level_items.clip1[1],level_items.clip2[2]);
+		VectorSet(end,level_items.clip2[0],start[1],start[2]);
+		maxsmins_boundary(start,end);
+		
+		VectorCopy(level_items.clip2,start);
+		VectorSet(end,start[0],start[1],level_items.clip1[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,start[0],level_items.clip1[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,level_items.clip1[0],start[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(start,level_items.clip1[0],level_items.clip2[1],level_items.clip2[2]);
+		VectorSet(end,start[0],level_items.clip1[1],start[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(end,start[0],start[1],level_items.clip1[2]);
+		maxsmins_boundary(start,end);
+		VectorSet(start,level_items.clip2[0],level_items.clip2[1],level_items.clip1[2]);
+		VectorSet(end,level_items.clip1[0],start[1],start[2]);
+		maxsmins_boundary(start,end);
+	}
+
+	//"addclip create" will create a clip between mark1 and mark2..
+	//"addclip checkpoint id" (id = 1,2,3 etc) will create a checkpoint between mark1 and mark2..
+	//"addclip teleporter target" will create a trigger_teleporter between mark1 and mark2..
+	if (strcmp(action,"create")==0 || strcmp(action,"checkpoint")==0)
 	{
-		//siz of bound box
+		if(strcmp(action,"checkpoint")==0 && gi.argc() < 3){
+			gi.dprintf("You need to give your checkpoint an ID from 0-%i (Ex: addclip checkpoint 1)\n", cpmax);
+			return;
+		}
+
+		remove_maxsmins_boundary(); //remove old boundary
+		//size of bound box
 		tent = G_Spawn();
-		tent->mins[0] = (level_items.clip1[0]-level_items.clip2[0])/2;
-		tent->mins[1] = (level_items.clip1[1]-level_items.clip2[1])/2;
-		tent->mins[2] = (level_items.clip1[2]-level_items.clip2[2])/2;
-		tent->maxs[0] = -tent->mins[0];
-		tent->maxs[1] = -tent->mins[1];
-		tent->maxs[2] = -tent->mins[2];
-		tent->s.origin[0] = level_items.clip1[0] - level_items.clip2[0];
-		tent->s.origin[2] = level_items.clip1[1] - level_items.clip2[1];
-		tent->s.origin[1] = level_items.clip1[2] - level_items.clip2[2];
+		if(level_items.clip1[0]>level_items.clip2[0])
+			tent->maxs[0] = (level_items.clip1[0]-level_items.clip2[0])/2;
+		else
+			tent->maxs[0] = (level_items.clip2[0]-level_items.clip1[0])/2;
+
+		if(level_items.clip1[1]>level_items.clip2[1])
+			tent->maxs[1] = (level_items.clip1[1]-level_items.clip2[1])/2;
+		else
+			tent->maxs[1] = (level_items.clip2[1]-level_items.clip1[1])/2;
+
+		if(level_items.clip1[2]>level_items.clip2[2])
+			tent->maxs[2] = (level_items.clip1[2]-level_items.clip2[2])/2;
+		else
+			tent->maxs[2] = (level_items.clip2[2]-level_items.clip1[2])/2;
+
+		tent->mins[0] = -tent->maxs[0];
+		tent->mins[1] = -tent->maxs[1];
+		tent->mins[2] = -tent->maxs[2];
+
+		VectorSubtract(level_items.clip2,level_items.clip1,center);
+		VectorScale(center,0.5,center);
+		VectorAdd(center,level_items.clip1,center);
+		VectorCopy(center,tent->s.origin);
 		VectorCopy (tent->s.origin, tent->s.old_origin);
 		tent->classname = "jump_clip";
 		tent->movetype = MOVETYPE_NONE;
-		tent->solid = SOLID_BBOX;
-	
-		tent->s.modelindex = gi.modelindex ("models/jump/smallmodel/tris.md2");
-		tent->dmg = 0;
+		if(strcmp(action,"checkpoint")==0){
+			cp = atoi(gi.argv(2));
+
+			// check for right cp values
+			if (cp < 0 || cp > (sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int)) - 1) {
+				gi.dprintf("Checkpoint value can only be between 0 and %i\n", cpmax);
+				return;
+			}
+				
+			tent->message = action;
+			tent->solid = SOLID_TRIGGER;
+			tent->count = cp;
+		} else {
+			tent->solid = SOLID_BBOX;
+		}
+		tent->s.modelindex = 1;
 		gi.linkentity (tent);
+
+		gi.linkentity (ent);
 
 
 		for (i=0;i<MAX_ENTS;i++)
@@ -10887,10 +10412,19 @@ void add_clip(edict_t *ent)
 			}
 		}
 		WriteEnts();
-	}
-	else
-	{
-		show_ent_list(ent,0);
+		if(strcmp(action,"checkpoint")==0){
+			gi.dprintf("Checkpoint created with a checkpoint value of %i.\n", cp);
+		}
+		else {
+			gi.dprintf("Jump_clip created.\n");
+		}
+		level_items.clip1[0] = 0;
+		level_items.clip1[1] = 0;
+		level_items.clip1[2] = 0;
+		level_items.clip2[0] = 0;
+		level_items.clip2[1] = 0;
+		level_items.clip2[2] = 0;
+		return;
 	}
 
 }
@@ -11023,11 +10557,11 @@ void CTFVoteTime(edict_t *ent)
 
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDTIME_LEVEL)
 	{
-		if (mset_vars->addedtimeoveride)
+		if (mset_vars->addedtimeoverride)
 		{
-			if (map_added_time+i>=mset_vars->addedtimeoveride)
+			if (map_added_time+i>=mset_vars->addedtimeoverride)
 			{
-				diff = mset_vars->addedtimeoveride - map_added_time;
+				diff = mset_vars->addedtimeoverride - map_added_time;
 				if (gset_vars->voteextratime)			
 					require_max = true;
 				else
@@ -11216,7 +10750,7 @@ void Create_Tower(edict_t *us)
 	vec3_t	maxs = {16, 16, 32};
 	int type,size;
 
-	if (us->client->resp.admin<aset_vars->MAX_ADMIN_LEVEL)
+	if (us->client->resp.admin<aset_vars->ADMIN_MAX_LEVEL)
 	{
 		//return;
 	}
@@ -11269,18 +10803,22 @@ void Create_Tower(edict_t *us)
 void Overide_Vote_Maps(edict_t *ent)
 {
 	int i;
-	if (gi.argc() < 3)
+
+	if (ent->client->resp.admin<aset_vars->ADMIN_NEXTMAPS_LEVEL)
+		return;
+
+	if (gi.argc() < 2)
 	{
-		gi.cprintf(ent,PRINT_HIGH,"format : acmd nextmaps <1> <2> <3>\n");
+		gi.cprintf(ent,PRINT_HIGH,"format : nextmaps <1> <2> <3>\n");
 		return;
 	}
-	if (gi.argc()>=5)
+	if (gi.argc()>=4)
 	{
-		map1 = atoi(gi.argv(2));
+		map1 = atoi(gi.argv(1));
 		if (!map1)
 		{
 			for (i=0;i<maplist.nummaps;i++)
-				if (strcmp(maplist.mapnames[i],gi.argv(2))==0)
+				if (strcmp(maplist.mapnames[i],gi.argv(1))==0)
 				{
 					map1 = i;
 					break;
@@ -11288,11 +10826,11 @@ void Overide_Vote_Maps(edict_t *ent)
 		}
 		else
 			map1--;
-		map2 = atoi(gi.argv(3));
+		map2 = atoi(gi.argv(2));
 		if (!map2)
 		{
 			for (i=0;i<maplist.nummaps;i++)
-				if (strcmp(maplist.mapnames[i],gi.argv(3))==0)
+				if (strcmp(maplist.mapnames[i],gi.argv(2))==0)
 				{
 					map2 = i;
 					break;
@@ -11300,11 +10838,11 @@ void Overide_Vote_Maps(edict_t *ent)
 		}
 		else
 			map2--;
-		map3 = atoi(gi.argv(4));
+		map3 = atoi(gi.argv(3));
 		if (!map3)
 		{
 			for (i=0;i<maplist.nummaps;i++)
-				if (strcmp(maplist.mapnames[i],gi.argv(4))==0)
+				if (strcmp(maplist.mapnames[i],gi.argv(3))==0)
 				{
 					map3 = i;
 					break;
@@ -11313,13 +10851,13 @@ void Overide_Vote_Maps(edict_t *ent)
 		else
 			map3--;
 	}
-	else if (gi.argc()>=4)
+	else if (gi.argc()>=3)
 	{
-		map1 = atoi(gi.argv(2));
+		map1 = atoi(gi.argv(1));
 		if (!map1)
 		{
 			for (i=0;i<maplist.nummaps;i++)
-				if (strcmp(maplist.mapnames[i],gi.argv(2))==0)
+				if (strcmp(maplist.mapnames[i],gi.argv(1))==0)
 				{
 					map1 = i;
 					break;
@@ -11327,11 +10865,11 @@ void Overide_Vote_Maps(edict_t *ent)
 		}
 		else
 			map1--;
-		map2 = atoi(gi.argv(3));
+		map2 = atoi(gi.argv(2));
 		if (!map2)
 		{
 			for (i=0;i<maplist.nummaps;i++)
-				if (strcmp(maplist.mapnames[i],gi.argv(3))==0)
+				if (strcmp(maplist.mapnames[i],gi.argv(2))==0)
 				{
 					map2 = i;
 					break;
@@ -11341,13 +10879,13 @@ void Overide_Vote_Maps(edict_t *ent)
 			map2--;
 		map3 = map2;
 	}
-	else if (gi.argc()>=3)
+	else if (gi.argc()>=2)
 	{
-		map1 = atoi(gi.argv(2));
+		map1 = atoi(gi.argv(1));
 		if (!map1)
 		{
 			for (i=0;i<maplist.nummaps;i++)
-				if (strcmp(maplist.mapnames[i],gi.argv(2))==0)
+				if (strcmp(maplist.mapnames[i],gi.argv(1))==0)
 				{
 					map1 = i;
 					break;
@@ -11370,6 +10908,10 @@ void sort_maps(edict_t *ent)
 	float t_up;
 	int i;
 	int j;
+
+	if (ent->client->resp.admin<aset_vars->ADMIN_SORTMAPS_LEVEL)
+		return;
+
     for ( i = 0; i < maplist.nummaps-1; ++i )
       for ( j = 1; j < maplist.nummaps-i; ++j )
 		if (strcmp(maplist.mapnames[j-1],maplist.mapnames[j])>0)
@@ -12466,7 +12008,6 @@ void Cmd_Race (edict_t *ent)
 		gi.cprintf(ent,PRINT_CHAT,"Replay racing is ON for demo %d\n",(int)(race_this+1));
 	gi.cprintf(ent,PRINT_HIGH,"Other options: race delay <num>, race off, race now, race <demonumber>\n");
 
-
 #endif
 }
 
@@ -12950,11 +12491,6 @@ void reset_maps_completed(edict_t *ent)
 	if (prev_uid>=0)
 		open_uid_file(prev_uid,ent);
 
-}
-
-void cmd_test(edict_t *ent)
-{
-	gi.bprintf(PRINT_HIGH,"%d\n",sizeof(record_data));
 }
 
 void Update_Added_Time(void)
@@ -13610,7 +13146,7 @@ void SkinList(edict_t *ent)
 {
 	int i;
 	char txt[255];
-	if (ent->client->resp.admin<gset_vars->admin_model_level)
+	if (ent->client->resp.admin<aset_vars->ADMIN_MODEL_LEVEL)
 		return;
 
 	if (!model_list_count)
@@ -14050,13 +13586,17 @@ void Changename(edict_t *ent)
 	int origid;
 	int newid;
 	int i;
-	if (gi.argc() < 4) 
+
+	if (ent->client->resp.admin<aset_vars->ADMIN_CHANGENAME_LEVEL)
+		return;
+
+	if (gi.argc() < 3) 
 	{
-		gi.cprintf(ent,PRINT_HIGH,"format: acmd changename orig_name new_name\nWarning: Any name change will force the current map to be reloaded.");
+		gi.cprintf(ent,PRINT_HIGH,"format: changename orig_name new_name\nWarning: Any name change will force the current map to be reloaded.\n");
 		return;
 	}
-	Com_sprintf(origname,sizeof(origname),gi.argv(2));
-	Com_sprintf(newname,sizeof(newname),gi.argv(3));
+	Com_sprintf(origname,sizeof(origname),gi.argv(1));
+	Com_sprintf(newname,sizeof(newname),gi.argv(2));
 	origid = GetPlayerUid_NoAdd(origname);
 	newid = GetPlayerUid_NoAdd(newname);
 	if (origid<0)

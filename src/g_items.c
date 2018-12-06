@@ -3477,30 +3477,67 @@ void SP_jumpbox_large (edict_t *ent)
 void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf){
     int my_time;
     float my_time_decimal;
+	gitem_t		*item;
 
 	// make sure it's a player touching it
 	if (!other->client)
 		return;
 
-    // get the clients time in .xxx format
+	// check for retard mappers
+	if (self->count >= sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int)) {
+		if (trigger_timer(5))
+			gi.dprintf ("Your count of %i is higher than the max value of %i, you are a shit mapper.\n", self->count, sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int)-1);
+		return;
+	}
+
+	//check if cpbox has a target...
+	if(self->target){
+
+		//check if it should clear all cp's.
+		if(Q_stricmp(self->target,"cp_clear")==0){
+			if (other->client->pers.checkpoints > 0)
+				gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->pers.checkpoints);
+			ClearCheckpoints(&other->client->pers);
+			return;
+		} 
+		//ckeck if it should reset timer++
+		else if (Q_stricmp(self->target,"start_line")==0) {
+			memset(other->client->pers.inventory, 0, sizeof(other->client->pers.inventory)); // reset their inventory
+
+			item = FindItem("Blaster"); // set their equiped item to a blaster
+			other->client->newweapon = item;
+			ChangeWeapon (other);
+
+			Stop_Recording(other); // stop the recording for race line alignment
+			Start_Recording(other); // start another recording for this rep
+			other->client->resp.item_timer = 0; // internal timer reset 1
+			other->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
+			other->client->resp.race_frame = 0; //reset race frame if racing
+			ClearCheckpoints(&other->client->pers);
+			return;
+		} 
+	}
+	// rest is for regular cpboxes..
+
+	// get the clients time in .xxx format
 	my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
 	my_time_decimal = (float)my_time / 1000.0f;
 
 	// check if they have it already, increase it if they don't
-    if (other->client->pers.cpbox_checkpoint[self->count] != 1) {
+	if (other->client->pers.cpbox_checkpoint[self->count] != 1) {
 		other->client->pers.cpbox_checkpoint[self->count] = 1;
-        other->client->pers.checkpoints += 1;
+		other->client->pers.checkpoints += 1;
 
 		// play a sound for it
 		CPSoundCheck(other);
 
 		// in easy give them the int, in hard give them the float
-        if (other->client->resp.ctf_team==CTF_TEAM1){
+		if (other->client->resp.ctf_team==CTF_TEAM1){
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
-        } else {
+		} else {
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
-        }
-    }
+		}
+	}
 }
 
 void SP_cpbox_small (edict_t *ent)
@@ -3918,18 +3955,24 @@ void SP_jump_time (edict_t *ent)
 	next_ent->owner = ent;
 
 	gi.linkentity (next_ent);
-}
-
+} 
 
 void SP_jump_clip (edict_t *ent)
 {
 	ent->classname = "jump_clip";
 	ent->movetype = MOVETYPE_NONE;
-	ent->solid = SOLID_BBOX;
-	
-	ent->s.modelindex = gi.modelindex ("models/jump/smallmodel/tris.md2");
-	ent->dmg = 0;
+	ent->clipmask = MASK_PLAYERSOLID;
+	ent->s.modelindex = 2;
+	if(ent->message && strcmp(ent->message,"checkpoint")==0){
+		ent->solid = SOLID_TRIGGER;
+		ent->touch = cpbox_touch;
+	}
+	else {
+		ent->solid = SOLID_BBOX;
+	}
+
 	gi.linkentity (ent);
+	level.jumpboxes[1]++;
 }
 
 /*void SP_misc_ball (edict_t *ent)

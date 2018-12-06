@@ -85,6 +85,7 @@ void SP_target_lightramp (edict_t *self);
 void SP_target_earthquake (edict_t *ent);
 void SP_target_character (edict_t *ent);
 void SP_target_string (edict_t *ent);
+void SP_model_spawner (edict_t *ent);
 
 void SP_worldspawn (edict_t *ent);
 void SP_viewthing (edict_t *ent);
@@ -233,6 +234,7 @@ spawn_t	spawns[] = {
 	{"target_earthquake", SP_target_earthquake},
 	{"target_character", SP_target_character},
 	{"target_string", SP_target_string},
+	{"model_spawner", SP_model_spawner},
 
 	{"worldspawn", SP_worldspawn},
 	{"viewthing", SP_viewthing},
@@ -1060,7 +1062,6 @@ void SP_worldspawn (edict_t *ent)
 	char str[2048];
 	char temp[50];
     char cptotal[2];
-    //const char *SpecNR[64] = {"∞", "±", "≤", "≥", "¥", "µ", "∂", "∑", "∏", "π", "±∞", "±", "±≤", "±≥", "±¥", "±µ", "±∂", "±∑", "±∏", "±π", "≤∞", "≤±", "≤≤", "≤≥", "≤¥", "≤µ", "≤∂", "≤∑", "≤∏", "≤π", "≥∞", "≥±"};
 
 	ent->movetype = MOVETYPE_PUSH;
 	ent->solid = SOLID_BSP;
@@ -1286,8 +1287,7 @@ void SP_worldspawn (edict_t *ent)
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_DISABLED,"Antiglue   ŒØ¡");
         sprintf(cptotal,"%d",mset_vars->checkpoint_total);
 		gi.configstring (CONFIG_CP_ON,va(              "  Chkpts: %s",HighAscii(cptotal))); //draxi ascii
-		gi.configstring (CONFIG_CP_OFF,                "              ");
-        gi.configstring (CONFIG_JUMP_RACE_ON,          "    Race:     ");
+		gi.configstring (CONFIG_CP_OFF,                "");
         gi.configstring (CONFIG_JUMP_RACE_OFF,         ""); // old "    Race: œ∆∆"
 		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    Team: ≈·Û˘");
 		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    Team: »·Ú‰");
