@@ -10280,9 +10280,14 @@ void add_clip(edict_t *ent)
 		gi.cprintf(ent,PRINT_HIGH,"Entity adding has been locked by %s.\n",level_items.locked_by->client->pers.netname);
 		return;
 	}
+
+	// set max cp value
+	cpmax = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int)-1;
+
 	//no args, show ent list
 	if (gi.argc() < 2) {
-		show_ent_list(ent,0);
+		gi.dprintf("Add 2 marks with addclip mark1/mark2, and create the ent with addclip create.\n");
+		gi.dprintf("Make the ent a checkpoint by using addclip checkpoint (0 - %i)\n", cpmax);
 		return;
 	}
 	
@@ -10342,9 +10347,6 @@ void add_clip(edict_t *ent)
 	//"addclip teleporter target" will create a trigger_teleporter between mark1 and mark2..
 	if (strcmp(action,"create")==0 || strcmp(action,"checkpoint")==0)
 	{
-		// set max cp value
-		cpmax = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int)-1;
-
 		if(strcmp(action,"checkpoint")==0 && gi.argc() < 3){
 			gi.dprintf("You need to give your checkpoint an ID from 0-%i (Ex: addclip checkpoint 1)\n", cpmax);
 			return;
