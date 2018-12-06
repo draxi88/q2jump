@@ -5438,7 +5438,7 @@ void Add_Box(edict_t *ent)
         cpsize = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);
          if ((box_num>3) && (box_num<7)){
             if (gi.argc() > 2){
-                if ((cp<1) || (cp>cpsize)) {
+                if ((cp<0) || (cp>cpsize-1)) {
                     gi.cprintf(ent,PRINT_HIGH,"Give the cpbox an ID from 0 to %d (Ex: Addbox 4 1).\n",cpsize-1);
                     return;
                 } else {
@@ -10262,6 +10262,7 @@ void add_clip(edict_t *ent)
 	char	action[16];
 	int i;
 	int cp;
+	int cpmax;
 	edict_t *tent;
 	vec3_t center;
 	vec3_t start;
@@ -10341,8 +10342,11 @@ void add_clip(edict_t *ent)
 	//"addclip teleporter target" will create a trigger_teleporter between mark1 and mark2..
 	if (strcmp(action,"create")==0 || strcmp(action,"checkpoint")==0)
 	{
+		// set max cp value
+		cpmax = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int)-1;
+
 		if(strcmp(action,"checkpoint")==0 && gi.argc() < 3){
-			gi.dprintf("You need to give your checkpoint an ID (Ex: addclip checkpoint 1)\n");
+			gi.dprintf("You need to give your checkpoint an ID from 0-%i (Ex: addclip checkpoint 1)\n", cpmax);
 			return;
 		}
 
@@ -10377,6 +10381,13 @@ void add_clip(edict_t *ent)
 		tent->movetype = MOVETYPE_NONE;
 		if(strcmp(action,"checkpoint")==0){
 			cp = atoi(gi.argv(2));
+
+			// check for right cp values
+			if (cp < 0 || cp > (sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int)) - 1) {
+				gi.dprintf("Checkpoint value can only be between 0 and %i\n", cpmax);
+				return;
+			}
+				
 			tent->message = action;
 			tent->solid = SOLID_TRIGGER;
 			tent->count = cp;
@@ -10400,7 +10411,7 @@ void add_clip(edict_t *ent)
 		}
 		WriteEnts();
 		if(strcmp(action,"checkpoint")==0){
-			gi.dprintf("Checkpoint created.\n");
+			gi.dprintf("Checkpoint created with a checkpoint value of %i.\n", cp);
 		}
 		else {
 			gi.dprintf("Jump_clip created.\n");
