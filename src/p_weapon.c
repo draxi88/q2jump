@@ -211,7 +211,8 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 			apply_time(other,ent);
 	}
 
-	if (other->client->pers.weapon != ent->item && (other->client->pers.inventory[index] == 1) && (!deathmatch->value || other->client->pers.weapon == FindItem("blaster")))
+	// always switch to the new weapon pickup
+	if (other->client->pers.weapon != ent->item)
 		other->client->newweapon = ent->item;
 
 	return false; // leave the weapon there
