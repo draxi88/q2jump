@@ -121,74 +121,54 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	gitem_t		*ammo;
 	int			pickup;
 
+	// get the item name
 	index = ITEM_INDEX(ent->item);	
 	
+	// check to make it's not ctf
 	if (gametype->value==GAME_CTF)
 		return false;
 
-	// team easy, just tell them what they would have gotten
-	if (other->client->resp.ctf_team==CTF_TEAM1) {
-		pickup = 0;
+	pickup = 0;
 
-		if (mset_vars->bfg == 1) { // bfg
-			if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0)
-				pickup = 1;
+	// bfg check
+	if (mset_vars->bfg == 1) {
+		if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0) {
+			other->client->pers.inventory[index]++;
+			pickup = 1;
 		}
+	}
 
-		if (mset_vars->rocket == 1 && pickup != 1) { // rockets
-			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0)
-				pickup = 1;
+	// rocket check
+	if (mset_vars->rocket == 1 && pickup != 1) {
+		if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0) {
+			other->client->pers.inventory[index]++;
+			pickup = 1;
 		}
+	}
 
-		if (mset_vars->checkpoint_total > 0 && pickup != 1) { // cps
-			if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
-				if (trigger_timer(5))
-					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
-				pickup = 1;
-			}
-		}
-
-		if (pickup == 0) // no other quals
+	// checkpoint check
+	if (mset_vars->checkpoint_total > 0 && pickup != 1) {
+		if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
 			if (trigger_timer(5))
-				gi.cprintf(other,PRINT_HIGH,"You would have got this weapon in %3.1f seconds.\n",other->client->resp.item_timer);
-	}
-
-	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) && other->client->pers.inventory[index])
-	{
-		if (!(ent->spawnflags & (DROPPED_ITEM | DROPPED_PLAYER_ITEM) ) )
-			return false;	// leave the weapon for others to pickup
-	}
-
-	if (level.status==LEVEL_STATUS_OVERTIME)
-	{
-		if (gset_vars->overtimetype==OVERTIME_FAST)
-		{
-			//this player wins, end overtime
-			gi.bprintf(PRINT_CHAT,"%s wins!\n",other->client->pers.netname);
-//			level.overtime = 0;
-			End_Overtime();
-			return false;
+				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d. Find more checkpoints!\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
+			pickup = 1;
 		}
 	}
 
-	// give them the weapon... conditionally
-	if (!mset_vars->bfg == 1 && Q_stricmp (ent->item->pickup_name,"BFG10K")==0) {} // if no bfg jumps, dont give weapon
-
-	else if (!mset_vars->rocket && 
-		(Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0)) {} // if no rockets or grenades, dont give weapon
-
-	else // otherwise give them weapon
+	// otherwise give them the weapon
+	if (pickup != 1)
 		other->client->pers.inventory[index]++;
 
-	if (!(ent->spawnflags & DROPPED_ITEM) )
-	{
-		// ammo supply for the weapon they picked up
+	// ammo hand out
+	if (!(ent->spawnflags & DROPPED_ITEM) ) {
 		ammo = FindItem (ent->item->ammo);
 
-		if ( (int)dmflags->value & DF_INFINITE_AMMO ) // give a lot of ammo of infinite flag is on
+		// inf ammo
+		if ((int)dmflags->value & DF_INFINITE_AMMO) 
 			Add_Ammo (other, ammo, 1000);
 
-		else // give the normal amount
+		// normal ammo
+		else
 			Add_Ammo (other, ammo, ammo->quantity);
 
 		if (! (ent->spawnflags & DROPPED_PLAYER_ITEM) ) {
@@ -203,39 +183,39 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		}
 	}
 
+	// leave the weapon for others to pickup
+	if ((((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) && other->client->pers.inventory[index]) {
+		if (!(ent->spawnflags & (DROPPED_ITEM | DROPPED_PLAYER_ITEM)))
+			return false;
+	}
 
-	// team hard, so apply the time
+	// check for overtime finish
+	if (level.status==LEVEL_STATUS_OVERTIME) {
+		if (gset_vars->overtimetype==OVERTIME_FAST) {
+			gi.bprintf(PRINT_CHAT,"%s wins!\n",other->client->pers.netname);
+			End_Overtime();
+			return false;
+		}
+	}
+
+	// easy team timer
+	if (other->client->resp.ctf_team==CTF_TEAM1) {
+		if (pickup == 0)
+			if (trigger_timer(5))
+				gi.cprintf(other,PRINT_HIGH,"You would have got this weapon in %3.1f seconds.\n",other->client->resp.item_timer);
+	}
+
+	// hard team timer
 	if (other->client->resp.ctf_team==CTF_TEAM2) {
-		pickup = 0;
-
-		if (mset_vars->bfg == 1) { // bfg
-			if (Q_stricmp(ent->item->pickup_name,"BFG10K")==0)
-				pickup = 1;
-		}
-
-		if (mset_vars->rocket == 1 && pickup != 1) { // rockets
-			if (Q_stricmp(ent->item->pickup_name,"Rocket Launcher")==0 || Q_stricmp(ent->item->pickup_name,"Grenade Launcher")==0)
-				pickup = 1;
-		}
-
-		if (mset_vars->checkpoint_total > 0 && pickup != 1) { // cps
-			if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
-				if (trigger_timer(5))
-					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d, please restart.\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
-				pickup = 1;
-			}
-		}
-
-		if (pickup == 0) // no other quals
+		if (pickup == 0)
 			apply_time(other,ent);
 	}
 
-	if (other->client->pers.weapon != ent->item && 
-		(other->client->pers.inventory[index] == 1) &&
-		( !deathmatch->value || other->client->pers.weapon == FindItem("blaster") ) )
+	// always switch to the new weapon pickup
+	if (other->client->pers.weapon != ent->item)
 		other->client->newweapon = ent->item;
 
-	return false; //leave the weapon there
+	return false; // leave the weapon there
 }
 
 
