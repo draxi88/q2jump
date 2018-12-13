@@ -10618,7 +10618,6 @@ void maxsmins_boundary(vec3_t start, vec3_t end){
 	VectorCopy(end,laser->pos2);
 	laser->movetype = MOVETYPE_NONE;
     laser->solid = SOLID_NOT;
-	laser->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
 	laser->s.modelindex = 1;
 	laser->classname = "maxsmins_boundary";
 	laser->s.frame = 2;
