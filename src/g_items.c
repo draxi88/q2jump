@@ -3990,10 +3990,16 @@ void cpwall_think (edict_t *self){
 
 void cpwall_touch (edict_t *self, edict_t *other)
 {
-	vec3_t	forward, zvec={0,0,0};
 	trace_t	tr;
 	qboolean XXX;
 	
+	if(!self->speed)
+		self->speed = 50;
+	else if(self->speed < 10)
+		self->speed = 10;
+	else if(self->speed > 200)
+		self->speed = 200;
+
 	XXX = false;
 	if(self->size[0]<self->size[1]){
 		XXX = true;
@@ -4002,14 +4008,14 @@ void cpwall_touch (edict_t *self, edict_t *other)
 		if(other->client->pers.checkpoints < self->count){
 			if(XXX){
 				if(other->s.origin[0]<self->s.origin[0])
-					other->s.origin[0] += 50;
+					other->s.origin[0] += self->speed;
 				else
-					other->s.origin[0] -= 50;
+					other->s.origin[0] -= self->speed;
 			} else {
 				if(other->s.origin[1]<self->s.origin[1])
-					other->s.origin[1] += 50;
+					other->s.origin[1] += self->speed;
 				else
-					other->s.origin[1] -= 50;
+					other->s.origin[1] -= self->speed;
 			}
 			VectorClear(other->velocity);
 			if (trigger_timer(5))
@@ -4030,8 +4036,11 @@ void SP_jump_cpwall (edict_t *ent) {
 	gi.setmodel (ent, ent->model);
 
 	//color
-	if (ent->spawnflags &  1)
-		ent->s.skinnum = 0xc0c0c0c0;//0xf2f2f0f0; //RED
+	if (!ent->spawnflags) //if not set = orange.
+		ent->s.skinnum = 0xe0e1e2e3;//ORANGE
+
+	else if (ent->spawnflags &  1)
+		ent->s.skinnum = 0xf2f2f0f0; //RED
 	else if (ent->spawnflags &  2)
 		ent->s.skinnum = 0xd0d1d2d3;//GREEN
 	else if (ent->spawnflags &  4)
