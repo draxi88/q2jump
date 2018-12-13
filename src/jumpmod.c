@@ -11925,6 +11925,37 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 		fclose(html_data.file);
 }
 
+void Raceline_think(edict_t *self){
+	int i;
+	int race_this;
+	race_this = self->client->resp.rep_race_number;
+
+	for(i=0;i<MAX_RECORD_FRAMES;i++){
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_RAILTRAIL);
+		gi.WritePosition (level_items.recorded_time_data[race_this][i].origin);
+		gi.WritePosition (level_items.recorded_time_data[race_this][i+1].origin);	
+		gi.multicast(level_items.recorded_time_data[race_this][i].origin, MULTICAST_PVS );
+		//gi.unicast(self,true);
+	}
+	self->nextthink = level.time + FRAMETIME;
+
+}
+
+void Cmd_Raceline (edict_t *ent){
+	edict_t *tent;
+	tent = G_Spawn();
+	tent->movetype = MOVETYPE_NONE;
+    tent->solid = SOLID_NOT;
+	tent->s.modelindex = 1;
+	tent->owner = ent;
+	tent->classname = "Raceline_classname";
+	tent->think = Raceline_think;
+	gi.linkentity(tent);
+
+	gi.cprintf(ent,PRINT_CHAT,"Raceline on.\n");
+}
+
 void Cmd_Race (edict_t *ent)
 {
 	float delay = 0;
