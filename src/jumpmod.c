@@ -12276,6 +12276,17 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 		fclose(html_data.file);
 }
 
+void Cmd_Raceline (edict_t *ent){
+
+	if(ent->client->resp.raceline) {
+		ent->client->resp.raceline = false;
+		gi.cprintf(ent,PRINT_HIGH,"Raceline OFF!\n");
+	} else {
+		ent->client->resp.raceline = true;
+		gi.cprintf(ent,PRINT_HIGH,"Raceline ON!\n");
+	}
+}
+
 void Cmd_Race (edict_t *ent)
 {
 	float delay = 0;
