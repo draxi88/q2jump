@@ -10245,7 +10245,6 @@ void maxsmins_boundary(vec3_t start, vec3_t end){
 	VectorCopy(end,laser->pos2);
 	laser->movetype = MOVETYPE_NONE;
     laser->solid = SOLID_NOT;
-	laser->s.renderfx |= RF_BEAM|RF_TRANSLUCENT;
 	laser->s.modelindex = 1;
 	laser->classname = "maxsmins_boundary";
 	laser->s.frame = 2;
@@ -11954,6 +11953,16 @@ void Cmd_Raceline (edict_t *ent){
 	gi.linkentity(tent);
 
 	gi.cprintf(ent,PRINT_CHAT,"Raceline on.\n");
+
+void Cmd_Raceline (edict_t *ent){
+
+	if(ent->client->resp.raceline) {
+		ent->client->resp.raceline = false;
+		gi.cprintf(ent,PRINT_HIGH,"Raceline OFF!\n");
+	} else {
+		ent->client->resp.raceline = true;
+		gi.cprintf(ent,PRINT_HIGH,"Raceline ON!\n");
+	}
 }
 
 void Cmd_Race (edict_t *ent)

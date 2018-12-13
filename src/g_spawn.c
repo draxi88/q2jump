@@ -156,6 +156,7 @@ void SP_jump_clip(edict_t *ent);
 void SP_cpbox_small (edict_t *ent);
 void SP_cpbox_medium (edict_t *ent);
 void SP_cpbox_large (edict_t *ent);
+void SP_jump_cpwall (edict_t *ent);
 
 //ww +ed ents
 //void SP_misc_ball (edict_t *ent);
@@ -171,6 +172,7 @@ spawn_t	spawns[] = {
     {"cpbox_small", SP_cpbox_small},
 	{"cpbox_medium", SP_cpbox_medium},
 	{"cpbox_large", SP_cpbox_large},
+	{"jump_cpwall", SP_jump_cpwall},
 	{"item_health", SP_item_health},
 	{"item_health_small", SP_item_health_small},
 	{"item_health_large", SP_item_health_large},

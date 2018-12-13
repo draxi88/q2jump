@@ -1129,6 +1129,7 @@ typedef struct
 	int			rep_race_number;
 	float	rep_racing_delay;
 	int			race_frame;
+	qboolean	raceline;
 	qboolean	shotproj;
 	qboolean cleanhud;
 	int			max_speed;
