@@ -4042,21 +4042,6 @@ void SP_jump_cpwall (edict_t *ent) {
 	ent->s.modelindex = 1;
 	gi.setmodel (ent, ent->model);
 
-	//color
-	if (!ent->spawnflags) //if not set = orange.
-		ent->s.skinnum = 0xe0e1e2e3;//ORANGE
-
-	else if (ent->spawnflags &  1)
-		ent->s.skinnum = 0xf2f2f0f0; //RED
-	else if (ent->spawnflags &  2)
-		ent->s.skinnum = 0xd0d1d2d3;//GREEN
-	else if (ent->spawnflags &  4)
-		ent->s.skinnum = 0xf3f3f1f1;//BLUE
-	else if (ent->spawnflags &  8)
-		ent->s.skinnum = 0xdcdddedf;//YELLOW
-	else if (ent->spawnflags &  16)
-		ent->s.skinnum = 0xe0e1e2e3;//ORANGE
-
 	VectorSubtract(ent->absmax,ent->absmin,center);
 	VectorScale(center,0.5,center);
 	VectorAdd(center,ent->absmin,center);
@@ -4076,8 +4061,22 @@ void SP_jump_cpwall (edict_t *ent) {
 		ent->pos2[2] += ent->size[2]/2;
 	}
 
-	ent->think = cpwall_think;
-	ent->nextthink = level.time + 1; 
+	//effect+color
+	if (ent->spawnflags){ //effect? if no color(spawnflag) set, no effect.
+		if (ent->spawnflags &  1)
+			ent->s.skinnum = 0xf2f2f0f0; //RED
+		else if (ent->spawnflags &  2)
+			ent->s.skinnum = 0xd0d1d2d3;//GREEN
+		else if (ent->spawnflags &  4)
+			ent->s.skinnum = 0xf3f3f1f1;//BLUE
+		else if (ent->spawnflags &  8)
+			ent->s.skinnum = 0xdcdddedf;//YELLOW
+		else if (ent->spawnflags &  16)
+			ent->s.skinnum = 0xe0e1e2e3;//ORANGE
+
+		ent->think = cpwall_think;
+		ent->nextthink = level.time + 1; 
+	}
 
 	gi.linkentity(ent);
 }
