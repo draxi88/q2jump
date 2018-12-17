@@ -2107,7 +2107,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			else
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"------ ----               %s\"",
+				"ctf %d %d %d %d %d xv 152 string \"    ------ ----          %s\"",
 				-8,y,sorted[i],cl->ping,1000,teamstring
 				); 
 
@@ -2196,7 +2196,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			else
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"------ ----                %s\"",
+				"ctf %d %d %d %d %d xv 152 string \"    ------ ----           %s\"",
 				-8,y,i,cl->ping,1000,teamstring
 				); 
 
