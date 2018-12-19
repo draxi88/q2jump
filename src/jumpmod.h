@@ -418,6 +418,7 @@ typedef struct
 	int damage;
 	int droptofloor;
 	char edited_by[256];
+	int ezmode;
 	int falldamage;
 	int fast_firing;
 	int fastdoors;	

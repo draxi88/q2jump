@@ -158,6 +158,13 @@ zbotcmd_t zbotCommands[] =
     &mset_vars->edited_by,
   },
   { 
+	0,1,0,
+    "ezmode", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->ezmode,
+  },
+  { 
 	0,1,1,
     "falldamage", 
     CMDWHERE_CFGFILE | CMD_MSET, 
@@ -414,6 +421,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
     CMDTYPE_STRING,
     &gset_vars->mset->edited_by,
+  },
+  { 
+	0,1,0,
+    "gezmode", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->ezmode,
   },
   { 
 	0,1,1,
@@ -4879,7 +4893,7 @@ void Cmd_Recall(edict_t *ent)
 	if (ent->client->resp.store) {
 
 		// if team easy
-		if ( ent->client->resp.ctf_team==CTF_TEAM1) {
+		if ( ent->client->resp.ctf_team==CTF_TEAM1 || mset_vars->ezmode == 1) {
 			ent->client->resp.item_timer = ent->client->resp.stored_item_timer;	
 			ent->client->resp.recalls--;
 
@@ -6457,6 +6471,7 @@ void SetDefaultValues(void)
 	gset_vars->debug =0;
 	gset_vars->mset->droptofloor = 1;
 	strcpy(gset_vars->mset->edited_by,"NA");
+	gset_vars->mset->ezmode = 0;
 	gset_vars->mset->falldamage = 1;
 	gset_vars->mset->fast_firing = 0;
 	gset_vars->mset->fastdoors = 0;
@@ -7078,6 +7093,11 @@ ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 
 	KillMyRox(ent);
 
+	if (mset_vars->ezmode == 1) { // force a store, so they cant cheat
+        M_droptofloor(ent);
+        Cmd_Store_f(ent);
+	}
+
 //	gi.bprintf(PRINT_HIGH,"Kill_hard\n");
 
 }
@@ -7563,17 +7583,21 @@ void CTFUnSilence(edict_t *ent)
 void Notify_Of_Team_Commands(edict_t *ent)
 {
 	UpdateThisUsersUID(ent,ent->client->pers.netname);
-	if (ent->client->resp.ctf_team==CTF_TEAM1)
-	{
+
+	if (ent->client->resp.ctf_team==CTF_TEAM1) {
 		gi.cprintf(ent,PRINT_HIGH,"Team Easy: Use the commands store and recall to practice jumps.\n");
 		if (ent->client->resp.store != 1) { // this only happens if a person has not placed a store
 			M_droptofloor(ent); // drop them to the floor in case spawn is raised
 			Cmd_Store_f(ent);
 		}
 	}
-	else if (ent->client->resp.ctf_team==CTF_TEAM2)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Team Hard: Grab the rail and set a time!\n");
+	else if (ent->client->resp.ctf_team==CTF_TEAM2) {
+		if (mset_vars->ezmode == 1) { // force a store, so they cant cheat
+			M_droptofloor(ent);
+			Cmd_Store_f(ent);
+			gi.cprintf(ent,PRINT_HIGH,"Ez Mode: Hard mode... with teles.\n");
+		} else
+			gi.cprintf(ent,PRINT_HIGH,"Team Hard: Grab the rail and set a time!\n");
 	}
 }
 
