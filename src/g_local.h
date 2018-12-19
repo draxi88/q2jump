@@ -886,6 +886,9 @@ typedef struct
 	int			max_cells;
 	int			max_slugs;
 
+	// recall counter
+	int			total_recall;
+
 	// checkpoint things
 	int			checkpoints;
 	int			red_checkpoint;
@@ -1076,6 +1079,7 @@ typedef struct
 	qboolean	hide_jumpers;
 	qboolean	mute_cps;
     qboolean    showtimes;
+	qboolean	ezmsg;
 	int			cur_jumper;
 	qboolean	going_up;
 	qboolean	going_forward;
