@@ -36,6 +36,7 @@ static char *help_main[] = {
 	"jumpers - turn on or off player models\n",
 	"cpsound - turn on or off checkpoint sounds\n",
 	"showtimes - turn on or off displaying all times\n",
+	"ezmode - turn on or off dsiplaying recall count in ezmode\n",
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
@@ -156,6 +157,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_STRING,
     &mset_vars->edited_by,
+  },
+  { 
+	0,1,0,
+    "ezmode", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->ezmode,
   },
   { 
 	0,1,1,
@@ -414,6 +422,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
     CMDTYPE_STRING,
     &gset_vars->mset->edited_by,
+  },
+  { 
+	0,1,0,
+    "gezmode", 
+    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+    CMDTYPE_NUMBER,
+    &gset_vars->mset->ezmode,
   },
   { 
 	0,1,1,
@@ -4879,9 +4894,10 @@ void Cmd_Recall(edict_t *ent)
 	if (ent->client->resp.store) {
 
 		// if team easy
-		if ( ent->client->resp.ctf_team==CTF_TEAM1) {
+		if ( ent->client->resp.ctf_team==CTF_TEAM1 || mset_vars->ezmode == 1) {
 			ent->client->resp.item_timer = ent->client->resp.stored_item_timer;	
 			ent->client->resp.recalls--;
+			ent->client->pers.total_recall++;
 
 			client = ent->client;
 
@@ -5082,6 +5098,11 @@ void Cmd_Recall(edict_t *ent)
 			ent->s.angles[ROLL] = 0;
 			VectorCopy (ent->s.angles, client->ps.viewangles);
 			VectorCopy (ent->s.angles, client->v_angle);
+
+			if ( ent->client->resp.ctf_team==CTF_TEAM2 || mset_vars->ezmode == 1) { // if hard and ezmode give a readout
+				if (ent->client->resp.ezmsg)
+					gi.cprintf(ent,PRINT_HIGH,"You have recalled %i time(s).\n", ent->client->pers.total_recall);
+			}
 
 		} else // must be team hard
 			Cmd_Kill_f(ent);
@@ -6457,6 +6478,7 @@ void SetDefaultValues(void)
 	gset_vars->debug =0;
 	gset_vars->mset->droptofloor = 1;
 	strcpy(gset_vars->mset->edited_by,"NA");
+	gset_vars->mset->ezmode = 0;
 	gset_vars->mset->falldamage = 1;
 	gset_vars->mset->fast_firing = 0;
 	gset_vars->mset->fastdoors = 0;
@@ -7078,6 +7100,12 @@ ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 
 	KillMyRox(ent);
 
+	if (mset_vars->ezmode == 1) { // force a store, so they cant cheat
+        M_droptofloor(ent);
+        Cmd_Store_f(ent);
+		ent->client->pers.total_recall = 0; // reset recall count
+	}
+
 //	gi.bprintf(PRINT_HIGH,"Kill_hard\n");
 
 }
@@ -7563,17 +7591,22 @@ void CTFUnSilence(edict_t *ent)
 void Notify_Of_Team_Commands(edict_t *ent)
 {
 	UpdateThisUsersUID(ent,ent->client->pers.netname);
-	if (ent->client->resp.ctf_team==CTF_TEAM1)
-	{
+
+	if (ent->client->resp.ctf_team==CTF_TEAM1) {
 		gi.cprintf(ent,PRINT_HIGH,"Team Easy: Use the commands store and recall to practice jumps.\n");
 		if (ent->client->resp.store != 1) { // this only happens if a person has not placed a store
 			M_droptofloor(ent); // drop them to the floor in case spawn is raised
 			Cmd_Store_f(ent);
 		}
 	}
-	else if (ent->client->resp.ctf_team==CTF_TEAM2)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Team Hard: Grab the rail and set a time!\n");
+	else if (ent->client->resp.ctf_team==CTF_TEAM2) {
+		if (mset_vars->ezmode == 1) { // force a store, so they cant cheat
+			M_droptofloor(ent);
+			Cmd_Store_f(ent);
+			ent->client->pers.total_recall = 0; // reset recall count
+			gi.cprintf(ent,PRINT_HIGH,"Ez Mode: Hard mode... with teles.\n");
+		} else
+			gi.cprintf(ent,PRINT_HIGH,"Team Hard: Grab the rail and set a time!\n");
 	}
 }
 
@@ -13503,6 +13536,14 @@ void Showtimes_on_off(edict_t *ent)
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
+// toggle for a message to display number of recalls during an ezmode run
+void Ezmsg_on_off(edict_t *ent)
+{
+	char s[255];
+	ent->client->resp.ezmsg = !ent->client->resp.ezmsg;
+	Com_sprintf(s,sizeof(s),"Showing recall count is now %s",(ent->client->resp.ezmsg ? "On." : "Off."));
+	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
+}
 
 
 void	FS_CreatePath (char *path)
