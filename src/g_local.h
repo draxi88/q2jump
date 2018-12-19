@@ -917,9 +917,6 @@ typedef struct
 	int			rs19_checkpoint;
 	int			rs20_checkpoint;
     int         cpbox_checkpoint[64];
-    int         cpbox_checkpoint1[64];
-    int         cpbox_checkpoint2[64];
-    int         cpbox_checkpoint3[64];
 
 	// stored checkpoints 1
 	int			stored_checkpoints1;
@@ -951,6 +948,7 @@ typedef struct
 	int			stored_rs18_checkpoint1;
 	int			stored_rs19_checkpoint1;
 	int			stored_rs20_checkpoint1;
+    int         cpbox_checkpoint1[64];
 
 	// stored checkpoints 2
 	int			stored_checkpoints2;
@@ -982,6 +980,7 @@ typedef struct
 	int			stored_rs18_checkpoint2;
 	int			stored_rs19_checkpoint2;
 	int			stored_rs20_checkpoint2;
+    int         cpbox_checkpoint2[64];
 
 	// stored checkpoints 3
 	int			stored_checkpoints3;
@@ -1013,6 +1012,7 @@ typedef struct
 	int			stored_rs18_checkpoint3;
 	int			stored_rs19_checkpoint3;
 	int			stored_rs20_checkpoint3;
+    int         cpbox_checkpoint3[64];
 
 	gitem_t		*weapon;
 	gitem_t		*lastweapon;
