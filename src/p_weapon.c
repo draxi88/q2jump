@@ -151,12 +151,12 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
 			if (trigger_timer(5))
 				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d. Find more checkpoints!\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
-			pickup = 1;
+			pickup = 2;
 		}
 	}
 
 	// otherwise give them the weapon
-	if (pickup != 1)
+	if (pickup == 0)
 		other->client->pers.inventory[index]++;
 
 	// ammo hand out
@@ -212,7 +212,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	}
 
 	// always switch to the new weapon pickup
-	if (other->client->pers.weapon != ent->item)
+	if (other->client->pers.weapon != ent->item && pickup != 2)
 		other->client->newweapon = ent->item;
 
 	return false; // leave the weapon there
