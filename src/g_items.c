@@ -516,6 +516,10 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 	int			my_time;
 	float		my_time_decimal;
 
+	// check if the client is already finished
+	if (other->client->resp.finished == 1)
+		return false;
+
 	if (gametype->value==GAME_CTF)
 		return false;
 
@@ -3489,6 +3493,10 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			gi.dprintf ("Your count of %i is higher than the max value of %i, you are a shit mapper.\n", self->count, sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int)-1);
 		return;
 	}
+
+	// check if the client is already finished
+	if (other->client->resp.finished == 1)
+		return false;
 
 	//check if cpbox has a target...
 	if(self->target){

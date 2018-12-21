@@ -121,6 +121,10 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	gitem_t		*ammo;
 	int			pickup;
 
+	// check if the client is already finished
+	if (other->client->resp.finished == 1)
+		return false;
+
 	// get the item name
 	index = ITEM_INDEX(ent->item);	
 	
@@ -183,12 +187,6 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		}
 	}
 
-	// leave the weapon for others to pickup
-	if ((((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) && other->client->pers.inventory[index]) {
-		if (!(ent->spawnflags & (DROPPED_ITEM | DROPPED_PLAYER_ITEM)))
-			return false;
-	}
-
 	// check for overtime finish
 	if (level.status==LEVEL_STATUS_OVERTIME) {
 		if (gset_vars->overtimetype==OVERTIME_FAST) {
@@ -212,8 +210,16 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	}
 
 	// always switch to the new weapon pickup
-	if (other->client->pers.weapon != ent->item && pickup != 2)
+	if (other->client->pers.weapon != ent->item && pickup != 2) {
 		other->client->newweapon = ent->item;
+		return false;
+	}
+	
+	// leave the weapon for others to pickup
+	if ((((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) && other->client->pers.inventory[index]) {
+		if (!(ent->spawnflags & (DROPPED_ITEM | DROPPED_PLAYER_ITEM)))
+			return false;
+	}
 
 	return false; // leave the weapon there
 }
