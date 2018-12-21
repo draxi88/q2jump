@@ -1,3 +1,35 @@
+#####v1.25ger#####
+New:
+-added cmd, raceline, shows the full raceline of a replay as tiny blue orbs
+-added jump_cpwall ent, a resizable wall
+	-add a count to gate behind that many checkpoints
+	-if you don't have the checkpoint value, it pushes you back
+	-if you don't have the checkpoint value, you can give it a particle effect
+		-spawnflag:
+			1: red
+			2: green
+			4: blue
+			8: yellow
+			16: orange
+		-once you have the number needed, the particles disappear
+-added mset, ezmode
+	-if set to 1, store and recall work on hard mode
+	-time does NOT reset on recall
+	-this will NEVER be added to any pre-existing maps
+-added cmd, ezmsg, toggles on displaying your total number of recalls in ezmode
+
+Changes:
+-rewrote weapon and item pickup, client info should be more consistent with messages
+-weapon pickup is now automatic, which means picking up a weapon instantly switches
+	-this means multiple weapon jumps can be used in a map without players needing to use a bind
+-items and weapons can no longer be picked up after you complete a map, fixes some spam msgs
+
+Fixes:
+-fix to a weird blue orb that showed up on some ents
+-fix to scoreboard alignment for players without a score or time
+-fixed a crash when teleporter has a target, but the target doesn't exist
+
+
 #####v1.24ger#####
 -mapvote and mvote changes, added a few new ways to vote maps:
 	-mapvote new - the newest map.
