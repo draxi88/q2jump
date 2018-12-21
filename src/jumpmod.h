@@ -1,7 +1,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.24ger"
+#define CTF_VERSION_S		"1.25ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -418,6 +418,7 @@ typedef struct
 	int damage;
 	int droptofloor;
 	char edited_by[256];
+	int ezmode;
 	int falldamage;
 	int fast_firing;
 	int fastdoors;	
@@ -554,6 +555,7 @@ extern char zbbuffer2[256];
 
 void KillMyRox(edict_t *ent);
 void Cmd_Race (edict_t *ent);
+void Cmd_Raceline (edict_t *ent);
 void stuffcmd(edict_t *e, char *s);
 int Q_stricmp (char *s1, char *s2);
 char *Info_ValueForKey (char *s, char *key);
@@ -841,6 +843,7 @@ void Jumpers_Update_Skins(edict_t *ent);
 void Jumpers_on_off(edict_t *ent);
 void Cpsound_on_off(edict_t *ent);
 void Showtimes_on_off(edict_t *ent);
+void Ezmsg_on_off(edict_t *ent);
 extern int number_of_jumpers_off;
 typedef struct 
 {

@@ -816,11 +816,12 @@ void SP_model_spawner (edict_t *ent)
 
 	if(ent->speed > 2)
 		ent->speed = 2;
-	if(ent->speed < 1)
-		ent->speed = 1;
+	else if (ent->speed < 0)
+		ent->speed = 0;
 
-	
-	ent->think = model_spawner_think;
-	ent->nextthink = level.time + 2;
+	if(ent->speed != 0){
+		ent->think = model_spawner_think;
+		ent->nextthink = level.time + 2;
+	}
 	gi.linkentity (ent);
 }

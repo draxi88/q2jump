@@ -1818,6 +1818,13 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 		return;
 
 	dest = G_Find (NULL, FOFS(targetname), self->target);
+
+	// target is set, but destination is bad
+	if (!dest) {
+        return;
+    }
+
+
 	CTFPlayerResetGrapple(other);
 
 	// count is set on the teleporter

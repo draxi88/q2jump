@@ -1518,6 +1518,8 @@ void ClientCommand (edict_t *ent)
       CTFUnSilence (ent); 
 	} else if (Q_stricmp (cmd, "race") == 0)
 		Cmd_Race (ent);
+	else if (Q_stricmp (cmd, "raceline") == 0)
+		Cmd_Raceline (ent);
 	else if (Q_stricmp (cmd, "whois") == 0)
 		Cmd_Whois (ent);
 	else if (Q_stricmp (cmd, "lastmaps") == 0)
@@ -1550,6 +1552,8 @@ void ClientCommand (edict_t *ent)
 		Cpsound_on_off(ent);
     else if (Q_stricmp (cmd, "showtimes") == 0)
 		Showtimes_on_off(ent);
+	else if (Q_stricmp (cmd, "ezmsg") == 0)
+		Ezmsg_on_off(ent);
 	else if (Q_stricmp (cmd, "remban") == 0)
 		RemBan(ent);
 	else if (Q_stricmp (cmd, "banflags") == 0)
