@@ -1,3 +1,7 @@
+#####v1.26ger#####
+-raceline disabled until the ent/sec ratio is... not insane
+-null memory fix in scoreboard
+
 #####v1.25ger#####
 New:
 -added cmd, raceline, shows the full raceline of a replay as tiny blue orbs
