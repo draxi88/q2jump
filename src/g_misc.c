@@ -1812,6 +1812,8 @@ void SP_func_clock (edict_t *self)
 void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
 	edict_t		*dest;
+	vec3_t		spawn;
+	vec3_t		center;
 	int			i;
 
 	if (!other->client)
@@ -1865,8 +1867,20 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	// unlink to make sure it can't possibly interfere with KillBox
 	gi.unlinkentity (other);
 
-	VectorCopy (dest->s.origin, other->s.origin);
-	VectorCopy (dest->s.origin, other->s.old_origin);
+	//spawn x distance from the spawn..?
+	if(self->message && Q_stricmp(self->message,"telehack")==0){
+		VectorSubtract(self->absmax,self->absmin,center);
+		VectorScale(center,0.5,center);
+		VectorAdd(self->absmin,center,center);
+		VectorSubtract(other->s.origin,center,spawn);
+		spawn[2] += 20; //or else it can spawn player under the ground?
+		VectorAdd(spawn,dest->s.origin,spawn);
+		VectorCopy (spawn, other->s.origin);
+		VectorCopy (spawn, other->s.old_origin);
+	} else {
+		VectorCopy (dest->s.origin, other->s.origin);
+		VectorCopy (dest->s.origin, other->s.old_origin);
+	}
 	other->s.origin[2] += 10;
 
 	// clear the velocity
