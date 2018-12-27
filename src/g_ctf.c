@@ -2003,7 +2003,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	int trecid;
 	int total_easy;
 	int total_specs;
-	char teamstring[8];
+	char teamstring[5];
 
 
 	// sort the clients by score
