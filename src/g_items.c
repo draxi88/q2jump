@@ -3982,6 +3982,55 @@ void SP_jump_clip (edict_t *ent)
 	gi.linkentity (ent);
 	level.jumpboxes[1]++;
 }
+void cpeffect_think(edict_t *self){
+	edict_t *temp_ent;
+	int i;
+
+	for (i=0 ; i<maxclients->value ; i++) {
+		temp_ent = g_edicts + 1 + i;
+		if (!temp_ent->inuse || !temp_ent->client)
+			continue;
+		if(temp_ent->client->pers.cpbox_checkpoint[self->count] == 1)
+			continue;
+
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_SPLASH);
+		gi.WriteByte (self->style);
+		gi.WritePosition (self->s.origin);
+		gi.WriteDir (self->movedir);
+		gi.WriteByte (SPLASH_SPARKS);
+		gi.unicast(temp_ent,true);
+
+	}
+	self->nextthink = level.time + FRAMETIME;
+	
+}
+
+//splash effect that turns off with the right cp.
+//count = CP
+//style = size of the splash (8-64, default 8) 
+void SP_jump_cpeffect (edict_t *ent){
+	vec3_t movedir;
+	
+	//should probably check for 1-64, since it's 0 when it's NOT set ?
+	if(ent->count<0 || ent->count>63){
+		gi.dprintf("jump_cpeffect at %s does not have the correct count-value (0-63, current value: %d\n",vtos(ent->s.origin),ent->count);
+		return;
+	}
+	if(!ent->style || ent->style<0)
+		ent->style = 8;
+	else if(ent->style>65)
+		ent->style = 64;
+	ent->classname = "jump_cpeffect";
+	ent->solid = SOLID_NOT;
+	ent->s.modelindex = 2;
+	VectorSet(movedir,90,0,0);
+	G_SetMovedir (movedir, ent->movedir);
+	ent->think = cpeffect_think;
+	ent->nextthink = level.time + 1;
+
+	gi.linkentity(ent);
+}
 void cpwall_think (edict_t *self){
 	edict_t *temp_ent;
 	int i;
