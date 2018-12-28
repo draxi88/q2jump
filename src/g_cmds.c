@@ -1518,7 +1518,7 @@ void ClientCommand (edict_t *ent)
       CTFUnSilence (ent); 
 	} else if (Q_stricmp (cmd, "race") == 0)
 		Cmd_Race (ent);
-	else if (Q_stricmp (cmd, "raceline") == 0)
+	//else if (Q_stricmp (cmd, "raceline") == 0)
 		//disabled for now
 		//Cmd_Raceline (ent);
 	else if (Q_stricmp (cmd, "whois") == 0)
