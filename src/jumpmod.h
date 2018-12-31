@@ -777,6 +777,7 @@ void reset_maps_completed(edict_t *ent);
 #define RECORD_KEY_RIGHT    8 << RECORD_KEY_SHIFT
 #define RECORD_KEY_FORWARD 16 << RECORD_KEY_SHIFT
 #define RECORD_KEY_BACK    32 << RECORD_KEY_SHIFT
+#define RECORD_KEY_ATTACK  64 << RECORD_KEY_SHIFT
 
 #define RECORD_FPS_SHIFT    8
 #define RECORD_FPS_MASK   255 << RECORD_FPS_SHIFT

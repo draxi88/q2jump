@@ -4462,6 +4462,8 @@ void Record_Frame(edict_t *ent)
 				store |= RECORD_KEY_LEFT;
 			else if (ent->client->resp.key_right)
 				store |= RECORD_KEY_RIGHT;
+			if (ent->client->buttons & BUTTON_ATTACK)
+				store |= RECORD_KEY_ATTACK;
 
 
 			client_record[index].data[client_record[index].current_frame].frame = store;
