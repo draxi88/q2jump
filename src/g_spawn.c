@@ -1270,6 +1270,7 @@ void SP_worldspawn (edict_t *ent)
 		gi.configstring (CONFIG_JUMP_KEY_JUMP,       "   JUMP!");
 		gi.configstring (CONFIG_JUMP_KEY_CROUCH,       " DUCK  DUCK");
 		gi.configstring (CONFIG_JUMP_KEY_BACK,       "    Back");
+		gi.configstring (CONFIG_JUMP_KEY_ATTACK,       "   Attack!");
 
 
 		//create mapname at 20chars long
