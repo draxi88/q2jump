@@ -58,3 +58,9 @@ scripts and files/output.csv
 scripts and files/timelimit testing.R
 src/release/
 src/debug/
+scripts and files/texture_lister/Release/texture_lister.tlog/
+scripts and files/texture_lister/Release/texture_lister.Build.CppClean.log
+scripts and files/texture_lister/Release/texture_lister.log
+scripts and files/texture_lister/Release/texture_lister.pdb
+scripts and files/texture_lister/Release/vc141.pdb
+scripts and files/texture_lister/.vs/
