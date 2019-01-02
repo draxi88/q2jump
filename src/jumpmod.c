@@ -13559,7 +13559,7 @@ void Cpsound_on_off(edict_t *ent)
 {
 	char s[255];
 	ent->client->resp.mute_cps = !ent->client->resp.mute_cps;
-	Com_sprintf(s,sizeof(s),"Checkpoint sounds are now %s",(ent->client->resp.mute_cps ? "OFF." : "ON."));
+	Com_sprintf(s,sizeof(s),"Checkpoint sounds are now %s",(ent->client->resp.mute_cps ? "off." : "on."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
@@ -13567,7 +13567,7 @@ void Showtimes_on_off(edict_t *ent)
 {
 	char s[255];
 	ent->client->resp.showtimes = !ent->client->resp.showtimes;
-	Com_sprintf(s,sizeof(s),"Showing other players time is now %s",(ent->client->resp.showtimes ? "On." : "Off."));
+	Com_sprintf(s,sizeof(s),"Showing all times is now %s",(ent->client->resp.showtimes ? "on." : "off."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
@@ -13576,7 +13576,7 @@ void Ezmsg_on_off(edict_t *ent)
 {
 	char s[255];
 	ent->client->resp.ezmsg = !ent->client->resp.ezmsg;
-	Com_sprintf(s,sizeof(s),"Showing recall count is now %s",(ent->client->resp.ezmsg ? "On." : "Off."));
+	Com_sprintf(s,sizeof(s),"Showing recall count is now %s",(ent->client->resp.ezmsg ? "on." : "off."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
