@@ -10378,7 +10378,6 @@ void add_clip(edict_t *ent)
 
 	//"addclip create" will create a clip between mark1 and mark2..
 	//"addclip checkpoint id" (id = 1,2,3 etc) will create a checkpoint between mark1 and mark2..
-	//"addclip teleporter target" will create a trigger_teleporter between mark1 and mark2..
 	if (strcmp(action,"create")==0 || strcmp(action,"checkpoint")==0)
 	{
 		if(strcmp(action,"checkpoint")==0 && gi.argc() < 3){
@@ -10516,6 +10515,7 @@ void addmaps(void)
 			maplist.nummaps++;
 			//new map added
 			append_added_ini(temp);
+			gi.bprintf(PRINT_HIGH,"%s has been added to the map rotation.\n", temp);
 		}
 	}
 
@@ -10524,6 +10524,39 @@ void addmaps(void)
 	remove(name);
 }
 
+void addsinglemap(char *mapname)
+{
+	qboolean got_match;
+	int i;
+
+	// Check that the map file exists.
+	if (!ValidateMap(mapname)) 
+        { 
+		return; 
+	} 
+
+	got_match = false;
+	for (i=0;i<maplist.nummaps;i++)
+	{
+		if (Q_stricmp(mapname,maplist.mapnames[i])==0)
+		{
+			//got match
+			got_match = true;
+		}
+	}
+	if (!got_match)
+	{
+		maplist.demoavail[maplist.nummaps] = false;
+		maplist.gametype[maplist.nummaps] = 0;
+		maplist.update[maplist.nummaps] = 0;
+		strncpy(maplist.mapnames[maplist.nummaps], mapname, MAX_MAPNAME_LEN); 
+		UpdateTimes(maplist.nummaps);
+		maplist.nummaps++;
+		//new map added
+		append_added_ini(mapname);
+		gi.bprintf(PRINT_HIGH,"%s has been added to the map rotation.\n", mapname);
+	}
+}
 int num_time_votes;
 
 void CTFVoteTime(edict_t *ent)
