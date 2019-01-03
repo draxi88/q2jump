@@ -1,4 +1,5 @@
 #include "g_local.h"
+#include "g_wireplay.h"
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -1742,6 +1743,20 @@ qboolean Can_highlight_Name(char *name)
 		}
 	}
 	return false;
+}
+
+void Cmd_Show_Maptimes_Wireplay(edict_t* ent)
+{
+    if (gi.argc() < 2)
+    {
+        gi.cprintf(ent, PRINT_HIGH, "Please specify a mapname, example: maptimeswp ps3");
+        return;
+    }
+    else
+    {
+        print_wireplay_time(ent, gi.argv(1));
+        return;
+    }
 }
 
 void ShowMapTimes(edict_t *ent) 
