@@ -10524,14 +10524,23 @@ void addmaps(void)
 	remove(name);
 }
 
-void addsinglemap(char *mapname)
+void addsinglemap()
 {
 	qboolean got_match;
-	int i;
-
+	int		i;
+	char	*mapname;
+	char	text[256];
+	
+	if(gi.argc()<3){
+		gi.cprintf (NULL,PRINT_HIGH,"Correct cmd: sv addsinglemap <mapname>\n");
+		return;
+	}
+	mapname = gi.argv(2);
 	// Check that the map file exists.
 	if (!ValidateMap(mapname)) 
-        { 
+    { 
+		//ERROR: <mapname>.bsp noto found!
+		gi.cprintf (NULL,PRINT_HIGH,"%s.bsp not found!\n", mapname); 
 		return; 
 	} 
 
@@ -10554,7 +10563,10 @@ void addsinglemap(char *mapname)
 		maplist.nummaps++;
 		//new map added
 		append_added_ini(mapname);
-		gi.bprintf(PRINT_HIGH,"%s has been added to the map rotation.\n", mapname);
+
+		sprintf(text,"say %s has been added to the map rotation.\n",mapname);
+		//gi.cprintf (NULL,PRINT_HIGH,"%s",text);
+		gi.AddCommandString(text);
 	}
 }
 int num_time_votes;

@@ -28,8 +28,8 @@ void	SVCmd_AddMaps (void)
 {
 	addmaps();
 }
-void	SVCmd_AddSingleMap (char *mapname) {
-	addsinglemap(mapname);
+void	SVCmd_AddSingleMap () {
+	addsinglemap();
 }
 
 /*
@@ -288,15 +288,12 @@ of the parameters
 void	ServerCommand (void)
 {
 	char	*cmd;
-	char	*mapname;
 
 	cmd = gi.argv(1);
-	mapname = gi.argv(2);
 	if (Q_stricmp (cmd, "addmaps") == 0)
 		SVCmd_AddMaps ();
 	else if (Q_stricmp (cmd, "addsinglemap") == 0)
-		if(gi.argc()==3)
-			SVCmd_AddSingleMap (mapname);
+		SVCmd_AddSingleMap();
 	else if (Q_stricmp (cmd, "changepass") == 0)
 		SVCmd_ChangePass_f ();
 	else if (Q_stricmp (cmd, "addip") == 0)
