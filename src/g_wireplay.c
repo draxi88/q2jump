@@ -1593,11 +1593,11 @@ void print_wireplay_time(edict_t* ent, const char* map) {
     // Can imprrove by moving to std::map or putting into a tree.
     for (int i = 0; i < NUM_WIREPLAY_TIMES; ++i) {
         if (Q_stricmp(map, wireplay_times[i].map) == 0) {
-            gi.cprintf(ent, PRINT_HIGH, "Wireplay time for map %s: %s in %s seconds", wireplay_times[i].map, wireplay_times[i].player, wireplay_times[i].time);
+            gi.cprintf(ent, PRINT_HIGH, "Wireplay time for map %s: %s in %s seconds\n", wireplay_times[i].map, wireplay_times[i].player, wireplay_times[i].time);
             return;
         }
     }
     // If we get here, we didn't find the map
-    gi.cprintf(ent, PRINT_HIGH, "No Wireplay times found for map %s", map);
+    gi.cprintf(ent, PRINT_HIGH, "No Wireplay times found for map %s\n", map);
     return;
 }
