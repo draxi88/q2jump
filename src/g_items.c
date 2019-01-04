@@ -3496,7 +3496,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 
 	// check if the client is already finished
 	if (other->client->resp.finished == 1)
-		return false;
+		return;
 
 	//check if cpbox has a target...
 	if(self->target){

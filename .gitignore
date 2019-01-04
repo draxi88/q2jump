@@ -1,3 +1,6 @@
+## 754: Don't include Visual Studio filter file
+*.filters
+
 ## Ignore common C++ temporary files
 
 # Prerequisites
