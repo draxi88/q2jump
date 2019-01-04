@@ -1749,7 +1749,7 @@ void Cmd_Show_Maptimes_Wireplay(edict_t* ent)
 {
     if (gi.argc() < 2)
     {
-        gi.cprintf(ent, PRINT_HIGH, "Please specify a mapname, example: maptimeswp ps3");
+        gi.cprintf(ent, PRINT_HIGH, "Please specify a mapname, example: maptimeswp ps3\n");
         return;
     }
     else
