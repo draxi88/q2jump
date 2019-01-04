@@ -1,7 +1,5 @@
 
 #include "g_wireplay.h"
-#include "g_local.h"
-#include "q_shared.h"
 
 struct wireplay_time_t
 {
