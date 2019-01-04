@@ -1,3 +1,5 @@
+#pragma once
+
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
