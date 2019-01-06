@@ -1399,6 +1399,8 @@ void ClientCommand (edict_t *ent)
 		ShowPlayerMaps (ent);
 	else if (Q_stricmp (cmd, "maptimes") == 0)
 		ShowMapTimes (ent);
+    else if (Q_stricmp (cmd, "maptimeswp") == 0)
+        Cmd_Show_Maptimes_Wireplay(ent);
 	else if ((Q_stricmp (cmd, "!help") == 0) || (Q_stricmp (cmd, "!commands") == 0))
 		Cmd_Show_Help(ent);
 	else if (Q_stricmp (cmd, "!glue") == 0)
@@ -1521,6 +1523,7 @@ void ClientCommand (edict_t *ent)
 	//else if (Q_stricmp (cmd, "raceline") == 0)
 		//disabled for now
 		//Cmd_Raceline (ent);
+        ;
 	else if (Q_stricmp (cmd, "whois") == 0)
 		Cmd_Whois (ent);
 	else if (Q_stricmp (cmd, "lastmaps") == 0)

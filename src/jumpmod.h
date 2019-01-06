@@ -1,3 +1,5 @@
+#pragma once
+
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
@@ -307,6 +309,7 @@ qboolean	trigger_timer(int timeBetweenMessages);
 qboolean    song_timer(int timeBetweenMessages);
 void		ClearCheckpoints(client_persistant_t* pers);
 void		CPSoundCheck(edict_t *ent);
+void        Cmd_Show_Maptimes_Wireplay(edict_t* ent);
 
 extern cvar_t		*gametype;
 extern admin_type	admin_pass[MAX_ADMINS];
