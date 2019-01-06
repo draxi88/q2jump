@@ -3708,32 +3708,33 @@ void BestTimesScoreboardMessage (edict_t *ent, edict_t *killer)
 	sprintf(string+strlen(string), "xv 0 yv 0 string2 \"No   Player                    Date \" ");
 	for (i=0;i<MAX_HIGHSCORES;i++)
 	{
-		if(i % 2 == 0){
+		/*if(i % 2 == 0){
 			sprintf(colorstring,"string");
 		} else {
 			sprintf(colorstring,"string2");
-		}
+		}*/
+		sprintf(colorstring,"string");
 		//015 sort floating point thing
 		if (level_items.stored_item_times[i].name[0])
 		{
 				if (level_items.stored_item_times[i].fresh)
 				{
 					
-					sprintf(string+strlen(string), "yv %d %s \"%2d%s *%-16s%8.3f  %s\" ", i*8+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
+					sprintf(string+strlen(string), "yv %d %s \"%2d%s *%-16s%8.3f  %s\" ", i*10+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
 						level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time
 						,level_items.stored_item_times[i].date
 						);
 				} else {
-					sprintf(string+strlen(string), "yv %d %s \"%2d%s  %-16s%8.3f  %s\" ", i*8+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
+					sprintf(string+strlen(string), "yv %d %s \"%2d%s  %-16s%8.3f  %s\" ", i*10+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
 						level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time
 						,level_items.stored_item_times[i].date
 						);
 				}
 		} else {
-			sprintf(string+strlen(string), "yv %d string \"%2d \" ", i*8+16,i+1);
+			sprintf(string+strlen(string), "yv %d string \"%2d \" ", i*10+16,i+1);
 		}
 	}
-	sprintf(string+strlen(string), "yv %d string \"%d players completed map %d times\" ", i*8+24,completions,total_count);
+	sprintf(string+strlen(string), "yv %d string \"    %d players completed map %d times\" ", i*10+24,completions,total_count);
 //	gi.bprintf(PRINT_HIGH,"%d\n",strlen(string));
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
