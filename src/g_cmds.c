@@ -1465,18 +1465,21 @@ void ClientCommand (edict_t *ent)
 			CTFTeam_f (ent);
 	} else if (Q_stricmp(cmd, "id") == 0) {
 		CTFID_f (ent);
-	} else if (Q_stricmp(cmd, "yes") == 0) {
-		if (gset_vars->tourney)
-		{
-			return;
+	} else if (ctfgame.election != ELECT_NONE) {
+		if(Q_stricmp(cmd, "yes") == 0) {
+			if (gset_vars->tourney)
+			{
+				return;
+			}
+			CTFVoteYes(ent);
 		}
-		CTFVoteYes(ent);
-	} else if (Q_stricmp(cmd, "no") == 0) {
-		if (gset_vars->tourney)
-		{
-			return;
+		else if (Q_stricmp(cmd, "no") == 0) {
+			if (gset_vars->tourney)
+			{
+				return;
+			}
+			CTFVoteNo(ent);
 		}
-		CTFVoteNo(ent);
 	} else if (Q_stricmp(cmd, "ghost") == 0) {
 		Change_Ghost_Model(ent);
 	} else if (Q_stricmp(cmd, "admin") == 0) {
