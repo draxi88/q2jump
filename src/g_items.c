@@ -4046,36 +4046,13 @@ void cpwall_think (edict_t *self){
 
 void cpwall_touch (edict_t *self, edict_t *other)
 {
-	trace_t	tr;
-	qboolean XXX;
-	
-	if(!self->speed)
-		self->speed = 50;
-	else if(self->speed < 10)
-		self->speed = 10;
-	else if(self->speed > 200)
-		self->speed = 200;
-
-	XXX = false;
-	if(self->size[0]<self->size[1]){
-		XXX = true;
-	}
 	if (strcmp(other->classname, "player") == 0){
-		if(other->client->pers.checkpoints < self->count){
-			if(XXX){
-				if(other->s.origin[0]<self->s.origin[0])
-					other->s.origin[0] += self->speed;
-				else
-					other->s.origin[0] -= self->speed;
-			} else {
-				if(other->s.origin[1]<self->s.origin[1])
-					other->s.origin[1] += self->speed;
-				else
-					other->s.origin[1] -= self->speed;
-			}
+		if (other->client->pers.checkpoints < self->count) {
+			VectorCopy(other->s.old_origin, other->s.origin);
 			VectorClear(other->velocity);
-			if (trigger_timer(5))
-					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s) to pass this barrier.\n", self->count);
+			if (trigger_timer(5)) {
+				gi.cprintf(other, PRINT_HIGH, "You need %d checkpoint(s) to pass this barrier.\n", self->count);
+			}
 		}
 	}
 }
@@ -4089,13 +4066,14 @@ void SP_jump_cpwall (edict_t *ent) {
 	ent->movetype = MOVETYPE_NONE;
 	ent->svflags |= SVF_NOCLIENT;
 	ent->s.modelindex = 1;
-	gi.setmodel (ent, ent->model);
+	
 
 	VectorSubtract(ent->absmax,ent->absmin,center);
 	VectorScale(center,0.5,center);
 	VectorAdd(center,ent->absmin,center);
 	VectorCopy(center,ent->pos1);
 	VectorCopy(center,ent->pos2);
+	gi.setmodel(ent, ent->model);
 	if(ent->size[0]>ent->size[1]){
 		ent->pos1[0] -= ent->size[0]/2;
 		ent->pos1[2] += ent->size[2]/2;
