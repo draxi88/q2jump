@@ -1181,7 +1181,7 @@ void ClientEndServerFrame (edict_t *ent)
 			sizeof(ent->client->ps.stats));		
 		e->client->ps.stats[STAT_LAYOUTS] = 1;
 		//allow spectator to see a players speed regardless of their team
-		e->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.max_speed;
+		e->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.cur_speed;
 //		break; // LilRed: This is the fix to the chasecam bug... commenting out break; =)
 	}
 //ZOID

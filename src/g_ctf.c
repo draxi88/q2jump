@@ -1228,10 +1228,10 @@ void SetCTFStats(edict_t *ent)
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP3] = CONFIG_JUMP_NEXT_MAP3;
 
-	if (ent->client->resp.ctf_team==CTF_TEAM2 || (gametype->value==GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1))
+	if (ent->client->resp.ctf_team==CTF_TEAM1 || ent->client->resp.ctf_team == CTF_TEAM2)
 	{
 		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
-		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
+		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.cur_speed;
 		if (gset_vars->antiglue==0)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
 		else
@@ -1241,17 +1241,7 @@ void SetCTFStats(edict_t *ent)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;
 
 	}
-	else if (gametype->value!=GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1)
-	{
-		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
-		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.max_speed;
-		if (ent->client->resp.antiglue)
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE;
-		else
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;
-	}
-	else
-	{
+	else {
 		if (ent->client->resp.replaying)
 		{
 			ent->client->ps.stats[STAT_JUMP_REPLAY] = ent->client->resp.replaying;
