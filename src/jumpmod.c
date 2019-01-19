@@ -8450,8 +8450,9 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		oldtime = tourney_record[trecid].time;
 	}
 
+
+	// this player already has a time, we can just update their old one
 	if (trecid>=0) {
-		//we only need to update
 		if (time<tourney_record[trecid].time) {
 			tourney_record[trecid].time = time;
 			strcpy(tourney_record[trecid].date,date);
@@ -8508,6 +8509,8 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		// something is very wrong...
 		return false;
 	}
+
+	// these players don't have a time on the map yet
 	else {
 		if (time>0)
 		for (i=0;i<MAX_USERS;i++)
@@ -8529,6 +8532,12 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 				tourney_record[i].fresh = true;
 				ent->client->resp.trecid = i;
 				ent->client->resp.best_time = time;
+
+				// new map, so don't show comparison
+				if (level_items.stored_item_times[0].time == 0) {
+					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (1st completion on the map)\n", ent->client->pers.netname, time);
+					return false;
+				}
 
 				// 1st comp AND 1st place
 				if (time < level_items.stored_item_times[0].time) {
