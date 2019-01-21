@@ -1,3 +1,34 @@
+#####v1.27ger#####
+New:
+-added "telehack" to trigger_teleport
+	-set "message" to "telehack"
+	-calculates where you enter the trigger
+	-player spawns that same distance from the destination
+-added jump_cpeffect
+	-dynamic light effect that turns off with the right cp value
+	-set "count" to the desired cp value
+	-gl_dynamic 1 needed to see it
+-added maptimeswp
+	-prints the fastest time from the wireplay server
+	-ex: maptimeswp ps3
+-added a console command to add maps, sv addsinglemap <mapname>
+-added slip's program to list textures from a bsp file to the scripts folder
+
+Changes:
+-speedometer now shows current speed instead of top speed
+-speedometer is now enabled in hard mode (was already possible with q2pro)
+-attacking now starts the timer (fixes a map where you spawn on top of a weapon)
+-attack is now listed near jump/left/right etc when you use it
+-top 15 board is back to all white, with slight gaps between names
+-solution file has been updated to a min visual studio version of 2015
+
+Fixes:
+-some changes to the output of using showtimes, mutecps, and ezmode
+-"yes" and "no" can be typed into console while there is no vote going on
+-jump_cpwall now uses a small teleport instead of a push, should work well now
+-fixed a memory leak that showed a weird value in ping
+
+
 #####v1.26ger#####
 -raceline disabled until the ent/sec ratio is... not insane
 -null memory fix in scoreboard
