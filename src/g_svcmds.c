@@ -28,6 +28,9 @@ void	SVCmd_AddMaps (void)
 {
 	addmaps();
 }
+void	SVCmd_AddSingleMap () {
+	addsinglemap();
+}
 
 /*
 ==============================================================================
@@ -289,6 +292,8 @@ void	ServerCommand (void)
 	cmd = gi.argv(1);
 	if (Q_stricmp (cmd, "addmaps") == 0)
 		SVCmd_AddMaps ();
+	else if (Q_stricmp (cmd, "addsinglemap") == 0)
+		SVCmd_AddSingleMap();
 	else if (Q_stricmp (cmd, "changepass") == 0)
 		SVCmd_ChangePass_f ();
 	else if (Q_stricmp (cmd, "addip") == 0)

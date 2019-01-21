@@ -3496,7 +3496,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 
 	// check if the client is already finished
 	if (other->client->resp.finished == 1)
-		return false;
+		return;
 
 	//check if cpbox has a target...
 	if(self->target){
@@ -3982,6 +3982,47 @@ void SP_jump_clip (edict_t *ent)
 	gi.linkentity (ent);
 	level.jumpboxes[1]++;
 }
+void cpeffect_think(edict_t *self){
+	edict_t *temp_ent;
+	int i;
+	
+	for (i=0 ; i<maxclients->value ; i++) {
+		temp_ent = g_edicts + 1 + i;
+		if (!temp_ent->inuse || !temp_ent->client)
+			continue;
+		if(temp_ent->client->pers.cpbox_checkpoint[self->count] == 1)
+			continue;
+		gi.WriteByte (svc_temp_entity);
+		gi.WriteByte (TE_FLASHLIGHT);
+		gi.WritePosition(self->s.origin);
+		gi.WriteShort (self-g_edicts);
+		gi.unicast(temp_ent,true);
+
+	}
+	self->nextthink = level.time + FRAMETIME;
+	
+}
+
+//light that turns off with the right cp.
+//count = CP
+void SP_jump_cpeffect (edict_t *ent){
+	vec3_t movedir;
+	
+	//should probably check for 1-64, since it's 0 when it's NOT set ?
+	if(ent->count<0 || ent->count>63){
+		gi.dprintf("jump_cpeffect at %s does not have the correct count-value (0-63, current value: %d\n",vtos(ent->s.origin),ent->count);
+		return;
+	}
+	ent->classname = "jump_cpeffect";
+	ent->solid = SOLID_NOT;
+	ent->s.modelindex = 2;
+	VectorSet(movedir,90,0,0);
+	G_SetMovedir (movedir, ent->movedir);
+	ent->think = cpeffect_think;
+	ent->nextthink = level.time + 1;
+
+	gi.linkentity(ent);
+}
 void cpwall_think (edict_t *self){
 	edict_t *temp_ent;
 	int i;
@@ -4005,36 +4046,13 @@ void cpwall_think (edict_t *self){
 
 void cpwall_touch (edict_t *self, edict_t *other)
 {
-	trace_t	tr;
-	qboolean XXX;
-	
-	if(!self->speed)
-		self->speed = 50;
-	else if(self->speed < 10)
-		self->speed = 10;
-	else if(self->speed > 200)
-		self->speed = 200;
-
-	XXX = false;
-	if(self->size[0]<self->size[1]){
-		XXX = true;
-	}
 	if (strcmp(other->classname, "player") == 0){
-		if(other->client->pers.checkpoints < self->count){
-			if(XXX){
-				if(other->s.origin[0]<self->s.origin[0])
-					other->s.origin[0] += self->speed;
-				else
-					other->s.origin[0] -= self->speed;
-			} else {
-				if(other->s.origin[1]<self->s.origin[1])
-					other->s.origin[1] += self->speed;
-				else
-					other->s.origin[1] -= self->speed;
-			}
+		if (other->client->pers.checkpoints < self->count) {
+			VectorCopy(other->s.old_origin, other->s.origin);
 			VectorClear(other->velocity);
-			if (trigger_timer(5))
-					gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s) to pass this barrier.\n", self->count);
+			if (trigger_timer(5)) {
+				gi.cprintf(other, PRINT_HIGH, "You need %d checkpoint(s) to pass this barrier.\n", self->count);
+			}
 		}
 	}
 }
@@ -4048,13 +4066,14 @@ void SP_jump_cpwall (edict_t *ent) {
 	ent->movetype = MOVETYPE_NONE;
 	ent->svflags |= SVF_NOCLIENT;
 	ent->s.modelindex = 1;
-	gi.setmodel (ent, ent->model);
+	
 
 	VectorSubtract(ent->absmax,ent->absmin,center);
 	VectorScale(center,0.5,center);
 	VectorAdd(center,ent->absmin,center);
 	VectorCopy(center,ent->pos1);
 	VectorCopy(center,ent->pos2);
+	gi.setmodel(ent, ent->model);
 	if(ent->size[0]>ent->size[1]){
 		ent->pos1[0] -= ent->size[0]/2;
 		ent->pos1[2] += ent->size[2]/2;

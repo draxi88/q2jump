@@ -1,4 +1,5 @@
 #include "g_local.h"
+#include "g_wireplay.h"
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -1742,6 +1743,20 @@ qboolean Can_highlight_Name(char *name)
 		}
 	}
 	return false;
+}
+
+void Cmd_Show_Maptimes_Wireplay(edict_t* ent)
+{
+    if (gi.argc() < 2)
+    {
+        gi.cprintf(ent, PRINT_HIGH, "Please specify a mapname, example: maptimeswp ps3\n");
+        return;
+    }
+    else
+    {
+        print_wireplay_time(ent, gi.argv(1));
+        return;
+    }
 }
 
 void ShowMapTimes(edict_t *ent) 
@@ -3708,32 +3723,33 @@ void BestTimesScoreboardMessage (edict_t *ent, edict_t *killer)
 	sprintf(string+strlen(string), "xv 0 yv 0 string2 \"No   Player                    Date \" ");
 	for (i=0;i<MAX_HIGHSCORES;i++)
 	{
-		if(i % 2 == 0){
+		/*if(i % 2 == 0){
 			sprintf(colorstring,"string");
 		} else {
 			sprintf(colorstring,"string2");
-		}
+		}*/
+		sprintf(colorstring,"string");
 		//015 sort floating point thing
 		if (level_items.stored_item_times[i].name[0])
 		{
 				if (level_items.stored_item_times[i].fresh)
 				{
 					
-					sprintf(string+strlen(string), "yv %d %s \"%2d%s *%-16s%8.3f  %s\" ", i*8+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
+					sprintf(string+strlen(string), "yv %d %s \"%2d%s *%-16s%8.3f  %s\" ", i*10+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
 						level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time
 						,level_items.stored_item_times[i].date
 						);
 				} else {
-					sprintf(string+strlen(string), "yv %d %s \"%2d%s  %-16s%8.3f  %s\" ", i*8+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
+					sprintf(string+strlen(string), "yv %d %s \"%2d%s  %-16s%8.3f  %s\" ", i*10+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
 						level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time
 						,level_items.stored_item_times[i].date
 						);
 				}
 		} else {
-			sprintf(string+strlen(string), "yv %d string \"%2d \" ", i*8+16,i+1);
+			sprintf(string+strlen(string), "yv %d string \"%2d \" ", i*10+16,i+1);
 		}
 	}
-	sprintf(string+strlen(string), "yv %d string \"%d players completed map %d times\" ", i*8+24,completions,total_count);
+	sprintf(string+strlen(string), "yv %d string \"    %d players completed map %d times\" ", i*10+24,completions,total_count);
 //	gi.bprintf(PRINT_HIGH,"%d\n",strlen(string));
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
@@ -4462,6 +4478,8 @@ void Record_Frame(edict_t *ent)
 				store |= RECORD_KEY_LEFT;
 			else if (ent->client->resp.key_right)
 				store |= RECORD_KEY_RIGHT;
+			if (ent->client->buttons & BUTTON_ATTACK)
+				store |= RECORD_KEY_ATTACK;
 
 
 			client_record[index].data[client_record[index].current_frame].frame = store;
@@ -8432,8 +8450,9 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		oldtime = tourney_record[trecid].time;
 	}
 
+
+	// this player already has a time, we can just update their old one
 	if (trecid>=0) {
-		//we only need to update
 		if (time<tourney_record[trecid].time) {
 			tourney_record[trecid].time = time;
 			strcpy(tourney_record[trecid].date,date);
@@ -8490,6 +8509,8 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		// something is very wrong...
 		return false;
 	}
+
+	// these players don't have a time on the map yet
 	else {
 		if (time>0)
 		for (i=0;i<MAX_USERS;i++)
@@ -8511,6 +8532,12 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 				tourney_record[i].fresh = true;
 				ent->client->resp.trecid = i;
 				ent->client->resp.best_time = time;
+
+				// new map, so don't show comparison
+				if (level_items.stored_item_times[0].time == 0) {
+					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (1st completion on the map)\n", ent->client->pers.netname, time);
+					return false;
+				}
 
 				// 1st comp AND 1st place
 				if (time < level_items.stored_item_times[0].time) {
@@ -10376,7 +10403,6 @@ void add_clip(edict_t *ent)
 
 	//"addclip create" will create a clip between mark1 and mark2..
 	//"addclip checkpoint id" (id = 1,2,3 etc) will create a checkpoint between mark1 and mark2..
-	//"addclip teleporter target" will create a trigger_teleporter between mark1 and mark2..
 	if (strcmp(action,"create")==0 || strcmp(action,"checkpoint")==0)
 	{
 		if(strcmp(action,"checkpoint")==0 && gi.argc() < 3){
@@ -10514,6 +10540,7 @@ void addmaps(void)
 			maplist.nummaps++;
 			//new map added
 			append_added_ini(temp);
+			gi.bprintf(PRINT_HIGH,"%s has been added to the map rotation.\n", temp);
 		}
 	}
 
@@ -10522,6 +10549,51 @@ void addmaps(void)
 	remove(name);
 }
 
+void addsinglemap()
+{
+	qboolean got_match;
+	int		i;
+	char	*mapname;
+	char	text[256];
+	
+	if(gi.argc()<3){
+		gi.cprintf (NULL,PRINT_HIGH,"Correct cmd: sv addsinglemap <mapname>\n");
+		return;
+	}
+	mapname = gi.argv(2);
+	// Check that the map file exists.
+	if (!ValidateMap(mapname)) 
+    { 
+		//ERROR: <mapname>.bsp noto found!
+		gi.cprintf (NULL,PRINT_HIGH,"%s.bsp not found!\n", mapname); 
+		return; 
+	} 
+
+	got_match = false;
+	for (i=0;i<maplist.nummaps;i++)
+	{
+		if (Q_stricmp(mapname,maplist.mapnames[i])==0)
+		{
+			//got match
+			got_match = true;
+		}
+	}
+	if (!got_match)
+	{
+		maplist.demoavail[maplist.nummaps] = false;
+		maplist.gametype[maplist.nummaps] = 0;
+		maplist.update[maplist.nummaps] = 0;
+		strncpy(maplist.mapnames[maplist.nummaps], mapname, MAX_MAPNAME_LEN); 
+		UpdateTimes(maplist.nummaps);
+		maplist.nummaps++;
+		//new map added
+		append_added_ini(mapname);
+
+		sprintf(text,"say %s has been added to the map rotation.\n",mapname);
+		//gi.cprintf (NULL,PRINT_HIGH,"%s",text);
+		gi.AddCommandString(text);
+	}
+}
 int num_time_votes;
 
 void CTFVoteTime(edict_t *ent)
@@ -13524,7 +13596,7 @@ void Cpsound_on_off(edict_t *ent)
 {
 	char s[255];
 	ent->client->resp.mute_cps = !ent->client->resp.mute_cps;
-	Com_sprintf(s,sizeof(s),"Checkpoint sounds are now %s",(ent->client->resp.mute_cps ? "OFF." : "ON."));
+	Com_sprintf(s,sizeof(s),"Checkpoint sounds are now %s",(ent->client->resp.mute_cps ? "off." : "on."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
@@ -13532,7 +13604,7 @@ void Showtimes_on_off(edict_t *ent)
 {
 	char s[255];
 	ent->client->resp.showtimes = !ent->client->resp.showtimes;
-	Com_sprintf(s,sizeof(s),"Showing other players time is now %s",(ent->client->resp.showtimes ? "On." : "Off."));
+	Com_sprintf(s,sizeof(s),"Showing all times is now %s",(ent->client->resp.showtimes ? "on." : "off."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
@@ -13541,7 +13613,7 @@ void Ezmsg_on_off(edict_t *ent)
 {
 	char s[255];
 	ent->client->resp.ezmsg = !ent->client->resp.ezmsg;
-	Com_sprintf(s,sizeof(s),"Showing recall count is now %s",(ent->client->resp.ezmsg ? "On." : "Off."));
+	Com_sprintf(s,sizeof(s),"Showing recall count is now %s",(ent->client->resp.ezmsg ? "on." : "off."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 

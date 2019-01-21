@@ -1399,6 +1399,8 @@ void ClientCommand (edict_t *ent)
 		ShowPlayerMaps (ent);
 	else if (Q_stricmp (cmd, "maptimes") == 0)
 		ShowMapTimes (ent);
+    else if (Q_stricmp (cmd, "maptimeswp") == 0)
+        Cmd_Show_Maptimes_Wireplay(ent);
 	else if ((Q_stricmp (cmd, "!help") == 0) || (Q_stricmp (cmd, "!commands") == 0))
 		Cmd_Show_Help(ent);
 	else if (Q_stricmp (cmd, "!glue") == 0)
@@ -1463,18 +1465,21 @@ void ClientCommand (edict_t *ent)
 			CTFTeam_f (ent);
 	} else if (Q_stricmp(cmd, "id") == 0) {
 		CTFID_f (ent);
-	} else if (Q_stricmp(cmd, "yes") == 0) {
-		if (gset_vars->tourney)
-		{
-			return;
+	} else if (ctfgame.election != ELECT_NONE) {
+		if(Q_stricmp(cmd, "yes") == 0) {
+			if (gset_vars->tourney)
+			{
+				return;
+			}
+			CTFVoteYes(ent);
 		}
-		CTFVoteYes(ent);
-	} else if (Q_stricmp(cmd, "no") == 0) {
-		if (gset_vars->tourney)
-		{
-			return;
+		else if (Q_stricmp(cmd, "no") == 0) {
+			if (gset_vars->tourney)
+			{
+				return;
+			}
+			CTFVoteNo(ent);
 		}
-		CTFVoteNo(ent);
 	} else if (Q_stricmp(cmd, "ghost") == 0) {
 		Change_Ghost_Model(ent);
 	} else if (Q_stricmp(cmd, "admin") == 0) {
@@ -1518,7 +1523,7 @@ void ClientCommand (edict_t *ent)
       CTFUnSilence (ent); 
 	} else if (Q_stricmp (cmd, "race") == 0)
 		Cmd_Race (ent);
-	else if (Q_stricmp (cmd, "raceline") == 0)
+	//else if (Q_stricmp (cmd, "raceline") == 0)
 		//disabled for now
 		//Cmd_Raceline (ent);
 	else if (Q_stricmp (cmd, "whois") == 0)

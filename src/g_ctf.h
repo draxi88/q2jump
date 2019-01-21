@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
+#pragma once
 
 #define CTF_VSTRING2(x) #x
 #define CTF_VSTRING(x) CTF_VSTRING2(x)
@@ -30,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define CONFIG_JUMP_KEY_BACK	(CS_AIRACCEL-5)
 #define CONFIG_JUMP_KEY_JUMP	(CS_AIRACCEL-6)
 #define CONFIG_JUMP_KEY_CROUCH	(CS_AIRACCEL-7)
+#define CONFIG_JUMP_KEY_ATTACK	(CS_AIRACCEL-8)
 //
 
 #define STAT_JUMP_0 0
@@ -52,7 +54,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //#define	STAT_FRAGS				14 in use
 //#define	STAT_FLASHES			15 in use
 
-#define STAT_JUMP_ANTIGLUE 16
+#define STAT_JUMP_ANTIGLUE 1614
 #define STAT_ITEM_TIMER 17
 #define STAT_ITEM_TIMER2 19
 #define STAT_JUMP_MAPCOUNT 18
@@ -61,6 +63,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define STAT_JUMP_KEY_JUMP			22
 #define STAT_JUMP_FPS			23
 #define STAT_JUMP_KEY_CROUCH			24
+#define STAT_JUMP_KEY_ATTACK			16 
 #define STAT_JUMP_TEAM 29
 #define STAT_JUMP_CPS 26
 #define STAT_JUMP_RACE 25

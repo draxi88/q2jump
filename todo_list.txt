@@ -1,3 +1,0 @@
--show raceline during replays
--keep race on after you watch a replay
--speedometer working and in hard mode

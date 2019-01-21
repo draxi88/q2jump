@@ -117,7 +117,7 @@ int main(int argc, char** argv)
     // Output the list of all used textures
     for (auto it = textures.begin(); it != textures.end(); ++it)
     {
-        std::cout << *it << "\n";
+        std::cout << "textures/" << *it << "\n";
     }
 
     return 0;

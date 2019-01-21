@@ -128,6 +128,10 @@ char *ctf_statusbar =
 "stat_string 21 "
 "yb -18 "
 "stat_string 24 "
+//attack key
+"yb -10 "
+"stat_string 16 "
+
 
 //pooy_key
 "yb -50 "
@@ -1224,10 +1228,10 @@ void SetCTFStats(edict_t *ent)
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP3] = CONFIG_JUMP_NEXT_MAP3;
 
-	if (ent->client->resp.ctf_team==CTF_TEAM2 || (gametype->value==GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1))
+	if (ent->client->resp.ctf_team==CTF_TEAM1 || ent->client->resp.ctf_team == CTF_TEAM2)
 	{
 		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
-		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
+		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.cur_speed;
 		if (gset_vars->antiglue==0)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
 		else
@@ -1237,17 +1241,7 @@ void SetCTFStats(edict_t *ent)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;
 
 	}
-	else if (gametype->value!=GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1)
-	{
-		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
-		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.max_speed;
-		if (ent->client->resp.antiglue)
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE;
-		else
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;
-	}
-	else
-	{
+	else {
 		if (ent->client->resp.replaying)
 		{
 			ent->client->ps.stats[STAT_JUMP_REPLAY] = ent->client->resp.replaying;
@@ -1315,7 +1309,12 @@ void SetCTFStats(edict_t *ent)
 		{
 			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
 		}
-
+		if (ent->client->buttons & BUTTON_ATTACK)
+		{
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_KEY_ATTACK;
+		} else {
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
+		}
 		if (ent->client->resp.key_up)
 		{
 			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_KEY_JUMP;
@@ -1366,6 +1365,14 @@ void SetCTFStats(edict_t *ent)
 		{
 			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
 		}
+		if(keys & RECORD_KEY_ATTACK)
+		{
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_KEY_ATTACK;
+		}
+		else
+		{
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
+		}	
 
 		if (keys & RECORD_KEY_UP)
 		{
@@ -1478,6 +1485,7 @@ void SetCTFStats(edict_t *ent)
 			ent->client->ps.stats[STAT_JUMP_FPS] = CONFIG_JUMP_EMPTY;
 			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
 			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
 		}
 		return;
 	}

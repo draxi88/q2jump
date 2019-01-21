@@ -2042,9 +2042,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	if (gametype->value!=GAME_CTF)
 	if (ent->client->resp.paused)
 	{
-		if (abs(ucmd->forwardmove)>0 || abs(ucmd->upmove)>0 || abs(ucmd->sidemove)>0)
-		{
-			
+		// if player moves, or attacks, timer starts
+		if (abs(ucmd->forwardmove)>0 || abs(ucmd->upmove)>0 || abs(ucmd->sidemove)>0 || (ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK)
+		{		
 			ent->client->resp.client_think_begin = Sys_Milliseconds();
 			unpause_client(ent);
 		}

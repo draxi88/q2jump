@@ -1,7 +1,9 @@
+#pragma once
+
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.26ger"
+#define CTF_VERSION_S		"1.27ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -307,6 +309,7 @@ qboolean	trigger_timer(int timeBetweenMessages);
 qboolean    song_timer(int timeBetweenMessages);
 void		ClearCheckpoints(client_persistant_t* pers);
 void		CPSoundCheck(edict_t *ent);
+void        Cmd_Show_Maptimes_Wireplay(edict_t* ent);
 
 extern cvar_t		*gametype;
 extern admin_type	admin_pass[MAX_ADMINS];
@@ -777,6 +780,7 @@ void reset_maps_completed(edict_t *ent);
 #define RECORD_KEY_RIGHT    8 << RECORD_KEY_SHIFT
 #define RECORD_KEY_FORWARD 16 << RECORD_KEY_SHIFT
 #define RECORD_KEY_BACK    32 << RECORD_KEY_SHIFT
+#define RECORD_KEY_ATTACK  64 << RECORD_KEY_SHIFT
 
 #define RECORD_FPS_SHIFT    8
 #define RECORD_FPS_MASK   255 << RECORD_FPS_SHIFT
