@@ -436,6 +436,7 @@ typedef struct
 	int slowdoors;	
 	int timelimit;
 	int weapons;
+	int fog;
 } mset_vars_t;
 
 // gsets that aren't msets
@@ -453,6 +454,7 @@ typedef struct
 	int autotime;
 	int best_time_glow;
 	int flashlight;
+	int fog;
 	int hookspeed;
 	int hookpull;
 	int respawn_sound;
