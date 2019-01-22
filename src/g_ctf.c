@@ -1858,140 +1858,6 @@ void CTFWeapon_Grapple (edict_t *ent)
 	}
 }
 
-void CTFTeam_f (edict_t *ent)
-{
-	char *t, *s;
-	int desired_team;
-	qboolean can_join = false;
-
-	if (ClientIsBanned(ent,BAN_PLAY))
-	{
-		gi.cprintf(ent,PRINT_HIGH,"You are banned from joining a team.\n");
-		return;
-	}
-	
-	if (level.status==LEVEL_STATUS_OVERTIME)
-	{
-		if (ent->client->resp.ctf_team!=CTF_NOTEAM)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot change teams during overtime\n");
-			return;
-		}
-		if (level.overtime>gset_vars->overtimewait)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot join a team after countdown has ended\n");
-			return;
-		}
-		can_join = true;
-	}
-	else if (level.status)
-	{
-		return;
-	}
-	t = gi.args();
-	if (!*t) {
-		gi.cprintf(ent, PRINT_HIGH, "You are on the %s team.\n",
-			CTFTeamName(ent->client->resp.ctf_team));
-		return;
-	}
-
-	if (ctfgame.match > MATCH_SETUP) {
-		gi.cprintf(ent, PRINT_HIGH, "Can't change teams in a match.\n");
-		return;
-	}
-
-//	Cmd_Reset_f(ent);
-	if (Q_stricmp(t, "easy") == 0)
-	{
-		desired_team = CTF_TEAM1;
-	}
-	else if (Q_stricmp(t, "hard") == 0)
-		desired_team = CTF_TEAM2;
-	else if (Q_stricmp(t, "red") == 0)
-		desired_team = CTF_TEAM1;
-	else if (Q_stricmp(t, "blue") == 0)
-		desired_team = CTF_TEAM2;
-	else {
-		gi.cprintf(ent, PRINT_HIGH, "Unknown team %s.\n", t);
-		return;
-	}
-
-
-	if (!level.status)
-	{
-		if ((gset_vars->tourney) && (desired_team==CTF_TEAM1))
-		{
-			gi.cprintf(ent,PRINT_HIGH,"You may only join the HARD team during tournaments\n");
-			return;
-		}
-	}
-
-	
-	if (can_join)
-	{
-	    ent->client->Jet_framenum = 0;
-
-		CTFAutoJoinTeam(ent,desired_team);
-		return;
-	}
-
-	if (level.framenum<=ent->client->respawn_time)
-		return;
-
-	if (ent->client->resp.ctf_team == desired_team) {
-		gi.cprintf(ent, PRINT_HIGH, "You are already on the %s team.\n",
-			CTFTeamName(ent->client->resp.ctf_team));
-		return;
-	}
-
-////
-    ent->client->Jet_framenum = 0;
-	ent->svflags = 0;
-	ent->flags &= ~FL_GODMODE;
-	ent->client->resp.ctf_team = desired_team;
-	ent->client->resp.ctf_state = 0;
-	s = Info_ValueForKey (ent->client->pers.userinfo, "skin");
-	CTFAssignSkin(ent, s);
-
-	if (ent->solid == SOLID_NOT) { // spectator
-		if (level.status==LEVEL_STATUS_OVERTIME)
-			AutoPutClientInServer (ent);
-		else
-			PutClientInServer (ent);
-		// add a teleportation effect
-//		ent->s.event = EV_PLAYER_TELEPORT;
-		// hold in place briefly
-		ent->client->ps.pmove.pm_flags = PMF_TIME_TELEPORT;
-		ent->client->ps.pmove.pm_time = 14;
-//		gi.bprintf(PRINT_HIGH, "%s joined the %s team.\n",
-//			ent->client->pers.netname, CTFTeamName(desired_team));
-ent->client->resp.item_timer_allow = true;
-ent->client->resp.item_timer = 0;
-ent->client->resp.item_timer_penalty = 0;
-ent->client->resp.client_think_begin = 0;
-ent->client->resp.item_timer_penalty_delay = 0;
-ent->client->resp.glued = 0;
-	if (!level.status)
-	Notify_Of_Team_Commands(ent);
-	}
-	else
-	{
-
-	ent->health = 0;
-	player_die (ent, ent, ent, 100000, vec3_origin);
-	// don't even bother waiting for death frames
-	ent->deadflag = DEAD_DEAD;
-	respawn (ent);
-
-//	gi.bprintf(PRINT_HIGH, "%s changed to the %s team.\n",
-//		ent->client->pers.netname, CTFTeamName(desired_team));
-	ent->client->respawn_time = level.framenum + 50;
-
-	if (!level.status)
-	Notify_Of_Team_Commands(ent);
-	}
-
-}
 void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 {
 	char	entry[1024];
@@ -3854,7 +3720,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 
 	PMenu_Close(ent);
 
-
+	ClearCheckpoints(&ent->client->pers);
 
 	if (level.status==LEVEL_STATUS_OVERTIME)
 	{
@@ -3987,79 +3853,11 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 
 void CTFJoinTeam1(edict_t *ent, pmenuhnd_t *p)
 {
-    ClearCheckpoints(&ent->client->pers);
-	
-	if (ClientIsBanned(ent,BAN_PLAY))
-	{
-		gi.cprintf(ent,PRINT_HIGH,"You are banned from joining a team.\n");
-		return;
-	}
-
-	if (level.status==LEVEL_STATUS_OVERTIME)
-	{
-		if (ent->client->resp.ctf_team!=CTF_NOTEAM)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot change teams during overtime\n");
-			return;
-		}
-		if (level.overtime>gset_vars->overtimewait)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot join a team after countdown has ended\n");
-			return;
-		}
-
-
-	}
-	else if (level.status)
-	{
-		return;
-	}
-	else
-	{
-		if (gset_vars->tourney)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"You may only join the HARD team during tournaments\n");
-			return;
-		}
-	}
-	if (ent->movetype==MOVETYPE_NOCLIP)
-		ent->movetype = MOVETYPE_WALK;
-
 	CTFJoinTeam(ent, CTF_TEAM1);
 }
 
 void CTFJoinTeam2(edict_t *ent, pmenuhnd_t *p)
-{
-    ClearCheckpoints(&ent->client->pers);
-	
-	if (ClientIsBanned(ent,BAN_PLAY))
-	{
-		gi.cprintf(ent,PRINT_HIGH,"You are banned from joining a team.\n");
-		return;
-	}
-
-	if (level.status==LEVEL_STATUS_OVERTIME)
-	{
-		if (ent->client->resp.ctf_team!=CTF_NOTEAM)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot change teams during overtime\n");
-			return;
-		}
-		if (level.overtime>gset_vars->overtimewait)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot join a team after countdown has ended\n");
-			return;
-		}
-
-
-	}
-	else if (level.status)
-	{
-		return;
-	}
-	if (ent->movetype==MOVETYPE_NOCLIP)
-		ent->movetype = MOVETYPE_WALK;
-
+{	
 	CTFJoinTeam(ent, CTF_TEAM2);
 }
 

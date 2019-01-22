@@ -203,7 +203,6 @@ void CTFEffects(edict_t *player);
 void CTFCalcScores(void);
 void SetCTFStats(edict_t *ent);
 void CTFDeadDropFlag(edict_t *self);
-void CTFTeam_f (edict_t *ent);
 void CTFID_f (edict_t *ent);
 void CTFSay_Team(edict_t *who, char *msg);
 void CTFFlagSetup (edict_t *ent);

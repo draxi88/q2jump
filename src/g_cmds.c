@@ -1459,10 +1459,11 @@ void ClientCommand (edict_t *ent)
 		FlashLight(ent);
 	else if (Q_stricmp (cmd, "antiglue") == 0)
 		AntiGlue(ent);
-	//ZOID
-	else if (Q_stricmp (cmd, "team") == 0)
-	{
-			CTFTeam_f (ent);
+	else if (Q_stricmp(cmd, "team") == 0) {
+		if (Q_stricmp(gi.argv(1), "easy") == 0)
+			CTFJoinTeam(ent, CTF_TEAM1);
+		else if (Q_stricmp(gi.argv(1), "hard") == 0)
+			CTFJoinTeam(ent, CTF_TEAM2);
 	} else if (Q_stricmp(cmd, "id") == 0) {
 		CTFID_f (ent);
 	} else if (ctfgame.election != ELECT_NONE) {
