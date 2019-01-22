@@ -4066,6 +4066,7 @@ void SP_jump_cpwall (edict_t *ent) {
 	ent->movetype = MOVETYPE_NONE;
 	ent->svflags |= SVF_NOCLIENT;
 	ent->s.modelindex = 1;
+	gi.setmodel(ent, ent->model);
 	
 
 	VectorSubtract(ent->absmax,ent->absmin,center);
@@ -4073,7 +4074,6 @@ void SP_jump_cpwall (edict_t *ent) {
 	VectorAdd(center,ent->absmin,center);
 	VectorCopy(center,ent->pos1);
 	VectorCopy(center,ent->pos2);
-	gi.setmodel(ent, ent->model);
 	if(ent->size[0]>ent->size[1]){
 		ent->pos1[0] -= ent->size[0]/2;
 		ent->pos1[2] += ent->size[2]/2;
