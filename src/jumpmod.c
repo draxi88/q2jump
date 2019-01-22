@@ -1763,8 +1763,9 @@ void Cmd_Show_Maptimes_Wireplay(edict_t* ent)
 {
     if (gi.argc() < 2)
     {
-        gi.cprintf(ent, PRINT_HIGH, "Please specify a mapname, example: maptimeswp ps3\n");
-        return;
+		if ((level.mapnum >= 0) && (level.mapnum < maplist.nummaps))
+			print_wireplay_time(ent, maplist.mapnames[level.mapnum]);
+		return;
     }
     else
     {
@@ -1782,22 +1783,14 @@ void ShowMapTimes(edict_t *ent)
 	int index;
 	float time;
 	mapnum = -1;
+
 	//if no args, show current map
 	if (gi.argc() < 2) {
 		if ((level.mapnum>=0) && (level.mapnum<maplist.nummaps))
 			mapnum = level.mapnum;
-/*		for (i=0;i<maplist.nummaps;i++)
-		{
-			if (strcmp(maplist.mapnames[i],level.mapname)==0)
-			{
-				mapnum = i;
-				break;
-			}
-		}*/
 	goto def;
 	}
 
-	
 	strncpy(temp,gi.argv(1),sizeof(temp)-1);
 	for (i=0;i<maplist.nummaps;i++)
 	{
