@@ -119,6 +119,6 @@ int main(int argc, char** argv)
     {
         std::cout << "textures/" << *it << "\n";
     }
-
+	system("pause");
     return 0;
 }
