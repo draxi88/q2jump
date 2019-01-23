@@ -12037,7 +12037,35 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 		fclose(html_data.file);
 }
 
+fog_settings setfog;
+void Cmd_Setfog(edict_t *ent) {
+	float	fgs;
+	char	type[8];
+
+	if (gi.argc() < 3) {
+		gi.dprintf("Use setfog R, G, B, A, Density (ex. setfog G 0.5\n");
+		gi.dprintf("Current fog: %f %f %f %f %f\n", setfog.R, setfog.G, setfog.B, setfog.A, setfog.Density);
+	}
+	else {
+		strcpy(type, gi.argv(1));
+		fgs = atof(gi.argv(2));
+		if (Q_stricmp(gi.argv(1), "R") == 0)
+			setfog.R = fgs;
+		else if (Q_stricmp(gi.argv(1), "G") == 0)
+			setfog.G = fgs;
+		else if (Q_stricmp(gi.argv(1), "B") == 0)
+			setfog.B = fgs;
+		else if (Q_stricmp(gi.argv(1), "A") == 0)
+			setfog.A = fgs;
+		else if (Q_stricmp(gi.argv(1), "Density") == 0)
+			setfog.Density = fgs;
+
+		gi.dprintf("Current fog: %f %f %f %f %f\n", setfog.R, setfog.G, setfog.B, setfog.A, setfog.Density);
+	}
+}
+
 void Cmd_Raceline (edict_t *ent){
+	int racenr,i;
 
 	if(ent->client->resp.raceline) {
 		ent->client->resp.raceline = false;

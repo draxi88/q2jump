@@ -1259,6 +1259,9 @@ void ClientCommand (edict_t *ent)
 			if (!level.overtime)
 				BringClient(ent);
 		}
+		else if (Q_stricmp(cmd, "setfog") == 0) {
+			Cmd_Setfog(ent);
+		}
 		else if (Q_stricmp (cmd, "cvote") == 0)
 			cvote(ent);
 		else if (Q_stricmp (cmd, "pvote") == 0)

@@ -391,6 +391,7 @@ typedef struct
 	float		maxyaw;
 	float		minpitch;
 	float		maxpitch;
+	char		*fog;
 } spawn_temp_t;
 
 
@@ -1422,6 +1423,20 @@ struct edict_s
 };
 
 int ESF_debug;
+
+//fog settings
+typedef struct
+{
+	qboolean fogon;
+	float R;
+	float G;
+	float B;
+	float A;
+	float Density;
+} fog_settings;
+
+extern fog_settings setfog;
+
 
 //ZOID
 #include "g_ctf.h"

@@ -1059,6 +1059,7 @@ Only used for the world.
 */
 prev_levels_t prev_levels[10];
 
+fog_settings setfog;
 void SP_worldspawn (edict_t *ent)
 {
 	int i;
@@ -1066,6 +1067,7 @@ void SP_worldspawn (edict_t *ent)
 	char str[2048];
 	char temp[50];
     char cptotal[2];
+	float float_fog[5] = { 0.0,0.0,0.0,0.0,0.0 };
 
 	ent->movetype = MOVETYPE_PUSH;
 	ent->solid = SOLID_BSP;
@@ -1106,6 +1108,20 @@ void SP_worldspawn (edict_t *ent)
 	gi.configstring (CS_MAXCLIENTS, va("%i", (int)(maxclients->value) ) );
 
 
+	//get fog
+	if (st.fog) {
+		sscanf(st.fog, "%f %f %f %f %f", &float_fog[0], &float_fog[1], &float_fog[2], &float_fog[3], &float_fog[4]);
+
+		setfog.R = float_fog[0];
+		setfog.G = float_fog[1];
+		setfog.B = float_fog[2];
+		setfog.A = float_fog[3];
+		setfog.Density = float_fog[4];
+		setfog.fogon = true;
+	}
+	else {
+		setfog.fogon = false;
+	}
 
 	// help icon for statusbar
 	gi.imageindex ("i_help");
