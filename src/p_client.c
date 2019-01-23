@@ -2669,10 +2669,14 @@ void ClientBeginServerFrame (edict_t *ent)
 	//fog
 	if(mset_vars->fog || setfog.fogon)
 	{
-		if(setfog.fogon)
-			GLfloat fogColor[] = { setfog.R,setfog.G,setfog.B,setfog.A };
-		else
-			GLfloat fogColor[] = { 0.530,0.530,0.530,1 };   // fog color
+		GLfloat fogColor[] = { 0.530,0.530,0.530,1 };   // fog color
+		if (setfog.fogon) {
+			fogColor[0] = setfog.R;
+			fogColor[1] = setfog.G;
+			fogColor[2] = setfog.B;
+			fogColor[3] = setfog.A;
+		}
+
 		// execute OpenGL commands
 		glEnable(GL_FOG);   // turn on fog, otherwise you won't see any
 
