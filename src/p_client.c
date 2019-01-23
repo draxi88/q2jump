@@ -2519,6 +2519,7 @@ void Generate_Race_Data(int race_frame,int race_this)
 								}
 }
 
+fog_settings setfog;
 void ClientBeginServerFrame (edict_t *ent)
 {
 	gclient_t	*client;
@@ -2666,16 +2667,24 @@ void ClientBeginServerFrame (edict_t *ent)
 #endif
 
 	//fog
-	if(mset_vars->fog)
+	if(mset_vars->fog || setfog.fogon)
 	{
-		GLfloat fogColor[] = { 0.530,0.530,0.530,1 };   // fog color
-
+		if(setfog.fogon)
+			GLfloat fogColor[] = { setfog.R,setfog.G,setfog.B,setfog.A };
+		else
+			GLfloat fogColor[] = { 0.530,0.530,0.530,1 };   // fog color
 		// execute OpenGL commands
 		glEnable(GL_FOG);   // turn on fog, otherwise you won't see any
 
 		glFogi(GL_FOG_MODE, GL_EXP2);   // Fog fade using exponential function
 		glFogfv(GL_FOG_COLOR, fogColor);   // Set the fog color
-		glFogf(GL_FOG_DENSITY, 0.0010);   // Set the density, don't make it too high.
+		//glFogf(GL_FOG_START, 0);
+		//glFogf(GL_FOG_END, 1000); Could use start/end instead of density, or as a 2nd option ? idk.. 
+		if(setfog.fogon)
+			glFogf(GL_FOG_DENSITY, setfog.Density);   // Set the density, don't make it too high.
+		else
+			glFogf(GL_FOG_DENSITY, 0.001);
+
 		glHint(GL_FOG_HINT, GL_NICEST);   // ROS says Set default calculation mode
 
 	}
