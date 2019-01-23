@@ -1935,7 +1935,6 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	strcpy (string + stringlength, entry);
 	stringlength += j;
 
-	strcpy(teamstring,"Hard");
 	for (i=0 ; i<total ; i++)
 	{
 		cl = &game.clients[sorted[i]];
@@ -1951,6 +1950,13 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 
 		// send the layout
+		if (cl->resp.frames_without_movement > 60000)
+		{
+			strcpy(teamstring, "Idle");
+		}
+		else {
+			strcpy(teamstring, "Hard");
+		}
 		if (cl->resp.best_time)
 		{
 			Com_sprintf (entry, sizeof(entry),
@@ -1981,7 +1987,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			else
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"    ------ ----          %s\"",
+				"ctf %d %d %d %d %d xv 152 string \"    ------ ----           %s\"",
 				-8,y,sorted[i],cl->ping,1000,teamstring
 				); 
 
@@ -1999,7 +2005,6 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	//easy team
 	total_easy = 0;
 	total_specs = 0;
-	strcpy(teamstring,"Easy");
 	if (gametype->value!=GAME_CTF)
 	for (i=0 ; i<maxclients->value ; i++)
 	{
@@ -2030,17 +2035,14 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			trecid = cl->resp.trecid;		
 		}
 
-		if (cl->resp.frames_without_movement>60000)
-		{	
-			strcpy(status,"(idle)");
-			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv 168 string \"%s\"",
-			-8,y,i,cl->ping,0,status
-			); 
-		}
-		else 
+		if (cl->resp.frames_without_movement > 60000)
 		{
-			if (cl->resp.best_time)
+			strcpy(teamstring, "Idle");
+		}
+		else {
+			strcpy(teamstring, "Easy");
+		}
+		if (cl->resp.best_time)
 		{
 			Com_sprintf (entry, sizeof(entry),
 			"ctf %d %d %d %d %d xv 152 string \"%8.3f %4i %4i  %4.1f  %s\"",
@@ -2076,11 +2078,6 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 			}
 		}
-		}
-
-		
-
-
 
 		j = strlen(entry);
 		if (stringlength + j > 1024)

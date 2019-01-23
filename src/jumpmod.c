@@ -12070,6 +12070,11 @@ void Cmd_Setfog(edict_t *ent) {
 	}
 }
 
+void Cmd_Idle(edict_t *ent) {
+	gi.cprintf(ent, PRINT_HIGH, "You are now Idle!\n");
+	ent->client->resp.frames_without_movement = 60001;
+}
+
 void Cmd_Raceline (edict_t *ent){
 	int racenr,i;
 

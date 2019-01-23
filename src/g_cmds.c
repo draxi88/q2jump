@@ -1262,6 +1262,9 @@ void ClientCommand (edict_t *ent)
 		else if (Q_stricmp(cmd, "setfog") == 0) {
 			Cmd_Setfog(ent);
 		}
+		else if (Q_stricmp(cmd, "idle") == 0) {
+			Cmd_Idle(ent);
+		}
 		else if (Q_stricmp (cmd, "cvote") == 0)
 			cvote(ent);
 		else if (Q_stricmp (cmd, "pvote") == 0)
