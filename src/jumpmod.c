@@ -1763,8 +1763,7 @@ void Cmd_Show_Maptimes_Wireplay(edict_t* ent)
 {
     if (gi.argc() < 2)
     {
-		if ((level.mapnum >= 0) && (level.mapnum < maplist.nummaps))
-			print_wireplay_time(ent, maplist.mapnames[level.mapnum]);
+		print_wireplay_time(ent, level.mapname);
 		return;
     }
     else
