@@ -2128,9 +2128,18 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			y = 48 + (8 *(total+total_easy+total_specs));
 		}
 
+		//idle spectator
+		if (cl->resp.frames_without_movement > 60000)
+		{
+			Com_sprintf(entry, sizeof(entry),
+				"ctf %d %d %d %d %d xv 168 string \" (idle)\"",
+				-8, y, i,
+				cl->ping,
+				0
+			);
+		} 
 
-		
-		if (cl->resp.replaying)
+		else if (cl->resp.replaying)
 		{
 			if (cl->resp.replaying==MAX_HIGHSCORES+1)
 			Com_sprintf (entry, sizeof(entry),
