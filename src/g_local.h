@@ -1142,6 +1142,9 @@ typedef struct
 	int			max_speed;
 	int			cur_speed;
 	int			max_speed_time;
+
+	// trigger_welcome
+	int         welcome_count[10];
 } client_respawn_t;
 
 
