@@ -1465,8 +1465,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp (cmd, "flashlight") == 0)
 		FlashLight(ent);
-	else if (Q_stricmp (cmd, "antiglue") == 0)
-		AntiGlue(ent);
+	//else if (Q_stricmp (cmd, "antiglue") == 0) //Disabled to not cause crashes..
+		//AntiGlue(ent);
 	else if (Q_stricmp(cmd, "team") == 0) {
 		if (Q_stricmp(gi.argv(1), "easy") == 0)
 			CTFJoinTeam(ent, CTF_TEAM1);
