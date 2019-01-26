@@ -113,6 +113,8 @@ sounds
 3)	large switch
 4)
 set "message" to text string
+if 'count' is set to 1-9, the trigger will fire once per level, for each player
+each count value is a separate trigger, so you can have 9 of these in a map
 */
 void trigger_enable (edict_t *self, edict_t *other, edict_t *activator)
 {
