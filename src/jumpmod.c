@@ -2468,7 +2468,6 @@ void Read_Admin_cfg(void)
 	if (!strstr(temp,"Jump039"))
 	{
 		//invalid admin config (old version, we cant use it)
-        fclose(f);
 		return;
 	} 
 	
@@ -8625,14 +8624,13 @@ void update_tourney_records(char *filename){
     fscanf(f,"%s",&temp);
     if(strstr(temp,"Jump067")){
         //gi.dprintf("Old file, better luck next time.!\n");
-        fclose(f);
 	    return;
     } else {
         //gi.dprintf("Read new alltimes tourneyfile!\n");
         rewind(f);
     }
 
-	for(i2=0;i2<MAX_USERS;i2++){
+	for(i2=0;i2<=MAX_USERS;i2++){
         tempuser.uid  = -1; // so it'll go away if it's not set to anything else.
 		fscanf(f, "%s", tempuser.date);
 		fscanf(f, "%f", &tempuser.time);
@@ -8642,7 +8640,7 @@ void update_tourney_records(char *filename){
             break;
         }
         founduser = false;
-        for(i=0;i<MAX_USERS;i++){
+        for(i=0;i<=MAX_USERS;i++){
             if(tempuser.uid == tourney_record[i].uid){
                 founduser = true; //not a new user..
                 if(tourney_record[i].completions==-1){ //if remtime
@@ -8659,7 +8657,7 @@ void update_tourney_records(char *filename){
             }
         }
         if(!founduser){ //new user! 
-            for(i=0;i<MAX_USERS;i++){
+            for(i=0;i<=MAX_USERS;i++){
                 if(tourney_record[i].uid==-1){
                     tourney_record[i] = tempuser;
                     break;
@@ -8670,7 +8668,7 @@ void update_tourney_records(char *filename){
             break;
         }
 	}
-    for(i=0;i<MAX_USERS;i++){ //check if there are any removed times left, and reset them.
+    for(i=0;i<=MAX_USERS;i++){ //check if there are any removed times left, and reset them.
         if(tourney_record[i].completions==-1){
             tourney_record[i].fresh = false;
 	        tourney_record[i].time = 0;
@@ -8735,7 +8733,7 @@ void open_tourney_file(char *filename,qboolean apply)
     }
 
     
-    for(i=0;i<MAX_USERS;i++){
+    for(i=0;i<=MAX_USERS;i++){
 		fscanf(f, "%s", &tourney_record[i].date);
 		fscanf(f, "%f", &tourney_record[i].time);
 		fscanf(f, "%i", &uid);
@@ -8824,7 +8822,7 @@ void write_tourney_file(char *filename,int mapnum)
 	//print other marker
 	fprintf (f, "\nJUMPMOD067ALLTIMES\n");
 	*/
-	for (i=0;i<MAX_USERS;i++)
+	for (i=0;i<=MAX_USERS;i++)
 	{
         if (tourney_record[i].uid>-1 && tourney_record[i].time>0){
 	        Com_sprintf(buffer,sizeof(buffer), "%s %f %i %i",tourney_record[i].date,tourney_record[i].time,tourney_record[i].uid,tourney_record[i].completions);
@@ -9478,7 +9476,6 @@ qboolean ReadTimes(char *filename)
 	}	
 	if (feof(f))
 	{
-        fclose(f);
 		return false;
 	}
 
@@ -12047,7 +12044,7 @@ void Cmd_Race (edict_t *ent)
 {
 	float delay = 0;
 	int i;
-    int race_this = 0;
+	int race_this;
 #ifndef RACESPARK
 	gi.cprintf(ent,PRINT_HIGH,"Replay racing not available.\n");
 	return;
@@ -12285,7 +12282,6 @@ void LoadBans()
 	if (!strstr(temp,"Bans"))
 	{
 		//Invalid bans file
-        fclose(f);
 		return;
 	} 
 	
