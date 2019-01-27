@@ -7513,7 +7513,6 @@ void remtime(edict_t *ent)
 
 		UpdateScores();
 		sort_users();
-        sort_tourney_records();
 
 		for (i = 1; i <= maxclients->value; i++) 
 		{
@@ -8575,16 +8574,16 @@ void sort_tourney_records(){
     swap = 0;
 
     for(i=1; i<MAX_USERS; i++){
-        if(tourney_record[i].completions==-1){
+        if(strlen(tourney_record[i].date)<2){
             break;
         }
         swap = 0; 
         for(j=0; j<(MAX_USERS-i); j++){
-            if(tourney_record[j].uid==-1 || tourney_record[j+1].uid==-1) {
+            if(strlen(tourney_record[j].date)<2 || strlen(tourney_record[j+1].date)<2) {
                 break;
             }
             if(tourney_record[j].time==tourney_record[j+1].time){
-                continue;
+                continue;	
             }
             if(tourney_record[j].time > tourney_record[j+1].time){
                 //gi.dprintf("Swap: %d  <->  %d\n",tourney_record[j].uid,tourney_record[j+1].uid);
@@ -8725,6 +8724,10 @@ void open_tourney_file(char *filename,qboolean apply)
 	{
 		return;
 	}	
+	fseek(f, 0, SEEK_END);
+	if (ftell(f) == 0) { //if file is empty.
+		return;
+	} 
 
     fscanf(f,"%s",&temp);
     if(strstr(temp,"Jump067")){
@@ -8744,11 +8747,13 @@ void open_tourney_file(char *filename,qboolean apply)
     
     for(i=0;i<MAX_USERS;i++){
 		fscanf(f, "%s", &tourney_record[i].date);
+		if (strlen(tourney_record[i].date) < 2 )
+			break; //ugly hack to stop it from loading 1 more uid, even though it has reached the end of the file..
 		fscanf(f, "%f", &tourney_record[i].time);
 		fscanf(f, "%i", &uid);
 		tourney_record[i].uid = uid;
-		fscanf(f, "%i", &tourney_record[i].completions);
-        //gi.dprintf("open UID %d  uid:%d\n",i,uid);
+		fscanf(f, "%i", &tourney_record[i].completions); 
+		gi.dprintf("NR: %d Uid: %d date: %s time: %f\n", i, uid, tourney_record[i].date, tourney_record[i].time);
 		if (apply && tourney_record[i].completions)
 		{
 			//need to check its existence on the good map list first
@@ -8949,6 +8954,7 @@ void open_users_file()
 	tgame = gi.cvar("game", "", 0);
 	port = gi.cvar("port", "", 0);
 
+	gi.dprintf("Opening users file!\n");
 	if (!*tgame->string)
 	{
 		sprintf	(name, "jump/%s/users.t", port->string);
@@ -8993,6 +8999,7 @@ void open_users_file()
 
     i = 0;
     if(!newusers){
+		gi.dprintf("Old users file....\n");
 	    while (!feof(f))
 	    {
 		    fscanf(f, "%i", &uid);
@@ -9021,6 +9028,7 @@ void open_users_file()
 		    maplist.num_users++;
 	    }
     } else { //new users.t version..
+		gi.dprintf("New!! users file!\n");
         while (!feof(f))
 	    {
             fscanf(f, "%i", &uid);
@@ -9051,7 +9059,7 @@ void write_users_file(void)
 	cvar_t	*port;
 	cvar_t	*tgame;
 
-    update_users_file();
+    //update_users_file(); //not needed when only running 1 server..
 	tgame = gi.cvar("game", "jump", 0);
 	port = gi.cvar("port", "27910", 0);
 
@@ -9366,7 +9374,6 @@ void read_top10_tourney_log(char *filename)
 	int uid;
     int completions;
 
-    sort_tourney_records();
 	//clear old times first
 	strcpy(level_items.mapname,filename);
 	ClearTimes();
@@ -9441,7 +9448,7 @@ void read_top10_tourney_log(char *filename)
     }
 	
 	fclose(f);
-	
+	sort_tourney_records(); //sort times..
 	if (level_items.stored_item_times_count>MAX_HIGHSCORES)
 		level_items.stored_item_times_count=MAX_HIGHSCORES;
 }
@@ -11455,10 +11462,11 @@ void resync(qboolean overide)
 	sprintf (name, "%s/_html/0.html", tgame->string);
 	f = fopen (name, "rb");
 
-	//see if 0.html exists, if not then we need to resync 
+	//see if gset create_html && 0.html exists, if not then we need to resync 
 	if (!f)
 	{
-		overide = true;
+		if(gset_vars->html_create)
+			overide = true;
 	}
 	else
 		fclose(f);
