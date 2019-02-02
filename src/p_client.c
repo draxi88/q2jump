@@ -21,11 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //#include "p_hook.h"
 #include "m_player.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-#include <GL/gl.h>
-
 void SP_misc_teleporter_dest (edict_t *ent);
 
 //
@@ -2666,20 +2661,5 @@ void ClientBeginServerFrame (edict_t *ent)
 		}
 	}
 #endif
-
-	//fog
-	if(mset_vars->fog)
-	{
-		GLfloat fogColor[] = { 0.530,0.530,0.530,1 };   // fog color
-
-		// execute OpenGL commands
-		glEnable(GL_FOG);   // turn on fog, otherwise you won't see any
-
-		glFogi(GL_FOG_MODE, GL_EXP2);   // Fog fade using exponential function
-		glFogfv(GL_FOG_COLOR, fogColor);   // Set the fog color
-		glFogf(GL_FOG_DENSITY, 0.0010);   // Set the density, don't make it too high.
-		glHint(GL_FOG_HINT, GL_NICEST);   // ROS says Set default calculation mode
-
-	}
 
 }

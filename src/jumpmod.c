@@ -257,19 +257,12 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &mset_vars->timelimit,
   },
-  {
+  { 
 	0,1,0,
-	"weapons",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->weapons,
-  },
-  {
-	0,1,0,
-	"fog",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->fog,
+    "weapons", 
+    CMDWHERE_CFGFILE | CMD_MSET, 
+    CMDTYPE_NUMBER,
+    &mset_vars->weapons,
   },
 
   //----------------------------
@@ -473,19 +466,12 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &gset_vars->flashlight,
   },
-  {
+  { 
 	0,1,1,
-	"fpskick",
-	CMDWHERE_CFGFILE | CMD_GSET,
-	CMDTYPE_NUMBER,
-	&gset_vars->fpskick,
-  },
-  {
-	0,1,0,
-	"fog",
-	CMDWHERE_CFGFILE | CMD_GSET,
-	CMDTYPE_NUMBER,
-	&gset_vars->fog,
+    "fpskick", 
+    CMDWHERE_CFGFILE | CMD_GSET, 
+    CMDTYPE_NUMBER,
+    &gset_vars->fpskick,
   },
   { 
 	0,1,1,
@@ -6510,7 +6496,6 @@ void SetDefaultValues(void)
 	gset_vars->mset->fasttele = 0;
 	gset_vars->flashlight = 1;
 	gset_vars->fpskick = 1;
-	gset_vars->mset->fog = 0;
 	gset_vars->mset->ghost = 1;
 	gset_vars->ghost_glow = 0;
 	gset_vars->mset->ghost_model = 0;
