@@ -12053,14 +12053,8 @@ void Cmd_Setfog(edict_t *ent) {
 	char	type[8];
 
 	if (gi.argc() < 3) {
-		if (Q_stricmp(gi.argv(1), "ON") == 0) {
-			setfog.fogon = true;
-		} else if (Q_stricmp(gi.argv(1), "OFF") == 0) {
-			setfog.fogon = false;
-		} else {
-			gi.dprintf("Usage: setfog ON/OFF, R, G, B, A, or Density (ex. setfog G 0.5\n");
-			gi.dprintf("Current fog: %f %f %f %f %f\n", setfog.R, setfog.G, setfog.B, setfog.A, setfog.Density);
-		}
+		gi.dprintf("Usage: setfog ON/OFF, R, G, B, A, or Density (ex. setfog G 0.5\n");
+		gi.dprintf("Current fog: %f %f %f %f %f\n", setfog.R, setfog.G, setfog.B, setfog.A, setfog.Density);
 	}
 	else {
 		strcpy(type, gi.argv(1));
@@ -12075,6 +12069,10 @@ void Cmd_Setfog(edict_t *ent) {
 			setfog.A = fgs;
 		else if (Q_stricmp(gi.argv(1), "Density") == 0)
 			setfog.Density = fgs;
+		else if (Q_stricmp(gi.argv(1), "ON") == 0)
+			setfog.fogon = true;
+		else if (Q_stricmp(gi.argv(1), "OFF") == 0)
+			setfog.fogon = false;
 
 		gi.dprintf("Current fog: %f %f %f %f %f\n", setfog.R, setfog.G, setfog.B, setfog.A, setfog.Density);
 	}
