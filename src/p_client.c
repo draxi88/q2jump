@@ -2671,10 +2671,8 @@ void ClientBeginServerFrame (edict_t *ent)
 	//fog
 	if(mset_vars->fog || setfog.fogon)
 	{
-		if(setfog.fogon)
-			GLfloat fogColor[] = { setfog.R,setfog.G,setfog.B,setfog.A };
-		else
-			GLfloat fogColor[] = { 0.530,0.530,0.530,1 };   // fog color
+		//GLfloat fogColor[] = { 0.530,0.530,0.530,1 };   // fog color
+		GLfloat fogColor[] = { setfog.R,setfog.G,setfog.B,setfog.A };
 		// execute OpenGL commands
 		glEnable(GL_FOG);   // turn on fog, otherwise you won't see any
 
@@ -2682,11 +2680,7 @@ void ClientBeginServerFrame (edict_t *ent)
 		glFogfv(GL_FOG_COLOR, fogColor);   // Set the fog color
 		//glFogf(GL_FOG_START, 0);
 		//glFogf(GL_FOG_END, 1000); Could use start/end instead of density, or as a 2nd option ? idk.. 
-		if(setfog.fogon)
-			glFogf(GL_FOG_DENSITY, setfog.Density);   // Set the density, don't make it too high.
-		else
-			glFogf(GL_FOG_DENSITY, 0.001);
-
+		glFogf(GL_FOG_DENSITY, setfog.Density);   // Set the density, don't make it too high.
 		glHint(GL_FOG_HINT, GL_NICEST);   // ROS says Set default calculation mode
 
 	}
