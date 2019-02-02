@@ -2681,7 +2681,7 @@ void ClientBeginServerFrame (edict_t *ent)
 		glFogi(GL_FOG_MODE, GL_EXP2);   // Fog fade using exponential function
 		glFogfv(GL_FOG_COLOR, fogColor);   // Set the fog color
 		//glFogf(GL_FOG_START, 0);
-		//glFogf(GL_FOG_END, 1000); Could use start/end instead of density, or as a 2nd option ? idk..
+		//glFogf(GL_FOG_END, 1000); Could use start/end instead of density, or as a 2nd option ? idk.. 
 		if(setfog.fogon)
 			glFogf(GL_FOG_DENSITY, setfog.Density);   // Set the density, don't make it too high.
 		else
