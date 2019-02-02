@@ -4690,6 +4690,8 @@ void Replay_Recording(edict_t *ent)
 	vec3_t next_angle;
 	vec3_t diff_frame;
 	vec3_t diff_angle;
+	vec3_t rep_speed1;
+	vec3_t rep_speed2;
 
 	temp = ent->client->resp.replaying - 1;
 	if (temp>=0)
@@ -4774,6 +4776,15 @@ void Replay_Recording(edict_t *ent)
 				ent->client->resp.replaying = 0;
 				ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 			}
+		}
+		//replay speedometer a la Killa
+		if (ent->client->resp.replaying) {
+			VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame - 10].origin, rep_speed1);
+			rep_speed1[2] = 0;
+			VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].origin, rep_speed2);
+			rep_speed2[2] = 0;
+			VectorSubtract(rep_speed1, rep_speed2, rep_speed1);
+			ent->client->resp.rep_speed = (int)fabs(VectorLength(rep_speed1));
 		}
 	} else {
 			// =========================

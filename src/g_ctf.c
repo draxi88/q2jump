@@ -1246,7 +1246,7 @@ void SetCTFStats(edict_t *ent)
 		{
 			ent->client->ps.stats[STAT_JUMP_REPLAY] = ent->client->resp.replaying;
 			ent->client->ps.stats[STAT_HEALTH] = 0;
-			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
+			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.rep_speed;
 		}
 		else
 		{

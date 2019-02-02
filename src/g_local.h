@@ -1140,6 +1140,7 @@ typedef struct
 	qboolean cleanhud;
 	int			max_speed;
 	int			cur_speed;
+	int			rep_speed;
 	int			max_speed_time;
 
 	// trigger_welcome
