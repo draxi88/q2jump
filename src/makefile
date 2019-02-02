@@ -2,8 +2,8 @@
 
 # Compiler flags
 CC = gcc
-CFLAGS = -Wall -fPIC -m32 -Dstricmp=strcasecmp
-LDFLAGS = -ldl -lm -lGL -lGLU -lglut -shared
+CFLAGS = -Wall -fPIC -Dstricmp=strcasecmp
+LDFLAGS = -ldl -lm -shared
 
 # Project files
 GAME_OBJS = \
