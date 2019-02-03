@@ -4692,6 +4692,7 @@ void Replay_Recording(edict_t *ent)
 	vec3_t diff_angle;
 	vec3_t rep_speed1;
 	vec3_t rep_speed2;
+	int rep_speed;
 
 	temp = ent->client->resp.replaying - 1;
 	if (temp>=0)
@@ -4784,7 +4785,10 @@ void Replay_Recording(edict_t *ent)
 			VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].origin, rep_speed2);
 			rep_speed2[2] = 0;
 			VectorSubtract(rep_speed1, rep_speed2, rep_speed1);
-			ent->client->resp.rep_speed = (int)fabs(VectorLength(rep_speed1));
+			rep_speed = (int)fabs(VectorLength(rep_speed1));
+			//Don't update rep_speed if it's not 10 ups faster/slower than current rep_speed.
+			if (rep_speed > ent->client->resp.rep_speed + 10 || rep_speed < ent->client->resp.rep_speed - 10)
+				ent->client->resp.rep_speed = rep_speed;
 		}
 	} else {
 			// =========================
