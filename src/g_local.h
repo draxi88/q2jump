@@ -1028,6 +1028,8 @@ typedef struct
 
 	char		userip[32];
 	unsigned long banlevel;
+	qboolean idle_player; //idle player, no vote for you!
+	unsigned long frames_without_movement;
 } client_persistant_t;
 
 // client data that stays across deathmatch respawns
@@ -1099,7 +1101,6 @@ typedef struct
 	int replay_data;
 	int			replay_speed;
 	int			current_vote;
-	unsigned long frames_without_movement;
 	int msec_history[10];
 	qboolean	auto_record_on;
 	qboolean	cmsg;

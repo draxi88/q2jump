@@ -670,24 +670,30 @@ This is only called when the game first initializes in single player,
 but is called after each death and level change in deathmatch
 ==============
 */
-void InitClientPersistant (gclient_t *client)
+void InitClientPersistant(gclient_t *client)
 {
 	gitem_t		*item;
 	char		userip[16];
 	unsigned long banlevel;
+	int			idletime;
+	qboolean	idle;
+
+	//idle trough mapchange?
+	idletime = client->pers.frames_without_movement;
+	idle = client->pers.idle_player;
 	//char		user_temp[1024];
 
 	//ww - hang on to user ip and banlevel
-	strcpy(userip,client->pers.userip);
+	strcpy(userip, client->pers.userip);
 	banlevel = client->pers.banlevel;
 
-//	strncpy(user_temp,client->pers.userinfo,sizeof(user_temp));
-	memset (&client->pers, 0, sizeof(client->pers));
+	//	strncpy(user_temp,client->pers.userinfo,sizeof(user_temp));
+	memset(&client->pers, 0, sizeof(client->pers));
 
 	//strncpy(client->pers.userinfo,user_temp,sizeof(client->pers.userinfo));
 
 	//ww - put banlevel and userip back in
-	strcpy(client->pers.userip,userip);
+	strcpy(client->pers.userip, userip);
 	client->pers.banlevel = banlevel;
 
 	item = FindItem("Blaster");
@@ -695,30 +701,33 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.inventory[client->pers.selected_item] = 1;
 
 	client->pers.weapon = item;
-//ZOID
+	//ZOID
 	client->pers.lastweapon = item;
-//ZOID
+	//ZOID
 
-	if ((level.status) && (gset_vars->overtimetype!=OVERTIME_FAST))
+	if ((level.status) && (gset_vars->overtimetype != OVERTIME_FAST))
 	{
-		client->pers.health			= gset_vars->overtimehealth;//pooy
-		client->pers.max_health		= gset_vars->overtimehealth;
+		client->pers.health = gset_vars->overtimehealth;//pooy
+		client->pers.max_health = gset_vars->overtimehealth;
 		client->pers.inventory[ITEM_INDEX(FindItem("Body Armor"))] = 150;
 	}
 	else
 	{
-		client->pers.health			= mset_vars->health;//pooy
-		client->pers.max_health		= mset_vars->health;
+		client->pers.health = mset_vars->health;//pooy
+		client->pers.max_health = mset_vars->health;
 	}
 
-	client->pers.max_bullets	= 200;
-	client->pers.max_shells		= 100;
-	client->pers.max_rockets	= 50;
-	client->pers.max_grenades	= 50;
-	client->pers.max_cells		= 200;
-	client->pers.max_slugs		= 50;
+	client->pers.max_bullets = 200;
+	client->pers.max_shells = 100;
+	client->pers.max_rockets = 50;
+	client->pers.max_grenades = 50;
+	client->pers.max_cells = 200;
+	client->pers.max_slugs = 50;
 
 	client->pers.connected = true;
+	//idle trough mapchange?
+	client->pers.frames_without_movement = idletime;
+	client->pers.idle_player = idle;
 }
 
 
@@ -1904,7 +1913,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 
 	ent->client->pers.connected = true;
 
-	ent->client->resp.frames_without_movement = 0;
+	ent->client->pers.frames_without_movement = 0;
 	ent->client->resp.current_vote = 0;
 	vote_data.votes[0]++;
 	removeClientCommands(ent);
@@ -1964,7 +1973,7 @@ void ClientDisconnect (edict_t *ent)
 
 	vote_data.votes[ent->client->resp.current_vote]--;
 	ent->client->resp.current_vote = 0;
-	ent->client->resp.frames_without_movement = 0;
+	ent->client->pers.frames_without_movement = 0;
 	removeClientCommands(ent);
 
 	playernum = ent-g_edicts-1;
@@ -2069,13 +2078,17 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	pm_passent = ent;
 
-
+	//idle ?
+	if (ent->client->pers.idle_player && ucmd->buttons != 0 && ent->client->resp.ctf_team != CTF_NOTEAM) {
+		gi.cprintf(ent, PRINT_HIGH, "You are no longer idle! Welcome back.\n");
+		ent->client->pers.idle_player = false;
+	}
 //auto kick code goes here
   if (enable_autokick->value) {
         if (ucmd->buttons==0) {
-                ent->client->resp.frames_without_movement += ucmd->msec;
-        } else {
-                ent->client->resp.frames_without_movement = 0;
+                ent->client->pers.frames_without_movement += ucmd->msec;
+		} else {
+                ent->client->pers.frames_without_movement = 0;
         };
   };
 

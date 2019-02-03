@@ -1950,7 +1950,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 
 		// send the layout
-		if (cl->resp.frames_without_movement > 60000)
+		if (cl->pers.frames_without_movement > 60000 || cl->pers.idle_player)
 		{
 			strcpy(teamstring, "Idle");
 		}
@@ -2035,7 +2035,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			trecid = cl->resp.trecid;		
 		}
 
-		if (cl->resp.frames_without_movement > 60000)
+		if (cl->pers.frames_without_movement > 60000 || cl->pers.idle_player)
 		{
 			strcpy(teamstring, "Idle");
 		}
@@ -2129,7 +2129,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 
 		//idle spectator
-		if (cl->resp.frames_without_movement > 60000)
+		if (cl->pers.frames_without_movement > 60000 || cl->pers.idle_player)
 		{
 			Com_sprintf(entry, sizeof(entry),
 				"ctf %d %d %d %d %d xv 168 string \" (idle)\"",
@@ -5229,7 +5229,7 @@ void CTFBoot(edict_t *ent)
 	char temp[128];
 	
 
-	//ent->client->resp.frames_without_movement = 0;
+	//ent->client->pers.frames_without_movement = 0;
 
 /*	if (!ent->client->resp.admin) {
 		gi.cprintf(ent, PRINT_HIGH, "You are not an admin.\n");
@@ -5694,7 +5694,7 @@ int Get_Voting_Clients(void)
 		e->client->resp.voted = false;
 		if (e->inuse)
 		{
-			if (e->client->resp.frames_without_movement>60000)
+			if (e->client->pers.frames_without_movement>60000 || e->client->pers.idle_player)
 			{
 				//they need removing from vote
 				e->client->resp.voted = true;

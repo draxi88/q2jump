@@ -3322,7 +3322,7 @@ void CTFSilence(edict_t *ent)
 	edict_t *targ;
 	char text[1024];
 	
-	//ent->client->resp.frames_without_movement = 0;
+	//ent->client->pers.frames_without_movement = 0;
 
 	if ((!map_allow_voting) && (ent->client->resp.admin<aset_vars->ADMIN_SILENCE_LEVEL))
 		return;
@@ -10620,7 +10620,7 @@ void CTFVoteTime(edict_t *ent)
 	int diff;
 	qboolean require_max = false;
 
-	//ent->client->resp.frames_without_movement = 0;
+	//ent->client->pers.frames_without_movement = 0;
 	
 	if (!map_allow_voting)
 		return;
@@ -12048,8 +12048,15 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 }
 
 void Cmd_Idle(edict_t *ent) {
-	gi.cprintf(ent, PRINT_HIGH, "You are now Idle!\n");
-	ent->client->resp.frames_without_movement = 60001;
+	if (!ent->client->pers.idle_player) {
+		gi.cprintf(ent, PRINT_HIGH, "You are now marked as idle!\n");
+		ent->client->pers.idle_player = true;
+	}
+	else {
+		gi.cprintf(ent, PRINT_HIGH, "You are no longer idle! Welcome back.\n");
+		ent->client->pers.idle_player = false;
+	}
+
 }
 
 void Cmd_Raceline (edict_t *ent){

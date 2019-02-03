@@ -845,7 +845,9 @@ void G_SetClientEffects (edict_t *ent)
 	{
 		if (!ent->client->resp.playtag)
 		{
-			if (ent->client->resp.frames_without_movement>60000)
+			if (ent->client->pers.frames_without_movement > 60000)
+				ent->svflags = SVF_NOCLIENT;
+			else if (ent->client->pers.idle_player)
 				ent->svflags = SVF_NOCLIENT;
 			else if (ent->client->resp.ctf_team!=CTF_NOTEAM)
 				ent->svflags &= ~SVF_NOCLIENT;

@@ -1116,7 +1116,7 @@ void ClientCommand (edict_t *ent)
 	if (!ent->client)
 		return;		// not fully in game yet
 
-	ent->client->resp.frames_without_movement = 0;
+	ent->client->pers.frames_without_movement = 0;
 
 	cmd = gi.argv(0);
 
@@ -1578,7 +1578,7 @@ void ClientCommand (edict_t *ent)
 	}
 	else	// anything that doesn't match a command will be a chat
 	{
-        ent->client->resp.frames_without_movement = 0;
+		ent->client->pers.frames_without_movement = 0;
 		Cmd_Say_f (ent, false, true);
 	}
 }

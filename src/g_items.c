@@ -3970,6 +3970,7 @@ void SP_jump_clip (edict_t *ent)
 	ent->classname = "jump_clip";
 	ent->movetype = MOVETYPE_NONE;
 	ent->clipmask = MASK_PLAYERSOLID;
+	ent->svflags = SVF_NOCLIENT;
 	ent->s.modelindex = 2;
 	if(ent->message && strcmp(ent->message,"checkpoint")==0){
 		ent->solid = SOLID_TRIGGER;
