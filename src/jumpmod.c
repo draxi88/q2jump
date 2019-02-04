@@ -13479,21 +13479,52 @@ void Compare_Users(edict_t *ent)
 void Update_Next_Maps(void)
 {
 	char txt[255];
-	if (maplist.times[map1][0].time>0)
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map1]],maplist.mapnames[map1],maplist.users[maplist.times[map1][0].uid].name,maplist.times[map1][0].time);
-	else
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map1]],maplist.mapnames[map1]);
+	char mapname[32];
+	char longmapname[64];
 
+	if (strlen(maplist.mapnames[map1]) > 16) {
+		strcpy(longmapname, maplist.mapnames[map1]);
+		memcpy(mapname, &longmapname[0], 13);
+		mapname[13] = '\0';
+		Com_sprintf(mapname, sizeof(mapname), "%s...", mapname);
+	} else {
+		strcpy(mapname, maplist.mapnames[map1]);
+	}
+
+	if (maplist.times[map1][0].time>0)
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map1]],mapname,maplist.users[maplist.times[map1][0].uid].name,maplist.times[map1][0].time);
+	else
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map1]],mapname);
 	gi.configstring (CONFIG_JUMP_NEXT_MAP1,txt);
+
+	if (strlen(maplist.mapnames[map2]) > 16) {
+		strcpy(longmapname, maplist.mapnames[map2]);
+		memcpy(mapname, &longmapname[0], 13);
+		mapname[13] = '\0';
+		Com_sprintf(mapname, sizeof(mapname), "%s...", mapname);
+	}
+	else {
+		strcpy(mapname, maplist.mapnames[map2]);
+	}
 	if (maplist.times[map2][0].time>0)
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map2]],maplist.mapnames[map2],maplist.users[maplist.times[map2][0].uid].name,maplist.times[map2][0].time);
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map2]],mapname,maplist.users[maplist.times[map2][0].uid].name,maplist.times[map2][0].time);
 	else
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map2]],maplist.mapnames[map2]);
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map2]],mapname);
 	gi.configstring (CONFIG_JUMP_NEXT_MAP2,txt);
+
+	if (strlen(maplist.mapnames[map3]) > 16) {
+		strcpy(longmapname, maplist.mapnames[map3]);
+		memcpy(mapname, &longmapname[0], 13);
+		mapname[13] = '\0';
+		Com_sprintf(mapname, sizeof(mapname), "%s...", mapname);
+	}
+	else {
+		strcpy(mapname, maplist.mapnames[map3]);
+	}
 	if (maplist.times[map3][0].time>0)
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map3]],maplist.mapnames[map3],maplist.users[maplist.times[map3][0].uid].name,maplist.times[map3][0].time);
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map3]],mapname,maplist.users[maplist.times[map3][0].uid].name,maplist.times[map3][0].time);
 	else
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map3]],maplist.mapnames[map3]);
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map3]],mapname);
 	gi.configstring (CONFIG_JUMP_NEXT_MAP3,txt);
 }
 
