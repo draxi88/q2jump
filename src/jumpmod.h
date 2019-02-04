@@ -506,6 +506,7 @@ typedef struct
 	unsigned int kill_delay;
 	unsigned int target_glow;
 	unsigned int tourney;
+	int drowningsound;
 } gset_vars_t;
 
 typedef struct
