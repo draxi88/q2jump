@@ -10370,8 +10370,8 @@ void add_clip(edict_t *ent)
 
 	//no args, show ent list
 	if (gi.argc() < 2) {
-		gi.dprintf("Add 2 marks with addclip mark1/mark2, and create the ent with addclip create.\n");
-		gi.dprintf("Make the ent a checkpoint by using addclip checkpoint (0 - %i)\n", cpmax);
+		gi.cprintf(ent, PRINT_HIGH, "Add 2 marks with addclip mark1/mark2, and create the ent with addclip create.\n");
+		gi.cprintf(ent, PRINT_HIGH, "Make the ent a checkpoint by using addclip checkpoint (0 - %i)\n", cpmax);
 		return;
 	}
 	
@@ -10380,14 +10380,14 @@ void add_clip(edict_t *ent)
 	{
 		VectorCopy(ent->s.origin,level_items.clip1);
 		level_items.clip1[2] -= 10;
-		gi.dprintf("Mark 1 added at: %f - %f - %f\n",level_items.clip1[0],level_items.clip1[1],level_items.clip1[2]);
+		gi.cprintf(ent, PRINT_HIGH, "Mark 1 added at: %f - %f - %f\n",level_items.clip1[0],level_items.clip1[1],level_items.clip1[2]);
 		remove_maxsmins_boundary(); //remove old boundary
 	}
 	else if (strcmp(action,"mark2")==0)
 	{
 		VectorCopy(ent->s.origin,level_items.clip2);
 		level_items.clip2[2] -= 10;
-		gi.dprintf("Mark 2 added at: %f - %f - %f\n",level_items.clip2[0],level_items.clip2[1],level_items.clip2[2]);
+		gi.cprintf(ent, PRINT_HIGH, "Mark 2 added at: %f - %f - %f\n",level_items.clip2[0],level_items.clip2[1],level_items.clip2[2]);
 		remove_maxsmins_boundary(); //remove old boundary
 	}
 
@@ -10431,7 +10431,7 @@ void add_clip(edict_t *ent)
 	if (strcmp(action,"create")==0 || strcmp(action,"checkpoint")==0)
 	{
 		if(strcmp(action,"checkpoint")==0 && gi.argc() < 3){
-			gi.dprintf("You need to give your checkpoint an ID from 0-%i (Ex: addclip checkpoint 1)\n", cpmax);
+			gi.cprintf(ent, PRINT_HIGH, "You need to give your checkpoint an ID from 0-%i (Ex: addclip checkpoint 1)\n", cpmax);
 			return;
 		}
 
@@ -10470,7 +10470,7 @@ void add_clip(edict_t *ent)
 
 			// check for right cp values
 			if (cp < 0 || cp > (sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int)) - 1) {
-				gi.dprintf("Checkpoint value can only be between 0 and %i\n", cpmax);
+				gi.cprintf(ent, PRINT_HIGH, "Checkpoint value can only be between 0 and %i\n", cpmax);
 				return;
 			}
 				
@@ -10497,10 +10497,10 @@ void add_clip(edict_t *ent)
 		}
 		WriteEnts();
 		if(strcmp(action,"checkpoint")==0){
-			gi.dprintf("Checkpoint created with a checkpoint value of %i.\n", cp);
+			gi.cprintf(ent, PRINT_HIGH, "Checkpoint created with a checkpoint value of %i.\n", cp);
 		}
 		else {
-			gi.dprintf("Jump_clip created.\n");
+			gi.cprintf(ent, PRINT_HIGH, "Jump_clip created.\n");
 		}
 		level_items.clip1[0] = 0;
 		level_items.clip1[1] = 0;
