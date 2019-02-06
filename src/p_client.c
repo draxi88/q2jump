@@ -2044,6 +2044,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	vec3_t temp_pos;
 	qboolean prev_groundentity;
 	vec_t tlen;
+	edict_t *cl_ent;
 
 	level.current_entity = ent;
 	client = ent->client;
@@ -2290,6 +2291,21 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	if (ent->groundentity && !pm.groundentity && (pm.cmd.upmove >= 10) && (pm.waterlevel == 0)) {
 		gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
 		PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
+		//jumpers no sound
+		for (i = 0; i < maxclients->value; i++) {
+			cl_ent = g_edicts + 1 + i;
+			if (cl_ent->client != client && cl_ent->client->resp.hide_jumpers)
+				return;
+			gi.sound(cl_ent, CHAN_BODY, gi.soundindex("*jump1_2.wav"), 1, ATTN_STATIC, 0);
+			/*
+			if (!cl_ent->client)
+				return;
+			if (!cl_ent->inuse)
+				continue;
+			if (cl_ent->client->resp.hide_jumpers && client != cl_ent->client)
+				stuffcmd(cl_ent, "stopsound");*/
+		}
+		
 	}
 
 	ent->viewheight = pm.viewheight;
