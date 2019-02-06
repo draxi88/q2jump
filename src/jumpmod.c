@@ -10314,7 +10314,7 @@ void remove_maxsmins_boundary() {
 
 void addclip_laser_think (edict_t *self){
 	gi.WriteByte(svc_temp_entity);
-	gi.WriteByte(TE_RAILTRAIL);
+	gi.WriteByte(TE_DEBUGTRAIL);
 	gi.WritePosition(self->pos1);
 	gi.WritePosition(self->pos2);
 	gi.multicast(self->s.origin, MULTICAST_PVS);
@@ -10463,6 +10463,7 @@ void add_clip(edict_t *ent)
 		VectorCopy(center,tent->s.origin);
 		VectorCopy (tent->s.origin, tent->s.old_origin);
 		tent->classname = "jump_clip";
+		tent->svflags |= SVF_NOCLIENT;
 		tent->movetype = MOVETYPE_NONE;
 		if(strcmp(action,"checkpoint")==0){
 			cp = atoi(gi.argv(2));
