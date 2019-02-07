@@ -2044,6 +2044,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	vec3_t temp_pos;
 	qboolean prev_groundentity;
 	vec_t tlen;
+	edict_t *cl_ent;
 
 	level.current_entity = ent;
 	client = ent->client;
@@ -2288,8 +2289,31 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
   /*ATTILA end*/
 
 	if (ent->groundentity && !pm.groundentity && (pm.cmd.upmove >= 10) && (pm.waterlevel == 0)) {
-		gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
-		PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
+		//gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
+		//PlayerNoise(ent, ent->s.origin, PNOISE_SELF); //not needed in jumpmod. No monsters (except fish ofc)
+		//jumpers no sound
+		for (i = 0; i < maxclients->value; i++) {
+			cl_ent = g_edicts + 1 + i;
+
+			if (!cl_ent->client)
+				return;
+			if (!cl_ent->inuse)
+				continue;
+			if (cl_ent->client->resp.hide_jumpers)
+				continue;
+
+			gi.WriteByte(svc_sound);
+			gi.WriteByte(39662527);//flags
+			gi.WriteByte(13);// (gi.soundindex("*jump1.wav"));//Sound.. why doesn't it used the correct sound? 13 worked... :D
+			gi.WriteByte(255);//Volume
+			gi.WriteByte(64);//Attenuation
+			gi.WriteByte(0.0);//OFfset
+			gi.WriteShort(2);//Channel
+			gi.WritePosition(ent->s.origin); //position
+			gi.unicast(cl_ent, true);
+
+		}
+		
 	}
 
 	ent->viewheight = pm.viewheight;
