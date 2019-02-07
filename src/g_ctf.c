@@ -1227,18 +1227,20 @@ void SetCTFStats(edict_t *ent)
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP3] = CONFIG_JUMP_NEXT_MAP3;
+	
 
 	if (ent->client->resp.ctf_team==CTF_TEAM1 || ent->client->resp.ctf_team == CTF_TEAM2)
 	{
 		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.cur_speed;
-		if (gset_vars->antiglue==0)
+		//no fucking antiglue anymore..
+		/*if (gset_vars->antiglue==0)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
 		else
 		if (ent->client->resp.antiglue)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE;
 		else
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;
+			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;*/
 
 	}
 	else {
@@ -1254,15 +1256,15 @@ void SetCTFStats(edict_t *ent)
 			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		}
 		
-		if (gset_vars->antiglue==0)
+		/*if (gset_vars->antiglue==0)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
 		else
 		if (ent->client->resp.antiglue)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE;
 		else
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;
+			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;*/
 	}
-	ent->client->ps.stats[STAT_JUMP_GLUED] = ent->client->resp.glued;
+	//ent->client->ps.stats[STAT_JUMP_GLUED] = ent->client->resp.glued;
 	//ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 999999999;
 	
 
@@ -1471,26 +1473,26 @@ void SetCTFStats(edict_t *ent)
 		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_HARD;
 	else
 		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_OBSERVER;
+
 	if (ent->client->resp.cleanhud)
 	{
-		ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = 0;
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		ent->client->ps.stats[STAT_JUMP_MAPCOUNT] = 0;
 		ent->client->ps.stats[STAT_JUMP_GLUED] = 0;
+		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_EMPTY;
+		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_EMPTY;
+		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_JUMP_EMPTY;
 		if (!ent->client->resp.replaying)
 		{
 			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
 			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
 			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_FPS] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_FPS] = 0;
 			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
 			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
 			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
 		}
-		return;
 	}
-
-
 }
 
 /*------------------------------------------------------------------------*/
