@@ -14081,7 +14081,7 @@ void CPSoundCheck(edict_t *ent) {
 	int i;
 	gi.WriteByte(svc_sound);
 	gi.WriteByte(39662527);//flags
-	gi.WriteByte(gi.soundindex("items/pkup.wav"));// (gi.soundindex("*jump1.wav"));//Sound.. why doesn't it used the correct sound? 13 worked... :D
+	gi.WriteByte(gi.soundindex("items/pkup.wav")); //sound
 	gi.WriteByte(255);//Volume
 	gi.WriteByte(64);//Attenuation
 	gi.WriteByte(0.0);//OFfset
@@ -14091,7 +14091,7 @@ void CPSoundCheck(edict_t *ent) {
 	//send sound to players who hasn't muted cps.
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
-	    if (!cl_ent->inuse)
+	    if (!(cl_ent->inuse && cl_ent->client))
 		    continue;
 
 		if (!cl_ent->client->resp.mute_cps)

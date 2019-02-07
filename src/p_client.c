@@ -2294,7 +2294,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		//jumpers no sound
 		gi.WriteByte(svc_sound);
 		gi.WriteByte(39662527);//flags
-		gi.WriteByte(13);// (gi.soundindex("*jump1.wav"));//Sound.. why doesn't it used the correct sound? 13 worked... :D
+		gi.WriteByte(gi.soundindex("player/female/jump1.wav"));//Sound..
 		gi.WriteByte(255);//Volume
 		gi.WriteByte(64);//Attenuation
 		gi.WriteByte(0.0);//OFfset
@@ -2303,9 +2303,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		for (i = 0; i < maxclients->value; i++) {
 			cl_ent = g_edicts + 1 + i;
 
-			if (!cl_ent->client)
-				return;
-			if (!cl_ent->inuse)
+			if (!(cl_ent->client && cl_ent->inuse))
 				continue;
 			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
 				continue;
