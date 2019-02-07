@@ -2299,7 +2299,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				return;
 			if (!cl_ent->inuse)
 				continue;
-			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
+			if (cl_ent->client->resp.hide_jumpers)
 				continue;
 
 			gi.WriteByte(svc_sound);
