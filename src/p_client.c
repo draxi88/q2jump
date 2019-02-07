@@ -2292,6 +2292,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		//gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
 		//PlayerNoise(ent, ent->s.origin, PNOISE_SELF); //not needed in jumpmod. No monsters (except fish ofc)
 		//jumpers no sound
+		gi.WriteByte(svc_sound);
+		gi.WriteByte(39662527);//flags
+		gi.WriteByte(13);// (gi.soundindex("*jump1.wav"));//Sound.. why doesn't it used the correct sound? 13 worked... :D
+		gi.WriteByte(255);//Volume
+		gi.WriteByte(64);//Attenuation
+		gi.WriteByte(0.0);//OFfset
+		gi.WriteShort(2);//Channel
+		gi.WritePosition(ent->s.origin); //position
 		for (i = 0; i < maxclients->value; i++) {
 			cl_ent = g_edicts + 1 + i;
 
@@ -2301,17 +2309,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				continue;
 			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
 				continue;
-
-			gi.WriteByte(svc_sound);
-			gi.WriteByte(39662527);//flags
-			gi.WriteByte(13);// (gi.soundindex("*jump1.wav"));//Sound.. why doesn't it used the correct sound? 13 worked... :D
-			gi.WriteByte(255);//Volume
-			gi.WriteByte(64);//Attenuation
-			gi.WriteByte(0.0);//OFfset
-			gi.WriteShort(2);//Channel
-			gi.WritePosition(ent->s.origin); //position
-			gi.unicast(cl_ent, true);
-
+			gi.unicast(cl_ent, true); //send to client
 		}
 		
 	}

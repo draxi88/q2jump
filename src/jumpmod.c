@@ -14077,18 +14077,24 @@ void ClearCheckpoints(client_persistant_t* pers) {
 
 // fxn to check for who to play sound to at checkpoints
 void CPSoundCheck(edict_t *ent) {
-
-	/*
 	edict_t *cl_ent;
 	int i;
+	gi.WriteByte(svc_sound);
+	gi.WriteByte(39662527);//flags
+	gi.WriteByte(gi.soundindex("items/pkup.wav"));// (gi.soundindex("*jump1.wav"));//Sound.. why doesn't it used the correct sound? 13 worked... :D
+	gi.WriteByte(255);//Volume
+	gi.WriteByte(64);//Attenuation
+	gi.WriteByte(0.0);//OFfset
+	gi.WriteShort(0);//Channel
+	gi.WritePosition(ent->s.origin); //position
 
+	//send sound to players who hasn't muted cps.
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
 	    if (!cl_ent->inuse)
 		    continue;
 
 		if (!cl_ent->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+			gi.unicast(cl_ent, true);//send sound.
 	}
-	*/
 }
