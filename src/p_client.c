@@ -2293,19 +2293,22 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		//PlayerNoise(ent, ent->s.origin, PNOISE_SELF); //not needed in jumpmod. No monsters (except fish ofc)
 		//jumpers no sound
 		gi.WriteByte(svc_sound);
-		gi.WriteByte(39662527);//flags
+		gi.WriteByte(27);//flags
 		gi.WriteByte(gi.soundindex("player/female/jump1.wav"));//Sound..
 		gi.WriteByte(255);//Volume
 		gi.WriteByte(64);//Attenuation
 		gi.WriteByte(0.0);//OFfset
 		gi.WriteShort(2);//Channel
-		gi.WritePosition(ent->s.origin); //position
+		gi.unicast(ent, true); //send sound to yourself. (this might be faster, and less "lag"?)
+
+		//gi.WritePosition(ent->s.origin); //+ position for the rest..
+		//send sound to everyone else without jumpers active.
 		for (i = 0; i < maxclients->value; i++) {
 			cl_ent = g_edicts + 1 + i;
 
 			if (!(cl_ent->client && cl_ent->inuse))
 				continue;
-			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
+			if (cl_ent->client->resp.hide_jumpers || cl_ent->client == ent->client)
 				continue;
 			gi.unicast(cl_ent, true); //send to client
 		}
