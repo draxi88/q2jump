@@ -2292,14 +2292,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		//gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
 		//PlayerNoise(ent, ent->s.origin, PNOISE_SELF); //not needed in jumpmod. No monsters (except fish ofc)
 		//jumpers no sound
-		gi.WriteByte(svc_sound);
-		gi.WriteByte(39662527);//flags
-		gi.WriteByte(gi.soundindex("player/female/jump1.wav"));//Sound..
-		gi.WriteByte(255);//Volume
-		gi.WriteByte(64);//Attenuation
-		gi.WriteByte(0.0);//OFfset
-		gi.WriteShort(2);//Channel
-		gi.WritePosition(ent->s.origin); //position
 		for (i = 0; i < maxclients->value; i++) {
 			cl_ent = g_edicts + 1 + i;
 
@@ -2307,7 +2299,21 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				continue;
 			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
 				continue;
-			gi.unicast(cl_ent, true); //send to client
+			gi.WriteByte(svc_sound);
+			if (cl_ent->client != ent->client)
+				gi.WriteByte(31);//flags ent+pos
+			else
+				gi.WriteByte(27);//flags ent (local only)
+			gi.WriteByte(gi.soundindex("player/female/jump1.wav"));//Sound..
+			gi.WriteByte(255);//Volume
+			gi.WriteByte(64);//Attenuation
+			gi.WriteByte(0.0);//OFfset
+			gi.WriteShort(2);//Channel
+			if (cl_ent->client != ent->client) {
+				gi.WritePosition(ent->s.origin); //Position (everyone else needs to know where the sound comes from!)
+			}
+			gi.unicast(cl_ent, true); //send to clients
+
 		}
 		
 	}
