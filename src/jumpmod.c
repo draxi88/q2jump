@@ -13640,7 +13640,7 @@ void Jumpers_on_off(edict_t *ent)
 	int i;
 	char s[255];
 	ent->client->resp.hide_jumpers = !ent->client->resp.hide_jumpers;
-	Com_sprintf(s,sizeof(s),"Players models are now %s",(ent->client->resp.hide_jumpers ? "OFF." : "ON."));
+	Com_sprintf(s,sizeof(s),"Players models/sounds are now %s",(ent->client->resp.hide_jumpers ? "OFF." : "ON."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 	if (!ent->client->resp.hide_jumpers)
 	{
