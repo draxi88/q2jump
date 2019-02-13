@@ -14077,24 +14077,14 @@ void ClearCheckpoints(client_persistant_t* pers) {
 
 // fxn to check for who to play sound to at checkpoints
 void CPSoundCheck(edict_t *ent) {
-	edict_t *cl_ent;
-	int i;
-	gi.WriteByte(svc_sound);
-	gi.WriteByte(39662527);//flags
-	gi.WriteByte(gi.soundindex("items/pkup.wav")); //sound
-	gi.WriteByte(255);//Volume
-	gi.WriteByte(64);//Attenuation
-	gi.WriteByte(0.0);//OFfset
-	gi.WriteShort(0);//Channel
-	gi.WritePosition(ent->s.origin); //position
-
-	//send sound to players who hasn't muted cps.
-	for (i = 0; i < maxclients->value; i++) {
-		cl_ent = g_edicts + 1 + i;
-	    if (!(cl_ent->inuse && cl_ent->client))
-		    continue;
-
-		if (!cl_ent->client->resp.mute_cps)
-			gi.unicast(cl_ent, true);//send sound.
-	}
+	if (!ent->client->resp.mute_cps)
+		gi.cprintf(ent, PRINT_HIGH, "Play pickupsound!\n");
+		gi.WriteByte(svc_sound);
+		gi.WriteByte(27);//flags SND_ENT
+		gi.WriteByte(gi.soundindex("items/pkup.wav"));//Sound..
+		gi.WriteByte(255);//Volume
+		gi.WriteByte(64);//Attenuation
+		gi.WriteByte(0.0);//OFfset
+		gi.WriteShort(0);//Channel
+		gi.unicast(ent, true); //send to client
 }
