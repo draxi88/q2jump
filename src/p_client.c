@@ -2082,9 +2082,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	pm_passent = ent;
 
 	//idle ?
-	if (ent->client->pers.idle_player && ucmd->buttons != 0 && ent->client->resp.ctf_team != CTF_NOTEAM) {
-		gi.cprintf(ent, PRINT_HIGH, "You are no longer idle! Welcome back.\n");
-		ent->client->pers.idle_player = false;
+	if (ent->client->pers.idle_player && ucmd->buttons != 0 && ent->client->resp.ctf_team != CTF_NOTEAM ) {
+		if (!(Q_stricmp(gi.argv(0), "score") == 0)) {
+			gi.cprintf(ent, PRINT_HIGH, "You are no longer idle! Welcome back.\n");
+			ent->client->pers.idle_player = false;
+		}
 	}
 //auto kick code goes here
   if (enable_autokick->value) {
