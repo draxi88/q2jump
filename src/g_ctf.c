@@ -1952,7 +1952,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 
 		// send the layout
-		if (cl->pers.frames_without_movement > 60000 || cl->pers.idle_player)
+		if (cl->pers.idle_player)
 		{
 			strcpy(teamstring, "Idle");
 		}
@@ -2037,7 +2037,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			trecid = cl->resp.trecid;		
 		}
 
-		if (cl->pers.frames_without_movement > 60000 || cl->pers.idle_player)
+		if (cl->pers.idle_player)
 		{
 			strcpy(teamstring, "Idle");
 		}
@@ -2131,7 +2131,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 
 		//idle spectator
-		if (cl->pers.frames_without_movement > 60000 || cl->pers.idle_player)
+		if (cl->pers.idle_player)
 		{
 			Com_sprintf(entry, sizeof(entry),
 				"ctf %d %d %d %d %d xv 168 string \" (idle)\"",
