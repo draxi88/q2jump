@@ -14077,6 +14077,10 @@ void ClearCheckpoints(client_persistant_t* pers) {
 
 // fxn to check for who to play sound to at checkpoints
 void CPSoundCheck(edict_t *ent) {
+	int numEnt, sendchan;
+
+	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
+	sendchan = (numEnt << 3) | (CHAN_ITEM & 7);
 	if (!ent->client->resp.mute_cps) {
 		gi.WriteByte(svc_sound);
 		gi.WriteByte(27);//flags SND_ENT
@@ -14084,7 +14088,7 @@ void CPSoundCheck(edict_t *ent) {
 		gi.WriteByte(255);//Volume
 		gi.WriteByte(64);//Attenuation
 		gi.WriteByte(0.0);//OFfset
-		gi.WriteShort(0);//Channel
+		gi.WriteShort(sendchan);//Channel
 		gi.unicast(ent, true); //send to client
 	}
 }
