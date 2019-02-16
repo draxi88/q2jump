@@ -14078,7 +14078,6 @@ void ClearCheckpoints(client_persistant_t* pers) {
 // fxn to check for who to play sound to at checkpoints
 void CPSoundCheck(edict_t *ent) {
 	if (!ent->client->resp.mute_cps)
-		gi.cprintf(ent, PRINT_HIGH, "Play pickupsound!\n");
 		gi.WriteByte(svc_sound);
 		gi.WriteByte(27);//flags SND_ENT
 		gi.WriteByte(gi.soundindex("items/pkup.wav"));//Sound..
