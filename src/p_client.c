@@ -2088,7 +2088,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			ent->client->pers.idle_player = false;
 		}
 	}
-	if (ent->client->frames_without_movement > 60000 && !ent->client->pers.idle_player) {
+	if (ent->client->pers.frames_without_movement > 60000 && !ent->client->pers.idle_player) {
 		//Player is now marked as idle.
 		ent->client->pers.idle_player = true;
 	}
