@@ -2428,13 +2428,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		{
 			if ((ucmd->upmove>=10) && (!ent->client->resp.going_up))
 				ent->client->resp.going_up = true;
+
 			if ((ucmd->upmove<10) && (ent->client->resp.going_up))
 			{
 				Cmd_RepRepeat(ent);
 				ent->client->resp.going_up = false;
 			}
+
 			if ((ucmd->forwardmove>=10) && (!ent->client->resp.going_forward))
 				ent->client->resp.going_forward = true;
+
 			if (((ucmd->forwardmove<10) && (ucmd->forwardmove>=0)) && (ent->client->resp.going_forward))
 			{
 				ent->client->resp.going_forward = false;
@@ -2445,10 +2448,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 					gi.cprintf(ent,PRINT_HIGH,"Paused\n");
 				else
 					gi.cprintf(ent,PRINT_HIGH,"Replaying at %2.1f speed\n",replay_speed_modifier[ent->client->resp.replay_speed]);
-
 			}
+
 			if ((ucmd->forwardmove<=-10) && (!ent->client->resp.going_back))
 				ent->client->resp.going_back = true;
+
 			if (((ucmd->forwardmove>-10) && (ucmd->forwardmove<=0)) && (ent->client->resp.going_back))
 			{
 				ent->client->resp.going_back = false;

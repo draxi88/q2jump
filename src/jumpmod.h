@@ -19,7 +19,7 @@
 
 
 #define MAX_ADMINS 128
-#define MAX_RECORD_FRAMES 10000
+#define MAX_RECORD_FRAMES 1000000
 #define GAME_JUMP 0
 #define GAME_CTF 1
 #define GAME_ROCKET 2
@@ -698,13 +698,13 @@ void resync(qboolean overide);
 void append_added_ini(char *mapname);
 qboolean ValidateMap (char *mapname);
 
-#define MAX_REPLAY_SPEED 14
+#define MAX_REPLAY_SPEED 18
 #define MIN_REPLAY_SPEED 0
-#define REPLAY_SPEED_ZERO 7
-#define REPLAY_SPEED_ONE  11
+#define REPLAY_SPEED_ZERO 9
+#define REPLAY_SPEED_ONE  13
 
 static const double replay_speed_modifier[] =  
-{-10,-5,-2,-1,-0.5,-0.2,-0.1,0,0.1,0.2,0.5,1,2,5,10};
+{-100, -25, -10, -5, -2, -1, -0.5, -0.2, -0.1, 0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 25, 100};
 
 typedef enum {
 	HTML_PLAYERS_SCORES,
