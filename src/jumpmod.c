@@ -12891,10 +12891,31 @@ void Lastseen_Command(edict_t *ent)
 	
 	if (gi.argc() == 2)
 	{
-		//page it
-		offset = atoi(gi.argv(1));
-		//name it
-		if (!offset)
+        const char* argv1 = gi.argv(1);
+        qboolean is_name = false;
+        for (int i = 0; argv1[i] != '\0'; ++i) {
+            // If there is any non-numeric character, recognize it as a name
+            if (argv1[i] < '0' || argv1[i] > '9') {
+                is_name = true;
+                break;
+            }
+        }
+
+        if (!is_name) {
+            // page number
+            offset = atoi(gi.argv(1));
+
+            // If a user's name is all numbers, we can recognize it if it's larger than the max pages
+            int max_pages = ceil(maplist.sort_num_users / 20.0);
+            if (offset > max_pages) {
+                is_name = true;
+            }
+
+            // If a user's name is all numbers and is less than the number of max pages,
+            // we'll have to fix this if this ever comes up :)
+        }
+
+		if (is_name)
 		{
 			Com_sprintf(name,sizeof(name),"%s",gi.argv(1));
 			uid = GetPlayerUid_NoAdd(name);
