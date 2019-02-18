@@ -84,6 +84,12 @@ void Touch_Multi (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 	else
 		return;
 
+	// give a trigger_multiple a count of 1-9, and it will be an individual welcome trigger
+	if (other->client->resp.welcome_count[self->count] > 0)
+		return;
+	if (self->count)
+		other->client->resp.welcome_count[self->count] = self->count;
+
 	if (!VectorCompare(self->movedir, vec3_origin))
 	{
 		vec3_t	forward;
@@ -107,6 +113,8 @@ sounds
 3)	large switch
 4)
 set "message" to text string
+if 'count' is set to 1-9, the trigger will fire once per level, for each player
+each count value is a separate trigger, so you can have 9 of these in a map
 */
 void trigger_enable (edict_t *self, edict_t *other, edict_t *activator)
 {

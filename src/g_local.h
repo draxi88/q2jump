@@ -41,8 +41,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define	svc_temp_entity		3
 #define	svc_layout			4
 #define	svc_inventory		5
+#define svc_sound			9//draxi
 #define	svc_stufftext		11//pooy
 #define	svc_configstring		13//pooy
+
+
 
 //==================================================================
 
@@ -1028,6 +1031,8 @@ typedef struct
 
 	char		userip[32];
 	unsigned long banlevel;
+	qboolean idle_player; //idle player, no vote for you!
+	unsigned long frames_without_movement;
 } client_persistant_t;
 
 // client data that stays across deathmatch respawns
@@ -1099,7 +1104,6 @@ typedef struct
 	int replay_data;
 	int			replay_speed;
 	int			current_vote;
-	unsigned long frames_without_movement;
 	int msec_history[10];
 	qboolean	auto_record_on;
 	qboolean	cmsg;
@@ -1140,7 +1144,11 @@ typedef struct
 	qboolean cleanhud;
 	int			max_speed;
 	int			cur_speed;
+	int			rep_speed;
 	int			max_speed_time;
+
+	// trigger_welcome
+	int         welcome_count[10];
 } client_respawn_t;
 
 

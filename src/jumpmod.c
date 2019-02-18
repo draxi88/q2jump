@@ -410,12 +410,19 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &gset_vars->debug,
   },
-  { 
+  {
 	0,1,1,
-    "gdroptofloor", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->droptofloor,
+	"gdroptofloor",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->droptofloor,
+  },
+  {
+	0,1,0,
+	"gdrowningsound",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->drowningsound,
   },
   { 
 	0,0,0,
@@ -1749,8 +1756,8 @@ void Cmd_Show_Maptimes_Wireplay(edict_t* ent)
 {
     if (gi.argc() < 2)
     {
-        gi.cprintf(ent, PRINT_HIGH, "Please specify a mapname, example: maptimeswp ps3\n");
-        return;
+		print_wireplay_time(ent, level.mapname);
+		return;
     }
     else
     {
@@ -1768,22 +1775,14 @@ void ShowMapTimes(edict_t *ent)
 	int index;
 	float time;
 	mapnum = -1;
+
 	//if no args, show current map
 	if (gi.argc() < 2) {
 		if ((level.mapnum>=0) && (level.mapnum<maplist.nummaps))
 			mapnum = level.mapnum;
-/*		for (i=0;i<maplist.nummaps;i++)
-		{
-			if (strcmp(maplist.mapnames[i],level.mapname)==0)
-			{
-				mapnum = i;
-				break;
-			}
-		}*/
 	goto def;
 	}
 
-	
 	strncpy(temp,gi.argv(1),sizeof(temp)-1);
 	for (i=0;i<maplist.nummaps;i++)
 	{
@@ -2468,6 +2467,7 @@ void Read_Admin_cfg(void)
 	if (!strstr(temp,"Jump039"))
 	{
 		//invalid admin config (old version, we cant use it)
+        fclose(f);
 		return;
 	} 
 	
@@ -3329,7 +3329,7 @@ void CTFSilence(edict_t *ent)
 	edict_t *targ;
 	char text[1024];
 	
-	//ent->client->resp.frames_without_movement = 0;
+	//ent->client->pers.frames_without_movement = 0;
 
 	if ((!map_allow_voting) && (ent->client->resp.admin<aset_vars->ADMIN_SILENCE_LEVEL))
 		return;
@@ -4697,6 +4697,9 @@ void Replay_Recording(edict_t *ent)
 	vec3_t next_angle;
 	vec3_t diff_frame;
 	vec3_t diff_angle;
+	vec3_t rep_speed1;
+	vec3_t rep_speed2;
+	int rep_speed;
 
 	temp = ent->client->resp.replaying - 1;
 	if (temp>=0)
@@ -4781,6 +4784,18 @@ void Replay_Recording(edict_t *ent)
 				ent->client->resp.replaying = 0;
 				ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 			}
+		}
+		//replay speedometer a la Killa
+		if (ent->client->resp.replaying) {
+			VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame - 10].origin, rep_speed1);
+			rep_speed1[2] = 0;
+			VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].origin, rep_speed2);
+			rep_speed2[2] = 0;
+			VectorSubtract(rep_speed1, rep_speed2, rep_speed1);
+			rep_speed = (int)fabs(VectorLength(rep_speed1));
+			//Don't update rep_speed if it's not 10 ups faster/slower than current rep_speed.
+			if (rep_speed > ent->client->resp.rep_speed + 10 || rep_speed < ent->client->resp.rep_speed - 10)
+				ent->client->resp.rep_speed = rep_speed;
 		}
 	} else {
 			// =========================
@@ -6495,6 +6510,7 @@ void SetDefaultValues(void)
 	gset_vars->mset->damage = 1;
 	gset_vars->debug =0;
 	gset_vars->mset->droptofloor = 1;
+	gset_vars->drowningsound = 0;
 	strcpy(gset_vars->mset->edited_by,"NA");
 	gset_vars->mset->ezmode = 0;
 	gset_vars->mset->falldamage = 1;
@@ -7505,7 +7521,6 @@ void remtime(edict_t *ent)
 
 		UpdateScores();
 		sort_users();
-        sort_tourney_records();
 
 		for (i = 1; i <= maxclients->value; i++) 
 		{
@@ -8567,16 +8582,16 @@ void sort_tourney_records(){
     swap = 0;
 
     for(i=1; i<MAX_USERS; i++){
-        if(tourney_record[i].completions==-1){
+        if(strlen(tourney_record[i].date)<2){
             break;
         }
         swap = 0; 
         for(j=0; j<(MAX_USERS-i); j++){
-            if(tourney_record[j].uid==-1 || tourney_record[j+1].uid==-1) {
+            if(strlen(tourney_record[j].date)<2 || strlen(tourney_record[j+1].date)<2) {
                 break;
             }
             if(tourney_record[j].time==tourney_record[j+1].time){
-                continue;
+                continue;	
             }
             if(tourney_record[j].time > tourney_record[j+1].time){
                 //gi.dprintf("Swap: %d  <->  %d\n",tourney_record[j].uid,tourney_record[j+1].uid);
@@ -8624,13 +8639,14 @@ void update_tourney_records(char *filename){
     fscanf(f,"%s",&temp);
     if(strstr(temp,"Jump067")){
         //gi.dprintf("Old file, better luck next time.!\n");
+        fclose(f);
 	    return;
     } else {
         //gi.dprintf("Read new alltimes tourneyfile!\n");
         rewind(f);
     }
 
-	for(i2=0;i2<=MAX_USERS;i2++){
+	for(i2=0;i2<MAX_USERS;i2++){
         tempuser.uid  = -1; // so it'll go away if it's not set to anything else.
 		fscanf(f, "%s", tempuser.date);
 		fscanf(f, "%f", &tempuser.time);
@@ -8640,7 +8656,7 @@ void update_tourney_records(char *filename){
             break;
         }
         founduser = false;
-        for(i=0;i<=MAX_USERS;i++){
+        for(i=0;i<MAX_USERS;i++){
             if(tempuser.uid == tourney_record[i].uid){
                 founduser = true; //not a new user..
                 if(tourney_record[i].completions==-1){ //if remtime
@@ -8657,7 +8673,7 @@ void update_tourney_records(char *filename){
             }
         }
         if(!founduser){ //new user! 
-            for(i=0;i<=MAX_USERS;i++){
+            for(i=0;i<MAX_USERS;i++){
                 if(tourney_record[i].uid==-1){
                     tourney_record[i] = tempuser;
                     break;
@@ -8668,7 +8684,7 @@ void update_tourney_records(char *filename){
             break;
         }
 	}
-    for(i=0;i<=MAX_USERS;i++){ //check if there are any removed times left, and reset them.
+    for(i=0;i<MAX_USERS;i++){ //check if there are any removed times left, and reset them.
         if(tourney_record[i].completions==-1){
             tourney_record[i].fresh = false;
 	        tourney_record[i].time = 0;
@@ -8716,6 +8732,10 @@ void open_tourney_file(char *filename,qboolean apply)
 	{
 		return;
 	}	
+	fseek(f, 0, SEEK_END);
+	if (ftell(f) == 0) { //if file is empty.
+		return;
+	} 
 
     fscanf(f,"%s",&temp);
     if(strstr(temp,"Jump067")){
@@ -8733,13 +8753,15 @@ void open_tourney_file(char *filename,qboolean apply)
     }
 
     
-    for(i=0;i<=MAX_USERS;i++){
+    for(i=0;i<MAX_USERS;i++){
 		fscanf(f, "%s", &tourney_record[i].date);
+		if (strlen(tourney_record[i].date) < 2 )
+			break; //ugly hack to stop it from loading 1 more uid, even though it has reached the end of the file..
 		fscanf(f, "%f", &tourney_record[i].time);
 		fscanf(f, "%i", &uid);
 		tourney_record[i].uid = uid;
-		fscanf(f, "%i", &tourney_record[i].completions);
-        //gi.dprintf("open UID %d  uid:%d\n",i,uid);
+		fscanf(f, "%i", &tourney_record[i].completions); 
+		gi.dprintf("NR: %d Uid: %d date: %s time: %f\n", i, uid, tourney_record[i].date, tourney_record[i].time);
 		if (apply && tourney_record[i].completions)
 		{
 			//need to check its existence on the good map list first
@@ -8822,7 +8844,7 @@ void write_tourney_file(char *filename,int mapnum)
 	//print other marker
 	fprintf (f, "\nJUMPMOD067ALLTIMES\n");
 	*/
-	for (i=0;i<=MAX_USERS;i++)
+	for (i=0;i<MAX_USERS;i++)
 	{
         if (tourney_record[i].uid>-1 && tourney_record[i].time>0){
 	        Com_sprintf(buffer,sizeof(buffer), "%s %f %i %i",tourney_record[i].date,tourney_record[i].time,tourney_record[i].uid,tourney_record[i].completions);
@@ -8940,6 +8962,7 @@ void open_users_file()
 	tgame = gi.cvar("game", "", 0);
 	port = gi.cvar("port", "", 0);
 
+	gi.dprintf("Opening users file!\n");
 	if (!*tgame->string)
 	{
 		sprintf	(name, "jump/%s/users.t", port->string);
@@ -8984,6 +9007,7 @@ void open_users_file()
 
     i = 0;
     if(!newusers){
+		gi.dprintf("Old users file....\n");
 	    while (!feof(f))
 	    {
 		    fscanf(f, "%i", &uid);
@@ -9012,6 +9036,7 @@ void open_users_file()
 		    maplist.num_users++;
 	    }
     } else { //new users.t version..
+		gi.dprintf("New!! users file!\n");
         while (!feof(f))
 	    {
             fscanf(f, "%i", &uid);
@@ -9042,7 +9067,7 @@ void write_users_file(void)
 	cvar_t	*port;
 	cvar_t	*tgame;
 
-    update_users_file();
+    //update_users_file(); //not needed when only running 1 server..
 	tgame = gi.cvar("game", "jump", 0);
 	port = gi.cvar("port", "27910", 0);
 
@@ -9357,7 +9382,6 @@ void read_top10_tourney_log(char *filename)
 	int uid;
     int completions;
 
-    sort_tourney_records();
 	//clear old times first
 	strcpy(level_items.mapname,filename);
 	ClearTimes();
@@ -9432,7 +9456,7 @@ void read_top10_tourney_log(char *filename)
     }
 	
 	fclose(f);
-	
+	sort_tourney_records(); //sort times..
 	if (level_items.stored_item_times_count>MAX_HIGHSCORES)
 		level_items.stored_item_times_count=MAX_HIGHSCORES;
 }
@@ -9476,6 +9500,7 @@ qboolean ReadTimes(char *filename)
 	}	
 	if (feof(f))
 	{
+        fclose(f);
 		return false;
 	}
 
@@ -10289,7 +10314,7 @@ void remove_maxsmins_boundary() {
 
 void addclip_laser_think (edict_t *self){
 	gi.WriteByte(svc_temp_entity);
-	gi.WriteByte(TE_RAILTRAIL);
+	gi.WriteByte(TE_DEBUGTRAIL);
 	gi.WritePosition(self->pos1);
 	gi.WritePosition(self->pos2);
 	gi.multicast(self->s.origin, MULTICAST_PVS);
@@ -10345,8 +10370,8 @@ void add_clip(edict_t *ent)
 
 	//no args, show ent list
 	if (gi.argc() < 2) {
-		gi.dprintf("Add 2 marks with addclip mark1/mark2, and create the ent with addclip create.\n");
-		gi.dprintf("Make the ent a checkpoint by using addclip checkpoint (0 - %i)\n", cpmax);
+		gi.cprintf(ent, PRINT_HIGH, "Add 2 marks with addclip mark1/mark2, and create the ent with addclip create.\n");
+		gi.cprintf(ent, PRINT_HIGH, "Make the ent a checkpoint by using addclip checkpoint (0 - %i)\n", cpmax);
 		return;
 	}
 	
@@ -10355,14 +10380,14 @@ void add_clip(edict_t *ent)
 	{
 		VectorCopy(ent->s.origin,level_items.clip1);
 		level_items.clip1[2] -= 10;
-		gi.dprintf("Mark 1 added at: %f - %f - %f\n",level_items.clip1[0],level_items.clip1[1],level_items.clip1[2]);
+		gi.cprintf(ent, PRINT_HIGH, "Mark 1 added at: %f - %f - %f\n",level_items.clip1[0],level_items.clip1[1],level_items.clip1[2]);
 		remove_maxsmins_boundary(); //remove old boundary
 	}
 	else if (strcmp(action,"mark2")==0)
 	{
 		VectorCopy(ent->s.origin,level_items.clip2);
 		level_items.clip2[2] -= 10;
-		gi.dprintf("Mark 2 added at: %f - %f - %f\n",level_items.clip2[0],level_items.clip2[1],level_items.clip2[2]);
+		gi.cprintf(ent, PRINT_HIGH, "Mark 2 added at: %f - %f - %f\n",level_items.clip2[0],level_items.clip2[1],level_items.clip2[2]);
 		remove_maxsmins_boundary(); //remove old boundary
 	}
 
@@ -10406,7 +10431,7 @@ void add_clip(edict_t *ent)
 	if (strcmp(action,"create")==0 || strcmp(action,"checkpoint")==0)
 	{
 		if(strcmp(action,"checkpoint")==0 && gi.argc() < 3){
-			gi.dprintf("You need to give your checkpoint an ID from 0-%i (Ex: addclip checkpoint 1)\n", cpmax);
+			gi.cprintf(ent, PRINT_HIGH, "You need to give your checkpoint an ID from 0-%i (Ex: addclip checkpoint 1)\n", cpmax);
 			return;
 		}
 
@@ -10438,13 +10463,14 @@ void add_clip(edict_t *ent)
 		VectorCopy(center,tent->s.origin);
 		VectorCopy (tent->s.origin, tent->s.old_origin);
 		tent->classname = "jump_clip";
+		tent->svflags |= SVF_NOCLIENT;
 		tent->movetype = MOVETYPE_NONE;
 		if(strcmp(action,"checkpoint")==0){
 			cp = atoi(gi.argv(2));
 
 			// check for right cp values
 			if (cp < 0 || cp > (sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int)) - 1) {
-				gi.dprintf("Checkpoint value can only be between 0 and %i\n", cpmax);
+				gi.cprintf(ent, PRINT_HIGH, "Checkpoint value can only be between 0 and %i\n", cpmax);
 				return;
 			}
 				
@@ -10471,10 +10497,10 @@ void add_clip(edict_t *ent)
 		}
 		WriteEnts();
 		if(strcmp(action,"checkpoint")==0){
-			gi.dprintf("Checkpoint created with a checkpoint value of %i.\n", cp);
+			gi.cprintf(ent, PRINT_HIGH, "Checkpoint created with a checkpoint value of %i.\n", cp);
 		}
 		else {
-			gi.dprintf("Jump_clip created.\n");
+			gi.cprintf(ent, PRINT_HIGH, "Jump_clip created.\n");
 		}
 		level_items.clip1[0] = 0;
 		level_items.clip1[1] = 0;
@@ -10603,7 +10629,7 @@ void CTFVoteTime(edict_t *ent)
 	int diff;
 	qboolean require_max = false;
 
-	//ent->client->resp.frames_without_movement = 0;
+	//ent->client->pers.frames_without_movement = 0;
 	
 	if (!map_allow_voting)
 		return;
@@ -11445,10 +11471,11 @@ void resync(qboolean overide)
 	sprintf (name, "%s/_html/0.html", tgame->string);
 	f = fopen (name, "rb");
 
-	//see if 0.html exists, if not then we need to resync 
+	//see if gset create_html && 0.html exists, if not then we need to resync 
 	if (!f)
 	{
-		overide = true;
+		if(gset_vars->html_create)
+			overide = true;
 	}
 	else
 		fclose(f);
@@ -12029,7 +12056,20 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 		fclose(html_data.file);
 }
 
+void Cmd_Idle(edict_t *ent) {
+	if (!ent->client->pers.idle_player) {
+		gi.cprintf(ent, PRINT_HIGH, "You are now marked as idle!\n");
+		ent->client->pers.idle_player = true;
+	}
+	else {
+		gi.cprintf(ent, PRINT_HIGH, "You are no longer idle! Welcome back.\n");
+		ent->client->pers.idle_player = false;
+	}
+
+}
+
 void Cmd_Raceline (edict_t *ent){
+	int racenr, i;
 
 	if(ent->client->resp.raceline) {
 		ent->client->resp.raceline = false;
@@ -12044,7 +12084,7 @@ void Cmd_Race (edict_t *ent)
 {
 	float delay = 0;
 	int i;
-	int race_this;
+    int race_this = 0;
 #ifndef RACESPARK
 	gi.cprintf(ent,PRINT_HIGH,"Replay racing not available.\n");
 	return;
@@ -12282,6 +12322,7 @@ void LoadBans()
 	if (!strstr(temp,"Bans"))
 	{
 		//Invalid bans file
+        fclose(f);
 		return;
 	} 
 	
@@ -12850,10 +12891,31 @@ void Lastseen_Command(edict_t *ent)
 	
 	if (gi.argc() == 2)
 	{
-		//page it
-		offset = atoi(gi.argv(1));
-		//name it
-		if (!offset)
+        const char* argv1 = gi.argv(1);
+        qboolean is_name = false;
+        for (int i = 0; argv1[i] != '\0'; ++i) {
+            // If there is any non-numeric character, recognize it as a name
+            if (argv1[i] < '0' || argv1[i] > '9') {
+                is_name = true;
+                break;
+            }
+        }
+
+        if (!is_name) {
+            // page number
+            offset = atoi(gi.argv(1));
+
+            // If a user's name is all numbers, we can recognize it if it's larger than the max pages
+            int max_pages = ceil(maplist.sort_num_users / 20.0);
+            if (offset > max_pages) {
+                is_name = true;
+            }
+
+            // If a user's name is all numbers and is less than the number of max pages,
+            // we'll have to fix this if this ever comes up :)
+        }
+
+		if (is_name)
 		{
 			Com_sprintf(name,sizeof(name),"%s",gi.argv(1));
 			uid = GetPlayerUid_NoAdd(name);
@@ -13439,21 +13501,52 @@ void Compare_Users(edict_t *ent)
 void Update_Next_Maps(void)
 {
 	char txt[255];
-	if (maplist.times[map1][0].time>0)
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map1]],maplist.mapnames[map1],maplist.users[maplist.times[map1][0].uid].name,maplist.times[map1][0].time);
-	else
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map1]],maplist.mapnames[map1]);
+	char mapname[32];
+	char longmapname[64];
 
+	if (strlen(maplist.mapnames[map1]) > 16) {
+		strcpy(longmapname, maplist.mapnames[map1]);
+		memcpy(mapname, &longmapname[0], 13);
+		mapname[13] = '\0';
+		Com_sprintf(mapname, sizeof(mapname), "%s...", mapname);
+	} else {
+		strcpy(mapname, maplist.mapnames[map1]);
+	}
+
+	if (maplist.times[map1][0].time>0)
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map1]],mapname,maplist.users[maplist.times[map1][0].uid].name,maplist.times[map1][0].time);
+	else
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map1]],mapname);
 	gi.configstring (CONFIG_JUMP_NEXT_MAP1,txt);
+
+	if (strlen(maplist.mapnames[map2]) > 16) {
+		strcpy(longmapname, maplist.mapnames[map2]);
+		memcpy(mapname, &longmapname[0], 13);
+		mapname[13] = '\0';
+		Com_sprintf(mapname, sizeof(mapname), "%s...", mapname);
+	}
+	else {
+		strcpy(mapname, maplist.mapnames[map2]);
+	}
 	if (maplist.times[map2][0].time>0)
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map2]],maplist.mapnames[map2],maplist.users[maplist.times[map2][0].uid].name,maplist.times[map2][0].time);
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map2]],mapname,maplist.users[maplist.times[map2][0].uid].name,maplist.times[map2][0].time);
 	else
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map2]],maplist.mapnames[map2]);
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map2]],mapname);
 	gi.configstring (CONFIG_JUMP_NEXT_MAP2,txt);
+
+	if (strlen(maplist.mapnames[map3]) > 16) {
+		strcpy(longmapname, maplist.mapnames[map3]);
+		memcpy(mapname, &longmapname[0], 13);
+		mapname[13] = '\0';
+		Com_sprintf(mapname, sizeof(mapname), "%s...", mapname);
+	}
+	else {
+		strcpy(mapname, maplist.mapnames[map3]);
+	}
 	if (maplist.times[map3][0].time>0)
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map3]],maplist.mapnames[map3],maplist.users[maplist.times[map3][0].uid].name,maplist.times[map3][0].time);
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s%16s %8.3f",map_skill2[maplist.skill[map3]],mapname,maplist.users[maplist.times[map3][0].uid].name,maplist.times[map3][0].time);
 	else
-		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map3]],maplist.mapnames[map3]);
+		Com_sprintf(txt,sizeof(txt),"%5s %-16s",map_skill2[maplist.skill[map3]],mapname);
 	gi.configstring (CONFIG_JUMP_NEXT_MAP3,txt);
 }
 
@@ -13568,7 +13661,7 @@ void Jumpers_on_off(edict_t *ent)
 	int i;
 	char s[255];
 	ent->client->resp.hide_jumpers = !ent->client->resp.hide_jumpers;
-	Com_sprintf(s,sizeof(s),"Players models are now %s",(ent->client->resp.hide_jumpers ? "OFF." : "ON."));
+	Com_sprintf(s,sizeof(s),"Players models/sounds are now %s",(ent->client->resp.hide_jumpers ? "OFF." : "ON."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 	if (!ent->client->resp.hide_jumpers)
 	{
@@ -14005,18 +14098,18 @@ void ClearCheckpoints(client_persistant_t* pers) {
 
 // fxn to check for who to play sound to at checkpoints
 void CPSoundCheck(edict_t *ent) {
+	int numEnt, sendchan;
 
-	/*
-	edict_t *cl_ent;
-	int i;
-
-	for (i = 0; i < maxclients->value; i++) {
-		cl_ent = g_edicts + 1 + i;
-	    if (!cl_ent->inuse)
-		    continue;
-
-		if (!cl_ent->client->resp.mute_cps)
-			gi.sound(ent, CHAN_AUTO, gi.soundindex("items/pkup.wav"), 1, ATTN_NORM, 0);
+	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
+	sendchan = (numEnt << 3) | (CHAN_ITEM & 7);
+	if (!ent->client->resp.mute_cps) {
+		gi.WriteByte(svc_sound);
+		gi.WriteByte(27);//flags SND_ENT
+		gi.WriteByte(gi.soundindex("items/pkup.wav"));//Sound..
+		gi.WriteByte(255);//Volume
+		gi.WriteByte(64);//Attenuation
+		gi.WriteByte(0.0);//OFfset
+		gi.WriteShort(sendchan);//Channel
+		gi.unicast(ent, true); //send to client
 	}
-	*/
 }

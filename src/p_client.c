@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -670,24 +670,30 @@ This is only called when the game first initializes in single player,
 but is called after each death and level change in deathmatch
 ==============
 */
-void InitClientPersistant (gclient_t *client)
+void InitClientPersistant(gclient_t *client)
 {
 	gitem_t		*item;
 	char		userip[16];
 	unsigned long banlevel;
+	int			idletime;
+	qboolean	idle;
+
+	//idle trough mapchange?
+	idletime = client->pers.frames_without_movement;
+	idle = client->pers.idle_player;
 	//char		user_temp[1024];
 
 	//ww - hang on to user ip and banlevel
-	strcpy(userip,client->pers.userip);
+	strcpy(userip, client->pers.userip);
 	banlevel = client->pers.banlevel;
 
-//	strncpy(user_temp,client->pers.userinfo,sizeof(user_temp));
-	memset (&client->pers, 0, sizeof(client->pers));
+	//	strncpy(user_temp,client->pers.userinfo,sizeof(user_temp));
+	memset(&client->pers, 0, sizeof(client->pers));
 
 	//strncpy(client->pers.userinfo,user_temp,sizeof(client->pers.userinfo));
 
 	//ww - put banlevel and userip back in
-	strcpy(client->pers.userip,userip);
+	strcpy(client->pers.userip, userip);
 	client->pers.banlevel = banlevel;
 
 	item = FindItem("Blaster");
@@ -695,30 +701,33 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.inventory[client->pers.selected_item] = 1;
 
 	client->pers.weapon = item;
-//ZOID
+	//ZOID
 	client->pers.lastweapon = item;
-//ZOID
+	//ZOID
 
-	if ((level.status) && (gset_vars->overtimetype!=OVERTIME_FAST))
+	if ((level.status) && (gset_vars->overtimetype != OVERTIME_FAST))
 	{
-		client->pers.health			= gset_vars->overtimehealth;//pooy 
-		client->pers.max_health		= gset_vars->overtimehealth;
+		client->pers.health = gset_vars->overtimehealth;//pooy
+		client->pers.max_health = gset_vars->overtimehealth;
 		client->pers.inventory[ITEM_INDEX(FindItem("Body Armor"))] = 150;
 	}
 	else
 	{
-		client->pers.health			= mset_vars->health;//pooy 
-		client->pers.max_health		= mset_vars->health;
+		client->pers.health = mset_vars->health;//pooy
+		client->pers.max_health = mset_vars->health;
 	}
 
-	client->pers.max_bullets	= 200;
-	client->pers.max_shells		= 100;
-	client->pers.max_rockets	= 50;
-	client->pers.max_grenades	= 50;
-	client->pers.max_cells		= 200;
-	client->pers.max_slugs		= 50;
+	client->pers.max_bullets = 200;
+	client->pers.max_shells = 100;
+	client->pers.max_rockets = 50;
+	client->pers.max_grenades = 50;
+	client->pers.max_cells = 200;
+	client->pers.max_slugs = 50;
 
 	client->pers.connected = true;
+	//idle trough mapchange?
+	client->pers.frames_without_movement = idletime;
+	client->pers.idle_player = idle;
 }
 
 
@@ -730,7 +739,7 @@ void InitClientResp (gclient_t *client)
 //ZOID
 
 	memset (&client->resp, 0, sizeof(client->resp));
-	
+
 //ZOID
 	client->resp.ctf_team = ctf_team;
 	client->resp.id_state = id_state;
@@ -748,7 +757,7 @@ void InitClientResp (gclient_t *client)
 ==================
 SaveClientData
 
-Some information that should be persistant, like health, 
+Some information that should be persistant, like health,
 is still stored in the edict structure, so it needs to
 be mirrored out to the client structure before all the
 edicts are wiped.
@@ -1067,7 +1076,7 @@ void respawn (edict_t *self)
 		self->client->resp.item_timer_penalty = 0;
 		self->client->resp.item_timer_penalty_delay = 0;
 		//self->client->resp.item_timer = self->client->resp.stored_item_timer;
-		
+
 	}
 
 	if (deathmatch->value || coop->value)
@@ -1115,7 +1124,7 @@ void give_item (edict_t *ent,char *name)
 	{
 		ent->client->pers.inventory[index] += it->quantity;
 	}
-	 
+
 	{
 		it_ent = G_Spawn();
 		it_ent->classname = it->classname;
@@ -1156,17 +1165,17 @@ void PutClientInServer (edict_t *ent)
 		ent->client->resp.jumps = 0;
 		pause_client(ent);
 	}
-	
+
 	// find a spawn point
 	// do it before setting health back up, so farthest
 	// ranging doesn't count this client
 	SelectSpawnPoint (ent, spawn_origin, spawn_angles);
-	
+
 	//pooy
 	if (gametype->value!=GAME_CTF)
 	{
 			if (
-			(ent->client->resp.store) && 
+			(ent->client->resp.store) &&
 				(
 				(ent->client->resp.ctf_team==CTF_TEAM1)
 				)
@@ -1232,10 +1241,10 @@ void PutClientInServer (edict_t *ent)
 	ent->groundentity = NULL;
 	ent->client = &game.clients[index];
 	ent->takedamage = DAMAGE_AIM;
-	
+
 	ent->movetype = MOVETYPE_WALK;
-//	ent->movetype = MOVETYPE_TOSS;  
-	
+//	ent->movetype = MOVETYPE_TOSS;
+
 	ent->viewheight = 22;
 	ent->inuse = true;
 	ent->classname = "player";
@@ -1247,12 +1256,12 @@ void PutClientInServer (edict_t *ent)
 		ent->solid = SOLID_TRIGGER;
 	else
 		ent->solid = SOLID_BBOX;//BBOX;*/
-	
+
 	ent->deadflag = DEAD_NO;
 	ent->air_finished = level.time + 12;
-	
+
 	ent->clipmask = MASK_PLAYERSOLID;
-	
+
 	ent->model = "players/male/tris.md2";
 	ent->pain = player_pain;
 	ent->die = player_die;
@@ -1293,7 +1302,7 @@ void PutClientInServer (edict_t *ent)
 	client->ps.gunindex = gi.modelindex(client->pers.weapon->view_model);
 
 	// clear entity state values
-	
+
 	ent->s.effects = 0;
 	ent->s.skinnum = ent - g_edicts - 1;
 	ent->s.modelindex = 255;		// will use the skin specified model
@@ -1353,7 +1362,7 @@ ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 		if (ent->client->resp.ctf_team==CTF_NOTEAM)
 		{
 			if (ent->client->resp.auto_recording)
-				autorecord_stop(ent);			
+				autorecord_stop(ent);
 		}
 		else if (ent->client->resp.ctf_team==CTF_TEAM2 || gametype->value==GAME_CTF)
 		{
@@ -1362,7 +1371,7 @@ ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 		else if (ent->client->resp.ctf_team==CTF_TEAM1)
 		{
 			if (ent->client->resp.auto_recording)
-				autorecord_stop(ent);			
+				autorecord_stop(ent);
 		}
 
 
@@ -1434,10 +1443,10 @@ void AutoPutClientInServer (edict_t *ent)
 	ent->groundentity = NULL;
 	ent->client = &game.clients[index];
 	ent->takedamage = DAMAGE_AIM;
-	
+
 	ent->movetype = MOVETYPE_WALK;
-//	ent->movetype = MOVETYPE_TOSS;  
-	
+//	ent->movetype = MOVETYPE_TOSS;
+
 	ent->viewheight = 22;
 	ent->inuse = true;
 	ent->classname = "player";
@@ -1457,12 +1466,12 @@ void AutoPutClientInServer (edict_t *ent)
 		else
 			ent->solid = SOLID_BBOX;//BBOX;*/
 	}
-	
+
 	ent->deadflag = DEAD_NO;
 	ent->air_finished = level.time + 12;
-	
+
 	ent->clipmask = MASK_PLAYERSOLID;
-	
+
 	ent->model = "players/male/tris.md2";
 	ent->pain = player_pain;
 	ent->die = player_die;
@@ -1503,7 +1512,7 @@ void AutoPutClientInServer (edict_t *ent)
 	client->ps.gunindex = gi.modelindex(client->pers.weapon->view_model);
 
 	// clear entity state values
-	
+
 	ent->s.effects = 0;
 	ent->s.skinnum = ent - g_edicts - 1;
 	ent->s.modelindex = 255;		// will use the skin specified model
@@ -1545,7 +1554,7 @@ void AutoPutClientInServer (edict_t *ent)
 		OverTime_GiveAll(ent,true);
 	else if (gset_vars->overtimetype==OVERTIME_RAIL)
 		OverTime_GiveAll(ent,false);
-	
+
 
 	if (gametype->value==GAME_CTF)
 	{
@@ -1565,7 +1574,7 @@ void AutoPutClientInServer (edict_t *ent)
 	{
 		ent->client->resp.auto_record_on = false;
 		autorecord_stop(ent);
-	}	
+	}
 
 	if ((ent->client->resp.ctf_team==CTF_TEAM1) || (ent->client->resp.ctf_team==CTF_TEAM2))
 		ent->client->ctf_regentime = level.time;
@@ -1582,7 +1591,7 @@ void AutoPutClientInServer (edict_t *ent)
 =====================
 ClientBeginDeathmatch
 
-A client has just connected to the server in 
+A client has just connected to the server in
 deathmatch mode, so clear everything out before starting them.
 =====================
 */
@@ -1623,7 +1632,7 @@ void ClientBeginDeathmatch (edict_t *ent)
 						gi.WriteByte (svc_stufftext);
 						gi.WriteString ("-attack\n");
 						gi.unicast(ent, true);
-						
+
 
 		addCmdQueue(ent,QCMD_DOWNLOAD,5,0,0);
 		addCmdQueue(ent,QCMD_CHECK_ADMIN,10,0,0);
@@ -1758,7 +1767,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	}
 
 	strncpy (ent->client->pers.netname, s, sizeof(ent->client->pers.netname)-1);
-	
+
 	// set skin
 	s = Info_ValueForKey (userinfo, "skin");
 
@@ -1867,14 +1876,14 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		Info_SetValueForKey(userinfo, "rejmsg", "Banned.");
 		return false;
 	}
-	
+
 	value = Info_ValueForKey (userinfo, "name");
 	if (strcmp(value,"")==0)
 		return false;
 
 	// check for a password
 	value = Info_ValueForKey (userinfo, "password");
-	if (*password->string && strcmp(password->string, "none") && 
+	if (*password->string && strcmp(password->string, "none") &&
 		strcmp(password->string, value)) {
 		Info_SetValueForKey(userinfo, "rejmsg", "Password required or incorrect.");
 		return false;
@@ -1890,7 +1899,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		// clear the respawning variables
 //ZOID -- force team join
 		ent->client->resp.ctf_team = -1;
-		ent->client->resp.id_state = true; 
+		ent->client->resp.id_state = true;
 //ZOID
 		InitClientResp (ent->client);
 		if (!game.autosaved || !ent->client->pers.weapon)
@@ -1904,7 +1913,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 
 	ent->client->pers.connected = true;
 
-	ent->client->resp.frames_without_movement = 0;
+	ent->client->pers.frames_without_movement = 0;
 	ent->client->resp.current_vote = 0;
 	vote_data.votes[0]++;
 	removeClientCommands(ent);
@@ -1951,7 +1960,7 @@ void ClientDisconnect (edict_t *ent)
 
 	if (jump_show_stored_ent)
 	{
-		if (ent->client->resp.stored_ent)	
+		if (ent->client->resp.stored_ent)
 			G_FreeEdict(ent->client->resp.stored_ent);
 	}
 	gi.unlinkentity (ent);
@@ -1964,9 +1973,9 @@ void ClientDisconnect (edict_t *ent)
 
 	vote_data.votes[ent->client->resp.current_vote]--;
 	ent->client->resp.current_vote = 0;
-	ent->client->resp.frames_without_movement = 0;
+	ent->client->pers.frames_without_movement = 0;
 	removeClientCommands(ent);
-	
+
 	playernum = ent-g_edicts-1;
 	gi.configstring (CS_PLAYERSKINS+playernum, "");
 }
@@ -2035,6 +2044,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	vec3_t temp_pos;
 	qboolean prev_groundentity;
 	vec_t tlen;
+	edict_t *cl_ent;
+	int		sendchan;
+	int		numEnt;
 
 	level.current_entity = ent;
 	client = ent->client;
@@ -2044,7 +2056,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		// if player moves, or attacks, timer starts
 		if (abs(ucmd->forwardmove)>0 || abs(ucmd->upmove)>0 || abs(ucmd->sidemove)>0 || (ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK)
-		{		
+		{
 			ent->client->resp.client_think_begin = Sys_Milliseconds();
 			unpause_client(ent);
 		}
@@ -2069,13 +2081,23 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	pm_passent = ent;
 
-	
+	//idle ?
+	if (ent->client->pers.idle_player && ucmd->buttons != 0 && ent->client->resp.ctf_team != CTF_NOTEAM ) {
+		if (!(Q_stricmp(gi.argv(0), "score") == 0)) {
+			gi.cprintf(ent, PRINT_HIGH, "You are no longer idle! Welcome back.\n");
+			ent->client->pers.idle_player = false;
+		}
+	}
+	else if (ent->client->pers.frames_without_movement > 60000 && !ent->client->pers.idle_player) {
+		//Player is now marked as idle.
+		ent->client->pers.idle_player = true;
+	}
 //auto kick code goes here
   if (enable_autokick->value) {
         if (ucmd->buttons==0) {
-                ent->client->resp.frames_without_movement += ucmd->msec;
-        } else {
-                ent->client->resp.frames_without_movement = 0;
+                ent->client->pers.frames_without_movement += ucmd->msec;
+		} else {
+                ent->client->pers.frames_without_movement = 0;
         };
   };
 
@@ -2092,7 +2114,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		}
 	}
 
-  
+
 	if (ent->client->resp.ctf_team==CTF_NOTEAM)
 	if (ucmd->buttons & BUTTON_ATTACK)
 	{
@@ -2258,7 +2280,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
     		ent->velocity[i] = pm.s.velocity[i]*0.125;
 	}
 
-	
+
 	VectorCopy (pm.mins, ent->mins);
 	VectorCopy (pm.maxs, ent->maxs);
 
@@ -2275,8 +2297,29 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
   /*ATTILA end*/
 
 	if (ent->groundentity && !pm.groundentity && (pm.cmd.upmove >= 10) && (pm.waterlevel == 0)) {
-		gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
-		PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
+		//gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
+		//PlayerNoise(ent, ent->s.origin, PNOISE_SELF); //not needed in jumpmod. No monsters (except fish ofc)
+		//jumpers no sound
+		numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
+		sendchan = (numEnt << 3) | (CHAN_VOICE & 7);
+		for (i = 0; i < maxclients->value; i++) {
+			cl_ent = g_edicts + 1 + i;
+
+			if (!(cl_ent->client && cl_ent->inuse))
+				continue;
+			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
+				continue;
+			gi.WriteByte(svc_sound);
+			gi.WriteByte(27);//flags SND_ENT
+			gi.WriteByte(gi.soundindex("player/female/jump1.wav"));//Sound..
+			gi.WriteByte(255);//Volume
+			gi.WriteByte(64);//Attenuation
+			gi.WriteByte(0.0);//OFfset
+			gi.WriteShort(sendchan);//Channel
+			gi.unicast(cl_ent, true); //send to clients
+
+		}
+		
 	}
 
 	ent->viewheight = pm.viewheight;
@@ -2325,13 +2368,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	client->oldbuttons = client->buttons;
 	client->buttons = ucmd->buttons;
-	
+
 	if (ucmd->forwardmove>10)
 	{
 		client->resp.key_forward = true;
 		client->resp.key_back = false;
 	}
-	else 
+	else
 	if (ucmd->forwardmove<-10)
 	{
 		client->resp.key_back = true;
@@ -2365,7 +2408,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->resp.key_up = true;
 		client->resp.key_down = false;
 	}
-	else 
+	else
 		if (ucmd->upmove<-10)
 	{
 		client->resp.key_down = true;
@@ -2385,13 +2428,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		{
 			if ((ucmd->upmove>=10) && (!ent->client->resp.going_up))
 				ent->client->resp.going_up = true;
+
 			if ((ucmd->upmove<10) && (ent->client->resp.going_up))
 			{
 				Cmd_RepRepeat(ent);
 				ent->client->resp.going_up = false;
 			}
+
 			if ((ucmd->forwardmove>=10) && (!ent->client->resp.going_forward))
 				ent->client->resp.going_forward = true;
+
 			if (((ucmd->forwardmove<10) && (ucmd->forwardmove>=0)) && (ent->client->resp.going_forward))
 			{
 				ent->client->resp.going_forward = false;
@@ -2402,10 +2448,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 					gi.cprintf(ent,PRINT_HIGH,"Paused\n");
 				else
 					gi.cprintf(ent,PRINT_HIGH,"Replaying at %2.1f speed\n",replay_speed_modifier[ent->client->resp.replay_speed]);
-
 			}
+
 			if ((ucmd->forwardmove<=-10) && (!ent->client->resp.going_back))
 				ent->client->resp.going_back = true;
+
 			if (((ucmd->forwardmove>-10) && (ucmd->forwardmove<=0)) && (ent->client->resp.going_back))
 			{
 				ent->client->resp.going_back = false;
@@ -2421,7 +2468,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 	else
 	{
-	
+
 		if ((ucmd->upmove>=10) && (!ent->client->resp.going_up))
 			ent->client->resp.going_up = true;
 		if ((ucmd->upmove<10) && (ent->client->resp.going_up))
@@ -2475,7 +2522,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 if ((client->hook_state == HOOK_ON) && (VectorLength(ent->velocity) < 10)) {
 	client->ps.pmove.pm_flags |= PMF_NO_PREDICTION;
-} else if (!ent->client->resp.replaying) {    
+} else if (!ent->client->resp.replaying) {
 	client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
 }
 
@@ -2570,7 +2617,7 @@ void ClientBeginServerFrame (edict_t *ent)
 	client->latched_buttons = 0;
 
 	//raceline - Will this be laggy?
-	if(ent->client->resp.raceline){ 
+	if(ent->client->resp.raceline){
 		racenr = ent->client->resp.rep_race_number;
 		if (racenr<0 || racenr>MAX_HIGHSCORES)
 			racenr = 0;
@@ -2627,7 +2674,7 @@ void ClientBeginServerFrame (edict_t *ent)
 							Generate_Race_Data(ent->client->resp.race_frame,race_this);
 							gi.unicast(ent,true);
 						}
-						//send to everyone chasing us? seems laggy but ok								
+						//send to everyone chasing us? seems laggy but ok
 						for (i=0 ; i<maxclients->value ; i++)
 						{
 							temp_ent = g_edicts + 1 + i;
@@ -2635,10 +2682,10 @@ void ClientBeginServerFrame (edict_t *ent)
 								continue;
 							Generate_Race_Data(ent->client->resp.race_frame,race_this);
 							gi.unicast(temp_ent,true);
-						}					
+						}
 					}
 				}
-				
+
 				if (!ent->client->resp.paused)
 					ent->client->resp.race_frame++;
 
@@ -2656,7 +2703,7 @@ void ClientBeginServerFrame (edict_t *ent)
 				if (ent->client->resp.race_frame>2)
 					if (ent->client->resp.race_frame>=level_items.recorded_time_frames[race_this])
 						ent->client->resp.race_frame = 2;
-	
+
 			}
 		}
 	}

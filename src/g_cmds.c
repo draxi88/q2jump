@@ -1116,61 +1116,63 @@ void ClientCommand (edict_t *ent)
 	if (!ent->client)
 		return;		// not fully in game yet
 
-	ent->client->resp.frames_without_movement = 0;
+	ent->client->pers.frames_without_movement = 0;
 
 	cmd = gi.argv(0);
 
-	if (Q_stricmp (cmd, "autoadmin") == 0)
+	if (Q_stricmp(cmd, "autoadmin") == 0)
 	{
 		return;
 	}
-	if (Q_stricmp (cmd, "players") == 0)
+	if (Q_stricmp(cmd, "players") == 0)
 	{
-		Cmd_Players_f (ent);
+		Cmd_Players_f(ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "say") == 0)
+	if (Q_stricmp(cmd, "say") == 0)
 	{
-		Cmd_Say_f (ent, false, false);
+		Cmd_Say_f(ent, false, false);
 		return;
 	}
-	if ((Q_stricmp (cmd, "say_person") == 0) || (Q_stricmp (cmd, "p_say") == 0) || (Q_stricmp (cmd, "!w") == 0))
+	if ((Q_stricmp(cmd, "say_person") == 0) || (Q_stricmp(cmd, "p_say") == 0) || (Q_stricmp(cmd, "!w") == 0))
 	{
 		say_person(ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "say_team") == 0 || Q_stricmp (cmd, "steam") == 0)
+	if (Q_stricmp(cmd, "say_team") == 0 || Q_stricmp(cmd, "steam") == 0)
 	{
 		CTFSay_Team(ent, gi.args());
 		return;
 	}
 
-	if (Q_stricmp (cmd, "inven") == 0)
+	if (Q_stricmp(cmd, "inven") == 0)
 	{
-		Cmd_Inven_f (ent);
+		Cmd_Inven_f(ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "invnext") == 0)
+	if (Q_stricmp(cmd, "invnext") == 0)
 	{
-		SelectNextItem (ent, -1);
-		return;
-	}
-	
-	if (Q_stricmp (cmd, "invprev") == 0)
-	{
-		SelectPrevItem (ent, -1);
+		SelectNextItem(ent, -1);
 		return;
 	}
 
-	if (Q_stricmp (cmd, "invuse") == 0)
+	if (Q_stricmp(cmd, "invprev") == 0)
 	{
-		Cmd_InvUse_f (ent);
+		SelectPrevItem(ent, -1);
 		return;
 	}
 
-	if (level.votingtime)
-		//dissallow anything in voting
+	if (Q_stricmp(cmd, "invuse") == 0)
+	{
+		Cmd_InvUse_f(ent);
 		return;
+	}
+
+	if (level.votingtime) {
+		//dissallow anything else but talk in voting
+		Cmd_Say_f(ent, false, true); 
+		return;
+	}
 
 	if (level.intermissiontime)
 		//same for intermission
@@ -1256,6 +1258,9 @@ void ClientCommand (edict_t *ent)
 		{
 			if (!level.overtime)
 				BringClient(ent);
+		}
+		else if (Q_stricmp(cmd, "idle") == 0) {
+			Cmd_Idle(ent);
 		}
 		else if (Q_stricmp (cmd, "cvote") == 0)
 			cvote(ent);
@@ -1457,29 +1462,27 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp (cmd, "flashlight") == 0)
 		FlashLight(ent);
-	else if (Q_stricmp (cmd, "antiglue") == 0)
-		AntiGlue(ent);
-	//ZOID
-	else if (Q_stricmp (cmd, "team") == 0)
-	{
-			CTFTeam_f (ent);
+	//else if (Q_stricmp (cmd, "antiglue") == 0) //Disabled to not cause crashes..
+		//AntiGlue(ent);
+	else if (Q_stricmp(cmd, "team") == 0) {
+		if (Q_stricmp(gi.argv(1), "easy") == 0)
+			CTFJoinTeam(ent, CTF_TEAM1);
+		else if (Q_stricmp(gi.argv(1), "hard") == 0)
+			CTFJoinTeam(ent, CTF_TEAM2);
 	} else if (Q_stricmp(cmd, "id") == 0) {
 		CTFID_f (ent);
-	} else if (ctfgame.election != ELECT_NONE) {
-		if(Q_stricmp(cmd, "yes") == 0) {
-			if (gset_vars->tourney)
-			{
-				return;
-			}
-			CTFVoteYes(ent);
+	} else if (Q_stricmp(cmd, "yes") == 0 && ctfgame.election != ELECT_NONE) {
+		if (gset_vars->tourney)
+		{
+			return;
 		}
-		else if (Q_stricmp(cmd, "no") == 0) {
-			if (gset_vars->tourney)
-			{
-				return;
-			}
-			CTFVoteNo(ent);
+		CTFVoteYes(ent);
+	} else if (Q_stricmp(cmd, "no") == 0 && ctfgame.election != ELECT_NONE) {
+		if (gset_vars->tourney)
+		{
+			return;
 		}
+		CTFVoteNo(ent);
 	} else if (Q_stricmp(cmd, "ghost") == 0) {
 		Change_Ghost_Model(ent);
 	} else if (Q_stricmp(cmd, "admin") == 0) {
@@ -1575,7 +1578,7 @@ void ClientCommand (edict_t *ent)
 	}
 	else	// anything that doesn't match a command will be a chat
 	{
-        ent->client->resp.frames_without_movement = 0;
+		ent->client->pers.frames_without_movement = 0;
 		Cmd_Say_f (ent, false, true);
 	}
 }

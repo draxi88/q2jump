@@ -1590,9 +1590,9 @@ static struct wireplay_time_t wireplay_times[NUM_WIREPLAY_TIMES] = {
 
 void print_wireplay_time(edict_t* ent, const char* map) {
     // TODO: currently linearly searching through the list.
-    // Can imprrove by moving to std::map or putting into a tree.
+    // Can improve by moving to std::map or putting into a tree.
     for (int i = 0; i < NUM_WIREPLAY_TIMES; ++i) {
-        if (Q_stricmp(map, wireplay_times[i].map) == 0) {
+        if (Q_stricmp((char*)map, (char*)wireplay_times[i].map) == 0) {
             gi.cprintf(ent, PRINT_HIGH, "Wireplay time for map %s: %s in %s seconds\n", wireplay_times[i].map, wireplay_times[i].player, wireplay_times[i].time);
             return;
         }

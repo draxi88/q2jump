@@ -54,7 +54,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //#define	STAT_FRAGS				14 in use
 //#define	STAT_FLASHES			15 in use
 
-#define STAT_JUMP_ANTIGLUE 1614
+#define STAT_JUMP_ANTIGLUE 1614 //16
 #define STAT_ITEM_TIMER 17
 #define STAT_ITEM_TIMER2 19
 #define STAT_JUMP_MAPCOUNT 18
@@ -203,7 +203,6 @@ void CTFEffects(edict_t *player);
 void CTFCalcScores(void);
 void SetCTFStats(edict_t *ent);
 void CTFDeadDropFlag(edict_t *self);
-void CTFTeam_f (edict_t *ent);
 void CTFID_f (edict_t *ent);
 void CTFSay_Team(edict_t *who, char *msg);
 void CTFFlagSetup (edict_t *ent);

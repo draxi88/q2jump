@@ -1227,18 +1227,20 @@ void SetCTFStats(edict_t *ent)
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP3] = CONFIG_JUMP_NEXT_MAP3;
+	
 
 	if (ent->client->resp.ctf_team==CTF_TEAM1 || ent->client->resp.ctf_team == CTF_TEAM2)
 	{
 		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.cur_speed;
-		if (gset_vars->antiglue==0)
+		//no fucking antiglue anymore..
+		/*if (gset_vars->antiglue==0)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
 		else
 		if (ent->client->resp.antiglue)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE;
 		else
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;
+			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;*/
 
 	}
 	else {
@@ -1246,7 +1248,7 @@ void SetCTFStats(edict_t *ent)
 		{
 			ent->client->ps.stats[STAT_JUMP_REPLAY] = ent->client->resp.replaying;
 			ent->client->ps.stats[STAT_HEALTH] = 0;
-			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
+			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.rep_speed;
 		}
 		else
 		{
@@ -1254,15 +1256,15 @@ void SetCTFStats(edict_t *ent)
 			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		}
 		
-		if (gset_vars->antiglue==0)
+		/*if (gset_vars->antiglue==0)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
 		else
 		if (ent->client->resp.antiglue)
 			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE;
 		else
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;
+			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;*/
 	}
-	ent->client->ps.stats[STAT_JUMP_GLUED] = ent->client->resp.glued;
+	//ent->client->ps.stats[STAT_JUMP_GLUED] = ent->client->resp.glued;
 	//ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 999999999;
 	
 
@@ -1471,26 +1473,26 @@ void SetCTFStats(edict_t *ent)
 		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_HARD;
 	else
 		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_OBSERVER;
+
 	if (ent->client->resp.cleanhud)
 	{
-		ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = 0;
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		ent->client->ps.stats[STAT_JUMP_MAPCOUNT] = 0;
 		ent->client->ps.stats[STAT_JUMP_GLUED] = 0;
+		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_EMPTY;
+		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_EMPTY;
+		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_JUMP_EMPTY;
 		if (!ent->client->resp.replaying)
 		{
 			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
 			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
 			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_FPS] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_FPS] = 0;
 			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
 			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
 			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
 		}
-		return;
 	}
-
-
 }
 
 /*------------------------------------------------------------------------*/
@@ -1858,140 +1860,6 @@ void CTFWeapon_Grapple (edict_t *ent)
 	}
 }
 
-void CTFTeam_f (edict_t *ent)
-{
-	char *t, *s;
-	int desired_team;
-	qboolean can_join = false;
-
-	if (ClientIsBanned(ent,BAN_PLAY))
-	{
-		gi.cprintf(ent,PRINT_HIGH,"You are banned from joining a team.\n");
-		return;
-	}
-	
-	if (level.status==LEVEL_STATUS_OVERTIME)
-	{
-		if (ent->client->resp.ctf_team!=CTF_NOTEAM)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot change teams during overtime\n");
-			return;
-		}
-		if (level.overtime>gset_vars->overtimewait)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot join a team after countdown has ended\n");
-			return;
-		}
-		can_join = true;
-	}
-	else if (level.status)
-	{
-		return;
-	}
-	t = gi.args();
-	if (!*t) {
-		gi.cprintf(ent, PRINT_HIGH, "You are on the %s team.\n",
-			CTFTeamName(ent->client->resp.ctf_team));
-		return;
-	}
-
-	if (ctfgame.match > MATCH_SETUP) {
-		gi.cprintf(ent, PRINT_HIGH, "Can't change teams in a match.\n");
-		return;
-	}
-
-//	Cmd_Reset_f(ent);
-	if (Q_stricmp(t, "easy") == 0)
-	{
-		desired_team = CTF_TEAM1;
-	}
-	else if (Q_stricmp(t, "hard") == 0)
-		desired_team = CTF_TEAM2;
-	else if (Q_stricmp(t, "red") == 0)
-		desired_team = CTF_TEAM1;
-	else if (Q_stricmp(t, "blue") == 0)
-		desired_team = CTF_TEAM2;
-	else {
-		gi.cprintf(ent, PRINT_HIGH, "Unknown team %s.\n", t);
-		return;
-	}
-
-
-	if (!level.status)
-	{
-		if ((gset_vars->tourney) && (desired_team==CTF_TEAM1))
-		{
-			gi.cprintf(ent,PRINT_HIGH,"You may only join the HARD team during tournaments\n");
-			return;
-		}
-	}
-
-	
-	if (can_join)
-	{
-	    ent->client->Jet_framenum = 0;
-
-		CTFAutoJoinTeam(ent,desired_team);
-		return;
-	}
-
-	if (level.framenum<=ent->client->respawn_time)
-		return;
-
-	if (ent->client->resp.ctf_team == desired_team) {
-		gi.cprintf(ent, PRINT_HIGH, "You are already on the %s team.\n",
-			CTFTeamName(ent->client->resp.ctf_team));
-		return;
-	}
-
-////
-    ent->client->Jet_framenum = 0;
-	ent->svflags = 0;
-	ent->flags &= ~FL_GODMODE;
-	ent->client->resp.ctf_team = desired_team;
-	ent->client->resp.ctf_state = 0;
-	s = Info_ValueForKey (ent->client->pers.userinfo, "skin");
-	CTFAssignSkin(ent, s);
-
-	if (ent->solid == SOLID_NOT) { // spectator
-		if (level.status==LEVEL_STATUS_OVERTIME)
-			AutoPutClientInServer (ent);
-		else
-			PutClientInServer (ent);
-		// add a teleportation effect
-//		ent->s.event = EV_PLAYER_TELEPORT;
-		// hold in place briefly
-		ent->client->ps.pmove.pm_flags = PMF_TIME_TELEPORT;
-		ent->client->ps.pmove.pm_time = 14;
-//		gi.bprintf(PRINT_HIGH, "%s joined the %s team.\n",
-//			ent->client->pers.netname, CTFTeamName(desired_team));
-ent->client->resp.item_timer_allow = true;
-ent->client->resp.item_timer = 0;
-ent->client->resp.item_timer_penalty = 0;
-ent->client->resp.client_think_begin = 0;
-ent->client->resp.item_timer_penalty_delay = 0;
-ent->client->resp.glued = 0;
-	if (!level.status)
-	Notify_Of_Team_Commands(ent);
-	}
-	else
-	{
-
-	ent->health = 0;
-	player_die (ent, ent, ent, 100000, vec3_origin);
-	// don't even bother waiting for death frames
-	ent->deadflag = DEAD_DEAD;
-	respawn (ent);
-
-//	gi.bprintf(PRINT_HIGH, "%s changed to the %s team.\n",
-//		ent->client->pers.netname, CTFTeamName(desired_team));
-	ent->client->respawn_time = level.framenum + 50;
-
-	if (!level.status)
-	Notify_Of_Team_Commands(ent);
-	}
-
-}
 void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 {
 	char	entry[1024];
@@ -2069,7 +1937,6 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	strcpy (string + stringlength, entry);
 	stringlength += j;
 
-	strcpy(teamstring,"Hard");
 	for (i=0 ; i<total ; i++)
 	{
 		cl = &game.clients[sorted[i]];
@@ -2085,6 +1952,13 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 
 		// send the layout
+		if (cl->pers.idle_player)
+		{
+			strcpy(teamstring, "Idle");
+		}
+		else {
+			strcpy(teamstring, "Hard");
+		}
 		if (cl->resp.best_time)
 		{
 			Com_sprintf (entry, sizeof(entry),
@@ -2115,7 +1989,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			else
 			{
 				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"    ------ ----          %s\"",
+				"ctf %d %d %d %d %d xv 152 string \"    ------ ----           %s\"",
 				-8,y,sorted[i],cl->ping,1000,teamstring
 				); 
 
@@ -2133,7 +2007,6 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	//easy team
 	total_easy = 0;
 	total_specs = 0;
-	strcpy(teamstring,"Easy");
 	if (gametype->value!=GAME_CTF)
 	for (i=0 ; i<maxclients->value ; i++)
 	{
@@ -2164,17 +2037,14 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			trecid = cl->resp.trecid;		
 		}
 
-		if (cl->resp.frames_without_movement>60000)
-		{	
-			strcpy(status,"(idle)");
-			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv 168 string \"%s\"",
-			-8,y,i,cl->ping,0,status
-			); 
-		}
-		else 
+		if (cl->pers.idle_player)
 		{
-			if (cl->resp.best_time)
+			strcpy(teamstring, "Idle");
+		}
+		else {
+			strcpy(teamstring, "Easy");
+		}
+		if (cl->resp.best_time)
 		{
 			Com_sprintf (entry, sizeof(entry),
 			"ctf %d %d %d %d %d xv 152 string \"%8.3f %4i %4i  %4.1f  %s\"",
@@ -2210,11 +2080,6 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 			}
 		}
-		}
-
-		
-
-
 
 		j = strlen(entry);
 		if (stringlength + j > 1024)
@@ -2265,9 +2130,18 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			y = 48 + (8 *(total+total_easy+total_specs));
 		}
 
+		//idle spectator
+		if (cl->pers.idle_player)
+		{
+			Com_sprintf(entry, sizeof(entry),
+				"ctf %d %d %d %d %d xv 168 string \" (idle)\"",
+				-8, y, i,
+				cl->ping,
+				0
+			);
+		} 
 
-		
-		if (cl->resp.replaying)
+		else if (cl->resp.replaying)
 		{
 			if (cl->resp.replaying==MAX_HIGHSCORES+1)
 			Com_sprintf (entry, sizeof(entry),
@@ -3854,7 +3728,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 
 	PMenu_Close(ent);
 
-
+	ClearCheckpoints(&ent->client->pers);
 
 	if (level.status==LEVEL_STATUS_OVERTIME)
 	{
@@ -3987,79 +3861,11 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 
 void CTFJoinTeam1(edict_t *ent, pmenuhnd_t *p)
 {
-    ClearCheckpoints(&ent->client->pers);
-	
-	if (ClientIsBanned(ent,BAN_PLAY))
-	{
-		gi.cprintf(ent,PRINT_HIGH,"You are banned from joining a team.\n");
-		return;
-	}
-
-	if (level.status==LEVEL_STATUS_OVERTIME)
-	{
-		if (ent->client->resp.ctf_team!=CTF_NOTEAM)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot change teams during overtime\n");
-			return;
-		}
-		if (level.overtime>gset_vars->overtimewait)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot join a team after countdown has ended\n");
-			return;
-		}
-
-
-	}
-	else if (level.status)
-	{
-		return;
-	}
-	else
-	{
-		if (gset_vars->tourney)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"You may only join the HARD team during tournaments\n");
-			return;
-		}
-	}
-	if (ent->movetype==MOVETYPE_NOCLIP)
-		ent->movetype = MOVETYPE_WALK;
-
 	CTFJoinTeam(ent, CTF_TEAM1);
 }
 
 void CTFJoinTeam2(edict_t *ent, pmenuhnd_t *p)
-{
-    ClearCheckpoints(&ent->client->pers);
-	
-	if (ClientIsBanned(ent,BAN_PLAY))
-	{
-		gi.cprintf(ent,PRINT_HIGH,"You are banned from joining a team.\n");
-		return;
-	}
-
-	if (level.status==LEVEL_STATUS_OVERTIME)
-	{
-		if (ent->client->resp.ctf_team!=CTF_NOTEAM)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot change teams during overtime\n");
-			return;
-		}
-		if (level.overtime>gset_vars->overtimewait)
-		{
-			gi.cprintf(ent,PRINT_HIGH,"Cannot join a team after countdown has ended\n");
-			return;
-		}
-
-
-	}
-	else if (level.status)
-	{
-		return;
-	}
-	if (ent->movetype==MOVETYPE_NOCLIP)
-		ent->movetype = MOVETYPE_WALK;
-
+{	
 	CTFJoinTeam(ent, CTF_TEAM2);
 }
 
@@ -4869,10 +4675,8 @@ void CTFAdmin(edict_t *ent)
 			
 			ent->client->resp.admin = admin_pass[alevel].level;
 			List_Admin_Commands(ent);
-			if (admin_pass[alevel].level<15) //only print for non 15's, i dont wanna talk to people
-			{
+			if (admin_pass[alevel].level < aset_vars->ADMIN_MAX_LEVEL) // only print if below cap
 				gi.bprintf(PRINT_HIGH, "%s has become a level %d admin.\n", ent->client->pers.netname,admin_pass[alevel].level);
-			}
 			if (admin_pass[alevel].level>1)
 			{
 				ent->client->resp.silence = false;
@@ -5425,7 +5229,7 @@ void CTFBoot(edict_t *ent)
 	char temp[128];
 	
 
-	//ent->client->resp.frames_without_movement = 0;
+	//ent->client->pers.frames_without_movement = 0;
 
 /*	if (!ent->client->resp.admin) {
 		gi.cprintf(ent, PRINT_HIGH, "You are not an admin.\n");
@@ -5890,7 +5694,7 @@ int Get_Voting_Clients(void)
 		e->client->resp.voted = false;
 		if (e->inuse)
 		{
-			if (e->client->resp.frames_without_movement>60000)
+			if (e->client->pers.frames_without_movement>60000 || e->client->pers.idle_player)
 			{
 				//they need removing from vote
 				e->client->resp.voted = true;

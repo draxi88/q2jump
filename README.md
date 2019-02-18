@@ -1,32 +1,28 @@
 # Quake II Jump Mod
+
 ### What it is
-Jump mod isolates the unique movement from Quake II, like strafe and double jumping, and turns it into a competition. 
-The goal is to get the fastest time from when you spawn, until when you reach the railgun at the end of the map. 
-In between the spawn and the railgun is a number of obstacles that you have to get over as quickly as possible. 
+Jump mod isolates the unique movement from Quake II, like strafe and double jumping, and turns it into a competition. The goal is to get the fastest time from when you spawn, until when you reach the railgun at the end of the map. In between the spawn and the railgun is a number of obstacles that you have to get over as quickly as possible. 
 
 ***
 ### Compiling
-The code should compile using windows or linux. 
-Included is a makefile for linux and visual studio .sln / .def / .vcproj files for compiling on windows. 
-To compile on linux, run the makefile with gcc. To compile on Windows, Visual Studio Express 2008 has worked for most people. 
-Send a question if you cannot get it to compile. 
+The code should compile using windows or linux. Included is a makefile for linux and a visual studio solution file for Windows. To compile on linux, run the makefile with gcc. To compile on Windows, Visual Studio 2015 or newer will work. Send us a question on our [discord](https://discord.q2jump.net) if you can't get it to work.
+
+***
+### Archive
+
+The archive folder contains some documents we don't want to lose. The source folder contains version of jump code over time.
+
+[Other documents](https://bitbucket.org/maxwagner65/q2jump/src/dev/archive/documents/):
+
+- JumpMod Commands: has a lot of info on commands used in game by players/admins
+- Q2 physics: written by nook, some fun stuff in here, and commonly referenced
+- adcom.cfg: easier management config for admins
+- greentext.xlsx: a conversion tool for using greentext and symbols in quake
 
 ***
 ### Credits
-| Name            | Credit
-| ---             | ---
-| SadButTrue      | original programmer
-| ManicMiner      | producer for 0 - 0.81
-| wootwoot        | programmer for 0.81 - 0.83wp
-| LilRedTheJumper | programmer for 0.84wp
-| ace             | programmer for 1.08ger - current
-| 754(slippery)   | programmer for 1.12ger - current
-| draxi           | programmer for 1.14ger - current
-| fish            | various scripts for discord integration
-| quadz           | fix_users_file script
-| maq             | last_place_fix/duplicate checker scripts
-| SumFuka         | jetpack code
-| Killerbee       | q2admin code
-| Doyoon Kim      | ball model
-| Hannibal_       | bug fixes
-| DeathJump       | adminbox additional colors
+| Name                 | Credit                                                                |
+|----------------------|-----------------------------------------------------------------------|
+| Wireplay Programmers | SadButTrue, ManicMiner, wootwoot, LilRedtheJumper                     |
+| German Programmers   | ace, draxi, slippery                                                  |
+| Various Additions    | Fish, quadz, maq, SumFuka, Killerbee, Doyoon Kim, Hannibal, DeathJump |

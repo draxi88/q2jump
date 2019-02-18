@@ -1,3 +1,37 @@
+#####v1.28ger#####
+-idle cmd:
+	-typing idle makes you... idle
+	-saved thru map changes
+	-checking leaderboard no longer makes you go unidle
+-trigger_welcome
+	-add a count to trigger_multiple 1-9, for 9 different versions
+	-will trigger once, per person, per map
+	-useful to add a welcome msg to a map, or a room description
+-replays:
+	-now saves up to 100,000 seconds, up from 1,000
+	-4 new replay speeds, 25x, 100x, -25x, -100x
+-sound changes:
+	-jumpers cmd now also mutes jump sounds of other players
+	-cpsound cmd works again, toggles sound from checkpoints, default is on
+	-checkpoint sounds only play to the player who pick them up
+	-jumpsound is now female only, no more loud ogreadmin grunts!
+	-fixed the jumpsound lag when moving quickly
+-speedometer works in replays
+-maptimeswp without argument now looks up current map
+-added gset for disabling drowning sounds
+-bugfixes:
+	-fixed a bug where you couldn't recall after joining a team
+	-fixed bug where you couldn't talk while vote was going on
+	-fixed a bug with cpwall not appearing
+	-fixed some overflows and handling problems that could cause crashes
+	-disabled an old antiglue cmd that could cause crashes
+	-changename works again
+	-fixed display issue for nomination list
+	-fix to addclip so it's not a LOCAL THING
+	-cleanhud works how it should now
+	-!seen commands now works for names with numbers at the start
+
+
 #####v1.27ger#####
 New:
 -added "telehack" to trigger_teleport
