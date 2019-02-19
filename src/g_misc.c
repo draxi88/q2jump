@@ -584,17 +584,61 @@ static void light_use (edict_t *self, edict_t *other, edict_t *activator)
 		self->spawnflags |= START_OFF;
 	}
 }
+void light_think(edict_t *self) {
+	int i;
+	edict_t *cl_ent;
+	int substyle;
 
-void SP_light (edict_t *self)
+	if (self->style >= 200)
+		substyle = 200;
+	else
+		substyle = 100;
+
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+
+		if (!cl_ent->inuse || !cl_ent->client)
+			continue;
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CS_LIGHTS + self->style);
+		if (cl_ent->client->pers.cpbox_checkpoint[self->style - substyle] == 1) {
+			if (self->style>199) { //start off
+				gi.WriteString("m");
+			} else {
+				gi.WriteString("a");
+			}
+		}
+		else {
+			if (self->style>199) { //start off
+				gi.WriteString("a");
+			} else {
+				gi.WriteString("m");
+			}
+		}
+		gi.unicast(cl_ent, true); //send to clients
+	}
+	self->nextthink = level.time + FRAMETIME;
+}
+void SP_light(edict_t *self)
 {
 	// no targeted lights in deathmatch, because they cause global messages
-	if (!self->targetname)
+	if (!self->targetname && self->style<100 || self->style>255)
 	{
-		G_FreeEdict (self);
+		G_FreeEdict(self);
 		return;
 	}
 
-	if (self->style >= 32)
+	if (self->style>=100 && self->style<256) {
+		if (self->style>163 && self->style<200) {
+			gi.dprintf("Style for cplight has to be between 100-163 for lights turning ON, and 200-255 for lights turning OFF!\n");
+			G_FreeEdict(self);
+			return;
+		}
+		self->think = light_think;
+		self->nextthink = level.time + 1;
+	}
+
+	else if (self->style >= 32 || self->style < 100)
 	{
 		self->use = light_use;
 		if (self->spawnflags & START_OFF)
