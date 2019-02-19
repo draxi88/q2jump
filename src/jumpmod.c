@@ -8761,7 +8761,7 @@ void open_tourney_file(char *filename,qboolean apply)
 		fscanf(f, "%i", &uid);
 		tourney_record[i].uid = uid;
 		fscanf(f, "%i", &tourney_record[i].completions); 
-		gi.dprintf("NR: %d Uid: %d date: %s time: %f\n", i, uid, tourney_record[i].date, tourney_record[i].time);
+		//gi.dprintf("NR: %d Uid: %d date: %s time: %f\n", i, uid, tourney_record[i].date, tourney_record[i].time);
 		if (apply && tourney_record[i].completions)
 		{
 			//need to check its existence on the good map list first
