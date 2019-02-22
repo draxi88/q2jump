@@ -19,7 +19,7 @@
 
 
 #define MAX_ADMINS 128
-#define MAX_RECORD_FRAMES 50000
+#define MAX_RECORD_FRAMES 10000
 #define GAME_JUMP 0
 #define GAME_CTF 1
 #define GAME_ROCKET 2
