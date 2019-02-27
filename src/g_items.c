@@ -3493,9 +3493,9 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			gi.dprintf ("Your count of %i is higher than the max value of %i, you are a shit mapper.\n", self->count, sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int)-1);
 		return;
 	}
-
+	
 	// check if the client is already finished
-	if (other->client->resp.finished == 1)
+	if (other->client->resp.finished == 1 && !other->client->resp.replaying)
 		return;
 
 	//check if cpbox has a target...
@@ -3531,6 +3531,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 	my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
 	my_time_decimal = (float)my_time / 1000.0f;
 
+	
 	// check if they have it already, increase it if they don't
 	if (other->client->pers.cpbox_checkpoint[self->count] != 1) {
 		other->client->pers.cpbox_checkpoint[self->count] = 1;
@@ -3538,12 +3539,13 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 
 		// play a sound for it
 		CPSoundCheck(other);
-
 		// in easy give them the int, in hard give them the float
 		if (other->client->resp.ctf_team==CTF_TEAM1){
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
-		} else {
+		} else if (other->client->resp.ctf_team==CTF_TEAM2){
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+		} else if (other->client->resp.ctf_team==CTF_NOTEAM && other->client->resp.replaying && other->client->resp.cp_rep) {
+			gi.cprintf(other, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds.\n", level_items.stored_item_times[other->client->resp.replaying-1].owner,other->client->pers.checkpoints, mset_vars->checkpoint_total, ((other->client->resp.replay_frame / 10)-0.1));
 		}
 	}
 }
@@ -4047,7 +4049,7 @@ void cpwall_think (edict_t *self){
 
 void cpwall_touch (edict_t *self, edict_t *other)
 {
-	if (strcmp(other->classname, "player") == 0){
+	if (other->client->resp.ctf_team == CTF_TEAM1 || other->client->resp.ctf_team == CTF_TEAM2){
 		if (other->client->pers.checkpoints < self->count) {
 			VectorCopy(other->s.old_origin, other->s.origin);
 			VectorClear(other->velocity);

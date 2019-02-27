@@ -2047,6 +2047,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	edict_t *cl_ent;
 	int		sendchan;
 	int		numEnt;
+	qboolean replaystarted;
 
 	level.current_entity = ent;
 	client = ent->client;
@@ -2165,7 +2166,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->ps.pmove.pm_type = PM_FREEZE;
 	}
 
-	if (client->hook_state == HOOK_ON)
+	if (client->hook_state == HOOK_ON || client->resp.replaying)
 		client->ps.pmove.gravity = 0;
 	else
 		client->ps.pmove.gravity = mset_vars->gravity * ent->gravity * ent->gravity2;
@@ -2426,6 +2427,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		if (ent->client->resp.replaying)
 		{
+			if (!replaystarted) {
+				replaystarted = true;
+			}
 			if ((ucmd->upmove>=10) && (!ent->client->resp.going_up))
 				ent->client->resp.going_up = true;
 
@@ -2464,6 +2468,10 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				else
 					gi.cprintf(ent,PRINT_HIGH,"Replaying at %2.1f speed\n",replay_speed_modifier[ent->client->resp.replay_speed]);
 			}
+		}
+		else if (replaystarted) { //Has been watching a replay, gotta put player to observer
+			CTFObserver(ent);
+			replaystarted = false;
 		}
 	}
 	else

@@ -37,6 +37,7 @@ static char *help_main[] = {
 	"jumpers - turn on or off player models\n",
 	"cpsound - turn on or off checkpoint sounds\n",
 	"showtimes - turn on or off displaying all times\n",
+	"cp_rep - turn on or off displaying replays cp-time\n",
 	"ezmode - turn on or off dsiplaying recall count in ezmode\n",
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
@@ -4584,12 +4585,7 @@ void Cmd_Replay(edict_t *ent)
 		}
 		//gi.cprintf(ent,PRINT_HIGH,"You can type 'replay now' to see a demo of fastest run this map.\n");
 	}
-	if (ent->client->resp.ctf_team>=CTF_TEAM1)
-	{
-		CTFObserver(ent);
-//		gi.cprintf(ent,PRINT_HIGH,"You need to be an observer to replay.\n");
-//		return;
-	}
+	CTFReplayer(ent);
 }
 
 void Load_Recording(void)
@@ -13692,13 +13688,21 @@ void Cpsound_on_off(edict_t *ent)
 	Com_sprintf(s,sizeof(s),"Checkpoint sounds are now %s",(ent->client->resp.mute_cps ? "off." : "on."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
+//get cp crossing time from the replay.
+void cp_rep_on_off(edict_t *ent)
+{
+	char s[255];
+	ent->client->resp.cp_rep = !ent->client->resp.cp_rep;
+	Com_sprintf(s, sizeof(s), "Showing replays checkpoint-time is now %s", (ent->client->resp.cp_rep ? "on." : "off."));
+	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(s));
+}
 
 void Showtimes_on_off(edict_t *ent)
 {
 	char s[255];
 	ent->client->resp.showtimes = !ent->client->resp.showtimes;
-	Com_sprintf(s,sizeof(s),"Showing all times is now %s",(ent->client->resp.showtimes ? "on." : "off."));
-	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
+	Com_sprintf(s, sizeof(s), "Showing all times is now %s", (ent->client->resp.showtimes ? "on." : "off."));
+	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(s));
 }
 
 // toggle for a message to display number of recalls during an ezmode run
