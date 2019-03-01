@@ -13693,7 +13693,7 @@ void Cpsound_on_off(edict_t *ent)
 void mute_cprep_on_off(edict_t *ent)
 {
 	char s[255];
-	ent->client->resp.mute_cprep = !ent->client->resp.mute_cprep
+	ent->client->resp.mute_cprep = !ent->client->resp.mute_cprep;
 	Com_sprintf(s, sizeof(s), "Showing replays checkpoint-time is now %s", (ent->client->resp.mute_cprep ? "off." : "on."));
 	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(s));
 }
