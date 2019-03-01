@@ -37,7 +37,7 @@ static char *help_main[] = {
 	"jumpers - turn on or off player models\n",
 	"cpsound - turn on or off checkpoint sounds\n",
 	"showtimes - turn on or off displaying all times\n",
-	"cp_rep - turn on or off displaying replays cp-time\n",
+	"mute_cprep - turn on or off displaying replays cp-time\n",
 	"ezmode - turn on or off dsiplaying recall count in ezmode\n",
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
@@ -13688,12 +13688,13 @@ void Cpsound_on_off(edict_t *ent)
 	Com_sprintf(s,sizeof(s),"Checkpoint sounds are now %s",(ent->client->resp.mute_cps ? "off." : "on."));
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
+
 //get cp crossing time from the replay.
-void cp_rep_on_off(edict_t *ent)
+void mute_cprep_on_off(edict_t *ent)
 {
 	char s[255];
-	ent->client->resp.cp_rep = !ent->client->resp.cp_rep;
-	Com_sprintf(s, sizeof(s), "Showing replays checkpoint-time is now %s", (ent->client->resp.cp_rep ? "on." : "off."));
+	ent->client->resp.mute_cprep = !ent->client->resp.mute_cprep
+	Com_sprintf(s, sizeof(s), "Showing replays checkpoint-time is now %s", (ent->client->resp.mute_cprep ? "off." : "on."));
 	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(s));
 }
 
@@ -14106,7 +14107,7 @@ void CPSoundCheck(edict_t *ent) {
 
 	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
 	sendchan = (numEnt << 3) | (CHAN_ITEM & 7);
-	if (!ent->client->resp.mute_cps) {
+	if (!ent->client->resp.mute_cps && !ent->client->resp.ctf_team == CTF_NOTEAM) {
 		gi.WriteByte(svc_sound);
 		gi.WriteByte(27);//flags SND_ENT
 		gi.WriteByte(gi.soundindex("items/pkup.wav"));//Sound..

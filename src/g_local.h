@@ -1086,7 +1086,7 @@ typedef struct
 	qboolean	hide_jumpers;
 	qboolean	mute_cps;
     qboolean    showtimes;
-	qboolean	cp_rep;
+	qboolean	mute_cprep;
 	qboolean	ezmsg;
 	int			cur_jumper;
 	qboolean	going_up;

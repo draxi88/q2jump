@@ -1561,8 +1561,8 @@ void ClientCommand (edict_t *ent)
 		Cpsound_on_off(ent);
 	else if (Q_stricmp(cmd, "showtimes") == 0)
 		Showtimes_on_off(ent);
-	else if (Q_stricmp (cmd, "cp_rep") == 0)
-		cp_rep_on_off(ent);
+	else if (Q_stricmp (cmd, "mute_cprep") == 0)
+		mute_cprep_on_off(ent);
 	else if (Q_stricmp (cmd, "ezmsg") == 0)
 		Ezmsg_on_off(ent);
 	else if (Q_stricmp (cmd, "remban") == 0)
