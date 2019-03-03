@@ -1912,7 +1912,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		gi.dprintf ("%s connected from %s\n", ent->client->pers.netname, ent->client->pers.userip);  // hann
 
 	ent->client->pers.connected = true;
-
+	ent->client->pers.idle_player = false; //not idle when joining the server
 	ent->client->pers.frames_without_movement = 0;
 	ent->client->resp.current_vote = 0;
 	vote_data.votes[0]++;
