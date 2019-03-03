@@ -213,11 +213,6 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	float my_time_decimal;
 	if (other->client->resp.ctf_team==CTF_TEAM2) {
 		if (pickup == 0)
-			if (other->client->pers.cp_split > 0) {
-				my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
-				my_time_decimal = (float)my_time / 1000.0f;
-				gi.cprintf(other, PRINT_HIGH, "(split: %1.3f)\n", my_time_decimal - other->client->pers.cp_split);
-			}
 			apply_time(other,ent);
 	}
 

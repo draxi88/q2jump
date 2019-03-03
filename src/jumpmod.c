@@ -4274,7 +4274,6 @@ void Jet_ApplyJet( edict_t *ent, usercmd_t *ucmd )
 void apply_time(edict_t *other, edict_t *ent)
 {
 	char		item_name[128];
-	ClearCheckpoints(&other->client->pers);
 
 	Stop_Recording(other);
 	if (((other->client->resp.item_timer_allow) || (other->client->resp.ctf_team==CTF_TEAM2)) || (gametype->value==GAME_CTF && other->client->resp.ctf_team==CTF_TEAM1))
@@ -4296,6 +4295,9 @@ void apply_time(edict_t *other, edict_t *ent)
 		
 
 		other->client->resp.item_timer = add_item_to_queue(other,other->client->resp.item_timer,other->client->resp.item_timer_penalty,other->client->pers.netname,ent->item->pickup_name);
+
+		ClearCheckpoints(&other->client->pers);
+
 		if (((other->client->resp.item_timer+0.0001)<level_items.item_time) || (level_items.item_time==0))
 		{
 			level_items.jumps = other->client->resp.jumps;
@@ -8461,7 +8463,6 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		oldtime = tourney_record[trecid].time;
 	}
 
-
 	// this player already has a time, we can just update their old one
 	if (trecid>=0) {
 		if (time<tourney_record[trecid].time) {
@@ -9254,6 +9255,16 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 	{
 		//due to paused start we now need to add 0.1
 		item_time += 0.1f;
+	}
+
+	// split checking for final gun grab
+	int my_time;
+	float my_time_decimal;
+
+	if (ent->client->pers.cp_split > 0) {
+		my_time = Sys_Milliseconds() - ent->client->resp.client_think_begin;
+		my_time_decimal = (float)my_time / 1000.0f;
+		gi.cprintf(ent, PRINT_HIGH, "(split: %1.3f) | ", my_time_decimal - ent->client->pers.cp_split);
 	}
 
 	played_wav = tourney_log(ent,uid,item_time,item_time_penalty,temp_date);
