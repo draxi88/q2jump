@@ -3539,13 +3539,21 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 
 		// play a sound for it
 		CPSoundCheck(other);
-		// in easy give them the int, in hard give them the float
+
+		// in easy give them the int, in hard give them the float, in replay give them relative
 		if (other->client->resp.ctf_team==CTF_TEAM1){
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds. (split: %1.1f)\n", 
+				other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer, other->client->resp.item_timer - other->client->pers.cp_split);
+			other->client->pers.cp_split = other->client->resp.item_timer;
 		} else if (other->client->resp.ctf_team==CTF_TEAM2){
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds. (split: %1.3f)\n", 
+				other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal, my_time_decimal - other->client->pers.cp_split);
+			other->client->pers.cp_split = my_time_decimal;
 		} else if (other->client->resp.ctf_team==CTF_NOTEAM && other->client->resp.replaying && !other->client->resp.mute_cprep) {
-			gi.cprintf(other, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds.\n", level_items.stored_item_times[other->client->resp.replaying-1].owner,other->client->pers.checkpoints, mset_vars->checkpoint_total, ((other->client->resp.replay_frame / 10)-0.1));
+			gi.cprintf(other, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds. (split: %1.1f)\n", 
+				level_items.stored_item_times[other->client->resp.replaying-1].owner, other->client->pers.checkpoints, 
+				mset_vars->checkpoint_total, (other->client->resp.replay_frame / 10) - 0.1, ((other->client->resp.replay_frame / 10) - 0.1) - other->client->pers.cp_split);
+			other->client->pers.cp_split = (other->client->resp.replay_frame / 10) - 0.1;
 		}
 	}
 }

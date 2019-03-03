@@ -14098,6 +14098,9 @@ void ClearCheckpoints(client_persistant_t* pers) {
 	for (i=0;i<sizeof(pers->cpbox_checkpoint)/sizeof(int);i++) {
         pers->cpbox_checkpoint[i] = 0;
     }
+
+	// cp split
+	pers->cp_split = 0;
 }
 
 
