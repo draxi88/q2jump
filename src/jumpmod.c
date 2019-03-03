@@ -3321,7 +3321,7 @@ void hook_fire (edict_t *ent) {
 
 
 	//Hooksound 
-	Sound(ent, false, "flyer/Flyatck3.wav", CHAN_WEAPON, 1, ATTN_NORM);
+	jumpmod_sound(ent, false, "flyer/Flyatck3.wav", CHAN_WEAPON, 1, ATTN_NORM);
 	/*
 	if (ent->client->silencer_shots)
 		gi.sound(ent, CHAN_WEAPON, gi.soundindex("flyer/Flyatck3.wav"), 0.2, ATTN_NORM, 0);
@@ -14157,7 +14157,7 @@ void CPSoundCheck(edict_t *ent) {
 // Hack to override the gi.sound function.
 // gi.soundindex(sound) must be set..
 // set volume 0.0 to 1.0 (1.0 default)
-void Sound(edict_t *ent, qboolean local, char *sound, int channel, float volume, int attenuation) {
+void jumpmod_sound(edict_t *ent, qboolean local, char *sound, int channel, float volume, int attenuation) {
 	edict_t *cl_ent;
 	int numEnt;
 	int sendchan;
