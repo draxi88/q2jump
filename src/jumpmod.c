@@ -8463,6 +8463,15 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		oldtime = tourney_record[trecid].time;
 	}
 
+	// split checking for final gun grab
+	int my_time;
+	float my_time_float;
+	float my_split;
+
+	my_time = Sys_Milliseconds() - ent->client->resp.client_think_begin;
+	my_time_float = (float)my_time / 1000.0f;
+	my_split = my_time_float - ent->client->pers.cp_split;
+
 	// this player already has a time, we can just update their old one
 	if (trecid>=0) {
 		if (time<tourney_record[trecid].time) {
@@ -8485,18 +8494,24 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		//maplist.times[level.mapnum][0].time
 		//tourney_record[0].time
 		//level_items.stored_item_times[0].time
-		
+
 		//setting a first
 		if (time < level_items.stored_item_times[0].time) {
-			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st %1.3f)\n",
-				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
+			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB %1.3f | 1st %1.3f", 
+				ent->client->pers.netname, time, time - oldtime, time - level_items.stored_item_times[0].time);
+			if (ent->client->pers.cp_split > 0)
+				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
+			gi.bprintf(PRINT_HIGH, ")\n");
 			return false;
 		}
 		
 		// beat pb, show to server
 		if (time < oldtime) {
-			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f)\n",
-				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
+			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f",
+				ent->client->pers.netname, time, time - oldtime, time - level_items.stored_item_times[0].time);
+			if (ent->client->pers.cp_split > 0)
+				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
+			gi.bprintf(PRINT_HIGH, ")\n");
 			return false;
 		}
 
@@ -8513,8 +8528,8 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 
 		// even with showtimes off, you should still see your own time
 		if (time >= oldtime && !ent->client->resp.showtimes) {
-			gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
-				time,time-oldtime,time-level_items.stored_item_times[0].time);
+			gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f | split: %1.3f)\n",
+				time,time-oldtime,time-level_items.stored_item_times[0].time, my_split);
 			return false;
 		}
 
@@ -8547,25 +8562,33 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 
 				// new map, so don't show comparison
 				if (level_items.stored_item_times[0].time == 0) {
-					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (1st completion on the map)\n", ent->client->pers.netname, time);
+					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (", ent->client->pers.netname, time);
+					if (ent->client->pers.cp_split > 0)
+						gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
+					gi.bprintf(PRINT_HIGH, "1st completion on the map)\n");
 					return false;
 				}
 
 				// 1st comp AND 1st place
 				if (time < level_items.stored_item_times[0].time) {
-					gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st completion) (1st %1.3f)\n",
+					gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st %1.3f | ",
 						ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
+					if (ent->client->pers.cp_split > 0)
+						gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
+					gi.bprintf(PRINT_HIGH, "1st completion)\n");
 					return false;
 				}
 
 				// always display someone's first completion
-				gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st completion) (1st +%1.3f)\n",
+				gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st +%1.3f | ",
 					ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
+				if (ent->client->pers.cp_split > 0)
+					gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
+				gi.bprintf(PRINT_HIGH, "1st completion)\n");
+
 				if (gset_vars->playsound)
 				if (time>gset_vars->playsound)
-				{
 					return true;
-				}
 				return false;
 			}
 		}
@@ -9257,18 +9280,7 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 		item_time += 0.1f;
 	}
 
-	// split checking for final gun grab
-	int my_time;
-	float my_time_decimal;
-
-	if (ent->client->pers.cp_split > 0) {
-		my_time = Sys_Milliseconds() - ent->client->resp.client_think_begin;
-		my_time_decimal = (float)my_time / 1000.0f;
-		gi.cprintf(ent, PRINT_HIGH, "(split: %1.3f) | ", my_time_decimal - ent->client->pers.cp_split);
-	}
-
 	played_wav = tourney_log(ent,uid,item_time,item_time_penalty,temp_date);
-
 
 	placement = level_items.stored_item_times_count;
 	if (level_items.stored_item_times_count)
