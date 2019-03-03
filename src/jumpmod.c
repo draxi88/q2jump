@@ -3263,6 +3263,10 @@ void hook_fire (edict_t *ent) {
 	vec3_t	forward, right;
 	vec3_t	start;
 	vec3_t	offset;
+	edict_t *cl_ent;
+	int		sendchan;
+	int		numEnt;
+	int		i;
 
 	if (gametype->value==GAME_CTF)
 		return;
@@ -3315,12 +3319,17 @@ void hook_fire (edict_t *ent) {
 
 	fire_hook (ent, start, forward);
 
+
+	//Hooksound 
+	Sound(ent, false, "flyer/Flyatck3.wav", CHAN_WEAPON, 1, ATTN_NORM);
+	/*
 	if (ent->client->silencer_shots)
 		gi.sound(ent, CHAN_WEAPON, gi.soundindex("flyer/Flyatck3.wav"), 0.2, ATTN_NORM, 0);
 	else
 		gi.sound(ent, CHAN_WEAPON, gi.soundindex("flyer/Flyatck3.wav"), 1, ATTN_NORM, 0);
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
+	*/
 
 }
 
@@ -14142,5 +14151,56 @@ void CPSoundCheck(edict_t *ent) {
 		gi.WriteByte(0.0);//OFfset
 		gi.WriteShort(sendchan);//Channel
 		gi.unicast(ent, true); //send to client
+	}
+}
+
+// Hack to override the gi.sound function.
+// gi.soundindex(sound) must be set..
+// set volume 0.0 to 1.0 (1.0 default)
+void Sound(edict_t *ent, qboolean local, char *sound, int channel, float volume, int attenuation) {
+	edict_t *cl_ent;
+	int numEnt;
+	int sendchan;
+	int i;
+
+	if (volume < 0 || volume > 1.0)
+		volume = 1; //FULL VOLUME
+	if (attenuation < 0 || attenuation > 4)
+		attenuation = 1; //ATTN_NORM
+
+	volume = volume * 255;
+	attenuation = attenuation * 64;
+
+	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
+	sendchan = (numEnt << 3) | (channel & 7);
+	//if local=true, local only sound..
+	if (local) { 
+		gi.WriteByte(svc_sound);
+		gi.WriteByte(27);//flags SND_ENT
+		gi.WriteByte(gi.soundindex(sound));//Sound..
+		gi.WriteByte(volume);//Volume
+		gi.WriteByte(attenuation);//Attenuation
+		gi.WriteByte(0.0);//OFfset
+		gi.WriteShort(sendchan);//Channel
+		gi.unicast(ent, true); //send to clients 
+	}
+	//if not local, send to all clients, unless they have jumpers enabled.
+	else {
+		for (i = 0; i < maxclients->value; i++) {
+			cl_ent = g_edicts + 1 + i;
+
+			if (!(cl_ent->client && cl_ent->inuse))
+				continue;
+			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
+				continue;
+			gi.WriteByte(svc_sound);
+			gi.WriteByte(27);//flags SND_ENT
+			gi.WriteByte(gi.soundindex(sound));//Sound..
+			gi.WriteByte(volume);//Volume
+			gi.WriteByte(attenuation);//Attenuation
+			gi.WriteByte(0.0);//OFfset
+			gi.WriteShort(sendchan);//Channel
+			gi.unicast(cl_ent, true); //send to clients 
+		}
 	}
 }
