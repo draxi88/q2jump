@@ -205,6 +205,16 @@ void ClientEndServerFrames (void)
 			}
 			race_frame = ent->client->resp.race_frame;
 		}
+		else if (ent->client->resp.replaying && ent->client->resp.rep_racing &&
+			     ent->client->resp.replaying-1 != ent->client->resp.rep_race_number) //no replay+race if both is from the same demo
+		{
+			race_this = ent->client->resp.rep_race_number;
+			if (race_this<0 || race_this>MAX_HIGHSCORES)
+			{
+				race_this = ent->client->resp.rep_race_number = 0;
+			}
+			race_frame = ent->client->resp.replay_frame;
+		}
 		else if (ent->client->chase_target)
 		{
 			cent = ent->client->chase_target;
