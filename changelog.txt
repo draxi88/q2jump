@@ -1,3 +1,22 @@
+#####v1.29ger#####
+-checkpoint lights:
+	-turn lights on or off when players grab checkpoints
+	-set `style` 100-163 for turning lights on
+	-set `style` 200-263 for turning lights off
+	-correspond with cpbox values of 0-63
+-splits:
+	-checkpoints now give split time from previous checkpoint
+	-team hard is 3 decimals, team easy is 1 decimal
+-replay changes:
+	-race is now usable in replays
+	-replays now show approximate checkpoint times
+-new cmd `mute_cprep:
+	-disables sound and msg from checkpoint pickup in replays
+-fixes:
+	-removed a debug line that caused crashes
+	-replay max length reduced to 20,000 seconds
+	-fixed problem with client idle on load in
+
 #####v1.28ger#####
 -idle cmd:
 	-typing idle makes you... idle
