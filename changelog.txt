@@ -2,7 +2,7 @@
 -checkpoint lights:
 	-turn lights on or off when players grab checkpoints
 	-set `style` 100-163 for turning lights on
-	-set `style` 200-263 for turning lights off
+	-set `style` 200-256 for turning lights off
 	-correspond with cpbox values of 0-63
 -splits:
 	-checkpoints now give split time from previous checkpoint
