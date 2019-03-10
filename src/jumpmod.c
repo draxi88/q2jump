@@ -37,6 +37,7 @@ static char *help_main[] = {
 	"jumpers - turn on or off player models\n",
 	"cpsound - turn on or off checkpoint sounds\n",
 	"showtimes - turn on or off displaying all times\n",
+	"mute_cprep - turn on or off displaying replays cp-time\n",
 	"ezmode - turn on or off dsiplaying recall count in ezmode\n",
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
@@ -3262,6 +3263,10 @@ void hook_fire (edict_t *ent) {
 	vec3_t	forward, right;
 	vec3_t	start;
 	vec3_t	offset;
+	edict_t *cl_ent;
+	int		sendchan;
+	int		numEnt;
+	int		i;
 
 	if (gametype->value==GAME_CTF)
 		return;
@@ -3314,12 +3319,17 @@ void hook_fire (edict_t *ent) {
 
 	fire_hook (ent, start, forward);
 
+
+	//Hooksound 
+	jumpmod_sound(ent, false, "flyer/Flyatck3.wav", CHAN_WEAPON, 1, ATTN_NORM);
+	/*
 	if (ent->client->silencer_shots)
 		gi.sound(ent, CHAN_WEAPON, gi.soundindex("flyer/Flyatck3.wav"), 0.2, ATTN_NORM, 0);
 	else
 		gi.sound(ent, CHAN_WEAPON, gi.soundindex("flyer/Flyatck3.wav"), 1, ATTN_NORM, 0);
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
+	*/
 
 }
 
@@ -4273,7 +4283,6 @@ void Jet_ApplyJet( edict_t *ent, usercmd_t *ucmd )
 void apply_time(edict_t *other, edict_t *ent)
 {
 	char		item_name[128];
-	ClearCheckpoints(&other->client->pers);
 
 	Stop_Recording(other);
 	if (((other->client->resp.item_timer_allow) || (other->client->resp.ctf_team==CTF_TEAM2)) || (gametype->value==GAME_CTF && other->client->resp.ctf_team==CTF_TEAM1))
@@ -4295,6 +4304,9 @@ void apply_time(edict_t *other, edict_t *ent)
 		
 
 		other->client->resp.item_timer = add_item_to_queue(other,other->client->resp.item_timer,other->client->resp.item_timer_penalty,other->client->pers.netname,ent->item->pickup_name);
+
+		ClearCheckpoints(&other->client->pers);
+
 		if (((other->client->resp.item_timer+0.0001)<level_items.item_time) || (level_items.item_time==0))
 		{
 			level_items.jumps = other->client->resp.jumps;
@@ -4584,12 +4596,7 @@ void Cmd_Replay(edict_t *ent)
 		}
 		//gi.cprintf(ent,PRINT_HIGH,"You can type 'replay now' to see a demo of fastest run this map.\n");
 	}
-	if (ent->client->resp.ctf_team>=CTF_TEAM1)
-	{
-		CTFObserver(ent);
-//		gi.cprintf(ent,PRINT_HIGH,"You need to be an observer to replay.\n");
-//		return;
-	}
+	CTFReplayer(ent);
 }
 
 void Load_Recording(void)
@@ -8465,6 +8472,14 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		oldtime = tourney_record[trecid].time;
 	}
 
+	// split checking for final gun grab
+	int my_time;
+	float my_time_float;
+	float my_split;
+
+	my_time = Sys_Milliseconds() - ent->client->resp.client_think_begin;
+	my_time_float = (float)my_time / 1000.0f;
+	my_split = my_time_float - ent->client->pers.cp_split;
 
 	// this player already has a time, we can just update their old one
 	if (trecid>=0) {
@@ -8488,18 +8503,24 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 		//maplist.times[level.mapnum][0].time
 		//tourney_record[0].time
 		//level_items.stored_item_times[0].time
-		
+
 		//setting a first
 		if (time < level_items.stored_item_times[0].time) {
-			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st %1.3f)\n",
-				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
+			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB %1.3f | 1st %1.3f", 
+				ent->client->pers.netname, time, time - oldtime, time - level_items.stored_item_times[0].time);
+			if (ent->client->pers.cp_split > 0)
+				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
+			gi.bprintf(PRINT_HIGH, ")\n");
 			return false;
 		}
 		
 		// beat pb, show to server
 		if (time < oldtime) {
-			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f)\n",
-				ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
+			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f",
+				ent->client->pers.netname, time, time - oldtime, time - level_items.stored_item_times[0].time);
+			if (ent->client->pers.cp_split > 0)
+				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
+			gi.bprintf(PRINT_HIGH, ")\n");
 			return false;
 		}
 
@@ -8516,8 +8537,8 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 
 		// even with showtimes off, you should still see your own time
 		if (time >= oldtime && !ent->client->resp.showtimes) {
-			gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
-				time,time-oldtime,time-level_items.stored_item_times[0].time);
+			gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f | split: %1.3f)\n",
+				time,time-oldtime,time-level_items.stored_item_times[0].time, my_split);
 			return false;
 		}
 
@@ -8550,25 +8571,33 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 
 				// new map, so don't show comparison
 				if (level_items.stored_item_times[0].time == 0) {
-					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (1st completion on the map)\n", ent->client->pers.netname, time);
+					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (", ent->client->pers.netname, time);
+					if (ent->client->pers.cp_split > 0)
+						gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
+					gi.bprintf(PRINT_HIGH, "1st completion on the map)\n");
 					return false;
 				}
 
 				// 1st comp AND 1st place
 				if (time < level_items.stored_item_times[0].time) {
-					gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st completion) (1st %1.3f)\n",
+					gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st %1.3f | ",
 						ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
+					if (ent->client->pers.cp_split > 0)
+						gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
+					gi.bprintf(PRINT_HIGH, "1st completion)\n");
 					return false;
 				}
 
 				// always display someone's first completion
-				gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st completion) (1st +%1.3f)\n",
+				gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st +%1.3f | ",
 					ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
+				if (ent->client->pers.cp_split > 0)
+					gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
+				gi.bprintf(PRINT_HIGH, "1st completion)\n");
+
 				if (gset_vars->playsound)
 				if (time>gset_vars->playsound)
-				{
 					return true;
-				}
 				return false;
 			}
 		}
@@ -8761,7 +8790,7 @@ void open_tourney_file(char *filename,qboolean apply)
 		fscanf(f, "%i", &uid);
 		tourney_record[i].uid = uid;
 		fscanf(f, "%i", &tourney_record[i].completions); 
-		gi.dprintf("NR: %d Uid: %d date: %s time: %f\n", i, uid, tourney_record[i].date, tourney_record[i].time);
+		//gi.dprintf("NR: %d Uid: %d date: %s time: %f\n", i, uid, tourney_record[i].date, tourney_record[i].time);
 		if (apply && tourney_record[i].completions)
 		{
 			//need to check its existence on the good map list first
@@ -9261,7 +9290,6 @@ float add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,ch
 	}
 
 	played_wav = tourney_log(ent,uid,item_time,item_time_penalty,temp_date);
-
 
 	placement = level_items.stored_item_times_count;
 	if (level_items.stored_item_times_count)
@@ -13693,12 +13721,21 @@ void Cpsound_on_off(edict_t *ent)
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
+//get cp crossing time from the replay.
+void mute_cprep_on_off(edict_t *ent)
+{
+	char s[255];
+	ent->client->resp.mute_cprep = !ent->client->resp.mute_cprep;
+	Com_sprintf(s, sizeof(s), "Showing replays checkpoint-time is now %s", (ent->client->resp.mute_cprep ? "off." : "on."));
+	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(s));
+}
+
 void Showtimes_on_off(edict_t *ent)
 {
 	char s[255];
 	ent->client->resp.showtimes = !ent->client->resp.showtimes;
-	Com_sprintf(s,sizeof(s),"Showing all times is now %s",(ent->client->resp.showtimes ? "on." : "off."));
-	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
+	Com_sprintf(s, sizeof(s), "Showing all times is now %s", (ent->client->resp.showtimes ? "on." : "off."));
+	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(s));
 }
 
 // toggle for a message to display number of recalls during an ezmode run
@@ -14093,6 +14130,9 @@ void ClearCheckpoints(client_persistant_t* pers) {
 	for (i=0;i<sizeof(pers->cpbox_checkpoint)/sizeof(int);i++) {
         pers->cpbox_checkpoint[i] = 0;
     }
+
+	// cp split
+	pers->cp_split = 0;
 }
 
 
@@ -14102,7 +14142,7 @@ void CPSoundCheck(edict_t *ent) {
 
 	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
 	sendchan = (numEnt << 3) | (CHAN_ITEM & 7);
-	if (!ent->client->resp.mute_cps) {
+	if (!ent->client->resp.mute_cps && !ent->client->resp.ctf_team == CTF_NOTEAM) {
 		gi.WriteByte(svc_sound);
 		gi.WriteByte(27);//flags SND_ENT
 		gi.WriteByte(gi.soundindex("items/pkup.wav"));//Sound..
@@ -14111,5 +14151,56 @@ void CPSoundCheck(edict_t *ent) {
 		gi.WriteByte(0.0);//OFfset
 		gi.WriteShort(sendchan);//Channel
 		gi.unicast(ent, true); //send to client
+	}
+}
+
+// Hack to override the gi.sound function.
+// gi.soundindex(sound) must be set..
+// set volume 0.0 to 1.0 (1.0 default)
+void jumpmod_sound(edict_t *ent, qboolean local, char *sound, int channel, float volume, int attenuation) {
+	edict_t *cl_ent;
+	int numEnt;
+	int sendchan;
+	int i;
+
+	if (volume < 0 || volume > 1.0)
+		volume = 1; //FULL VOLUME
+	if (attenuation < 0 || attenuation > 4)
+		attenuation = 1; //ATTN_NORM
+
+	volume = volume * 255;
+	attenuation = attenuation * 64;
+
+	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
+	sendchan = (numEnt << 3) | (channel & 7);
+	//if local=true, local only sound..
+	if (local) { 
+		gi.WriteByte(svc_sound);
+		gi.WriteByte(27);//flags SND_ENT
+		gi.WriteByte(gi.soundindex(sound));//Sound..
+		gi.WriteByte(volume);//Volume
+		gi.WriteByte(attenuation);//Attenuation
+		gi.WriteByte(0.0);//OFfset
+		gi.WriteShort(sendchan);//Channel
+		gi.unicast(ent, true); //send to clients 
+	}
+	//if not local, send to all clients, unless they have jumpers enabled.
+	else {
+		for (i = 0; i < maxclients->value; i++) {
+			cl_ent = g_edicts + 1 + i;
+
+			if (!(cl_ent->client && cl_ent->inuse))
+				continue;
+			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
+				continue;
+			gi.WriteByte(svc_sound);
+			gi.WriteByte(27);//flags SND_ENT
+			gi.WriteByte(gi.soundindex(sound));//Sound..
+			gi.WriteByte(volume);//Volume
+			gi.WriteByte(attenuation);//Attenuation
+			gi.WriteByte(0.0);//OFfset
+			gi.WriteShort(sendchan);//Channel
+			gi.unicast(cl_ent, true); //send to clients 
+		}
 	}
 }

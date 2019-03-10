@@ -1912,7 +1912,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		gi.dprintf ("%s connected from %s\n", ent->client->pers.netname, ent->client->pers.userip);  // hann
 
 	ent->client->pers.connected = true;
-
+	ent->client->pers.idle_player = false; //not idle when joining the server
 	ent->client->pers.frames_without_movement = 0;
 	ent->client->resp.current_vote = 0;
 	vote_data.votes[0]++;
@@ -2165,7 +2165,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->ps.pmove.pm_type = PM_FREEZE;
 	}
 
-	if (client->hook_state == HOOK_ON)
+	if (client->hook_state == HOOK_ON || client->resp.replaying)
 		client->ps.pmove.gravity = 0;
 	else
 		client->ps.pmove.gravity = mset_vars->gravity * ent->gravity * ent->gravity2;
@@ -2464,6 +2464,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				else
 					gi.cprintf(ent,PRINT_HIGH,"Replaying at %2.1f speed\n",replay_speed_modifier[ent->client->resp.replay_speed]);
 			}
+		}
+		else if (ent->movetype==MOVETYPE_WALK) { //Has been watching a replay, gotta put player to observer
+			CTFObserver(ent);
 		}
 	}
 	else

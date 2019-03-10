@@ -4103,6 +4103,30 @@ qboolean CTFStartClient(edict_t *ent)
 	return false;
 }
 
+void CTFReplayer(edict_t *ent)
+{
+	char		userinfo[MAX_INFO_STRING];
+
+	unpause_client(ent);
+    hook_reset(ent->client->hook);
+	CTFPlayerResetGrapple(ent);
+	CTFDeadDropFlag(ent);
+
+    ent->client->Jet_framenum = 0;
+	ent->deadflag = DEAD_NO;
+	ent->solid = SOLID_NOT;
+	ent->movetype = MOVETYPE_WALK;
+	ent->svflags |= SVF_NOCLIENT;
+	ent->client->resp.ctf_team = CTF_NOTEAM;
+	ent->client->ps.stats[STAT_ITEM_TIMER] = 0;
+	ent->client->ps.stats[STAT_ITEM_TIMER2] = 0;
+	ent->client->ps.gunindex = 0;
+	memcpy (userinfo, ent->client->pers.userinfo, sizeof(userinfo));
+	InitClientPersistant(ent->client);
+	ClientUserinfoChanged (ent, userinfo);
+	gi.linkentity (ent);
+}
+
 void CTFObserver(edict_t *ent)
 {
 	char		userinfo[MAX_INFO_STRING];
@@ -4110,27 +4134,27 @@ void CTFObserver(edict_t *ent)
 	unpause_client(ent);
 	// start as 'observer'
 //	Cmd_Reset_f(ent);
-    hook_reset(ent->client->hook); //draxi
+	hook_reset(ent->client->hook); //draxi
 	if (ent->movetype == MOVETYPE_NOCLIP)
 
 	CTFPlayerResetGrapple(ent);
 	CTFDeadDropFlag(ent);
 	//CTFDeadDropTech(ent);
 
-    ent->client->Jet_framenum = 0;
+	ent->client->Jet_framenum = 0;
 	ent->deadflag = DEAD_NO;
-	ent->movetype = MOVETYPE_NOCLIP;
 	ent->solid = SOLID_NOT;
+	ent->movetype = MOVETYPE_NOCLIP;
 	ent->svflags |= SVF_NOCLIENT;
 	ent->client->resp.ctf_team = CTF_NOTEAM;
 	ent->client->ps.stats[STAT_ITEM_TIMER] = 0;
 	ent->client->ps.stats[STAT_ITEM_TIMER2] = 0;
 	ent->client->ps.gunindex = 0;
-//	ent->client->resp.score = 0;
-	memcpy (userinfo, ent->client->pers.userinfo, sizeof(userinfo));
+	//	ent->client->resp.score = 0;
+	memcpy(userinfo, ent->client->pers.userinfo, sizeof(userinfo));
 	InitClientPersistant(ent->client);
-	ClientUserinfoChanged (ent, userinfo);
-	gi.linkentity (ent);
+	ClientUserinfoChanged(ent, userinfo);
+	gi.linkentity(ent);
 	//CTFOpenJoinMenu(ent);
 }
 

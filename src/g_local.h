@@ -925,6 +925,7 @@ typedef struct
 	int			rs19_checkpoint;
 	int			rs20_checkpoint;
     int         cpbox_checkpoint[64];
+	float		cp_split;
 
 	// stored checkpoints 1
 	int			stored_checkpoints1;
@@ -1086,6 +1087,7 @@ typedef struct
 	qboolean	hide_jumpers;
 	qboolean	mute_cps;
     qboolean    showtimes;
+	qboolean	mute_cprep;
 	qboolean	ezmsg;
 	int			cur_jumper;
 	qboolean	going_up;

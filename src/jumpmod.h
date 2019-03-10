@@ -3,7 +3,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.28"
+#define CTF_VERSION_S		"1.29ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -19,7 +19,7 @@
 
 
 #define MAX_ADMINS 128
-#define MAX_RECORD_FRAMES 1000000
+#define MAX_RECORD_FRAMES 200000
 #define GAME_JUMP 0
 #define GAME_CTF 1
 #define GAME_ROCKET 2
@@ -848,6 +848,7 @@ void Jumpers_Update_Skins(edict_t *ent);
 void Jumpers_on_off(edict_t *ent);
 void Cpsound_on_off(edict_t *ent);
 void Showtimes_on_off(edict_t *ent);
+void mute_cprep_on_off(edict_t *ent);
 void Ezmsg_on_off(edict_t *ent);
 extern int number_of_jumpers_off;
 typedef struct 
@@ -862,3 +863,4 @@ void Changename(edict_t *ent);
 void Cmd_Stats(edict_t *ent);
 extern qboolean removed_map;
 
+void jumpmod_sound(edict_t *ent, qboolean local, char *sound, int channel, float volume, int attenuation);
