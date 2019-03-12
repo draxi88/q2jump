@@ -8760,14 +8760,17 @@ void open_tourney_file(char *filename,qboolean apply)
 	if (!f)
 	{
 		return;
-	}	
+	}
 	fseek(f, 0, SEEK_END);
 	if (ftell(f) == 0) { //if file is empty.
 		return;
-	} 
-
+	}
+	else {
+		rewind(f);
+	}
     fscanf(f,"%s",&temp);
-    if(strstr(temp,"Jump067")){
+	gi.dprintf("%s\n", &temp);
+    if(Q_stricmp(temp,"Jump067")==0){
 	    while (!feof(f))
 	    {
 		    fscanf(f,"%s",&temp);
