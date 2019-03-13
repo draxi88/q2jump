@@ -2131,8 +2131,17 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 
 		//idle spectator
+		if (cl->pers.idle_player)
+		{
+			Com_sprintf(entry, sizeof(entry),
+				"ctf %d %d %d %d %d xv 168 string \" (idle)\"",
+				-8, y, i,
+				cl->ping,
+				0
+			);
+		} 
 
-		if (cl->resp.replaying)
+		else if (cl->resp.replaying)
 		{
 			if (cl->resp.replaying==MAX_HIGHSCORES+1)
 			Com_sprintf (entry, sizeof(entry),
@@ -2151,22 +2160,15 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 
 			); 
 		}
-		else 
-		if (cl->pers.idle_player) //add idle tag to chaser
-		{
-			Com_sprintf(entry, sizeof(entry),
-				"xv %d yv %d string \"(idle)\"",64+(strlen(cl->pers.netname)*8), y);
-			j = strlen(entry);
-			strcpy(string + stringlength, entry);
-			stringlength += j;
-		}
+		else
 		Com_sprintf (entry, sizeof(entry),
-		"ctf %d %d %d %d %d xv %d string \"%s%s\"",
+		"ctf %d %d %d %d %d xv 168 string \"%s%s\"",
 		-8,y,i,
 		cl->ping,
-		0, cl->pers.idle_player ? 168 + (strlen(cl->pers.netname) * 8) : 168,
+		0,
 		cl->chase_target ? " -> " : "",
 		cl->chase_target ? cl->chase_target->client->pers.netname : ""
+
 		); 
 
 
