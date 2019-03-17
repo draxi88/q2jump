@@ -1,3 +1,8 @@
+#####v1.30ger#####
+-fixed a problem with converting old score files
+-fixed a problem where idle players didn't show who they were chasing
+
+
 #####v1.29ger#####
 -checkpoint lights:
 	-turn lights on or off when players grab checkpoints
@@ -17,6 +22,7 @@
 	-replay max length reduced to 20,000 seconds
 	-fixed problem with client idle on load in
 
+	
 #####v1.28ger#####
 -idle cmd:
 	-typing idle makes you... idle
