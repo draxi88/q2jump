@@ -3339,7 +3339,9 @@ void CTFSilence(edict_t *ent)
 	edict_t *targ;
 	char text[1024];
 	
-	//ent->client->pers.frames_without_movement = 0;
+	// forcing non-idle
+	ent->client->pers.frames_without_movement = 0;
+	ent->client->pers.idle_player = false;
 
 	if ((!map_allow_voting) && (ent->client->resp.admin<aset_vars->ADMIN_SILENCE_LEVEL))
 		return;
@@ -10660,7 +10662,9 @@ void CTFVoteTime(edict_t *ent)
 	int diff;
 	qboolean require_max = false;
 
-	//ent->client->pers.frames_without_movement = 0;
+	// forcing non-idle
+	ent->client->pers.frames_without_movement = 0;
+	ent->client->pers.idle_player = false;
 	
 	if (!map_allow_voting)
 		return;

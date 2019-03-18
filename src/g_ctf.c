@@ -4874,6 +4874,11 @@ void CTFWarp(edict_t *ent)
 
 	if (ent->client->resp.silence)
 		return;
+
+	// forcing non-idle
+	ent->client->pers.frames_without_movement = 0;
+	ent->client->pers.idle_player = false;
+
 /*	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120){
 		if (Get_Voting_Clients()>1) {
@@ -5257,6 +5262,10 @@ void CTFBoot(edict_t *ent)
 		gi.cprintf(ent, PRINT_HIGH, "You are not an admin.\n");
 		return;
 	}*/
+
+	// forcing non-idle
+	ent->client->pers.frames_without_movement = 0;
+	ent->client->pers.idle_player = false;
 
 	if ((!map_allow_voting) && (ent->client->resp.admin<aset_vars->ADMIN_BOOT_LEVEL))
 		return;
