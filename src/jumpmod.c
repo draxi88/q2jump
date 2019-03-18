@@ -3341,7 +3341,11 @@ void CTFSilence(edict_t *ent)
 	
 	// forcing non-idle
 	ent->client->pers.frames_without_movement = 0;
-	ent->client->pers.idle_player = false;
+	if (ent->client->pers.idle_player == true) {
+		ent->client->pers.idle_player = false;
+		gi.cprintf(ent, PRINT_HIGH, "idle debug\n");
+	}
+
 
 	if ((!map_allow_voting) && (ent->client->resp.admin<aset_vars->ADMIN_SILENCE_LEVEL))
 		return;
