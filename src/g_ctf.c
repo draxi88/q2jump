@@ -2976,8 +2976,13 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 		}
 	}
 
-	// clear votes
-	count = Get_Voting_Clients();
+	//get the type of vote -> count who should be able to vote.
+	if (type == ELECT_MAP || type == ELECT_ADDTIME || type == ELECT_NOMINATE || type == ELECT_RAND || type == ELECT_DUMMY) {
+		count = Get_Voting_Clients();
+	}
+	else {
+		count = Get_Connected_Clients();
+	}
 
 	if (ent!=NULL && count < 2) {
 		ctfgame.etarget = ent;
@@ -5735,6 +5740,22 @@ int Get_Voting_Clients(void)
 				
 				count++;
 			}
+		}
+	}
+	return count;
+}
+
+int Get_Connected_Clients(void)
+{
+	int i;
+	int count;
+	edict_t *e;
+	count = 0;
+	for (i = 1; i <= maxclients->value; i++) {
+		e = g_edicts + i;
+		e->client->resp.voted = false;
+		if (e->inuse) {
+			count++;
 		}
 	}
 	return count;
