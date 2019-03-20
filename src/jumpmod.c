@@ -8543,8 +8543,12 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 
 		// even with showtimes off, you should still see your own time
 		if (time >= oldtime && !ent->client->resp.showtimes) {
-			gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f | split: %1.3f)\n",
-				time,time-oldtime,time-level_items.stored_item_times[0].time, my_split);
+			if (ent->client->pers.cp_split > 0)
+				gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f | split: %1.3f)\n",
+					time,time-oldtime,time-level_items.stored_item_times[0].time, my_split);
+			else
+				gi.cprintf(ent, PRINT_HIGH, "You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
+					time, time - oldtime, time - level_items.stored_item_times[0].time);
 			return false;
 		}
 
