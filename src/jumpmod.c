@@ -6168,6 +6168,12 @@ void MSET(edict_t *ent)
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Invalid command\n");
 	}
+
+	//fix onscreen message for checkpoints
+	if (strcmp(gi.argv(1), "checkpoint_total") == 0) {
+		if (atoi(gi.argv(2)) > 0)
+			gi.configstring(CONFIG_CP_ON, va("  Chkpts: %s", HighAscii(gi.argv(2))));
+	}
 }
 
 void GSET(edict_t *ent)
