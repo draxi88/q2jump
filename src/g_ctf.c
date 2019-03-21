@@ -1952,7 +1952,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 
 		// send the layout
-		if (cl->pers.idle_player)
+		if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000)
 		{
 			strcpy(teamstring, "Idle");
 		}
@@ -2037,7 +2037,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			trecid = cl->resp.trecid;		
 		}
 
-		if (cl->pers.idle_player)
+		if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000)
 		{
 			strcpy(teamstring, "Idle");
 		}
@@ -2152,7 +2152,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			); 
 		}
 		else 
-		if (cl->pers.idle_player) //add idle tag to chaser
+		if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000) //add idle tag to chaser
 		{
 			Com_sprintf(entry, sizeof(entry),
 				"xv %d yv %d string \"(idle)\"",64+(strlen(cl->pers.netname)*8), y);
@@ -2164,7 +2164,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		"ctf %d %d %d %d %d xv %d string \"%s%s\"",
 		-8,y,i,
 		cl->ping,
-		0, cl->pers.idle_player ? 168 + (strlen(cl->pers.netname) * 8) : 168,
+		0, cl->pers.idle_player || cl->pers.frames_without_movement > 60000 ? 168 + (strlen(cl->pers.netname) * 8) : 168,
 		cl->chase_target ? " -> " : "",
 		cl->chase_target ? cl->chase_target->client->pers.netname : ""
 		); 
@@ -2974,6 +2974,11 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 			gi.cprintf(ent, PRINT_HIGH, "Vote already in progress.\n");
 			return false;
 		}
+	}
+
+	if (ent->client->pers.idle_player) {
+		gi.cprintf(ent, PRINT_HIGH, "You are idle, and can't start a vote.\n");
+		return false;
 	}
 
 	//get the type of vote -> count who should be able to vote.
@@ -4880,9 +4885,9 @@ void CTFWarp(edict_t *ent)
 	if (ent->client->resp.silence)
 		return;
 
-	// forcing non-idle
+	/*// forcing non-idle
 	ent->client->pers.frames_without_movement = 0;
-	ent->client->pers.idle_player = false;
+	ent->client->pers.idle_player = false;*/
 
 /*	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
 	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120){
@@ -5268,9 +5273,9 @@ void CTFBoot(edict_t *ent)
 		return;
 	}*/
 
-	// forcing non-idle
+	/*// forcing non-idle
 	ent->client->pers.frames_without_movement = 0;
-	ent->client->pers.idle_player = false;
+	ent->client->pers.idle_player = false;*/
 
 	if ((!map_allow_voting) && (ent->client->resp.admin<aset_vars->ADMIN_BOOT_LEVEL))
 		return;
