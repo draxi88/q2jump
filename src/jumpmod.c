@@ -418,13 +418,6 @@ zbotcmd_t zbotCommands[] =
 	CMDTYPE_NUMBER,
 	&gset_vars->mset->droptofloor,
   },
-  {
-	0,1,0,
-	"gdrowningsound",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->drowningsound,
-  },
   { 
 	0,0,0,
     "gedited_by", 
@@ -6526,7 +6519,6 @@ void SetDefaultValues(void)
 	gset_vars->mset->damage = 1;
 	gset_vars->debug =0;
 	gset_vars->mset->droptofloor = 1;
-	gset_vars->drowningsound = 0;
 	strcpy(gset_vars->mset->edited_by,"NA");
 	gset_vars->mset->ezmode = 0;
 	gset_vars->mset->falldamage = 1;
