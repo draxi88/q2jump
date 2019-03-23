@@ -4057,6 +4057,8 @@ void cpwall_think (edict_t *self){
 
 void cpwall_touch (edict_t *self, edict_t *other)
 {
+	if (!other->client)
+		return;
 	if (other->client->resp.ctf_team == CTF_TEAM1 || other->client->resp.ctf_team == CTF_TEAM2){
 		if (other->client->pers.checkpoints < self->count) {
 			VectorCopy(other->s.old_origin, other->s.origin);
