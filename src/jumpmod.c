@@ -14194,8 +14194,6 @@ void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float v
 				continue;
 			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
 				continue;
-			if (Q_stricmp(cl_ent->client->pers.netname, "draxi") == 0)
-				continue;
 			gi.WriteByte(svc_sound);
 			gi.WriteByte(11);//flags //27 if offset should be used..
 			gi.WriteByte(sound);//Sound..
@@ -14230,8 +14228,6 @@ void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float vo
 		if (!(cl_ent->client && cl_ent->inuse))
 			continue;
 		if (cl_ent->client->resp.hide_jumpers)
-			continue;
-		if (Q_stricmp(cl_ent->client->pers.netname, "draxi") == 0)
 			continue;
 		gi.WriteByte(svc_sound);
 		gi.WriteByte(15);//flags //31 if offset should be used..
