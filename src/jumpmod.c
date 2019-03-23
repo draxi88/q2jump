@@ -14152,16 +14152,17 @@ void ClearCheckpoints(client_persistant_t* pers) {
 
 // fxn to check for who to play sound to at checkpoints
 void CPSoundCheck(edict_t *ent) {
-	jumpmod_sound(ent, false, "items/pkup.wav", CHAN_ITEM, 1, ATTN_NORM);
+	jumpmod_sound(ent, false, gi.soundindex("items/pkup.wav"), CHAN_ITEM, 1, ATTN_NORM);
 }
 
 // Hack to override the gi.sound function.
 // set volume 0.0 to 1.0 (1.0 default)
-void jumpmod_sound(edict_t *ent, qboolean local, char *sound, int channel, float volume, int attenuation) {
+void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float volume, int attenuation) {
 	edict_t *cl_ent;
 	int numEnt;
 	int sendchan;
 	int i;
+	
 
 	if (volume < 0 || volume > 1.0)
 		volume = 1; //FULL VOLUME
@@ -14207,7 +14208,7 @@ void jumpmod_sound(edict_t *ent, qboolean local, char *sound, int channel, float
 	}
 }
 
-void jumpmod_pos_sound(vec3_t pos,edict_t *ent, char *sound, int channel, float volume, int attenuation) {
+void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float volume, int attenuation) {
 	edict_t *cl_ent;
 	int numEnt;
 	int sendchan;
