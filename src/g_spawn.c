@@ -1147,8 +1147,6 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("*gurp1.wav");		// drowning damage
 	gi.soundindex ("*gurp2.wav");	
 	gi.soundindex ("*jump1.wav");		// player jump
-	gi.soundindex("player/female/jump1.wav"); //jumpmod jumpsound jumphack!
-	gi.soundindex("flyer/Flyatck3.wav"); //hooksound
 	//gi.soundindex ("*pain25_1.wav");
 	//gi.soundindex ("*pain25_2.wav");
 	//gi.soundindex ("*pain50_1.wav");

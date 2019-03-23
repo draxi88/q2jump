@@ -3205,7 +3205,10 @@ void hook_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 			T_Damage(other, self, self->owner, dir, self->s.origin, normal, 1, 1, 0, MOD_GRAPPLE);
 		}
 */
-		gi.positioned_sound(self->s.origin, self, CHAN_WEAPON, gi.soundindex("flyer/Flyatck2.wav"), 1, ATTN_NORM, 0);
+		//gi.positioned_sound(self->s.origin, self, CHAN_WEAPON, gi.soundindex("flyer/Flyatck2.wav"), 1, ATTN_NORM, 0);
+		jumpmod_pos_sound(self->s.origin, self, gi.soundindex("flyer/Flyatck2.wav"), CHAN_WEAPON, 1, ATTN_NORM); //hook hit wall
+
+
 //	}
 	
 	VectorClear(self->velocity);
@@ -3321,7 +3324,7 @@ void hook_fire (edict_t *ent) {
 
 
 	//Hooksound 
-	jumpmod_sound(ent, false, "flyer/Flyatck3.wav", CHAN_WEAPON, 1, ATTN_NORM);
+	jumpmod_sound(ent, false, gi.soundindex("flyer/Flyatck3.wav"), CHAN_WEAPON, 1, ATTN_NORM);
 	/*
 	if (ent->client->silencer_shots)
 		gi.sound(ent, CHAN_WEAPON, gi.soundindex("flyer/Flyatck3.wav"), 0.2, ATTN_NORM, 0);
@@ -14149,26 +14152,63 @@ void ClearCheckpoints(client_persistant_t* pers) {
 
 // fxn to check for who to play sound to at checkpoints
 void CPSoundCheck(edict_t *ent) {
-	int numEnt, sendchan;
-
-	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
-	sendchan = (numEnt << 3) | (CHAN_ITEM & 7);
-	if (!ent->client->resp.mute_cps && !ent->client->resp.ctf_team == CTF_NOTEAM) {
-		gi.WriteByte(svc_sound);
-		gi.WriteByte(27);//flags SND_ENT
-		gi.WriteByte(gi.soundindex("items/pkup.wav"));//Sound..
-		gi.WriteByte(255);//Volume
-		gi.WriteByte(64);//Attenuation
-		gi.WriteByte(0.0);//OFfset
-		gi.WriteShort(sendchan);//Channel
-		gi.unicast(ent, true); //send to client
-	}
+	jumpmod_sound(ent, false, gi.soundindex("items/pkup.wav"), CHAN_ITEM, 1, ATTN_NORM);
 }
 
 // Hack to override the gi.sound function.
-// gi.soundindex(sound) must be set..
 // set volume 0.0 to 1.0 (1.0 default)
-void jumpmod_sound(edict_t *ent, qboolean local, char *sound, int channel, float volume, int attenuation) {
+void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float volume, int attenuation) {
+	edict_t *cl_ent;
+	int numEnt;
+	int sendchan;
+	int i;
+	
+
+	if (volume < 0 || volume > 1.0)
+		volume = 1; //FULL VOLUME
+	if (attenuation < 0 || attenuation > 4)
+		attenuation = 1; //ATTN_NORM
+
+	volume = volume * 255;
+	attenuation = attenuation * 64;
+
+	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
+	sendchan = (numEnt << 3) | (channel & 7);
+	//if local=true, local only sound..
+	if (local) {
+		gi.WriteByte(svc_sound);
+		gi.WriteByte(11);//flags //27 if offset should be used..
+		gi.WriteByte(sound);//Sound..
+		gi.WriteByte(volume);//Volume
+		gi.WriteByte(attenuation);//Attenuation
+		//gi.WriteByte(0.0);//OFfset
+		gi.WriteShort(sendchan);//Channel
+		gi.unicast(ent, true); //send to clients 
+	}
+	//if not local, send to all clients, unless they have jumpers enabled.
+	else {
+		for (i = 0; i < maxclients->value; i++) {
+			cl_ent = g_edicts + 1 + i;
+
+			if (!(cl_ent->client && cl_ent->inuse))
+				continue;
+			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
+				continue;
+			if (Q_stricmp(cl_ent->client->pers.netname, "draxi") == 0)
+				continue;
+			gi.WriteByte(svc_sound);
+			gi.WriteByte(11);//flags //27 if offset should be used..
+			gi.WriteByte(sound);//Sound..
+			gi.WriteByte(volume);//Volume
+			gi.WriteByte(attenuation);//Attenuation
+			//gi.WriteByte(0.0);//OFfset
+			gi.WriteShort(sendchan);//Channel
+			gi.unicast(cl_ent, true); //send to clients 
+		}
+	}
+}
+
+void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float volume, int attenuation) {
 	edict_t *cl_ent;
 	int numEnt;
 	int sendchan;
@@ -14184,34 +14224,23 @@ void jumpmod_sound(edict_t *ent, qboolean local, char *sound, int channel, float
 
 	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
 	sendchan = (numEnt << 3) | (channel & 7);
-	//if local=true, local only sound..
-	if (local) { 
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+
+		if (!(cl_ent->client && cl_ent->inuse))
+			continue;
+		if (cl_ent->client->resp.hide_jumpers)
+			continue;
+		if (Q_stricmp(cl_ent->client->pers.netname, "draxi") == 0)
+			continue;
 		gi.WriteByte(svc_sound);
-		gi.WriteByte(27);//flags SND_ENT
-		gi.WriteByte(gi.soundindex(sound));//Sound..
+		gi.WriteByte(15);//flags //31 if offset should be used..
+		gi.WriteByte(sound);//Sound..
 		gi.WriteByte(volume);//Volume
 		gi.WriteByte(attenuation);//Attenuation
-		gi.WriteByte(0.0);//OFfset
+		//gi.WriteByte(0.0);//OFfset
 		gi.WriteShort(sendchan);//Channel
-		gi.unicast(ent, true); //send to clients 
-	}
-	//if not local, send to all clients, unless they have jumpers enabled.
-	else {
-		for (i = 0; i < maxclients->value; i++) {
-			cl_ent = g_edicts + 1 + i;
-
-			if (!(cl_ent->client && cl_ent->inuse))
-				continue;
-			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
-				continue;
-			gi.WriteByte(svc_sound);
-			gi.WriteByte(27);//flags SND_ENT
-			gi.WriteByte(gi.soundindex(sound));//Sound..
-			gi.WriteByte(volume);//Volume
-			gi.WriteByte(attenuation);//Attenuation
-			gi.WriteByte(0.0);//OFfset
-			gi.WriteShort(sendchan);//Channel
-			gi.unicast(cl_ent, true); //send to clients 
-		}
+		gi.WritePosition(pos);
+		gi.unicast(cl_ent, true); //send to clients 
 	}
 }
