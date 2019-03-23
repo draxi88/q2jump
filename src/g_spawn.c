@@ -1128,6 +1128,10 @@ void SP_worldspawn (edict_t *ent)
 
 	gi.soundindex ("player/lava1.wav");
 	gi.soundindex ("player/lava2.wav");
+	gi.soundindex("player/step1.wav");
+	gi.soundindex("player/step2.wav");
+	gi.soundindex("player/step3.wav");
+	gi.soundindex("player/step4.wav");
 
 	gi.soundindex ("misc/pc_up.wav");
 	gi.soundindex ("misc/talk1.wav");

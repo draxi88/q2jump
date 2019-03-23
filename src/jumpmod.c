@@ -7140,7 +7140,13 @@ ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 	ent->health = mset_vars->health;
 	if (gset_vars->respawn_sound)
 	{
-		ent->s.event = EV_PLAYER_TELEPORT;
+		//ent->s.event = EV_PLAYER_TELEPORT; //spawn sound
+		jumpmod_sound(ent, false, gi.soundindex("misc/tele1.wav"), CHAN_ITEM, 1, ATTN_IDLE);
+		//particles?
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_TELEPORT_EFFECT);
+		gi.WritePosition(ent->s.origin);
+		gi.multicast(ent->s.origin, MULTICAST_PHS);
 	}
 
 	if (ent->client->resp.rep_racing_delay)
@@ -8231,7 +8237,13 @@ void Overtime_Kill(edict_t *ent)
 	ent->health = mset_vars->health;
 	if (gset_vars->respawn_sound)
 	{
-		ent->s.event = EV_PLAYER_TELEPORT;
+		//ent->s.event = EV_PLAYER_TELEPORT; //spawn sound
+		jumpmod_sound(ent, false, gi.soundindex("misc/tele1.wav"), CHAN_ITEM, 1, ATTN_IDLE);
+		//particles?
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_TELEPORT_EFFECT);
+		gi.WritePosition(ent->s.origin);
+		gi.multicast(ent->s.origin, MULTICAST_PHS);
 	}
 
 }
