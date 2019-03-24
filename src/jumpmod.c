@@ -7693,6 +7693,7 @@ void JumpChase(edict_t *ent)
 		e = g_edicts + i;
 		if (e->inuse && e->solid != SOLID_NOT) {
 			ent->client->chase_target = e;
+			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
 			return;
@@ -8537,13 +8538,13 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 			return false;
 		}
 
-		// didn't beat pb/1st, only show to players that wants it! :D
+		// didn't beat pb/1st, only show to players that wants it, or players who are chasing you! :D //no splits atm though :thinking: :linux: :thing:
         for (i = 0; i < maxclients->value; i++) {
 		    cl_ent = g_edicts + 1 + i;
 		    if (!cl_ent->inuse)
 			    continue;
 
-			if (cl_ent->client->resp.showtimes)
+			if (cl_ent->client->resp.showtimes || cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname,ent->client->pers.netname)==0)
 			    gi.cprintf(cl_ent, PRINT_HIGH, "%s finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
 					ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
 	    }

@@ -3479,9 +3479,12 @@ void SP_jumpbox_large (edict_t *ent)
 }
 
 void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf){
-    int my_time;
-    float my_time_decimal;
+    int			my_time;
+    float		my_time_decimal;
 	gitem_t		*item;
+	edict_t		*cl_ent;
+	int			i;
+	char		cpstring[256];
 
 	// make sure it's a player touching it
 	if (!other->client)
@@ -3542,18 +3545,30 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 
 		// in easy give them the int, in hard give them the float, in replay give them relative
 		if (other->client->resp.ctf_team==CTF_TEAM1){
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds. (split: %1.1f)\n", 
-				other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer, other->client->resp.item_timer - other->client->pers.cp_split);
+			sprintf(cpstring,"reached checkpoint %d/%d in %1.1f seconds. (split: %1.1f)\n",
+			other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer, other->client->resp.item_timer - other->client->pers.cp_split);
 			other->client->pers.cp_split = other->client->resp.item_timer;
+			gi.cprintf(other, PRINT_HIGH, "You %s", cpstring);
 		} else if (other->client->resp.ctf_team==CTF_TEAM2){
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds. (split: %1.3f)\n", 
-				other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal, my_time_decimal - other->client->pers.cp_split);
+			sprintf(cpstring, "reached checkpoint %d/%d in %1.3f seconds. (split: %1.3f)\n",
+			other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal, my_time_decimal - other->client->pers.cp_split);
 			other->client->pers.cp_split = my_time_decimal;
+			gi.cprintf(other, PRINT_HIGH, "You %s",cpstring);
 		} else if (other->client->resp.ctf_team==CTF_NOTEAM && other->client->resp.replaying && !other->client->resp.mute_cprep) {
 			gi.cprintf(other, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds. (split: %1.1f)\n", 
 				level_items.stored_item_times[other->client->resp.replaying-1].owner, other->client->pers.checkpoints, 
 				mset_vars->checkpoint_total, (other->client->resp.replay_frame / 10) - 0.1, ((other->client->resp.replay_frame / 10) - 0.1) - other->client->pers.cp_split);
 			other->client->pers.cp_split = (other->client->resp.replay_frame / 10) - 0.1;
+		}
+		//memcpy+msg for anyone chasing us...
+		for (i = 0; i < maxclients->value; i++) {
+			cl_ent = g_edicts + 1 + i;
+			if (!cl_ent->inuse)
+				continue;
+			if (cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname, other->client->pers.netname) == 0) {
+				gi.cprintf(cl_ent, PRINT_HIGH, "%s %s", other->client->pers.netname, cpstring);
+				memcpy(cl_ent->client->pers.cpbox_checkpoint, other->client->pers.cpbox_checkpoint, sizeof(other->client->pers.cpbox_checkpoint));
+			}
 		}
 	}
 }
