@@ -1097,7 +1097,8 @@ void SV_Physics_Step (edict_t *ent)
 		if (ent->groundentity)
 			if (!wasonground)
 				if (hitsound)
-					gi.sound (ent, 0, gi.soundindex("world/land.wav"), 1, 1, 0);
+					//gi.sound (ent, 0, gi.soundindex("world/land.wav"), 1, 1, 0);
+					jumpmod_sound(ent, false, gi.soundindex("world/land.wav"), 0, 1, 1);
 	}
 
 // regular thinking
