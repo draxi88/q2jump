@@ -157,6 +157,55 @@ void SP_trigger_multiple (edict_t *ent)
 	gi.linkentity (ent);
 }
 
+/*QUAKED trigger_lapcounter (.5 .5 .5) ?
+resizable ent that acts as a lap counter
+-style: how many laps the ent needs to finish the race
+-count: how many checkpoints needed to finish a lap
+*/
+
+void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	// client check
+	if (!other->client)
+		return;
+
+	if (trigger_timer(5)) {
+		//debug
+		gi.cprintf(other, PRINT_HIGH, "Debug start\n");
+		gi.cprintf(other, PRINT_HIGH, "Entering lapcounter_touch\n");
+		gi.cprintf(other, PRINT_HIGH, "Ent count: %d\n", self->count);
+		gi.cprintf(other, PRINT_HIGH, "Ent style: %d\n", self->style);
+		gi.cprintf(other, PRINT_HIGH, "Debug end\n");
+	}
+
+	// movement stuff
+	if (!VectorCompare(self->movedir, vec3_origin)) {
+		vec3_t	forward;
+		AngleVectors(other->s.angles, forward, NULL, NULL);
+		if (_DotProduct(forward, self->movedir) < 0)
+			return;
+	}
+
+	self->activator = other;
+	multi_trigger(self);
+}
+
+void SP_trigger_lapcounter(edict_t *ent)
+{
+	if (!ent->wait)
+		ent->wait = 0.2;
+	ent->touch = lapcounter_touch;
+	ent->movetype = MOVETYPE_NONE;
+	ent->svflags |= SVF_NOCLIENT;
+	ent->solid = SOLID_TRIGGER;
+	ent->use = Use_Multi;
+
+	if (!VectorCompare(ent->s.angles, vec3_origin))
+		G_SetMovedir(ent->s.angles, ent->movedir);
+
+	gi.setmodel(ent, ent->model);
+	gi.linkentity(ent);
+}
 
 /*QUAKED trigger_once (.5 .5 .5) ? x x TRIGGERED
 Triggers once, then removes itself.
@@ -377,7 +426,6 @@ void SP_trigger_counter (edict_t *self)
 
 	self->use = trigger_counter_use;
 }
-
 
 /*
 ==============================================================================

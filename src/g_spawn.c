@@ -58,6 +58,7 @@ void SP_func_killbox (edict_t *ent);
 void SP_trigger_always (edict_t *ent);
 void SP_trigger_once (edict_t *ent);
 void SP_trigger_multiple (edict_t *ent);
+void SP_trigger_lapcounter(edict_t *ent);
 void SP_trigger_relay (edict_t *ent);
 void SP_trigger_push (edict_t *ent);
 void SP_trigger_hurt (edict_t *ent);
@@ -209,6 +210,7 @@ spawn_t	spawns[] = {
 	{"trigger_always", SP_trigger_always},
 	{"trigger_once", SP_trigger_once},
 	{"trigger_multiple", SP_trigger_multiple},
+	{"trigger_lapcounter", SP_trigger_lapcounter},
 	{"trigger_relay", SP_trigger_relay},
 	{"trigger_push", SP_trigger_push},
 	{"trigger_hurt", SP_trigger_hurt},
