@@ -165,17 +165,58 @@ resizable ent that acts as a lap counter
 
 void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	// client check
 	if (!other->client)
 		return;
 
-	if (trigger_timer(5)) {
-		//debug
-		gi.cprintf(other, PRINT_HIGH, "Debug start\n");
-		gi.cprintf(other, PRINT_HIGH, "Entering lapcounter_touch\n");
-		gi.cprintf(other, PRINT_HIGH, "Ent count: %d\n", self->count);
-		gi.cprintf(other, PRINT_HIGH, "Ent style: %d\n", self->style);
-		gi.cprintf(other, PRINT_HIGH, "Debug end\n");
+	// check for 0 count
+	if (self->count == 0) {
+		if (trigger_timer(2))
+			gi.cprintf(other, PRINT_HIGH, "Your count is 0, fix it!\n");
+		return;
+	}
+
+	// check for lap_total of 1
+	if (mset_vars->lap_total == 1) {
+		if (trigger_timer(2))
+			gi.cprintf(other, PRINT_HIGH, "lap_total needs to be at least 2 if enabled, fix it!\n");
+		return;
+	}
+
+	// is their lapcount already over the needed value?
+	if (other->client->pers.lapcount >= mset_vars->lap_total) {
+		if (trigger_timer(2))
+			gi.cprintf(other, PRINT_HIGH, "Lapcount already over the needed value, shouldn't get here.\n");
+		return;
+	}
+
+	// do they have enough checkpoints to increase laps_player?
+	if (other->client->pers.checkpoints >= self->count) {
+
+		other->client->pers.lapcount = other->client->pers.lapcount + 1;
+		ClearCheckpoints(&other->client->pers);
+
+		//check if this made them finish
+		if (other->client->pers.lapcount >= mset_vars->lap_total) {
+			if (trigger_timer(2)) {
+				gi.cprintf(other, PRINT_HIGH, "You finished.\n");
+			}
+		}
+		else {
+			if (trigger_timer(2))
+				gi.cprintf(other, PRINT_HIGH, "Lap: %d/%d\n", other->client->pers.lapcount+1, mset_vars->lap_total);
+		}
+		return;
+	}
+	// tell them they need more cps since they don't have enough
+	else if (other->client->pers.checkpoints < self->count) {
+		if (trigger_timer(2))
+			gi.cprintf(other, PRINT_HIGH, "You don't have enough checkpoints to get this lap_counter.\n");
+		return;
+	}
+	else {
+		if (trigger_timer(2))
+			gi.cprintf(other, PRINT_HIGH, "Should never get here, tell an admin :)\n");
+		return;
 	}
 
 	// movement stuff
