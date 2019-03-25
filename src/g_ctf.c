@@ -2982,13 +2982,12 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 	}
 
 	//get the type of vote -> count who should be able to vote.
-	/*if (type == ELECT_MAP || type == ELECT_ADDTIME || type == ELECT_NOMINATE || type == ELECT_RAND || type == ELECT_DUMMY) {
+	if (type == ELECT_MAP || type == ELECT_ADDTIME || type == ELECT_NOMINATE || type == ELECT_RAND || type == ELECT_DUMMY) {
 		count = Get_Voting_Clients();
 	}
 	else {
 		count = Get_Connected_Clients();
-	}*/
-	count = Get_Voting_Clients();
+	}
 
 	if (ent!=NULL && count < 2) {
 		ctfgame.etarget = ent;
