@@ -835,6 +835,7 @@ typedef struct
 extern compare_users_t compare_users[24];
 void Compare_Users(edict_t *ent);
 int Get_Voting_Clients(void);
+int Get_Connected_Clients(void);
 void Update_Next_Maps(void);
 void CTFRand(edict_t *ent);
 

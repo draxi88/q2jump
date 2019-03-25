@@ -1912,7 +1912,6 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		gi.dprintf ("%s connected from %s\n", ent->client->pers.netname, ent->client->pers.userip);  // hann
 
 	ent->client->pers.connected = true;
-	ent->client->pers.idle_player = false; //not idle when joining the server
 	ent->client->pers.frames_without_movement = 0;
 	ent->client->resp.current_vote = 0;
 	vote_data.votes[0]++;
@@ -1952,6 +1951,9 @@ void ClientDisconnect (edict_t *ent)
 	ent->client->resp.got_time = false;
 	ent->client->resp.silence = false;
 	ent->client->resp.silence_until = 0;
+	if (ent->client->pers.idle_player) {
+		ent->client->pers.idle_player = false; //not idle when disconnecting.
+	}
 	// send effect
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
