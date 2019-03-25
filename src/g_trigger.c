@@ -159,7 +159,6 @@ void SP_trigger_multiple (edict_t *ent)
 
 /*QUAKED trigger_lapcounter (.5 .5 .5) ?
 resizable ent that acts as a lap counter
--style: how many laps the ent needs to finish the race
 -count: how many checkpoints needed to finish a lap
 */
 
@@ -182,6 +181,10 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		return;
 	}
 
+	// check if the client is already finished
+	if (other->client->resp.finished == 1 && !other->client->resp.replaying)
+		return;
+
 	// is their lapcount already over the needed value?
 	if (other->client->pers.lapcount >= mset_vars->lap_total) {
 		if (trigger_timer(2))
@@ -190,27 +193,32 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	}
 
 	// do they have enough checkpoints to increase laps_player?
-	if (other->client->pers.checkpoints >= self->count) {
-
+	if (other->client->pers.lap_cps >= self->count) {
 		other->client->pers.lapcount = other->client->pers.lapcount + 1;
-		ClearCheckpoints(&other->client->pers);
+
+		// reset lap cp's
+		int i;
+		other->client->pers.lap_cps = 0;
+		for (i = 0; i < sizeof(other->client->pers.lap_cp) / sizeof(int); i++) {
+			other->client->pers.lap_cp[i] = 0;
+		}
 
 		//check if this made them finish
 		if (other->client->pers.lapcount >= mset_vars->lap_total) {
 			if (trigger_timer(2)) {
-				gi.cprintf(other, PRINT_HIGH, "You finished.\n");
+				gi.cprintf(other, PRINT_HIGH, "debug: You finished.\n");
 			}
 		}
 		else {
 			if (trigger_timer(2))
-				gi.cprintf(other, PRINT_HIGH, "Lap: %d/%d\n", other->client->pers.lapcount+1, mset_vars->lap_total);
+				gi.cprintf(other, PRINT_HIGH, "%d laps left\n", mset_vars->lap_total - other->client->pers.lapcount);
 		}
 		return;
 	}
 	// tell them they need more cps since they don't have enough
-	else if (other->client->pers.checkpoints < self->count) {
+	else if (other->client->pers.lap_cps < self->count) {
 		if (trigger_timer(2))
-			gi.cprintf(other, PRINT_HIGH, "You don't have enough checkpoints to get this lap_counter.\n");
+			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d checkpoints need to complete this lap.\n", other->client->pers.lap_cps, self->count);
 		return;
 	}
 	else {
@@ -235,7 +243,84 @@ void SP_trigger_lapcounter(edict_t *ent)
 {
 	if (!ent->wait)
 		ent->wait = 0.2;
+
 	ent->touch = lapcounter_touch;
+	ent->movetype = MOVETYPE_NONE;
+	ent->svflags |= SVF_NOCLIENT;
+	ent->solid = SOLID_TRIGGER;
+	ent->use = Use_Multi;
+
+	if (!VectorCompare(ent->s.angles, vec3_origin))
+		G_SetMovedir(ent->s.angles, ent->movedir);
+
+	gi.setmodel(ent, ent->model);
+	gi.linkentity(ent);
+}
+
+/*QUAKED trigger_lapcp (.5 .5 .5) ?
+resizable ent that acts as a checkpoint for maps with a lapcounter
+-count: count of the cp, 0-63
+*/
+
+void lapcp_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	int my_time;
+	float my_time_decimal;
+
+	if (!other->client)
+		return;
+
+	// check for bad count values
+	if (self->count >= sizeof(other->client->pers.lap_cp) / sizeof(int)) {
+		if (trigger_timer(5))
+			gi.dprintf("Your count of %i is higher than the max value of %i.\n", self->count, sizeof(other->client->pers.lap_cp) / sizeof(int) - 1);
+		return;
+	}
+
+	// check if the client is already finished
+	if (other->client->resp.finished == 1 && !other->client->resp.replaying)
+		return;
+
+	// get the clients time in .xxx format
+	my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
+	my_time_decimal = (float)my_time / 1000.0f;
+
+	// check if they have it already, increase it if they don't
+	if (other->client->pers.lap_cp[self->count] != 1) {
+		other->client->pers.lap_cp[self->count] = 1;
+		other->client->pers.lap_cps += 1;
+		gi.cprintf(other, PRINT_HIGH, "debug: You picked up lap_cp with count %d, you now have %d.\n", self->count, other->client->pers.lap_cps);
+
+		// play a sound for it
+		CPSoundCheck(other);
+
+		// in easy give them the int, in hard give them the float, in replay give them relative
+		if (other->client->resp.ctf_team == CTF_TEAM1)
+			other->client->pers.cp_split = other->client->resp.item_timer;
+		else if (other->client->resp.ctf_team == CTF_TEAM2)
+			other->client->pers.cp_split = my_time_decimal;
+		else if (other->client->resp.ctf_team == CTF_NOTEAM && other->client->resp.replaying && !other->client->resp.mute_cprep)
+			other->client->pers.cp_split = (other->client->resp.replay_frame / 10) - 0.1;
+	}
+
+	// movement stuff
+	if (!VectorCompare(self->movedir, vec3_origin)) {
+		vec3_t	forward;
+		AngleVectors(other->s.angles, forward, NULL, NULL);
+		if (_DotProduct(forward, self->movedir) < 0)
+			return;
+	}
+
+	self->activator = other;
+	multi_trigger(self);
+}
+
+void SP_trigger_lapcp(edict_t *ent)
+{
+	if (!ent->wait)
+		ent->wait = 0.2;
+
+	ent->touch = lapcp_touch;
 	ent->movetype = MOVETYPE_NONE;
 	ent->svflags |= SVF_NOCLIENT;
 	ent->solid = SOLID_TRIGGER;

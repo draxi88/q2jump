@@ -4933,10 +4933,6 @@ void Cmd_Recall(edict_t *ent)
 
 	ClearCheckpoints(&ent->client->pers);
 
-    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
-        ent->client->pers.cpbox_checkpoint[i] = 0;
-    }
-
 	if (gametype->value==GAME_CTF)
 		return;
 
@@ -14115,7 +14111,6 @@ qboolean song_timer(int timeBetweenMessages) {
 		return false;
 }
 
-
 // fxn to clear all checkpoints from a player
 void ClearCheckpoints(client_persistant_t* pers) {
 
@@ -14160,13 +14155,24 @@ void ClearCheckpoints(client_persistant_t* pers) {
 	pers->pyramid_checkpoint = 0;
 
 	// cp box checkpoints
-	for (i=0;i<sizeof(pers->cpbox_checkpoint)/sizeof(int);i++) {
-        pers->cpbox_checkpoint[i] = 0;
-    }
+	for (i = 0; i < sizeof(pers->cpbox_checkpoint) / sizeof(int); i++) {
+		pers->cpbox_checkpoint[i] = 0;
+	}
 
 	// cp split
 	pers->cp_split = 0;
+
+	// lap counter
+	pers->lapcount = 0;
+
+	// cp lap checkpoints
+	pers->lap_cps = 0;
+
+	for (i = 0; i < sizeof(pers->lap_cp) / sizeof(int); i++) {
+		pers->lap_cp[i] = 0;
+	}
 }
+
 
 
 // fxn to check for who to play sound to at checkpoints

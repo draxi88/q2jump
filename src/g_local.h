@@ -894,8 +894,12 @@ typedef struct
 	// recall counter
 	int			total_recall;
 
-	// checkpoint things
+	// lapcounter things
 	int			lapcount;
+	int			lap_cps;
+	int         lap_cp[64];
+
+	// checkpoint things
 	int			checkpoints;
 	int			red_checkpoint;
 	int			target_checkpoint;
