@@ -2976,19 +2976,18 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 		}
 	}
 
-	if (ent->client->pers.idle_player) {
+	if (ent!=NULL && ent->client->pers.idle_player) {
 		gi.cprintf(ent, PRINT_HIGH, "You are idle, and can't start a vote.\n");
 		return false;
 	}
 
 	//get the type of vote -> count who should be able to vote.
-	/*if (type == ELECT_MAP || type == ELECT_ADDTIME || type == ELECT_NOMINATE || type == ELECT_RAND || type == ELECT_DUMMY) {
+	if (type == ELECT_MAP || type == ELECT_ADDTIME || type == ELECT_NOMINATE || type == ELECT_RAND || type == ELECT_DUMMY) {
 		count = Get_Voting_Clients();
 	}
 	else {
 		count = Get_Connected_Clients();
-	}*/
-	count = Get_Voting_Clients();
+	}
 
 	if (ent!=NULL && count < 2) {
 		ctfgame.etarget = ent;
@@ -3021,8 +3020,7 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 	{
 		ctfgame.needvotes++;
 		if (ctfgame.needvotes<=0)
-			ctfgame.needvotes = 1;
-			
+			ctfgame.needvotes = 1;			
 	}
 	ctfgame.electtime = level.time + 30; // twenty seconds for election
 	ctfgame.electframe = level.framenum;
