@@ -889,12 +889,13 @@ void G_RunFrame (void)
 			((mset_vars->timelimit*60)+
 			(map_added_time*60))
 			-level.time)/60;
+
 	if (itemp<=0 && !num_time_votes && gset_vars->autotime && (ctfgame.election == ELECT_NONE) && activeclients>0 && map_allow_voting) // draxi - added "map_allow_voting" so the dvotes command disable/enable it!
 	{
 		num_time_votes++;
 		sprintf(text, "Automated vote: Do you wish to add %i minutes extra time?",gset_vars->autotime);
 		if (CTFBeginElection(NULL, ELECT_ADDTIME, text,false))
-		{	
+		{		
 			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Automated vote")));
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Time: %d minutes",gset_vars->autotime));
 			ctfgame.ekicknum = gset_vars->autotime;
