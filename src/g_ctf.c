@@ -1880,7 +1880,9 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 	int total_easy;
 	int total_specs;
 	char teamstring[5];
+	qboolean idle;
 
+	idle = false;
 
 	// sort the clients by score
 	total = 0;
@@ -2109,8 +2111,18 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		stringlength += j;
 	}
 
+	//any spectators idle, if so, add extra gap for the idle tag...
+	for (i = 0; i < maxclients->value; i++) {
+		cl = &game.clients[i];
+		cl_ent = g_edicts + 1 + i;
+		if (!cl_ent->inuse)
+			continue;
+		if (cl_ent->client->resp.ctf_team != CTF_NOTEAM)
+			continue;
+		if (cl_ent->client->pers.idle_player || cl_ent->client->pers.frames_without_movement > 60000)
+			idle = true;
+	}
 	total_specs = 0;
-
 	for (i=0 ; i<maxclients->value ; i++)
 	{
 		cl = &game.clients[i];
@@ -2119,7 +2131,6 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			continue;
 		if (cl_ent->client->resp.ctf_team!=CTF_NOTEAM)
 			continue;
-	
 		if ((total) && (total_easy))
 		{
 			//if we have players on both teams, theres an extra 8 gap
@@ -2135,17 +2146,17 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		{
 			if (cl->resp.replaying==MAX_HIGHSCORES+1)
 			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv 168 string \" (Replay now)\"",
+			"ctf %d %d %d %d %d xv %d string \" (Replay now)\"",
 			-8,y,i,
 			cl->ping,
-			0
+			0, idle ? 224 : 168
 			); 
 			else
 			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv 168 string \" (Replay %d)\"",
+			"ctf %d %d %d %d %d xv %d string \" (Replay %d)\"",
 			-8,y,i,
 			cl->ping,
-			0,
+			0, idle ? 224 : 168,
 			cl->resp.replaying
 
 			); 
@@ -2155,7 +2166,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000) //add idle tag to chaser
 			{
 				Com_sprintf(entry, sizeof(entry),
-					"xv %d yv %d string \"(idle)\"", 64 + (strlen(cl->pers.netname) * 8), y);
+					"xv %d yv %d string \"(idle)\"", 56 + (strlen(cl->pers.netname) * 8), y);
 				j = strlen(entry);
 				strcpy(string + stringlength, entry);
 				stringlength += j;
@@ -2164,7 +2175,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 				"ctf %d %d %d %d %d xv %d string \"%s%s\"",
 				-8, y, i,
 				cl->ping,
-				0, cl->pers.idle_player || cl->pers.frames_without_movement > 60000 ? 168 + (strlen(cl->pers.netname) * 8) : 168,
+				0, idle ? 224 : 168,
 				cl->chase_target ? " -> " : "",
 				cl->chase_target ? cl->chase_target->client->pers.netname : ""
 			);
@@ -3036,7 +3047,7 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 		(int)(ctfgame.electtime - level.time));
 
 	gi.configstring (CONFIG_JUMP_VOTE_REMAINING,va("%d seconds",(int)(ctfgame.electtime-level.time)));
-	gi.configstring (CONFIG_JUMP_VOTE_CAST,va("Votes: %d of %d",ctfgame.evotes,ctfgame.needvotes));
+	gi.configstring (CONFIG_JUMP_VOTE_CAST,va("Votes: %d of %d",ctfgame.evotes,ctfgame.needvotes)); 
 
 	return true;
 }
