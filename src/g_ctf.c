@@ -3747,6 +3747,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 	PMenu_Close(ent);
 
 	ClearCheckpoints(&ent->client->pers);
+	cphud(); // update checkpoints@hud.
 
 	if (level.status==LEVEL_STATUS_OVERTIME)
 	{
@@ -3897,6 +3898,7 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 	if (ent->client->resp.replaying)
 		ent->client->resp.replaying = 0;
 	// =====================================
+	cphud(); // update checkpoints@hud.
 
 	if (ent->client->resp.ctf_team!=CTF_NOTEAM)
 		CTFObserver(ent);
@@ -3913,6 +3915,8 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 		e = g_edicts + i;
 		if (e->inuse && e->solid != SOLID_NOT) {
 			ent->client->chase_target = e;
+			cphud(); // update checkpoints@hud.
+			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
 			return;

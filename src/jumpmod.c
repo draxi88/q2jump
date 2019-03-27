@@ -5134,6 +5134,7 @@ void Cmd_Recall(edict_t *ent)
 			ent->s.angles[ROLL] = 0;
 			VectorCopy (ent->s.angles, client->ps.viewangles);
 			VectorCopy (ent->s.angles, client->v_angle);
+			cphud(); // update checkpoints@hud.
 
 			if ( ent->client->resp.ctf_team==CTF_TEAM2 || mset_vars->ezmode == 1) { // if hard and ezmode give a readout
 				if (ent->client->resp.ezmsg)
@@ -6160,10 +6161,7 @@ void MSET(edict_t *ent)
 	}
 
 	//fix onscreen message for checkpoints
-	if (strcmp(gi.argv(1), "checkpoint_total") == 0) {
-		if (atoi(gi.argv(2)) > 0)
-			gi.configstring(CONFIG_CP_ON, va("  Chkpts: %s", HighAscii(gi.argv(2))));
-	}
+	cphud();
 }
 
 void GSET(edict_t *ent)
@@ -7668,7 +7666,7 @@ void JumpChase(edict_t *ent)
 	ent->client->resp.next_chasecam_toggle = level.time + 0.5;
 	ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 	ent->client->resp.replaying = 0;
-
+	cphud(); // update checkpoints@hud.
 	if (ent->client->chase_target) {
 		if (!ent->client->resp.chase_ineye)
 		{
@@ -7685,7 +7683,7 @@ void JumpChase(edict_t *ent)
 			ent->client->resp.chasecam_type = 0;
 			return;
 		}
-		ent->client->resp.chasecam_type++;
+		ent->client->resp.chasecam_type++;	
 		return;
 	}
 
@@ -7693,6 +7691,7 @@ void JumpChase(edict_t *ent)
 		e = g_edicts + i;
 		if (e->inuse && e->solid != SOLID_NOT) {
 			ent->client->chase_target = e;
+			cphud(); // update checkpoints@hud.
 			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
@@ -14243,5 +14242,32 @@ void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float vo
 		gi.WriteShort(sendchan);//Channel
 		gi.WritePosition(pos);
 		gi.unicast(cl_ent, true); //send to clients 
+	}
+}
+
+
+void cphud() {
+	edict_t *cl_ent;
+	int i;
+	char string[128];
+	char cp[2];
+	char cptotal[2];
+
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+
+		if (!(cl_ent->client && cl_ent->inuse))
+			continue;
+		if (cl_ent->client->chase_target)
+			sprintf(cp, "%d", cl_ent->client->chase_target->client->pers.checkpoints);
+		else
+			sprintf(cp, "%d", cl_ent->client->pers.checkpoints);
+
+		sprintf(cptotal, "%d", mset_vars->checkpoint_total);
+		sprintf(string, "  Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_CP_ON);
+		gi.WriteString(string);
+		gi.unicast(cl_ent, true); //send to clients
 	}
 }

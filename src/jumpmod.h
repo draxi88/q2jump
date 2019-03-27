@@ -865,3 +865,4 @@ extern qboolean removed_map;
 
 void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float volume, int attenuation);
 void jumpmod_pos_sound(vec3_t pos, edict_t *ent, int sound, int channel, float volume, int attenuation);
+void cphud();

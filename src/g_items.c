@@ -3571,6 +3571,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			}
 		}
 	}
+	cphud(); // update checkpoints@hud.
 }
 
 void SP_cpbox_small (edict_t *ent)
