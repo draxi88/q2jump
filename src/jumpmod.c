@@ -4302,7 +4302,8 @@ void apply_time(edict_t *other, edict_t *ent)
 		other->client->resp.item_timer = add_item_to_queue(other,other->client->resp.item_timer,other->client->resp.item_timer_penalty,other->client->pers.netname,ent->item->pickup_name);
 
 		ClearCheckpoints(&other->client->pers);
-
+		cphud();
+		
 		if (((other->client->resp.item_timer+0.0001)<level_items.item_time) || (level_items.item_time==0))
 		{
 			level_items.jumps = other->client->resp.jumps;
@@ -14103,7 +14104,7 @@ qboolean song_timer(int timeBetweenMessages) {
 
 // fxn to clear all checkpoints from a player
 void ClearCheckpoints(client_persistant_t* pers) {
-
+	edict_t *cl_ent;
 	int i;
 
     if (pers == 0) {
@@ -14148,6 +14149,15 @@ void ClearCheckpoints(client_persistant_t* pers) {
 	for (i=0;i<sizeof(pers->cpbox_checkpoint)/sizeof(int);i++) {
         pers->cpbox_checkpoint[i] = 0;
     }
+	//memcpy for anyone chasing us...
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+		if (!cl_ent->inuse)
+			continue;
+		if (cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname, pers->netname) == 0) {
+			memcpy(cl_ent->client->pers.cpbox_checkpoint, pers->cpbox_checkpoint, sizeof(pers->cpbox_checkpoint));
+		}
+	}
 
 	// cp split
 	pers->cp_split = 0;
@@ -14254,6 +14264,7 @@ void cphud() {
 	char cp[2];
 	char cptotal[2];
 
+	sprintf(cptotal, "%d", mset_vars->checkpoint_total);
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
 
@@ -14264,7 +14275,6 @@ void cphud() {
 		else
 			sprintf(cp, "%d", cl_ent->client->pers.checkpoints);
 
-		sprintf(cptotal, "%d", mset_vars->checkpoint_total);
 		sprintf(string, "  Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
 		gi.WriteByte(svc_configstring);
 		gi.WriteShort(CONFIG_CP_ON);

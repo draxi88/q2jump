@@ -3747,7 +3747,6 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 	PMenu_Close(ent);
 
 	ClearCheckpoints(&ent->client->pers);
-	cphud(); // update checkpoints@hud.
 
 	if (level.status==LEVEL_STATUS_OVERTIME)
 	{
@@ -3801,7 +3800,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 		ent->client->resp.item_timer_penalty = 0;
 		ent->client->resp.item_timer_allow = true;
 	}
-
+	cphud(); // update checkpoints@hud.
 	s = Info_ValueForKey (ent->client->pers.userinfo, "skin");
 	CTFAssignSkin(ent, s);
 
