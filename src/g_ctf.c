@@ -2166,7 +2166,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000) //add idle tag to chaser
 			{
 				Com_sprintf(entry, sizeof(entry),
-					"xv %d yv %d string \"(idle)\"", 56 + (strlen(cl->pers.netname) * 8), y);
+					"xv %d yv %d string \" (idle)\"", 56 + (strlen(cl->pers.netname) * 8), y);
 				j = strlen(entry);
 				strcpy(string + stringlength, entry);
 				stringlength += j;
