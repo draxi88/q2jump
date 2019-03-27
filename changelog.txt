@@ -8,8 +8,8 @@
 	-all other votes, boot, silence, etc, all clients vote regardess of idle status
 -split:
 	-added a check for the "you finished in" situation
-checkpoints:
-	-ui is now live updated with your checkpoint value and total checkpoints
+-checkpoints:
+	-ui is now live updated with your checkpoint value and total checkpoints due to cphud()
 	-chasers now see how many checkpoints you have
 	-chasers now see checkpoint based lights and effects
 	-chasers now see checkpoint splits
