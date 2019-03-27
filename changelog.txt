@@ -23,7 +23,7 @@ checkpoints:
 	-sound is more directionally accurate
 	-moved many sounds to be local only when using the jumpers cmd
 	-removed gsets for these sounds
-	-ex: water, drowning, landing thuds, 
+	-ex: water, drowning, landing thuds, few other thing
 
 	
 #####v1.30ger#####
