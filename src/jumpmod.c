@@ -14245,7 +14245,8 @@ void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float vo
 	}
 }
 
-
+// finds how many pers.checkpoints a player has and displays it in hud
+// if chasing, you will view the checkpoints of the player you are chasing
 void cphud() {
 	edict_t *cl_ent;
 	int i;

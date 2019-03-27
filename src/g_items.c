@@ -848,6 +848,9 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		else
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
+
+	cphud(); // update checkpoints@hud.
+
 	return false; // leave item on the ground
 }
 
