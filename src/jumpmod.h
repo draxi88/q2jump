@@ -3,7 +3,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.30ger"
+#define CTF_VERSION_S		"1.31ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -506,7 +506,6 @@ typedef struct
 	unsigned int kill_delay;
 	unsigned int target_glow;
 	unsigned int tourney;
-	int drowningsound;
 } gset_vars_t;
 
 typedef struct
@@ -836,6 +835,7 @@ typedef struct
 extern compare_users_t compare_users[24];
 void Compare_Users(edict_t *ent);
 int Get_Voting_Clients(void);
+int Get_Connected_Clients(void);
 void Update_Next_Maps(void);
 void CTFRand(edict_t *ent);
 
@@ -863,4 +863,6 @@ void Changename(edict_t *ent);
 void Cmd_Stats(edict_t *ent);
 extern qboolean removed_map;
 
-void jumpmod_sound(edict_t *ent, qboolean local, char *sound, int channel, float volume, int attenuation);
+void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float volume, int attenuation);
+void jumpmod_pos_sound(vec3_t pos, edict_t *ent, int sound, int channel, float volume, int attenuation);
+void cphud();

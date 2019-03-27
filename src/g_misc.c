@@ -638,7 +638,7 @@ void SP_light(edict_t *self)
 		self->nextthink = level.time + 1;
 	}
 
-	else if (self->style >= 32 || self->style < 100)
+	else if (self->style >= 32 && self->style < 100)
 	{
 		self->use = light_use;
 		if (self->spawnflags & START_OFF)

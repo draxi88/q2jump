@@ -418,13 +418,6 @@ zbotcmd_t zbotCommands[] =
 	CMDTYPE_NUMBER,
 	&gset_vars->mset->droptofloor,
   },
-  {
-	0,1,0,
-	"gdrowningsound",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->drowningsound,
-  },
   { 
 	0,0,0,
     "gedited_by", 
@@ -3205,7 +3198,10 @@ void hook_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 			T_Damage(other, self, self->owner, dir, self->s.origin, normal, 1, 1, 0, MOD_GRAPPLE);
 		}
 */
-		gi.positioned_sound(self->s.origin, self, CHAN_WEAPON, gi.soundindex("flyer/Flyatck2.wav"), 1, ATTN_NORM, 0);
+		//gi.positioned_sound(self->s.origin, self, CHAN_WEAPON, gi.soundindex("flyer/Flyatck2.wav"), 1, ATTN_NORM, 0);
+		jumpmod_pos_sound(self->s.origin, self, gi.soundindex("flyer/Flyatck2.wav"), CHAN_WEAPON, 1, ATTN_NORM); //hook hit wall
+
+
 //	}
 	
 	VectorClear(self->velocity);
@@ -3321,7 +3317,7 @@ void hook_fire (edict_t *ent) {
 
 
 	//Hooksound 
-	jumpmod_sound(ent, false, "flyer/Flyatck3.wav", CHAN_WEAPON, 1, ATTN_NORM);
+	jumpmod_sound(ent, false, gi.soundindex("flyer/Flyatck3.wav"), CHAN_WEAPON, 1, ATTN_NORM);
 	/*
 	if (ent->client->silencer_shots)
 		gi.sound(ent, CHAN_WEAPON, gi.soundindex("flyer/Flyatck3.wav"), 0.2, ATTN_NORM, 0);
@@ -3339,7 +3335,7 @@ void CTFSilence(edict_t *ent)
 	edict_t *targ;
 	char text[1024];
 	
-	//ent->client->pers.frames_without_movement = 0;
+
 
 	if ((!map_allow_voting) && (ent->client->resp.admin<aset_vars->ADMIN_SILENCE_LEVEL))
 		return;
@@ -5138,6 +5134,7 @@ void Cmd_Recall(edict_t *ent)
 			ent->s.angles[ROLL] = 0;
 			VectorCopy (ent->s.angles, client->ps.viewangles);
 			VectorCopy (ent->s.angles, client->v_angle);
+			cphud(); // update checkpoints@hud.
 
 			if ( ent->client->resp.ctf_team==CTF_TEAM2 || mset_vars->ezmode == 1) { // if hard and ezmode give a readout
 				if (ent->client->resp.ezmsg)
@@ -6162,6 +6159,9 @@ void MSET(edict_t *ent)
 	{
 		gi.cprintf(ent,PRINT_HIGH,"Invalid command\n");
 	}
+
+	//fix onscreen message for checkpoints
+	cphud();
 }
 
 void GSET(edict_t *ent)
@@ -6517,7 +6517,6 @@ void SetDefaultValues(void)
 	gset_vars->mset->damage = 1;
 	gset_vars->debug =0;
 	gset_vars->mset->droptofloor = 1;
-	gset_vars->drowningsound = 0;
 	strcpy(gset_vars->mset->edited_by,"NA");
 	gset_vars->mset->ezmode = 0;
 	gset_vars->mset->falldamage = 1;
@@ -7131,7 +7130,13 @@ ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 	ent->health = mset_vars->health;
 	if (gset_vars->respawn_sound)
 	{
-		ent->s.event = EV_PLAYER_TELEPORT;
+		//ent->s.event = EV_PLAYER_TELEPORT; //spawn sound
+		jumpmod_sound(ent, false, gi.soundindex("misc/tele1.wav"), CHAN_ITEM, 1, ATTN_IDLE);
+		//particles?
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_TELEPORT_EFFECT);
+		gi.WritePosition(ent->s.origin);
+		gi.multicast(ent->s.origin, MULTICAST_PHS);
 	}
 
 	if (ent->client->resp.rep_racing_delay)
@@ -7661,7 +7666,7 @@ void JumpChase(edict_t *ent)
 	ent->client->resp.next_chasecam_toggle = level.time + 0.5;
 	ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 	ent->client->resp.replaying = 0;
-
+	cphud(); // update checkpoints@hud.
 	if (ent->client->chase_target) {
 		if (!ent->client->resp.chase_ineye)
 		{
@@ -7678,7 +7683,7 @@ void JumpChase(edict_t *ent)
 			ent->client->resp.chasecam_type = 0;
 			return;
 		}
-		ent->client->resp.chasecam_type++;
+		ent->client->resp.chasecam_type++;	
 		return;
 	}
 
@@ -7686,6 +7691,8 @@ void JumpChase(edict_t *ent)
 		e = g_edicts + i;
 		if (e->inuse && e->solid != SOLID_NOT) {
 			ent->client->chase_target = e;
+			cphud(); // update checkpoints@hud.
+			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
 			return;
@@ -8222,7 +8229,13 @@ void Overtime_Kill(edict_t *ent)
 	ent->health = mset_vars->health;
 	if (gset_vars->respawn_sound)
 	{
-		ent->s.event = EV_PLAYER_TELEPORT;
+		//ent->s.event = EV_PLAYER_TELEPORT; //spawn sound
+		jumpmod_sound(ent, false, gi.soundindex("misc/tele1.wav"), CHAN_ITEM, 1, ATTN_IDLE);
+		//particles?
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_TELEPORT_EFFECT);
+		gi.WritePosition(ent->s.origin);
+		gi.multicast(ent->s.origin, MULTICAST_PHS);
 	}
 
 }
@@ -8524,21 +8537,25 @@ qboolean tourney_log(edict_t *ent,int uid, float time,float item_time_penalty,ch
 			return false;
 		}
 
-		// didn't beat pb/1st, only show to players that wants it! :D
+		// didn't beat pb/1st, only show to players that wants it, or players who are chasing you! :D //no splits atm though :thinking: :linux: :thing:
         for (i = 0; i < maxclients->value; i++) {
 		    cl_ent = g_edicts + 1 + i;
 		    if (!cl_ent->inuse)
 			    continue;
 
-			if (cl_ent->client->resp.showtimes)
+			if (cl_ent->client->resp.showtimes || cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname,ent->client->pers.netname)==0)
 			    gi.cprintf(cl_ent, PRINT_HIGH, "%s finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
 					ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
 	    }
 
 		// even with showtimes off, you should still see your own time
 		if (time >= oldtime && !ent->client->resp.showtimes) {
-			gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f | split: %1.3f)\n",
-				time,time-oldtime,time-level_items.stored_item_times[0].time, my_split);
+			if (ent->client->pers.cp_split > 0)
+				gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f | split: %1.3f)\n",
+					time,time-oldtime,time-level_items.stored_item_times[0].time, my_split);
+			else
+				gi.cprintf(ent, PRINT_HIGH, "You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
+					time, time - oldtime, time - level_items.stored_item_times[0].time);
 			return false;
 		}
 
@@ -10659,8 +10676,6 @@ void CTFVoteTime(edict_t *ent)
 	char text[1024];
 	int diff;
 	qboolean require_max = false;
-
-	//ent->client->pers.frames_without_movement = 0;
 	
 	if (!map_allow_voting)
 		return;
@@ -14141,26 +14156,61 @@ void ClearCheckpoints(client_persistant_t* pers) {
 
 // fxn to check for who to play sound to at checkpoints
 void CPSoundCheck(edict_t *ent) {
-	int numEnt, sendchan;
-
-	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
-	sendchan = (numEnt << 3) | (CHAN_ITEM & 7);
-	if (!ent->client->resp.mute_cps && !ent->client->resp.ctf_team == CTF_NOTEAM) {
-		gi.WriteByte(svc_sound);
-		gi.WriteByte(27);//flags SND_ENT
-		gi.WriteByte(gi.soundindex("items/pkup.wav"));//Sound..
-		gi.WriteByte(255);//Volume
-		gi.WriteByte(64);//Attenuation
-		gi.WriteByte(0.0);//OFfset
-		gi.WriteShort(sendchan);//Channel
-		gi.unicast(ent, true); //send to client
-	}
+	jumpmod_sound(ent, false, gi.soundindex("items/pkup.wav"), CHAN_ITEM, 1, ATTN_NORM);
 }
 
 // Hack to override the gi.sound function.
-// gi.soundindex(sound) must be set..
 // set volume 0.0 to 1.0 (1.0 default)
-void jumpmod_sound(edict_t *ent, qboolean local, char *sound, int channel, float volume, int attenuation) {
+void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float volume, int attenuation) {
+	edict_t *cl_ent;
+	int numEnt;
+	int sendchan;
+	int i;
+	
+
+	if (volume < 0 || volume > 1.0)
+		volume = 1; //FULL VOLUME
+	if (attenuation < 0 || attenuation > 4)
+		attenuation = 1; //ATTN_NORM
+
+	volume = volume * 255;
+	attenuation = attenuation * 64;
+
+	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
+	sendchan = (numEnt << 3) | (channel & 7);
+	//if local=true, local only sound..
+	if (local) {
+		gi.WriteByte(svc_sound);
+		gi.WriteByte(11);//flags //27 if offset should be used..
+		gi.WriteByte(sound);//Sound..
+		gi.WriteByte(volume);//Volume
+		gi.WriteByte(attenuation);//Attenuation
+		//gi.WriteByte(0.0);//OFfset
+		gi.WriteShort(sendchan);//Channel
+		gi.unicast(ent, true); //send to clients 
+	}
+	//if not local, send to all clients, unless they have jumpers enabled.
+	else {
+		for (i = 0; i < maxclients->value; i++) {
+			cl_ent = g_edicts + 1 + i;
+
+			if (!(cl_ent->client && cl_ent->inuse))
+				continue;
+			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
+				continue;
+			gi.WriteByte(svc_sound);
+			gi.WriteByte(11);//flags //27 if offset should be used..
+			gi.WriteByte(sound);//Sound..
+			gi.WriteByte(volume);//Volume
+			gi.WriteByte(attenuation);//Attenuation
+			//gi.WriteByte(0.0);//OFfset
+			gi.WriteShort(sendchan);//Channel
+			gi.unicast(cl_ent, true); //send to clients 
+		}
+	}
+}
+
+void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float volume, int attenuation) {
 	edict_t *cl_ent;
 	int numEnt;
 	int sendchan;
@@ -14176,34 +14226,49 @@ void jumpmod_sound(edict_t *ent, qboolean local, char *sound, int channel, float
 
 	numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
 	sendchan = (numEnt << 3) | (channel & 7);
-	//if local=true, local only sound..
-	if (local) { 
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+
+		if (!(cl_ent->client && cl_ent->inuse))
+			continue;
+		if (cl_ent->client->resp.hide_jumpers)
+			continue;
 		gi.WriteByte(svc_sound);
-		gi.WriteByte(27);//flags SND_ENT
-		gi.WriteByte(gi.soundindex(sound));//Sound..
+		gi.WriteByte(15);//flags //31 if offset should be used..
+		gi.WriteByte(sound);//Sound..
 		gi.WriteByte(volume);//Volume
 		gi.WriteByte(attenuation);//Attenuation
-		gi.WriteByte(0.0);//OFfset
+		//gi.WriteByte(0.0);//OFfset
 		gi.WriteShort(sendchan);//Channel
-		gi.unicast(ent, true); //send to clients 
+		gi.WritePosition(pos);
+		gi.unicast(cl_ent, true); //send to clients 
 	}
-	//if not local, send to all clients, unless they have jumpers enabled.
-	else {
-		for (i = 0; i < maxclients->value; i++) {
-			cl_ent = g_edicts + 1 + i;
+}
 
-			if (!(cl_ent->client && cl_ent->inuse))
-				continue;
-			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
-				continue;
-			gi.WriteByte(svc_sound);
-			gi.WriteByte(27);//flags SND_ENT
-			gi.WriteByte(gi.soundindex(sound));//Sound..
-			gi.WriteByte(volume);//Volume
-			gi.WriteByte(attenuation);//Attenuation
-			gi.WriteByte(0.0);//OFfset
-			gi.WriteShort(sendchan);//Channel
-			gi.unicast(cl_ent, true); //send to clients 
-		}
+// finds how many pers.checkpoints a player has and displays it in hud
+// if chasing, you will view the checkpoints of the player you are chasing
+void cphud() {
+	edict_t *cl_ent;
+	int i;
+	char string[128];
+	char cp[2];
+	char cptotal[2];
+
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+
+		if (!(cl_ent->client && cl_ent->inuse))
+			continue;
+		if (cl_ent->client->chase_target)
+			sprintf(cp, "%d", cl_ent->client->chase_target->client->pers.checkpoints);
+		else
+			sprintf(cp, "%d", cl_ent->client->pers.checkpoints);
+
+		sprintf(cptotal, "%d", mset_vars->checkpoint_total);
+		sprintf(string, "  Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_CP_ON);
+		gi.WriteString(string);
+		gi.unicast(cl_ent, true); //send to clients
 	}
 }

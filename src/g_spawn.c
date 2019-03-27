@@ -1065,7 +1065,6 @@ void SP_worldspawn (edict_t *ent)
 	char this_map[64];
 	char str[2048];
 	char temp[50];
-    char cptotal[2];
 
 	ent->movetype = MOVETYPE_PUSH;
 	ent->solid = SOLID_BSP;
@@ -1128,6 +1127,10 @@ void SP_worldspawn (edict_t *ent)
 
 	gi.soundindex ("player/lava1.wav");
 	gi.soundindex ("player/lava2.wav");
+	gi.soundindex("player/step1.wav");
+	gi.soundindex("player/step2.wav");
+	gi.soundindex("player/step3.wav");
+	gi.soundindex("player/step4.wav");
 
 	gi.soundindex ("misc/pc_up.wav");
 	gi.soundindex ("misc/talk1.wav");
@@ -1147,8 +1150,6 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("*gurp1.wav");		// drowning damage
 	gi.soundindex ("*gurp2.wav");	
 	gi.soundindex ("*jump1.wav");		// player jump
-	gi.soundindex("player/female/jump1.wav"); //jumpmod jumpsound jumphack!
-	gi.soundindex("flyer/Flyatck3.wav"); //hooksound
 	//gi.soundindex ("*pain25_1.wav");
 	//gi.soundindex ("*pain25_2.wav");
 	//gi.soundindex ("*pain50_1.wav");
@@ -1292,8 +1293,7 @@ void SP_worldspawn (edict_t *ent)
 		gi.configstring (CONFIG_JUMP_ANTIGLUE,         "Antiglue    œÓ");			
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_OFF,     "Antiglue   œ∆∆");			
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_DISABLED,"Antiglue   ŒØ¡");
-        sprintf(cptotal,"%d",mset_vars->checkpoint_total);
-		gi.configstring (CONFIG_CP_ON,va(              "  Chkpts: %s",HighAscii(cptotal))); //draxi ascii
+		cphud(); //cphud gi.configstring(CONFIG_CP_ON, va("  Chkpts: 0/%s", HighAscii(cptotal)));
 		gi.configstring (CONFIG_CP_OFF,                "");
         gi.configstring (CONFIG_JUMP_RACE_OFF,         ""); // old "    Race: œ∆∆"
 		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    Team: ≈·Û˘");

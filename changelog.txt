@@ -1,3 +1,31 @@
+#####v1.31ger#####
+-idle changes:
+	-crash from loading previous player's idle status fixed
+	-now split between autoidle and command idle
+	-idle by command blocks voting
+	-mapvote, timevote, silence, boot all force unidle when autoidle
+	-if vote is for map, time, nom, rand, dummpy, only unidle vote
+	-all other votes, boot, silence, etc, all clients vote regardess of idle status
+-split:
+	-added a check for the "you finished in" situation
+checkpoints:
+	-ui is now live updated with your checkpoint value and total checkpoints
+	-chasers now see how many checkpoints you have
+	-chasers now see checkpoint based lights and effects
+	-chasers now see checkpoint splits
+-scoreboard:
+	-alignment for idle players is better
+	-bug where it didn't show you were replaying fixed
+-hook:
+	-hook going through jump_cpwall fixed
+-sound:
+	-added an overwrite to default sound fxn
+	-sound is more directionally accurate
+	-moved many sounds to be local only when using the jumpers cmd
+	-removed gsets for these sounds
+	-ex: water, drowning, landing thuds, few other thing
+
+	
 #####v1.30ger#####
 -fixed a problem with converting old score files
 -fixed a problem where idle players didn't show who they were chasing

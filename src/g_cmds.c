@@ -742,6 +742,7 @@ void Cmd_Kill_f (edict_t *ent)
 	if (ent->client->resp.ctf_team==CTF_TEAM2) {
 		ClearCheckpoints(&ent->client->pers);
 	}
+	cphud(); // update checkpoints@hud.
 
 //ZOID
 	if (ent->solid == SOLID_NOT)

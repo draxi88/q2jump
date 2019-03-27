@@ -1912,7 +1912,6 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		gi.dprintf ("%s connected from %s\n", ent->client->pers.netname, ent->client->pers.userip);  // hann
 
 	ent->client->pers.connected = true;
-	ent->client->pers.idle_player = false; //not idle when joining the server
 	ent->client->pers.frames_without_movement = 0;
 	ent->client->resp.current_vote = 0;
 	vote_data.votes[0]++;
@@ -1952,6 +1951,9 @@ void ClientDisconnect (edict_t *ent)
 	ent->client->resp.got_time = false;
 	ent->client->resp.silence = false;
 	ent->client->resp.silence_until = 0;
+	if (ent->client->pers.idle_player) {
+		ent->client->pers.idle_player = false; //not idle when disconnecting.
+	}
 	// send effect
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -2044,9 +2046,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	vec3_t temp_pos;
 	qboolean prev_groundentity;
 	vec_t tlen;
-	edict_t *cl_ent;
-	int		sendchan;
-	int		numEnt;
 
 	level.current_entity = ent;
 	client = ent->client;
@@ -2088,10 +2087,10 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			ent->client->pers.idle_player = false;
 		}
 	}
-	else if (ent->client->pers.frames_without_movement > 60000 && !ent->client->pers.idle_player) {
+	/*else if (ent->client->pers.frames_without_movement > 60000 && !ent->client->pers.idle_player) {
 		//Player is now marked as idle.
 		ent->client->pers.idle_player = true;
-	}
+	}*/
 //auto kick code goes here
   if (enable_autokick->value) {
         if (ucmd->buttons==0) {
@@ -2300,26 +2299,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		//gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
 		//PlayerNoise(ent, ent->s.origin, PNOISE_SELF); //not needed in jumpmod. No monsters (except fish ofc)
 		//jumpers no sound
-		numEnt = (((byte *)(ent)-(byte *)globals.edicts) / globals.edict_size);
-		sendchan = (numEnt << 3) | (CHAN_VOICE & 7);
-		for (i = 0; i < maxclients->value; i++) {
-			cl_ent = g_edicts + 1 + i;
-
-			if (!(cl_ent->client && cl_ent->inuse))
-				continue;
-			if (cl_ent->client->resp.hide_jumpers && cl_ent->client != ent->client)
-				continue;
-			gi.WriteByte(svc_sound);
-			gi.WriteByte(27);//flags SND_ENT
-			gi.WriteByte(gi.soundindex("player/female/jump1.wav"));//Sound..
-			gi.WriteByte(255);//Volume
-			gi.WriteByte(64);//Attenuation
-			gi.WriteByte(0.0);//OFfset
-			gi.WriteShort(sendchan);//Channel
-			gi.unicast(cl_ent, true); //send to clients
-
-		}
-		
+		jumpmod_sound(ent, false, gi.soundindex("*jump1.wav"), CHAN_VOICE, 1, ATTN_NORM);		
 	}
 
 	ent->viewheight = pm.viewheight;
