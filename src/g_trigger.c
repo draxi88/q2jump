@@ -161,7 +161,6 @@ void SP_trigger_multiple (edict_t *ent)
 resizable ent that acts as a lap counter
 -count: how many checkpoints needed to finish a lap
 */
-
 void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
 	if (!other->client)
@@ -170,14 +169,14 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	// check for 0 count
 	if (self->count == 0) {
 		if (trigger_timer(2))
-			gi.cprintf(other, PRINT_HIGH, "Your count is 0, fix it!\n");
+			gi.cprintf(other, PRINT_HIGH, "Mapper Error: count set to 0.\n");
 		return;
 	}
 
 	// check for lap_total of 1
 	if (mset_vars->lap_total == 1) {
 		if (trigger_timer(2))
-			gi.cprintf(other, PRINT_HIGH, "lap_total needs to be at least 2 if enabled, fix it!\n");
+			gi.cprintf(other, PRINT_HIGH, "Mset Error: lap_total needs to be at least 2 if enabled.\n");
 		return;
 	}
 
@@ -185,16 +184,28 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	if (other->client->resp.finished == 1 && !other->client->resp.replaying)
 		return;
 
-	// is their lapcount already over the needed value?
-	if (other->client->pers.lapcount >= mset_vars->lap_total) {
-		if (trigger_timer(2))
-			gi.cprintf(other, PRINT_HIGH, "Lapcount already over the needed value, shouldn't get here.\n");
+	// is their lapcount already over the needed value, you should never get here.
+	if (other->client->pers.lapcount >= mset_vars->lap_total)
 		return;
-	}
 
 	// do they have enough checkpoints to increase laps_player?
 	if (other->client->pers.lap_cps >= self->count) {
 		other->client->pers.lapcount = other->client->pers.lapcount + 1;
+
+		int my_time;
+		float my_time_decimal;
+
+		// get the clients time in .xxx format
+		my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
+		my_time_decimal = (float)my_time / 1000.0f;
+
+		// in easy give them the int, in hard give them the float, in replay give them relative
+		if (other->client->resp.ctf_team == CTF_TEAM1)
+			other->client->pers.cp_split = other->client->resp.item_timer;
+		else if (other->client->resp.ctf_team == CTF_TEAM2)
+			other->client->pers.cp_split = my_time_decimal;
+		else if (other->client->resp.ctf_team == CTF_NOTEAM && other->client->resp.replaying && !other->client->resp.mute_cprep)
+			other->client->pers.cp_split = (other->client->resp.replay_frame / 10) - 0.1;
 
 		// reset lap cp's
 		int i;
@@ -204,26 +215,18 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		}
 
 		//check if this made them finish
-		if (other->client->pers.lapcount >= mset_vars->lap_total) {
-			if (trigger_timer(2)) {
-				gi.cprintf(other, PRINT_HIGH, "debug: You finished.\n");
-			}
-		}
+		if (other->client->pers.lapcount >= mset_vars->lap_total) {} // you finished
 		else {
 			if (trigger_timer(2))
-				gi.cprintf(other, PRINT_HIGH, "%d laps left\n", mset_vars->lap_total - other->client->pers.lapcount);
+				gi.cprintf(other, PRINT_HIGH, "%d laps left (split: %d)\n", 
+					mset_vars->lap_total - other->client->pers.lapcount, other->client->resp.item_timer - other->client->pers.cp_split);
 		}
 		return;
 	}
-	// tell them they need more cps since they don't have enough
+	// they don't have enough lap checkpoints, tell them how many they missed
 	else if (other->client->pers.lap_cps < self->count) {
 		if (trigger_timer(2))
-			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d checkpoints need to complete this lap.\n", other->client->pers.lap_cps, self->count);
-		return;
-	}
-	else {
-		if (trigger_timer(2))
-			gi.cprintf(other, PRINT_HIGH, "Should never get here, tell an admin :)\n");
+			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints need to complete this lap.\n", other->client->pers.lap_cps, self->count);
 		return;
 	}
 
@@ -261,19 +264,14 @@ void SP_trigger_lapcounter(edict_t *ent)
 resizable ent that acts as a checkpoint for maps with a lapcounter
 -count: count of the cp, 0-63
 */
-
-void lapcp_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
-{
-	int my_time;
-	float my_time_decimal;
-
+void lapcp_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {	
 	if (!other->client)
 		return;
 
 	// check for bad count values
 	if (self->count >= sizeof(other->client->pers.lap_cp) / sizeof(int)) {
 		if (trigger_timer(5))
-			gi.dprintf("Your count of %i is higher than the max value of %i.\n", self->count, sizeof(other->client->pers.lap_cp) / sizeof(int) - 1);
+			gi.dprintf("Mapper Error: Your count of %i is higher than the max value of %i.\n", self->count, sizeof(other->client->pers.lap_cp) / sizeof(int) - 1);
 		return;
 	}
 
@@ -281,26 +279,13 @@ void lapcp_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 	if (other->client->resp.finished == 1 && !other->client->resp.replaying)
 		return;
 
-	// get the clients time in .xxx format
-	my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
-	my_time_decimal = (float)my_time / 1000.0f;
-
 	// check if they have it already, increase it if they don't
 	if (other->client->pers.lap_cp[self->count] != 1) {
 		other->client->pers.lap_cp[self->count] = 1;
 		other->client->pers.lap_cps += 1;
-		gi.cprintf(other, PRINT_HIGH, "debug: You picked up lap_cp with count %d, you now have %d.\n", self->count, other->client->pers.lap_cps);
 
 		// play a sound for it
 		CPSoundCheck(other);
-
-		// in easy give them the int, in hard give them the float, in replay give them relative
-		if (other->client->resp.ctf_team == CTF_TEAM1)
-			other->client->pers.cp_split = other->client->resp.item_timer;
-		else if (other->client->resp.ctf_team == CTF_TEAM2)
-			other->client->pers.cp_split = my_time_decimal;
-		else if (other->client->resp.ctf_team == CTF_NOTEAM && other->client->resp.replaying && !other->client->resp.mute_cprep)
-			other->client->pers.cp_split = (other->client->resp.replay_frame / 10) - 0.1;
 	}
 
 	// movement stuff
