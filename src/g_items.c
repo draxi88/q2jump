@@ -3566,9 +3566,11 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		//memcpy+msg for anyone chasing us...
 		for (i = 0; i < maxclients->value; i++) {
 			cl_ent = g_edicts + 1 + i;
-			if (!cl_ent->inuse)
+			if (!cl_ent->inuse || !cl_ent->client->chase_target)
 				continue;
-			if (cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname, other->client->pers.netname) == 0) {
+			if (cl_ent->client->chase_target->client->resp.ctf_team == CTF_NOTEAM)
+				continue;
+			if (Q_stricmp(cl_ent->client->chase_target->client->pers.netname, other->client->pers.netname) == 0) {
 				gi.cprintf(cl_ent, PRINT_HIGH, "%s %s", other->client->pers.netname, cpstring);
 				memcpy(cl_ent->client->pers.cpbox_checkpoint, other->client->pers.cpbox_checkpoint, sizeof(other->client->pers.cpbox_checkpoint));
 			}
