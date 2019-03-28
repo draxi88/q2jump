@@ -132,13 +132,6 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &mset_vars->checkpoint_total,
   },
-  {
-	0,100,0,
-	"lap_total",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->lap_total,
-  },
   { 
 	0,1,0,
     "cmsg", 
@@ -229,6 +222,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
     &mset_vars->health,
+  },
+  {
+	0,100,0,
+	"lap_total",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->lap_total,
   },
   { 
 	-100,100,100,
@@ -389,13 +389,6 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
     CMDTYPE_NUMBER,
     &gset_vars->mset->checkpoint_total,
-  },
-  {
-	0,28,0,
-	"glap_total",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->lap_total,
   },
   { 
 	0,1,0,
@@ -627,6 +620,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
     &gset_vars->kill_delay,
+  },
+  {
+	0,28,0,
+	"glap_total",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->lap_total,
   },
   {
     0,1,1,
