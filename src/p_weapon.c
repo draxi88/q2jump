@@ -152,11 +152,8 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 	// lapcounter check
 	if (mset_vars->lap_total > 0 && pickup != 1) {
-		if (other->client->pers.lapcount < mset_vars->lap_total) {
-			if (trigger_timer(5))
-				gi.cprintf(other, PRINT_HIGH, "debug: not enough laps!\n");
+		if (other->client->pers.lapcount < mset_vars->lap_total)
 			pickup = 2;
-		}
 	}
 
 	// checkpoint check
