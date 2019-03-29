@@ -218,8 +218,7 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		if (other->client->pers.lapcount >= mset_vars->lap_total) {} // you finished
 		else {
 			if (trigger_timer(2))
-				gi.cprintf(other, PRINT_HIGH, "%d laps left (split: %d)\n", 
-					mset_vars->lap_total - other->client->pers.lapcount, other->client->resp.item_timer - other->client->pers.cp_split);
+				gi.cprintf(other, PRINT_HIGH, "%d laps left\n", mset_vars->lap_total - other->client->pers.lapcount);
 		}
 		return;
 	}
