@@ -223,6 +223,13 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &mset_vars->health,
   },
+  {
+	0,100,0,
+	"lap_total",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->lap_total,
+  },
   { 
 	-100,100,100,
     "regen",
@@ -613,6 +620,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
     &gset_vars->kill_delay,
+  },
+  {
+	0,28,0,
+	"glap_total",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->lap_total,
   },
   {
     0,1,1,
@@ -4920,10 +4934,6 @@ void Cmd_Recall(edict_t *ent)
 
 	ClearCheckpoints(&ent->client->pers);
 
-    for (i=0;i<sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);i++) {
-        ent->client->pers.cpbox_checkpoint[i] = 0;
-    }
-
 	if (gametype->value==GAME_CTF)
 		return;
 
@@ -6526,6 +6536,7 @@ void SetDefaultValues(void)
 	gset_vars->mset->fasttele = 0;
 	gset_vars->flashlight = 1;
 	gset_vars->fpskick = 1;
+	gset_vars->mset->lap_total = 0;
 	gset_vars->mset->ghost = 1;
 	gset_vars->ghost_glow = 0;
 	gset_vars->mset->ghost_model = 0;
@@ -14101,7 +14112,6 @@ qboolean song_timer(int timeBetweenMessages) {
 		return false;
 }
 
-
 // fxn to clear all checkpoints from a player
 void ClearCheckpoints(client_persistant_t* pers) {
 	edict_t *cl_ent;
@@ -14157,10 +14167,22 @@ void ClearCheckpoints(client_persistant_t* pers) {
 		if (cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname, pers->netname) == 0) {
 			memcpy(cl_ent->client->pers.cpbox_checkpoint, pers->cpbox_checkpoint, sizeof(pers->cpbox_checkpoint));
 		}
+	for (i = 0; i < sizeof(pers->cpbox_checkpoint) / sizeof(int); i++) {
+		pers->cpbox_checkpoint[i] = 0;
 	}
 
 	// cp split
 	pers->cp_split = 0;
+
+	// lap counter
+	pers->lapcount = 0;
+
+	// cp lap checkpoints
+	pers->lap_cps = 0;
+
+	for (i = 0; i < sizeof(pers->lap_cp) / sizeof(int); i++) {
+		pers->lap_cp[i] = 0;
+	}
 }
 
 

@@ -430,6 +430,7 @@ typedef struct
 	int ghost_model;
 	int gravity;
 	int health;
+	int lap_total;
 	int regen;
 	int rocket;
 	int singlespawn;
