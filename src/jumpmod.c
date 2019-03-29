@@ -14160,16 +14160,6 @@ void ClearCheckpoints(client_persistant_t* pers) {
 		pers->cpbox_checkpoint[i] = 0;
 	}
 
-	//memcpy for anyone chasing us...
-	for (i = 0; i < maxclients->value; i++) {
-		cl_ent = g_edicts + 1 + i;
-		if (!cl_ent->inuse)
-			continue;
-		if (cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname, pers->netname) == 0) {
-			memcpy(cl_ent->client->pers.cpbox_checkpoint, pers->cpbox_checkpoint, sizeof(pers->cpbox_checkpoint));
-		}
-	}
-
 	// cp split
 	pers->cp_split = 0;
 
@@ -14178,9 +14168,18 @@ void ClearCheckpoints(client_persistant_t* pers) {
 
 	// cp lap checkpoints
 	pers->lap_cps = 0;
-
 	for (i = 0; i < sizeof(pers->lap_cp) / sizeof(int); i++) {
 		pers->lap_cp[i] = 0;
+	}
+
+	//memcpy for anyone chasing us...
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+		if (!cl_ent->inuse)
+			continue;
+		if (cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname, pers->netname) == 0) {
+			memcpy(cl_ent->client->pers.cpbox_checkpoint, pers->cpbox_checkpoint, sizeof(pers->cpbox_checkpoint));
+		}
 	}
 }
 
