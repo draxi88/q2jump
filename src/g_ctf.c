@@ -169,12 +169,14 @@ char *ctf_statusbar =
 
 "if 16 "
   "xv 72 "
-  "yb -24 "
-  "stat_string 29 "
-  "yb -16 "
-  "stat_string 25 "
-  "yb -8 "
-  "stat_string 26 "
+  "yb -32 "			// team
+  "stat_string 29 " // team
+  "yb -24 "			// laps
+  "stat_string 4 "  // laps
+  "yb -16 "			// race
+  "stat_string 25 " // race
+  "yb -8 "			// cps
+  "stat_string 26 " // cps
   "xr -128 "
   "yt 2 "
   "string \"%s\" "
@@ -1410,6 +1412,10 @@ void SetCTFStats(edict_t *ent)
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_ON;
 	else
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_OFF;
+	if (mset_vars->lap_total > 1)
+		ent->client->ps.stats[STAT_JUMP_LAP] = CONFIG_LAP_ON;
+	else
+		ent->client->ps.stats[STAT_JUMP_LAP] = CONFIG_LAP_OFF;
 	if (ent->client->resp.rep_racing && !ent->client->resp.replaying){
 		if (ent->client->resp.rep_race_number==MAX_HIGHSCORES){
 			gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: нов"); //race now.
@@ -1478,10 +1484,10 @@ void SetCTFStats(edict_t *ent)
 	{
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		ent->client->ps.stats[STAT_JUMP_MAPCOUNT] = 0;
-		ent->client->ps.stats[STAT_JUMP_GLUED] = 0;
 		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_EMPTY;
 		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_EMPTY;
 		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_JUMP_EMPTY;
+		ent->client->ps.stats[STAT_JUMP_LAP] = CONFIG_JUMP_EMPTY;
 		if (!ent->client->resp.replaying)
 		{
 			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
@@ -3802,6 +3808,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 		ent->client->resp.item_timer_allow = true;
 	}
 	cphud(); // update checkpoints@hud.
+	laphud();
 	s = Info_ValueForKey (ent->client->pers.userinfo, "skin");
 	CTFAssignSkin(ent, s);
 
@@ -3899,6 +3906,7 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 		ent->client->resp.replaying = 0;
 	// =====================================
 	cphud(); // update checkpoints@hud.
+	laphud();
 
 	if (ent->client->resp.ctf_team!=CTF_NOTEAM)
 		CTFObserver(ent);
@@ -3917,6 +3925,7 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 			ent->client->chase_target = e;
 			cphud(); // update checkpoints@hud.
 			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
+			laphud();
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
 			return;

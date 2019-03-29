@@ -743,6 +743,7 @@ void Cmd_Kill_f (edict_t *ent)
 		ClearCheckpoints(&ent->client->pers);
 	}
 	cphud(); // update checkpoints@hud.
+	laphud();
 
 //ZOID
 	if (ent->solid == SOLID_NOT)

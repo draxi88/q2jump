@@ -850,6 +850,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 	}
 
 	cphud(); // update checkpoints@hud.
+	laphud();
 
 	return false; // leave item on the ground
 }
@@ -3577,6 +3578,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		}
 	}
 	cphud(); // update checkpoints@hud.
+	laphud();
 }
 
 void SP_cpbox_small (edict_t *ent)

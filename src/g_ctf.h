@@ -39,7 +39,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define STAT_JUMP_VOTE_TYPE 2
 //#define	STAT_AMMO				3 available
 #define	STAT_JUMP_NEXT_MAP1	3
-#define STAT_JUMP_GLUED 4
+//#define STAT_JUMP_GLUED 4
+#define STAT_JUMP_LAP 4
 //#define	STAT_ARMOR				5 available
 #define	STAT_JUMP_NEXT_MAP2 5
 //#define	STAT_SELECTED_ICON		6 in use
@@ -116,6 +117,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define CONFIG_JUMP_RACE_13 1655
 #define CONFIG_JUMP_RACE_14 1656
 #define CONFIG_JUMP_RACE_15 1657
+#define CONFIG_LAP_ON 1658
+#define CONFIG_LAP_OFF 1659
 
 #define CONFIG_CTF_MATCH (CS_AIRACCEL-1)
 #define CONFIG_CTF_TEAMINFO	(CS_AIRACCEL-2)
