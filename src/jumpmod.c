@@ -11389,12 +11389,12 @@ void list_mapsleft(edict_t *ent)
 				   {
 					  Com_sprintf(name,sizeof(name),maplist.users[maplist.times[i2][0].uid].name);
 					  Highlight_Name(name);
-  					  gi.cprintf (ent, PRINT_HIGH, "%-3d %5s %-20s %-16s %8.3f\n", i,map_skill[maplist.skill[i2]],
+  					  gi.cprintf (ent, PRINT_HIGH, "%-3d %5s %-20s %-16s %8.3f\n", i+1,map_skill[maplist.skill[i2]],
 						  maplist.mapnames[i2],name,
 						  maplist.times[i2][0].time);
 				   }
 				   else
-						gi.cprintf (ent, PRINT_HIGH, "%-3d %5s %-20s %-16s %-6s\n", i, map_skill[maplist.skill[i2]],maplist.mapnames[i2],"","");
+						gi.cprintf (ent, PRINT_HIGH, "%-3d %5s %-20s %-16s %-6s\n", i+1, map_skill[maplist.skill[i2]],maplist.mapnames[i2],"","");
 
 				}
 				i2++;
