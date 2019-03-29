@@ -4317,6 +4317,7 @@ void apply_time(edict_t *other, edict_t *ent)
 
 		ClearCheckpoints(&other->client->pers);
 		cphud();
+		laphud();
 		
 		if (((other->client->resp.item_timer+0.0001)<level_items.item_time) || (level_items.item_time==0))
 		{
@@ -5146,6 +5147,7 @@ void Cmd_Recall(edict_t *ent)
 			VectorCopy (ent->s.angles, client->ps.viewangles);
 			VectorCopy (ent->s.angles, client->v_angle);
 			cphud(); // update checkpoints@hud.
+			laphud();
 
 			if ( ent->client->resp.ctf_team==CTF_TEAM2 || mset_vars->ezmode == 1) { // if hard and ezmode give a readout
 				if (ent->client->resp.ezmsg)
@@ -6173,6 +6175,7 @@ void MSET(edict_t *ent)
 
 	//fix onscreen message for checkpoints
 	cphud();
+	laphud();
 }
 
 void GSET(edict_t *ent)
@@ -7679,6 +7682,7 @@ void JumpChase(edict_t *ent)
 	ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 	ent->client->resp.replaying = 0;
 	cphud(); // update checkpoints@hud.
+	laphud();
 	if (ent->client->chase_target) {
 		if (!ent->client->resp.chase_ineye)
 		{
@@ -7704,7 +7708,8 @@ void JumpChase(edict_t *ent)
 		if (e->inuse && e->solid != SOLID_NOT) {
 			ent->client->chase_target = e;
 			cphud(); // update checkpoints@hud.
-			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
+			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint)); //copy checkpoints
+			laphud();
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
 			return;
@@ -14298,6 +14303,34 @@ void cphud() {
 		sprintf(string, "  Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
 		gi.WriteByte(svc_configstring);
 		gi.WriteShort(CONFIG_CP_ON);
+		gi.WriteString(string);
+		gi.unicast(cl_ent, true); //send to clients
+	}
+}
+
+// finds how many laps a player has and displays it in hud
+// if chasing, you will view the laps of the player you are chasing
+void laphud() {
+	edict_t *cl_ent;
+	int i;
+	char string[128];
+	char lap[10];
+	char laptotal[10];
+
+	sprintf(laptotal, "%d", mset_vars->lap_total);
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+
+		if (!(cl_ent->client && cl_ent->inuse))
+			continue;
+		if (cl_ent->client->chase_target)
+			sprintf(lap, "%d", cl_ent->client->chase_target->client->pers.lapcount);
+		else
+			sprintf(lap, "%d", cl_ent->client->pers.lapcount);
+
+		sprintf(string, "    Laps: %s/%s", HighAscii(lap), HighAscii(laptotal));
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_LAP_ON);
 		gi.WriteString(string);
 		gi.unicast(cl_ent, true); //send to clients
 	}

@@ -180,6 +180,8 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		return;
 	}
 
+	laphud();
+
 	// check if the client is already finished
 	if (other->client->resp.finished == 1 && !other->client->resp.replaying)
 		return;
@@ -231,7 +233,7 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	// they don't have enough lap checkpoints, tell them how many they missed
 	else if (other->client->pers.lap_cps < self->count) {
 		if (trigger_timer(2))
-			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints need to complete this lap.\n", other->client->pers.lap_cps, self->count);
+			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints needed to complete this lap.\n", other->client->pers.lap_cps, self->count);
 		return;
 	}
 

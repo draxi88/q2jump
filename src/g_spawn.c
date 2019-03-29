@@ -1298,9 +1298,9 @@ void SP_worldspawn (edict_t *ent)
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_OFF,     "Antiglue   œ∆∆");			
 		gi.configstring (CONFIG_JUMP_ANTIGLUE_DISABLED,"Antiglue   ŒØ¡");
 		cphud(); //cphud gi.configstring(CONFIG_CP_ON, va("  Chkpts: 0/%s", HighAscii(cptotal)));
-		gi.configstring(CONFIG_LAP_ON, "LAP UI IS ON");
-		gi.configstring(CONFIG_LAP_OFF, "LAP UI IS OFF");
-		gi.configstring (CONFIG_CP_OFF,                "");
+		gi.configstring(CONFIG_CP_OFF, "");
+		laphud(); 
+		gi.configstring(CONFIG_LAP_OFF, "");
         gi.configstring (CONFIG_JUMP_RACE_OFF,         ""); // old "    Race: œ∆∆"
 		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    Team: ≈·Û˘");
 		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    Team: »·Ú‰");
