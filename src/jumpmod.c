@@ -12190,7 +12190,7 @@ void Cmd_Race (edict_t *ent)
 	if (!level_items.recorded_time_frames[race_this])
 	{
 		ent->client->resp.rep_racing = false;
-		gi.cprintf(ent,PRINT_HIGH,"There is no demo to race. Try replay now or replay <demonumber>\n");
+		gi.cprintf(ent,PRINT_HIGH,"There is no demo to race.");
 		gi.cprintf(ent,PRINT_CHAT,"\nNo. Player             Time\n");
 		for (i=0;i<MAX_HIGHSCORES;i++)
 		{
