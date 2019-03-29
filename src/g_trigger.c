@@ -192,6 +192,8 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	if (other->client->pers.lap_cps >= self->count) {
 		other->client->pers.lapcount = other->client->pers.lapcount + 1;
 
+		/*
+		// split stuff
 		int my_time;
 		float my_time_decimal;
 
@@ -206,6 +208,7 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 			other->client->pers.cp_split = my_time_decimal;
 		else if (other->client->resp.ctf_team == CTF_NOTEAM && other->client->resp.replaying && !other->client->resp.mute_cprep)
 			other->client->pers.cp_split = (other->client->resp.replay_frame / 10) - 0.1;
+		*/
 
 		// reset lap cp's
 		int i;
