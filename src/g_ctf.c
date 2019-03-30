@@ -53,8 +53,6 @@ int imageindex_ctfsb1;
 int imageindex_ctfsb2;*/
 
 char *ctf_statusbar =
-
-
 "if 1 "
 // health
 "yb	-32 "
@@ -171,12 +169,12 @@ char *ctf_statusbar =
   "xv 72 "
   "yb -32 "			// team
   "stat_string 29 " // team
-  "yb -24 "			// laps
-  "stat_string 4 "  // laps
-  "yb -16 "			// race
+  "yb -24 "			// race
   "stat_string 25 " // race
-  "yb -8 "			// cps
+  "yb -16 "			// cps
   "stat_string 26 " // cps
+  "yb -8 "			// laps
+  "stat_string 4 "  // laps
   "xr -128 "
   "yt 2 "
   "string \"%s\" "
