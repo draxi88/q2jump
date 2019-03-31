@@ -7710,6 +7710,7 @@ void JumpChase(edict_t *ent)
 			cphud(); // update checkpoints@hud.
 			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint)); //copy checkpoints
 			laphud();
+			racehud();
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
 			return;
@@ -12220,6 +12221,7 @@ void Cmd_Race (edict_t *ent)
 
 	ent->client->resp.rep_racing = true;
 	ent->client->resp.rep_race_number = race_this;
+	racehud();
 	if (race_this==MAX_HIGHSCORES)
 		gi.cprintf(ent,PRINT_CHAT,"Replay racing is ON for the fastest demo this map.\n");
 	else
@@ -14331,6 +14333,38 @@ void laphud() {
 		sprintf(string, "    Laps: %s/%s", HighAscii(lap), HighAscii(laptotal));
 		gi.WriteByte(svc_configstring);
 		gi.WriteShort(CONFIG_LAP_ON);
+		gi.WriteString(string);
+		gi.unicast(cl_ent, true); //send to clients
+	}
+}
+
+// finds racenumber and displays it in hud
+// if chasing, you will view the racenumber of the player you are chasing
+void racehud() {
+	edict_t *cl_ent;
+	int i;
+	char string[128];
+	char race[10];
+
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+
+		if (!(cl_ent->client && cl_ent->inuse))
+			continue;
+		if (!cl_ent->client->resp.rep_racing && !cl_ent->client->chase_target) {
+			sprintf(string, "");
+		}
+		else {
+			if (cl_ent->client->chase_target)
+				sprintf(race, "%d", cl_ent->client->chase_target->client->resp.rep_race_number+1);
+			else
+				sprintf(race, "%d", cl_ent->client->resp.rep_race_number+1);
+			if (Q_stricmp(race, "16") == 0)
+				sprintf(race, "NOW");
+			sprintf(string, "    Race: %s", HighAscii(race));
+		}
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_RACE);
 		gi.WriteString(string);
 		gi.unicast(cl_ent, true); //send to clients
 	}

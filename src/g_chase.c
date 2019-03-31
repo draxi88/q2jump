@@ -189,6 +189,7 @@ void ChaseNext(edict_t *ent)
 	cphud(); // update checkpoints@hud.
 	memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
 	laphud();
+	racehud();
 }
 
 
@@ -217,4 +218,5 @@ void ChasePrev(edict_t *ent)
 	cphud(); // update checkpoints@hud.
 	memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
 	laphud();
+	racehud();
 }
