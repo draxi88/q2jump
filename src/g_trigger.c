@@ -576,6 +576,9 @@ trigger_push
 
 static int windsound;
 
+
+// checkpoint usage is left here for compatibility with a few maps
+// ent is not advised to be used for checkpoints anymore, use jump_cpwall, it is better in every way
 void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
 	if(self->target) {
