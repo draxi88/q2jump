@@ -4057,6 +4057,7 @@ void SP_jump_cpeffect (edict_t *ent){
 
 	gi.linkentity(ent);
 }
+
 void cpwall_think (edict_t *self){
 	edict_t *temp_ent;
 	int i;
@@ -4065,7 +4066,9 @@ void cpwall_think (edict_t *self){
 		temp_ent = g_edicts + 1 + i;
 		if (!temp_ent->inuse || !temp_ent->client)
 			continue;
-		if(temp_ent->client->pers.checkpoints>=self->count)
+		if(mset_vars->checkpoint_total > 0 && temp_ent->client->pers.checkpoints >= self->count)
+			continue;
+		if (self->style == 1 && temp_ent->client->pers.lap_cps >= self->count)
 			continue;
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_FORCEWALL);
@@ -4083,12 +4086,18 @@ void cpwall_touch (edict_t *self, edict_t *other)
 	if (!other->client)
 		return;
 	if (other->client->resp.ctf_team == CTF_TEAM1 || other->client->resp.ctf_team == CTF_TEAM2){
-		if (other->client->pers.checkpoints < self->count) {
+		if (mset_vars->checkpoint_total > 0 && other->client->pers.checkpoints < self->count) {
 			VectorCopy(other->s.old_origin, other->s.origin);
 			VectorClear(other->velocity);
 			if (trigger_timer(5)) {
 				gi.cprintf(other, PRINT_HIGH, "You need %d checkpoint(s) to pass this barrier.\n", self->count);
 			}
+		}
+		else if (self->style == 1 && other->client->pers.lap_cps < self->count) {
+			VectorCopy(other->s.old_origin, other->s.origin);
+			VectorClear(other->velocity);
+			if (trigger_timer(2))
+				gi.cprintf(other, PRINT_HIGH, "You need %d lap checkpoint(s) to pass this barrier.\n", self->count);
 		}
 	}
 }
