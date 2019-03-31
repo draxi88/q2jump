@@ -4058,6 +4058,9 @@ void SP_jump_cpeffect (edict_t *ent){
 	gi.linkentity(ent);
 }
 
+// resizable trigger that repels people without the needed items
+// count - number of the things you need, defaults to checkpoints
+// style - set this to 1 to change the needed items to lap checkpoints
 void cpwall_think (edict_t *self){
 	edict_t *temp_ent;
 	int i;
@@ -4078,11 +4081,9 @@ void cpwall_think (edict_t *self){
 		gi.unicast(temp_ent,true);
 	}
 	self->nextthink = level.time + FRAMETIME;
-	
 }
 
-void cpwall_touch (edict_t *self, edict_t *other)
-{
+void cpwall_touch (edict_t *self, edict_t *other) {
 	if (!other->client)
 		return;
 	if (other->client->resp.ctf_team == CTF_TEAM1 || other->client->resp.ctf_team == CTF_TEAM2){
@@ -4112,7 +4113,7 @@ void SP_jump_cpwall (edict_t *ent) {
 	ent->svflags |= SVF_NOCLIENT;
 	ent->s.modelindex = 1;
 	gi.setmodel(ent, ent->model);
-	
+
 
 	VectorSubtract(ent->absmax,ent->absmin,center);
 	VectorScale(center,0.5,center);
