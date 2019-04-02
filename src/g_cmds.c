@@ -777,7 +777,7 @@ void Cmd_Kill_f (edict_t *ent)
 
 	if (ent->health<=0)
 	{
-		return;
+		respawn(ent);
 	}
 	if (ent->client->resp.ctf_team==CTF_TEAM2 || (gametype->value==GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1))
 	{
