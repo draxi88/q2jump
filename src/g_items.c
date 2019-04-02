@@ -3576,9 +3576,9 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 				memcpy(cl_ent->client->pers.cpbox_checkpoint, other->client->pers.cpbox_checkpoint, sizeof(other->client->pers.cpbox_checkpoint));
 			}
 		}
+		cphud(); // update checkpoints@hud.
+		laphud();
 	}
-	cphud(); // update checkpoints@hud.
-	laphud();
 }
 
 void SP_cpbox_small (edict_t *ent)

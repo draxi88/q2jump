@@ -14193,7 +14193,10 @@ void ClearCheckpoints(client_persistant_t* pers) {
 
 // fxn to check for who to play sound to at checkpoints
 void CPSoundCheck(edict_t *ent) {
-	jumpmod_sound(ent, false, gi.soundindex("items/pkup.wav"), CHAN_ITEM, 1, ATTN_NORM);
+	if (ent->client->resp.replaying) //if replaying, cp-sound is local only.
+		jumpmod_sound(ent, true, gi.soundindex("items/pkup.wav"), CHAN_ITEM, 1, ATTN_NORM);
+	else
+		jumpmod_sound(ent, false, gi.soundindex("items/pkup.wav"), CHAN_ITEM, 1, ATTN_NORM);
 }
 
 // Hack to override the gi.sound function.
