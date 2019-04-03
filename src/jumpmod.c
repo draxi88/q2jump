@@ -7415,13 +7415,23 @@ void removemapfrom_uid_file(int uid){
 
 	FILE	*f;
     int     i;
+	int		mapid;
 	cvar_t	*port;
 	cvar_t	*tgame;
 	char	name[256];
     maplist_uid_file maplistinuid[MAX_MAPS];
+	char	mapname[256];
 
 	tgame = gi.cvar("game", "", 0);
 	port = gi.cvar("port", "", 0);
+
+	if (Q_stricmp(gi.argv(0), "remmap") == 0) { //if remmap is used, it should remove maps from uid aswell.
+		mapid = atoi(gi.argv(1)) - 1;
+		sprintf(mapname, "%s", maplist.mapnames[mapid]);
+	}
+	else {
+		strcpy(mapname, level.mapname);
+	}
 
 	if (!*tgame->string)
 	{
@@ -7451,7 +7461,7 @@ void removemapfrom_uid_file(int uid){
 
 	for (i=0;i<MAX_MAPS;i++)
 	{
-        if (strcmp(maplistinuid[i].mapname,level.mapname)==0){
+        if (Q_stricmp(maplistinuid[i].mapname,mapname)==0){
             continue;
         }
 		fprintf (f, " %s", maplistinuid[i].mapname);
@@ -9914,7 +9924,10 @@ void AddMap(edict_t *ent)
 void RemoveMap (edict_t* ent)
 {
 	int num;
+	int i;
+	int status;
 	char	maplist_path[256];
+	char	filename[256];
 	cvar_t	*port;
 	cvar_t	*tgame;
 	if (ent->client->resp.admin<aset_vars->ADMIN_ADDMAP_LEVEL)
@@ -9941,11 +9954,23 @@ void RemoveMap (edict_t* ent)
 		gi.cprintf(ent,PRINT_HIGH,"Invalid map number\n");
 		return;
 	}
-
+	for (i = 0; i < MAX_USERS; i++){
+		if (maplist.times[num][i].time == 0)
+			break;
+		if (maplist.times[num][i].uid >= 0)
+		{
+			maplist.users[maplist.times[num][i].uid].completions--;
+			if(points[i]>0)
+				maplist.users[maplist.times[num][i].uid].score -= points[i];
+			removemapfrom_uid_file(maplist.times[num][i].uid);
+		}
+	}
+	port = gi.cvar("port", "", 0);
+	tgame = gi.cvar("game", "", 0);
+	sprintf(filename, "%s/%s/%s.t", tgame->string, port->string, maplist.mapnames[num]);
+	remove(filename);
 	gi.cprintf(ent, PRINT_HIGH, "Removed %s from the maplist.\n", maplist.mapnames[num]);
 	strcpy(maplist.mapnames[num], "");
-	port = gi.cvar("port", "", 0);
-	tgame = gi.cvar("game","",0);
 	sprintf (maplist_path, "%s/%s/maplist.ini", tgame->string,port->string);
 	//write_tourney_file(level.mapname,level.mapnum);
 	WriteMapList();
