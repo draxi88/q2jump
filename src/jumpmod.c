@@ -4943,6 +4943,8 @@ void Cmd_Recall(edict_t *ent)
 
 		// if team easy
 		if ( ent->client->resp.ctf_team==CTF_TEAM1 || mset_vars->ezmode == 1) {
+			if (ent->deadflag)
+				respawn(ent);
 			ent->client->resp.item_timer = ent->client->resp.stored_item_timer;	
 			ent->client->resp.recalls--;
 			ent->client->pers.total_recall++;
