@@ -214,7 +214,6 @@ void		ShowPlayerTimes(edict_t *ent);
 void		ShowPlayerScores(edict_t *ent);
 void sort_users_4( int n );
 void		Cmd_Show_Help(edict_t *ent);
-void		Cmd_Show_Glue(edict_t *ent);
 void		show_ent_list(edict_t *ent,int page);
 qboolean	AddNewEnt(void);
 void		ClearNewEnt(void);
@@ -271,7 +270,7 @@ void		CloseFile(FILE *fp);
 void		sort_queue( int n );
 void		AddUser(char *name,int i);
 int			GetPlayerUid(char *name);
-float		add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,char *owner,char *name);
+float		add_item_to_queue(edict_t *ent, float item_time,char *owner,char *name);
 void		sort_users_2( int n );
 void		sort_users(void);
 qboolean	Jet_AvoidGround( edict_t *ent );
@@ -448,9 +447,6 @@ typedef struct
 	int admin_max_addtime;
 	char admin_model[255];
 	int allow_admin_boot;
-	int antiglue;
-	int antiglue_allow1st;
-	int antiglue_penalty;
 	int autotime;
 	int best_time_glow;
 	int flashlight;
@@ -642,7 +638,7 @@ void removeClientCommands(edict_t *ent);
 
 void AutoPutClientInServer (edict_t *ent);
 
-qboolean tourney_log(edict_t *ent, int uid, float time, float item_time_penalty, char *date );
+qboolean tourney_log(edict_t *ent, int uid, float time, char *date );
 void sort_tourney_records();
 void open_tourney_file(char *filename,qboolean apply);
 void write_tourney_file(char *filename,int mapnum);

@@ -888,9 +888,6 @@ qboolean CTFPickup_Flag(edict_t *ent, edict_t *other)
 	Start_Recording(other);
 
 	other->client->resp.item_timer = 0;
-	other->client->resp.item_timer_penalty = 0;
-	other->client->resp.item_timer_penalty_delay = 0;
-	other->client->resp.glued = 0;
 	other->client->resp.jumps = 0;
 	// pick up the flag
 	// if it's not a dropped flag, we just make is disappear
@@ -1233,15 +1230,6 @@ void SetCTFStats(edict_t *ent)
 	{
 		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.cur_speed;
-		//no fucking antiglue anymore..
-		/*if (gset_vars->antiglue==0)
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
-		else
-		if (ent->client->resp.antiglue)
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE;
-		else
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;*/
-
 	}
 	else {
 		if (ent->client->resp.replaying)
@@ -1255,16 +1243,7 @@ void SetCTFStats(edict_t *ent)
 			ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		}
-		
-		/*if (gset_vars->antiglue==0)
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
-		else
-		if (ent->client->resp.antiglue)
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE;
-		else
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;*/
 	}
-	//ent->client->ps.stats[STAT_JUMP_GLUED] = ent->client->resp.glued;
 	//ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 999999999;
 	
 
@@ -3500,7 +3479,6 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p);
 void CTFHelp(edict_t *ent, pmenuhnd_t *p);
 void CTFHelp_main(edict_t *ent, pmenuhnd_t *p);
 void CTFHelp_misc(edict_t *ent, pmenuhnd_t *p);
-void CTFHelp_antiglue(edict_t *ent, pmenuhnd_t *p);
 void CTFHelp_vote(edict_t *ent, pmenuhnd_t *p);
 
 pmenu_t creditsmenu[] = {
@@ -3586,27 +3564,6 @@ pmenu_t helpmenu_misc[] = {
 	{ "*time",					PMENU_ALIGN_LEFT, NULL },
 	{ "*cmsg",					PMENU_ALIGN_LEFT, NULL },
 	{ NULL,								PMENU_ALIGN_LEFT, NULL },
-	{ NULL,								PMENU_ALIGN_LEFT, NULL },
-	{ NULL,								PMENU_ALIGN_LEFT, NULL },
-	{ "Return to Main Menu",			PMENU_ALIGN_LEFT, CTFReturnToMain }
-};
-
-pmenu_t helpmenu_antiglue[] = {
-	{ "*Quake II JumpMod",						PMENU_ALIGN_CENTER, NULL },
-	{ "* ",	PMENU_ALIGN_CENTER, NULL },
-	{ NULL,								PMENU_ALIGN_LEFT, NULL },
-	{ NULL,					PMENU_ALIGN_LEFT, NULL },
-	{ "Glue is caused by jumping",					PMENU_ALIGN_LEFT, NULL },
-	{ "too soon on hitting the",								PMENU_ALIGN_LEFT, NULL },
-	{ "floor. This server allows",				PMENU_ALIGN_LEFT, NULL },
-	{ "you to prevent glue by",					PMENU_ALIGN_LEFT, NULL },
-	{ "typing:",								PMENU_ALIGN_LEFT, NULL },
-	{ "*antiglue",							PMENU_ALIGN_LEFT, NULL },
-	{ NULL,								PMENU_ALIGN_LEFT, NULL },
-	{ "For every jump fixed you",					PMENU_ALIGN_LEFT, NULL },
-	{ "will be given a time",		PMENU_ALIGN_LEFT, NULL },
-	{ "penalty.",					PMENU_ALIGN_LEFT, NULL },
-	{ "",					PMENU_ALIGN_LEFT, NULL },
 	{ NULL,								PMENU_ALIGN_LEFT, NULL },
 	{ NULL,								PMENU_ALIGN_LEFT, NULL },
 	{ "Return to Main Menu",			PMENU_ALIGN_LEFT, CTFReturnToMain }
@@ -3741,17 +3698,11 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 	{
 		ent->client->resp.item_timer = 0;
 		ent->client->resp.client_think_begin = 0;
-		ent->client->resp.glued = 0;
-		ent->client->resp.item_timer_penalty_delay = 0;
-		ent->client->resp.item_timer_penalty = 0;
 		ent->client->resp.item_timer_allow = true;
 	} else {
 		ent->client->resp.jumps = 0;
 		ent->client->resp.client_think_begin = 0;
-		ent->client->resp.glued = 0;
 		ent->client->resp.item_timer = 0;
-		ent->client->resp.item_timer_penalty_delay = 0;
-		ent->client->resp.item_timer_penalty = 0;
 		ent->client->resp.item_timer_allow = true;
 	}
 	cphud(); // update checkpoints@hud.
@@ -3779,10 +3730,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 	ent->client->ps.pmove.pm_time = 14;
 	ent->client->resp.item_timer_allow = true;
 	ent->client->resp.item_timer = 0;
-	ent->client->resp.glued = 0;
 	ent->client->resp.client_think_begin = 0;
-	ent->client->resp.item_timer_penalty = 0;
-	ent->client->resp.item_timer_penalty_delay = 0;
 	if (!level.status)
 Notify_Of_Team_Commands(ent);
 //	gi.bprintf(PRINT_HIGH, "%s joined the %s team.\n",
@@ -3813,9 +3761,6 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 
 	ent->client->resp.client_think_begin = 0;
 	ent->client->resp.item_timer = 0;
-	ent->client->resp.glued = 0;
-	ent->client->resp.item_timer_penalty = 0;
-	ent->client->resp.item_timer_penalty_delay = 0;
 	ent->client->resp.item_timer_allow = true;
 
 	s = Info_ValueForKey (ent->client->pers.userinfo, "skin");
@@ -5680,12 +5625,6 @@ void CTFHelp_misc(edict_t *ent, pmenuhnd_t *p)
 {
 	PMenu_Close(ent);
 	PMenu_Open(ent, helpmenu_misc, -1, sizeof(helpmenu_misc) / sizeof(pmenu_t), NULL);
-}
-
-void CTFHelp_antiglue(edict_t *ent, pmenuhnd_t *p)
-{
-	PMenu_Close(ent);
-	PMenu_Open(ent, helpmenu_antiglue, -1, sizeof(helpmenu_antiglue) / sizeof(pmenu_t), NULL);
 }
 
 void CTFHelp_vote(edict_t *ent, pmenuhnd_t *p)

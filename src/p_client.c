@@ -1063,18 +1063,12 @@ void respawn (edict_t *self)
 	{
 		self->client->resp.item_timer = 0;
 		self->client->resp.client_think_begin = 0;
-		self->client->resp.glued = 0;
-		self->client->resp.item_timer_penalty = 0;
-		self->client->resp.item_timer_penalty_delay = 0;
 		self->client->resp.jumps = 0;
 	}
 	else
 	{
 		self->client->resp.client_think_begin = 0;
-		self->client->resp.glued = 0;
 		self->client->resp.item_timer = 0;
-		self->client->resp.item_timer_penalty = 0;
-		self->client->resp.item_timer_penalty_delay = 0;
 		//self->client->resp.item_timer = self->client->resp.stored_item_timer;
 
 	}
@@ -1159,9 +1153,7 @@ void PutClientInServer (edict_t *ent)
 	{
 
 		ent->client->resp.item_timer = 0;
-		ent->client->resp.item_timer_penalty_delay = 0;
 		ent->client->resp.client_think_begin = 0;
-		ent->client->resp.item_timer_penalty = 0;
 		ent->client->resp.jumps = 0;
 		pause_client(ent);
 	}
@@ -2203,40 +2195,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 
 	if (gametype->value!=GAME_CTF)
-	if ((pm.s.pm_flags & PMF_TIME_LAND) && (pm.s.pm_time==25 || pm.s.pm_time==18))
-	{
-		//antiglue is always off now unless turned on
-		if (ent->client->resp.antiglue)
-		{
-			//antiglue is enabled or we are on easy team
-			if (gset_vars->antiglue || ent->client->resp.ctf_team==CTF_TEAM1)
-			//if (!(gset_vars->antiglue==0 && ent->client->resp.ctf_team!=CTF_TEAM1))
-			{
-				pm.s.pm_flags &= ~(PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_TELEPORT);
-				pm.s.pm_time = 0;
-				//apply a penalty if available
-				if (gset_vars->antiglue_penalty)
-				{
-					//penalty delay
-					if (ent->client->resp.item_timer_penalty_delay<level.framenum)
-					{
-						if (!level_items.stored_item_times_count)
-						{
-							ent->client->resp.item_timer += 5;
-							ent->client->resp.item_timer_penalty += 50;
-						}
-						else
-						{
-							ent->client->resp.item_timer += (gset_vars->antiglue_penalty/10);
-							ent->client->resp.item_timer_penalty += gset_vars->antiglue_penalty;
-						}
-						ent->client->resp.item_timer_penalty_delay = level.framenum + 5;
-					}
-				}
-			}
-		}
-		ent->client->resp.glued++;
-	}
 
 	if (ent->client->resp.showjumpdistance)
 	if (!pm.groundentity)

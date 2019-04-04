@@ -39,7 +39,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define STAT_JUMP_VOTE_TYPE 2
 //#define	STAT_AMMO				3 available
 #define	STAT_JUMP_NEXT_MAP1	3
-//#define STAT_JUMP_GLUED 4
 #define STAT_JUMP_LAP 4
 //#define	STAT_ARMOR				5 available
 #define	STAT_JUMP_NEXT_MAP2 5
@@ -55,24 +54,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //#define	STAT_FRAGS				14 in use
 //#define	STAT_FLASHES			15 in use
 
-#define STAT_JUMP_ANTIGLUE 1614 //16
-#define STAT_ITEM_TIMER 17
-#define STAT_ITEM_TIMER2 19
-#define STAT_JUMP_MAPCOUNT 18
-#define STAT_JUMP_KEY_LEFT_RIGHT			20
+#define STAT_JUMP_KEY_ATTACK	16 
+#define STAT_ITEM_TIMER			17
+#define STAT_ITEM_TIMER2		19
+#define STAT_JUMP_MAPCOUNT		18
+#define STAT_JUMP_KEY_LEFT_RIGHT	20
 #define STAT_JUMP_KEY_BACK			21
 #define STAT_JUMP_KEY_JUMP			22
-#define STAT_JUMP_FPS			23
-#define STAT_JUMP_KEY_CROUCH			24
-#define STAT_JUMP_KEY_ATTACK			16 
-#define STAT_JUMP_TEAM 29
-#define STAT_JUMP_CPS 26
-#define STAT_JUMP_RACE 25
+#define STAT_JUMP_FPS				23
+#define STAT_JUMP_KEY_CROUCH		24
+#define STAT_JUMP_TEAM				29
+#define STAT_JUMP_CPS				26
+#define STAT_JUMP_RACE				25
 
 #define STAT_CTF_ID_VIEW			27
-#define STAT_TIME_LEFT 28
-#define STAT_JUMP_KEY_FORWARD			30
-#define STAT_JUMP_REPLAY	31
+#define STAT_TIME_LEFT				28
+#define STAT_JUMP_KEY_FORWARD		30
+#define STAT_JUMP_REPLAY			31
 
 #define CONFIG_JUMP_TEAM_EASY 1600
 #define CONFIG_JUMP_TEAM_HARD 1601
@@ -82,12 +80,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define CONFIG_CP_OFF 1606
 #define CONFIG_JUMP_EMPTY 1609
 
-
-#define CONFIG_JUMP_ANTIGLUE 1610
-#define CONFIG_JUMP_ANTIGLUE_OFF 1611
 #define CONFIG_JUMP_ADDED_TIME 1612
-#define CONFIG_JUMP_ANTIGLUE_DISABLED 1613
-//#define CONFIG_JUMP_ANTIGLUE_ENABLED 1614
 
 
 #define CONFIG_JUMP_VOTE_REMAINING 1620
