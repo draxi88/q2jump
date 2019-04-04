@@ -9846,6 +9846,8 @@ void RemoveMap (edict_t* ent)
 	sprintf(filename, "%s/%s/%s.t", tgame->string, port->string, maplist.mapnames[num]);
 	remove(filename);
 	gi.cprintf(ent, PRINT_HIGH, "Removed %s from the maplist.\n", maplist.mapnames[num]);
+	if (Q_stricmp(maplist.mapnames[num], level.mapname) == 0)
+		remtimes(ent);
 	strcpy(maplist.mapnames[num], "");
 	sprintf (maplist_path, "%s/%s/maplist.ini", tgame->string,port->string);
 	//write_tourney_file(level.mapname,level.mapnum);
