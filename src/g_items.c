@@ -849,8 +849,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
 
-	cphud(); // update checkpoints@hud.
-	laphud();
+	hud_footer(other);
 
 	return false; // leave item on the ground
 }
@@ -3544,9 +3543,6 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		other->client->pers.cpbox_checkpoint[self->count] = 1;
 		other->client->pers.checkpoints += 1;
 
-		// play a sound for it
-		CPSoundCheck(other);
-
 		// in easy give them the int, in hard give them the float, in replay give them relative
 		if (other->client->resp.ctf_team==CTF_TEAM1){
 			sprintf(cpstring,"reached checkpoint %d/%d in %1.1f seconds. (split: %1.1f)\n",
@@ -3576,8 +3572,10 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 				memcpy(cl_ent->client->pers.cpbox_checkpoint, other->client->pers.cpbox_checkpoint, sizeof(other->client->pers.cpbox_checkpoint));
 			}
 		}
-		cphud(); // update checkpoints@hud.
-		laphud();
+		// play a sound for it
+		CPSoundCheck(other);
+		//update hud
+		hud_footer(other);
 	}
 }
 

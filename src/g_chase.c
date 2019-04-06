@@ -186,10 +186,8 @@ void ChaseNext(edict_t *ent)
 
 	ent->client->chase_target = e;
 	ent->client->update_chase = true;
-	cphud(); // update checkpoints@hud.
 	memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
-	laphud();
-	racehud();
+	hud_footer(ent);
 }
 
 
@@ -215,8 +213,6 @@ void ChasePrev(edict_t *ent)
 
 	ent->client->chase_target = e;
 	ent->client->update_chase = true;
-	cphud(); // update checkpoints@hud.
 	memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
-	laphud();
-	racehud();
+	hud_footer(ent);
 }

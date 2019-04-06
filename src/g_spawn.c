@@ -1294,14 +1294,8 @@ void SP_worldspawn (edict_t *ent)
 		strcpy(prev_levels[0].mapname,this_map);
 		for (i=0;i<strlen(this_map);i++)
 			this_map[i] |= 128;
-		cphud(); //cphud gi.configstring(CONFIG_CP_ON, va("  Chkpts: 0/%s", HighAscii(cptotal)));
-		gi.configstring(CONFIG_CP_OFF, "");
-		laphud(); 
-		gi.configstring(CONFIG_LAP_OFF, "");
-		racehud();
-		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    Team: Åáóù");
-		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    Team: Èáòä");
-		gi.configstring (CONFIG_JUMP_TEAM_OBSERVER,    "    Team: Ïâóåòöåò");
+		hud_footer(ent);
+
 		gi.configstring (CONFIG_JUMP_EMPTY,    " ");
 
 		gi.configstring (CONFIG_JUMP_MAPCOUNT,va("%4d",maplist.nummaps));
@@ -1318,9 +1312,9 @@ void SP_worldspawn (edict_t *ent)
 	if (deathmatch->value)
 //ZOID
 		if (ctf->value) {
-			Com_sprintf(str,sizeof(str),ctf_statusbar,this_map,prev_levels[1].mapname,prev_levels[2].mapname,prev_levels[3].mapname);
-			//gi.dprintf("%d %s\n",strlen(str),str);
-			gi.configstring (CS_STATUSBAR, str);
+			Com_sprintf(str, sizeof(str), ctf_statusbar,"","","","",
+				this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
+			gi.configstring(CS_STATUSBAR, str);
 			CTFPrecache();
 		} else
 //ZOID

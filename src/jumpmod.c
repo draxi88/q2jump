@@ -4273,8 +4273,7 @@ void apply_time(edict_t *other, edict_t *ent)
 		other->client->resp.item_timer = add_item_to_queue(other,other->client->resp.item_timer,other->client->pers.netname,ent->item->pickup_name);
 
 		ClearCheckpoints(&other->client->pers);
-		cphud();
-		laphud();
+		hud_footer(other);
 		
 		if (((other->client->resp.item_timer+0.0001)<level_items.item_time) || (level_items.item_time==0))
 		{
@@ -5105,8 +5104,7 @@ void Cmd_Recall(edict_t *ent)
 			ent->s.angles[ROLL] = 0;
 			VectorCopy (ent->s.angles, client->ps.viewangles);
 			VectorCopy (ent->s.angles, client->v_angle);
-			cphud(); // update checkpoints@hud.
-			laphud();
+			hud_footer(ent);
 
 			if ( ent->client->resp.ctf_team==CTF_TEAM2 || mset_vars->ezmode == 1) { // if hard and ezmode give a readout
 				if (ent->client->resp.ezmsg)
@@ -6132,9 +6130,7 @@ void MSET(edict_t *ent)
 		gi.cprintf(ent,PRINT_HIGH,"Invalid command\n");
 	}
 
-	//fix onscreen message for checkpoints
-	cphud();
-	laphud();
+	hud_footer(ent);
 }
 
 void GSET(edict_t *ent)
@@ -7644,8 +7640,7 @@ void JumpChase(edict_t *ent)
 	ent->client->resp.next_chasecam_toggle = level.time + 0.5;
 	ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 	ent->client->resp.replaying = 0;
-	cphud(); // update checkpoints@hud.
-	laphud();
+	hud_footer(ent);
 	if (ent->client->chase_target) {
 		if (!ent->client->resp.chase_ineye)
 		{
@@ -7670,10 +7665,8 @@ void JumpChase(edict_t *ent)
 		e = g_edicts + i;
 		if (e->inuse && e->solid != SOLID_NOT) {
 			ent->client->chase_target = e;
-			cphud(); // update checkpoints@hud.
 			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint)); //copy checkpoints
-			laphud();
-			racehud();
+			hud_footer(ent);
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
 			return;
@@ -12126,7 +12119,7 @@ void Cmd_Race (edict_t *ent)
 
 	ent->client->resp.rep_racing = true;
 	ent->client->resp.rep_race_number = race_this;
-	racehud();
+	hud_footer(ent);
 	if (race_this==MAX_HIGHSCORES)
 		gi.cprintf(ent,PRINT_CHAT,"Replay racing is ON for the fastest demo this map.\n");
 	else
@@ -12716,6 +12709,7 @@ static qboolean showhud = true;
 void ToggleHud(edict_t *ent)
 {
 	char this_map[64];
+	char s[64];
 	char str[2048];
 	int i;
 	if (ent->client->resp.admin<aset_vars->ADMIN_TOGGLEHUD_LEVEL)
@@ -12724,10 +12718,15 @@ void ToggleHud(edict_t *ent)
 	for (i=0;i<strlen(this_map);i++)
 		this_map[i] |= 128;
 
+	Com_sprintf(s, sizeof(s), "Hud is now %s", (showhud ? "on." : "off."));
+	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(s));
+
 	showhud = !showhud;
 	if (showhud)
 	{
-		Com_sprintf(str,sizeof(str),ctf_statusbar,this_map,prev_levels[1].mapname,prev_levels[2].mapname,prev_levels[3].mapname);
+		Com_sprintf(str,sizeof(str),ctf_statusbar,
+			ent->client->resp.hud_string1, ent->client->resp.hud_string2, ent->client->resp.hud_string3, ent->client->resp.hud_string4,
+			this_map,prev_levels[1].mapname,prev_levels[2].mapname,prev_levels[3].mapname);
 		gi.configstring (CS_STATUSBAR, str);
 //		gi.configstring (CS_STATUSBAR, ctf_statusbar);
 	}
@@ -14190,90 +14189,102 @@ void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float vo
 	}
 }
 
-// finds how many pers.checkpoints a player has and displays it in hud
-// if chasing, you will view the checkpoints of the player you are chasing
-void cphud() {
+void hud_footer(edict_t *ent) {
 	edict_t *cl_ent;
 	int i;
-	char string[128];
+	char teamstring[32];
+	char racestring[32];
+	char cpstring[32];
+	char lapstring[32];
 	char cp[2];
 	char cptotal[2];
-
-	sprintf(cptotal, "%d", mset_vars->checkpoint_total);
-	for (i = 0; i < maxclients->value; i++) {
-		cl_ent = g_edicts + 1 + i;
-
-		if (!(cl_ent->client && cl_ent->inuse))
-			continue;
-		if (cl_ent->client->chase_target)
-			sprintf(cp, "%d", cl_ent->client->chase_target->client->pers.checkpoints);
-		else
-			sprintf(cp, "%d", cl_ent->client->pers.checkpoints);
-
-		sprintf(string, "  Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
-		gi.WriteByte(svc_configstring);
-		gi.WriteShort(CONFIG_CP_ON);
-		gi.WriteString(string);
-		gi.unicast(cl_ent, true); //send to clients
-	}
-}
-
-// finds how many laps a player has and displays it in hud
-// if chasing, you will view the laps of the player you are chasing
-void laphud() {
-	edict_t *cl_ent;
-	int i;
-	char string[128];
+	char race[10];
 	char lap[10];
 	char laptotal[10];
+	char this_map[64];
+	char str[2048];
 
-	sprintf(laptotal, "%d", mset_vars->lap_total);
+	if (!ent->client)
+		return;
+	strcpy(this_map, prev_levels[0].mapname);
+	for (i = 0; i < strlen(this_map); i++)
+		this_map[i] |= 128;
+
+	//team
+	if (ent->client->resp.ctf_team == CTF_TEAM1)
+		sprintf(teamstring, "  Team: Åáóù");
+	else if (ent->client->resp.ctf_team == CTF_TEAM2)
+		sprintf(teamstring, "  Team: Èáòä");
+	else
+		sprintf(teamstring, "  Team: Ïâóåòöåò");
+	//string 1
+	sprintf(ent->client->resp.hud_string1, teamstring);
+
+	// race
+	strcpy(racestring, "");
+	if (ent->client->resp.rep_racing) {
+		sprintf(race, "%d", ent->client->resp.rep_race_number + 1);
+		if (Q_stricmp(race, "16") == 0)
+			sprintf(race, "NOW");
+		sprintf(racestring, "  Race: %s", HighAscii(race));
+	}
+
+	// cp
+	strcpy(cpstring, "");
+	if (mset_vars->checkpoint_total) {
+		sprintf(cptotal, "%d", mset_vars->checkpoint_total);
+		sprintf(cp, "%d", ent->client->pers.checkpoints);
+		sprintf(cpstring, "Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
+	}
+
+	// lap
+	strcpy(lapstring, "");
+	if (mset_vars->lap_total) {
+		sprintf(laptotal, "%d", mset_vars->lap_total);
+		sprintf(lap, "%d", ent->client->pers.lapcount);
+		sprintf(lapstring, "  Laps: %s/%s", HighAscii(lap), HighAscii(laptotal));
+	}
+
+	//string2
+	if (strlen(racestring) > 1)
+		sprintf(ent->client->resp.hud_string2, racestring);
+	else if (strlen(cpstring) > 1)
+		sprintf(ent->client->resp.hud_string2, cpstring);
+	else if (strlen(lapstring) > 1)
+		sprintf(ent->client->resp.hud_string2, lapstring);
+	else
+		sprintf(ent->client->resp.hud_string2, "");
+
+	//string3
+	if(strlen(racestring)>1 && strlen(cpstring)>1)
+		sprintf(ent->client->resp.hud_string3, cpstring);
+	else if (strlen(racestring) > 1 && strlen(lapstring) > 1)
+		sprintf(ent->client->resp.hud_string3, lapstring);
+	else
+		sprintf(ent->client->resp.hud_string3, "");
+
+	//string4
+	if (strlen(racestring) > 1 && strlen(cpstring) > 1 && strlen(lapstring)>1)
+		sprintf(ent->client->resp.hud_string4, lapstring);
+	else
+		sprintf(ent->client->resp.hud_string4, "");
+	//update for chasers!
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
 
 		if (!(cl_ent->client && cl_ent->inuse))
 			continue;
-		if (cl_ent->client->chase_target)
-			sprintf(lap, "%d", cl_ent->client->chase_target->client->pers.lapcount);
-		else
-			sprintf(lap, "%d", cl_ent->client->pers.lapcount);
-
-		sprintf(string, "    Laps: %s/%s", HighAscii(lap), HighAscii(laptotal));
-		gi.WriteByte(svc_configstring);
-		gi.WriteShort(CONFIG_LAP_ON);
-		gi.WriteString(string);
-		gi.unicast(cl_ent, true); //send to clients
-	}
-}
-
-// finds racenumber and displays it in hud
-// if chasing, you will view the racenumber of the player you are chasing
-void racehud() {
-	edict_t *cl_ent;
-	int i;
-	char string[128];
-	char race[10];
-
-	for (i = 0; i < maxclients->value; i++) {
-		cl_ent = g_edicts + 1 + i;
-
-		if (!(cl_ent->client && cl_ent->inuse))
+		if (!cl_ent->client->chase_target)
 			continue;
-		if (!cl_ent->client->resp.rep_racing && !cl_ent->client->chase_target) {
-			sprintf(string, "");
-		}
-		else {
-			if (cl_ent->client->chase_target)
-				sprintf(race, "%d", cl_ent->client->chase_target->client->resp.rep_race_number+1);
-			else
-				sprintf(race, "%d", cl_ent->client->resp.rep_race_number+1);
-			if (Q_stricmp(race, "16") == 0)
-				sprintf(race, "NOW");
-			sprintf(string, "    Race: %s", HighAscii(race));
-		}
-		gi.WriteByte(svc_configstring);
-		gi.WriteShort(CONFIG_JUMP_RACE);
-		gi.WriteString(string);
-		gi.unicast(cl_ent, true); //send to clients
+		if (cl_ent->client->chase_target->client != ent->client)
+			continue;
+		strcpy(cl_ent->client->chase_target->client->resp.hud_string1,ent->client->resp.hud_string1);
+		strcpy(cl_ent->client->chase_target->client->resp.hud_string2,ent->client->resp.hud_string2);
+		strcpy(cl_ent->client->chase_target->client->resp.hud_string3,ent->client->resp.hud_string3);
+		strcpy(cl_ent->client->chase_target->client->resp.hud_string4,ent->client->resp.hud_string4);
 	}
+	Com_sprintf(str, sizeof(str), ctf_statusbar,
+		ent->client->resp.hud_string1, ent->client->resp.hud_string2, ent->client->resp.hud_string3, ent->client->resp.hud_string4,
+		this_map,prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
+	gi.configstring(CS_STATUSBAR, str);
 }

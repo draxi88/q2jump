@@ -167,23 +167,24 @@ char *ctf_statusbar =
 
 "if 16 "
   "xv 72 "
-  "yb -32 "			// team
-  "stat_string 29 " // team
-  "yb -24 "			// race
-  "stat_string 25 " // race
-  "yb -16 "			// cps
-  "stat_string 26 " // cps
-  "yb -8 "			// laps
-  "stat_string 4 "  // laps
+  "yb -32 "			// hud_string1
+  "string \"%s\" "	// hud_string1
+  "yb -24 "			// hud_string2
+  "string \"%s\" "	// hud_string2
+  "yb -16 "			// hud_string3
+  "string \"%s\" "	// hud_string3
+  "yb -8 "			// hud_string4
+  "string \"%s\" "  // hud_string4
+
   "xr -128 "
   "yt 2 "
-  "string \"%s\" "
+  "string \"%s\" " //current map
   "yt 10 "
-  "string \"%s\" "
+  "string \"%s\" " //last map 1
   "yt 18 "
-  "string \"%s\" "
+  "string \"%s\" " //last map 2
   "yt 26 "
-  "string \"%s\" "
+  "string \"%s\" " //last map 3
 "endif "
 
   "xr -32 "
@@ -1385,35 +1386,12 @@ void SetCTFStats(edict_t *ent)
 	else {
 		ent->client->ps.stats[STAT_CTF_ID_VIEW] = 0;
 	}
-	if (mset_vars->checkpoint_total >= 1)
-		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_ON;
-	else
-		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_OFF;
-	if (mset_vars->lap_total > 1)
-		ent->client->ps.stats[STAT_JUMP_LAP] = CONFIG_LAP_ON;
-	else
-		ent->client->ps.stats[STAT_JUMP_LAP] = CONFIG_LAP_OFF;
-	if (ent->client->resp.rep_racing && !ent->client->resp.replaying){
-			ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE;
-	} else {
-		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_EMPTY;
-	}
-	if (ent->client->resp.ctf_team==CTF_TEAM1)
-		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_EASY;
-	else
-	if (ent->client->resp.ctf_team==CTF_TEAM2)
-		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_HARD;
-	else
-		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_OBSERVER;
+
 
 	if (ent->client->resp.cleanhud)
 	{
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		ent->client->ps.stats[STAT_JUMP_MAPCOUNT] = 0;
-		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_EMPTY;
-		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_EMPTY;
-		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_JUMP_EMPTY;
-		ent->client->ps.stats[STAT_JUMP_LAP] = CONFIG_JUMP_EMPTY;
 		if (!ent->client->resp.replaying)
 		{
 			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
@@ -3705,8 +3683,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 		ent->client->resp.item_timer = 0;
 		ent->client->resp.item_timer_allow = true;
 	}
-	cphud(); // update checkpoints@hud.
-	laphud();
+	hud_footer(ent);
 	s = Info_ValueForKey (ent->client->pers.userinfo, "skin");
 	CTFAssignSkin(ent, s);
 
@@ -3797,8 +3774,7 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 	if (ent->client->resp.replaying)
 		ent->client->resp.replaying = 0;
 	// =====================================
-	cphud(); // update checkpoints@hud.
-	laphud();
+	hud_footer(ent);
 
 	if (ent->client->resp.ctf_team!=CTF_NOTEAM)
 		CTFObserver(ent);
@@ -3815,10 +3791,8 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 		e = g_edicts + i;
 		if (e->inuse && e->solid != SOLID_NOT) {
 			ent->client->chase_target = e;
-			cphud(); // update checkpoints@hud.
 			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
-			laphud();
-			racehud();
+			hud_footer(ent);
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
 			return;

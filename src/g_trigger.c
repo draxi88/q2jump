@@ -180,7 +180,7 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		return;
 	}
 
-	laphud();
+	hud_footer(other);
 
 	// check if the client is already finished
 	if (other->client->resp.finished == 1 && !other->client->resp.replaying)

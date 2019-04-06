@@ -2366,8 +2366,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		{
 			if (ent->client->resp.replay_frame < 5) {
 				ClearCheckpoints(&ent->client->pers);
-				cphud();
-				laphud();
+				hud_footer(ent);
 			}
 			if ((ucmd->upmove>=10) && (!ent->client->resp.going_up))
 				ent->client->resp.going_up = true;
