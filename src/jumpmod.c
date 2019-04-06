@@ -14210,6 +14210,11 @@ void hud_footer(edict_t *ent) {
 	for (i = 0; i < strlen(this_map); i++)
 		this_map[i] |= 128;
 
+	//rem old strings //team string is always there..
+	sprintf(ent->client->resp.hud_string2, "");
+	sprintf(ent->client->resp.hud_string3, "");
+	sprintf(ent->client->resp.hud_string4, "");
+
 	//team
 	if (ent->client->resp.ctf_team == CTF_TEAM1)
 		sprintf(teamstring, "  Team: ≈бущ");
@@ -14252,22 +14257,20 @@ void hud_footer(edict_t *ent) {
 		sprintf(ent->client->resp.hud_string2, cpstring);
 	else if (strlen(lapstring) > 1)
 		sprintf(ent->client->resp.hud_string2, lapstring);
-	else
-		sprintf(ent->client->resp.hud_string2, "");
 
 	//string3
-	if(strlen(racestring)>1 && strlen(cpstring)>1)
-		sprintf(ent->client->resp.hud_string3, cpstring);
-	else if (strlen(racestring) > 1 && strlen(lapstring) > 1)
+	if (strlen(racestring) > 1) {
+		if (strlen(cpstring) > 1)
+			sprintf(ent->client->resp.hud_string3, cpstring);
+		else if (strlen(lapstring) > 1)
+			sprintf(ent->client->resp.hud_string3, lapstring);
+	} else if (strlen(cpstring)>1 && strlen(lapstring)>1)
 		sprintf(ent->client->resp.hud_string3, lapstring);
-	else
-		sprintf(ent->client->resp.hud_string3, "");
 
 	//string4
-	if (strlen(racestring) > 1 && strlen(cpstring) > 1 && strlen(lapstring)>1)
+	if (strlen(racestring) > 1 && strlen(cpstring) > 1 && strlen(lapstring) > 1)
 		sprintf(ent->client->resp.hud_string4, lapstring);
-	else
-		sprintf(ent->client->resp.hud_string4, "");
+
 	//update for chasers!
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;

@@ -894,11 +894,11 @@ debug_log(text);
 	nominated_map = false;
 	GenerateVoteMaps();
 	Update_Next_Maps();
-	if (gametype->value==GAME_CTF)
+	/*if (gametype->value==GAME_CTF)
 	{
 		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    team  RED");
 		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    team BLUE");
-	}
+	}*/
 	
 }
 
