@@ -12069,6 +12069,7 @@ void Cmd_Race (edict_t *ent)
 		{
 			gi.cprintf(ent,PRINT_CHAT,"Replay racing is OFF\n");
 			ent->client->resp.rep_racing = false;
+			hud_footer(ent);
 			return;
 		}
 		else
