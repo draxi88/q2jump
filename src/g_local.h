@@ -1041,6 +1041,12 @@ typedef struct
 	unsigned long frames_without_movement;
 } client_persistant_t;
 
+//hud stuff
+typedef struct
+{
+	char string[32];
+} hud_struct;
+
 // client data that stays across deathmatch respawns
 typedef struct
 {
@@ -1153,11 +1159,7 @@ typedef struct
 	// trigger_welcome
 	int         welcome_count[10];
 
-	//hud_footer
-	char		hud_string1[32];
-	char		hud_string2[32];
-	char		hud_string3[32];
-	char		hud_string4[32];
+	hud_struct hud[4];
 } client_respawn_t;
 
 

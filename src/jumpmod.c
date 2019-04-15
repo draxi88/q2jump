@@ -12726,7 +12726,7 @@ void ToggleHud(edict_t *ent)
 	if (showhud)
 	{
 		Com_sprintf(str,sizeof(str),ctf_statusbar,
-			ent->client->resp.hud_string1, ent->client->resp.hud_string2, ent->client->resp.hud_string3, ent->client->resp.hud_string4,
+			ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
 			this_map,prev_levels[1].mapname,prev_levels[2].mapname,prev_levels[3].mapname);
 		gi.configstring (CS_STATUSBAR, str);
 //		gi.configstring (CS_STATUSBAR, ctf_statusbar);
@@ -12978,6 +12978,7 @@ void Cmd_Cleanhud(edict_t *ent)
 		gi.cprintf(ent,PRINT_HIGH,"Hud returned to normal\n");
 	else
 		gi.cprintf(ent,PRINT_HIGH,"Clean hud enabled. Type cleanhud again to return to normal.\n");
+	hud_footer(ent);
 }
 
 void Copy_Recording(int uid)
@@ -14211,10 +14212,10 @@ void hud_footer(edict_t *ent) {
 	for (i = 0; i < strlen(this_map); i++)
 		this_map[i] |= 128;
 
-	//rem old strings //team string is always there..
-	sprintf(ent->client->resp.hud_string2, "");
-	sprintf(ent->client->resp.hud_string3, "");
-	sprintf(ent->client->resp.hud_string4, "");
+	//rem old strings
+	for (i = 0; i < 4; i++) {
+		sprintf(ent->client->resp.hud[i].string, "");
+	}
 
 	//team
 	if (ent->client->resp.ctf_team == CTF_TEAM1)
@@ -14224,7 +14225,7 @@ void hud_footer(edict_t *ent) {
 	else
 		sprintf(teamstring, "  Team: ѕвуетцет");
 	//string 1
-	sprintf(ent->client->resp.hud_string1, teamstring);
+	sprintf(ent->client->resp.hud[0].string, teamstring);
 
 	// race
 	strcpy(racestring, "");
@@ -14253,24 +14254,24 @@ void hud_footer(edict_t *ent) {
 
 	//string2
 	if (strlen(racestring) > 1)
-		sprintf(ent->client->resp.hud_string2, racestring);
+		sprintf(ent->client->resp.hud[1].string, racestring);
 	else if (strlen(cpstring) > 1)
-		sprintf(ent->client->resp.hud_string2, cpstring);
+		sprintf(ent->client->resp.hud[1].string, cpstring);
 	else if (strlen(lapstring) > 1)
-		sprintf(ent->client->resp.hud_string2, lapstring);
+		sprintf(ent->client->resp.hud[1].string, lapstring);
 
 	//string3
 	if (strlen(racestring) > 1) {
 		if (strlen(cpstring) > 1)
-			sprintf(ent->client->resp.hud_string3, cpstring);
+			sprintf(ent->client->resp.hud[2].string, cpstring);
 		else if (strlen(lapstring) > 1)
-			sprintf(ent->client->resp.hud_string3, lapstring);
+			sprintf(ent->client->resp.hud[2].string, lapstring);
 	} else if (strlen(cpstring)>1 && strlen(lapstring)>1)
-		sprintf(ent->client->resp.hud_string3, lapstring);
+		sprintf(ent->client->resp.hud[2].string, lapstring);
 
 	//string4
 	if (strlen(racestring) > 1 && strlen(cpstring) > 1 && strlen(lapstring) > 1)
-		sprintf(ent->client->resp.hud_string4, lapstring);
+		sprintf(ent->client->resp.hud[3].string, lapstring);
 
 	//update for chasers!
 	for (i = 0; i < maxclients->value; i++) {
@@ -14282,13 +14283,24 @@ void hud_footer(edict_t *ent) {
 			continue;
 		if (cl_ent->client->chase_target->client != ent->client)
 			continue;
-		strcpy(cl_ent->client->chase_target->client->resp.hud_string1,ent->client->resp.hud_string1);
-		strcpy(cl_ent->client->chase_target->client->resp.hud_string2,ent->client->resp.hud_string2);
-		strcpy(cl_ent->client->chase_target->client->resp.hud_string3,ent->client->resp.hud_string3);
-		strcpy(cl_ent->client->chase_target->client->resp.hud_string4,ent->client->resp.hud_string4);
+		if (cl_ent->client->resp.cleanhud) {
+			for (i = 0; i < 4; i++) {
+				sprintf(cl_ent->client->resp.hud[i].string, "");
+			}
+			continue;
+		}
+		for (i = 0; i < 4; i++) {
+			strcpy(cl_ent->client->resp.hud[i].string, ent->client->resp.hud[i].string);
+		}
+	}
+	//check if client is using cleanhud..
+	if (ent->client->resp.cleanhud) {
+		for (i = 0; i < 4; i++) {
+			sprintf(ent->client->resp.hud[i].string, "");
+		}
 	}
 	Com_sprintf(str, sizeof(str), ctf_statusbar,
-		ent->client->resp.hud_string1, ent->client->resp.hud_string2, ent->client->resp.hud_string3, ent->client->resp.hud_string4,
+		ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
 		this_map,prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
 	gi.configstring(CS_STATUSBAR, str);
 }
