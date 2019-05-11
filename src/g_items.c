@@ -3486,22 +3486,41 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
     float		my_time_decimal;
 	gitem_t		*item;
 	edict_t		*cl_ent;
+	edict_t		*player;
 	int			i;
 	char		cpstring[256];
 
-	// make sure it's a player touching it
-	if (!other->client)
+	// make sure it's a player or players projectile touching it
+	if (self->health && self->health > 0) {
+		if (other->client)
+			player = other;
+		else if (other->owner->client)
+			player = other->owner;
+		else
+			return;
+	}
+	else if (!self->health) {
+		if (other->client)
+			player = other;
+		else
+			return;
+	}
+	else if (!other->client || !player->client)
 		return;
-
-	// check for retard mappers
-	if (self->count >= sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int)) {
-		if (trigger_timer(5))
-			gi.dprintf ("Your count of %i is higher than the max value of %i, you are a shit mapper.\n", self->count, sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int)-1);
+	
+	//check for stuff that shouldn't trigger the cp.. hook etc.
+	if (Q_stricmp(player->classname, "hook") == 0) {
 		return;
 	}
-	
+
+	// check for retard mappers
+	if (self->count >= sizeof(player->client->pers.cpbox_checkpoint)/sizeof(int)) {
+		if (trigger_timer(5))
+			gi.dprintf ("Your count of %i is higher than the max value of %i, you are a shit mapper.\n", self->count, sizeof(player->client->pers.cpbox_checkpoint)/sizeof(int)-1);
+		return;
+	}
 	// check if the client is already finished
-	if (other->client->resp.finished == 1 && !other->client->resp.replaying)
+	if (player->client->resp.finished == 1 && !player->client->resp.replaying)
 		return;
 
 	//check if cpbox has a target...
@@ -3509,56 +3528,54 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 
 		//check if it should clear all cp's.
 		if(Q_stricmp(self->target,"cp_clear")==0){
-			if (other->client->pers.checkpoints > 0)
-				gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->pers.checkpoints);
-			ClearCheckpoints(&other->client->pers);
+			if (player->client->pers.checkpoints > 0)
+				gi.cprintf(player,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", player->client->pers.checkpoints);
+			ClearCheckpoints(&player->client->pers);
 			return;
 		} 
 		//ckeck if it should reset timer++
 		else if (Q_stricmp(self->target,"start_line")==0) {
-			memset(other->client->pers.inventory, 0, sizeof(other->client->pers.inventory)); // reset their inventory
+			memset(player->client->pers.inventory, 0, sizeof(player->client->pers.inventory)); // reset their inventory
 
 			item = FindItem("Blaster"); // set their equiped item to a blaster
-			other->client->newweapon = item;
-			ChangeWeapon (other);
+			player->client->newweapon = item;
+			ChangeWeapon (player);
 
-			Stop_Recording(other); // stop the recording for race line alignment
-			Start_Recording(other); // start another recording for this rep
-			other->client->resp.item_timer = 0; // internal timer reset 1
-			other->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
-			other->client->resp.race_frame = 0; //reset race frame if racing
-			ClearCheckpoints(&other->client->pers);
+			Stop_Recording(player); // stop the recording for race line alignment
+			Start_Recording(player); // start another recording for this rep
+			player->client->resp.item_timer = 0; // internal timer reset 1
+			player->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
+			player->client->resp.race_frame = 0; //reset race frame if racing
+			ClearCheckpoints(&player->client->pers);
 			return;
 		} 
 	}
 	// rest is for regular cpboxes..
 
 	// get the clients time in .xxx format
-	my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
+	my_time = Sys_Milliseconds() - player->client->resp.client_think_begin;
 	my_time_decimal = (float)my_time / 1000.0f;
 
-	
 	// check if they have it already, increase it if they don't
-	if (other->client->pers.cpbox_checkpoint[self->count] != 1) {
-		other->client->pers.cpbox_checkpoint[self->count] = 1;
-		other->client->pers.checkpoints += 1;
-
+	if (player->client->pers.cpbox_checkpoint[self->count] != 1) {
+		player->client->pers.cpbox_checkpoint[self->count] = 1;
+		player->client->pers.checkpoints += 1;
 		// in easy give them the int, in hard give them the float, in replay give them relative
-		if (other->client->resp.ctf_team==CTF_TEAM1){
+		if (player->client->resp.ctf_team==CTF_TEAM1){
 			sprintf(cpstring,"reached checkpoint %d/%d in %1.1f seconds. (split: %1.1f)\n",
-			other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer, other->client->resp.item_timer - other->client->pers.cp_split);
-			other->client->pers.cp_split = other->client->resp.item_timer;
-			gi.cprintf(other, PRINT_HIGH, "You %s", cpstring);
-		} else if (other->client->resp.ctf_team==CTF_TEAM2){
+			player->client->pers.checkpoints, mset_vars->checkpoint_total, player->client->resp.item_timer, player->client->resp.item_timer - player->client->pers.cp_split);
+			player->client->pers.cp_split = player->client->resp.item_timer;
+			gi.cprintf(player, PRINT_HIGH, "You %s", cpstring);
+		} else if (player->client->resp.ctf_team==CTF_TEAM2){
 			sprintf(cpstring, "reached checkpoint %d/%d in %1.3f seconds. (split: %1.3f)\n",
-			other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal, my_time_decimal - other->client->pers.cp_split);
-			other->client->pers.cp_split = my_time_decimal;
-			gi.cprintf(other, PRINT_HIGH, "You %s",cpstring);
-		} else if (other->client->resp.ctf_team==CTF_NOTEAM && other->client->resp.replaying && !other->client->resp.mute_cprep) {
-			gi.cprintf(other, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds. (split: %1.1f)\n", 
-				level_items.stored_item_times[other->client->resp.replaying-1].owner, other->client->pers.checkpoints, 
-				mset_vars->checkpoint_total, (other->client->resp.replay_frame / 10) - 0.1, ((other->client->resp.replay_frame / 10) - 0.1) - other->client->pers.cp_split);
-			other->client->pers.cp_split = (other->client->resp.replay_frame / 10) - 0.1;
+			player->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal, my_time_decimal - player->client->pers.cp_split);
+			player->client->pers.cp_split = my_time_decimal;
+			gi.cprintf(player, PRINT_HIGH, "You %s",cpstring);
+		} else if (player->client->resp.ctf_team==CTF_NOTEAM && player->client->resp.replaying && !player->client->resp.mute_cprep) {
+			gi.cprintf(player, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds. (split: %1.1f)\n", 
+				level_items.stored_item_times[player->client->resp.replaying-1].owner, player->client->pers.checkpoints, 
+				mset_vars->checkpoint_total, (player->client->resp.replay_frame / 10) - 0.1, ((player->client->resp.replay_frame / 10) - 0.1) - player->client->pers.cp_split);
+			player->client->pers.cp_split = (player->client->resp.replay_frame / 10) - 0.1;
 		}
 		//memcpy+msg for anyone chasing us...
 		for (i = 0; i < maxclients->value; i++) {
@@ -3567,15 +3584,15 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 				continue;
 			if (cl_ent->client->chase_target->client->resp.ctf_team == CTF_NOTEAM)
 				continue;
-			if (Q_stricmp(cl_ent->client->chase_target->client->pers.netname, other->client->pers.netname) == 0) {
-				gi.cprintf(cl_ent, PRINT_HIGH, "%s %s", other->client->pers.netname, cpstring);
-				memcpy(cl_ent->client->pers.cpbox_checkpoint, other->client->pers.cpbox_checkpoint, sizeof(other->client->pers.cpbox_checkpoint));
+			if (Q_stricmp(cl_ent->client->chase_target->client->pers.netname, player->client->pers.netname) == 0) {
+				gi.cprintf(cl_ent, PRINT_HIGH, "%s %s", player->client->pers.netname, cpstring);
+				memcpy(cl_ent->client->pers.cpbox_checkpoint, player->client->pers.cpbox_checkpoint, sizeof(player->client->pers.cpbox_checkpoint));
 			}
 		}
 		// play a sound for it
-		CPSoundCheck(other);
+		CPSoundCheck(player);
 		//update hud
-		hud_footer(other);
+		hud_footer(player);
 	}
 }
 
