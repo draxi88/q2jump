@@ -7634,7 +7634,7 @@ void JumpChase(edict_t *ent)
 	int i;
 	edict_t *e;
 
-	if (ent->client->resp.ctf_team!=CTF_NOTEAM)
+	if (ent->client->resp.ctf_team!=CTF_NOTEAM || ent->client->resp.replaying)
 		CTFObserver(ent);
 
 	ent->client->resp.next_chasecam_toggle = level.time + 0.5;
