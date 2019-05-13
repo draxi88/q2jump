@@ -3776,7 +3776,7 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 	// =====================================
 	hud_footer(ent);
 
-	if (ent->client->resp.ctf_team!=CTF_NOTEAM)
+	if (ent->client->resp.ctf_team!=CTF_NOTEAM || ent->client->resp.replaying)
 		CTFObserver(ent);
 
 	ent->client->resp.chasecam_type = 0;
