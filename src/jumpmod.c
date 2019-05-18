@@ -12058,74 +12058,65 @@ void Cmd_Race (edict_t *ent)
 		return;
 	}
 
-	if (gi.argc()>=2)
+	if (gi.argc()>=2) // multiple args
 	{
 		if (!strcmp(gi.argv(1),"now"))
-		{
 			race_this = MAX_HIGHSCORES;
-		}
-		else
-		if (!strcmp(gi.argv(1),"off"))
-		{
-			gi.cprintf(ent,PRINT_CHAT,"Replay racing is OFF\n");
+		else if (!strcmp(gi.argv(1),"off")) { // turn racing off
+			gi.cprintf(ent,PRINT_CHAT,"No longer racing.\n");
 			ent->client->resp.rep_racing = false;
 			hud_footer(ent);
 			return;
 		}
-		else
-		if (!strcmp(gi.argv(1),"delay"))
-		{
-			if (gi.argc()<3)
-			{
-				gi.cprintf(ent,PRINT_HIGH,"Please enter a value from 0.0 to 10.0 seconds for the delay. For example: race delay 0.5\n");
+		else if (!strcmp(gi.argv(1),"delay")) { // add a delay to the race
+			if (gi.argc()<3) {
+				gi.cprintf(ent,PRINT_HIGH,"Enter a value from 0.0 to 10.0 seconds for the delay. For example: race delay 0.5\n");
 				return;
 			}
-			else
-			{
+			else {
 				delay = atof(gi.argv(2));
 				if (delay<0)
-				{
 					delay = 0;
-				}
 				if (delay>10)
 					delay = 10;
 				ent->client->resp.rep_racing_delay = delay;
-				gi.cprintf(ent,PRINT_HIGH,"Replay racing delay is %1.1f\n",delay);
+				gi.cprintf(ent,PRINT_HIGH,"Race delay is %1.1f\n",delay);
 				return;
 			}
 		}
-		else
-		{
+		else {
 			race_this = atoi(gi.argv(1));
 			race_this--;
 		}
 	}
 
+	// the race number provided is higher than max replays on the map
 	if (race_this<0 || race_this>MAX_HIGHSCORES)
 		race_this = 0;
-	if (!level_items.recorded_time_frames[race_this])
-	{
+
+	if (!level_items.recorded_time_frames[race_this]) {
 		ent->client->resp.rep_racing = false;
-		gi.cprintf(ent,PRINT_HIGH,"There is no demo to race.");
+		gi.cprintf(ent,PRINT_HIGH,"There is no demo to race. Choose one from below:");
 		gi.cprintf(ent,PRINT_CHAT,"\nNo. Player             Time\n");
-		for (i=0;i<MAX_HIGHSCORES;i++)
-		{
+		for (i=0;i<MAX_HIGHSCORES;i++) {
 			if (level_items.recorded_time_frames[i])
-			{
 				gi.cprintf(ent,PRINT_HIGH,"%2d. %-16s %8.3f\n",i+1,level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time);
-			}
 		}
 		return;
 	}
 
+	// race number is usable
 	ent->client->resp.rep_racing = true;
 	ent->client->resp.rep_race_number = race_this;
 	hud_footer(ent);
-	if (race_this==MAX_HIGHSCORES)
-		gi.cprintf(ent,PRINT_CHAT,"Replay racing is ON for the fastest demo this map.\n");
+	if (race_this==MAX_HIGHSCORES) // replay now, from above
+		gi.cprintf(ent,PRINT_CHAT,"Now racing replay 1: %s\n", level_items.stored_item_times[0].owner);
 	else
-		gi.cprintf(ent,PRINT_CHAT,"Replay racing is ON for demo %d\n",(int)(race_this+1));
-	gi.cprintf(ent,PRINT_HIGH,"Other options: race delay <num>, race off, race now, race <demonumber>\n");
+		gi.cprintf(ent,PRINT_CHAT,"Now racing replay %d: %s\n", (int)(race_this+1), level_items.stored_item_times[race_this].owner);
+
+	// player gave no further arguments, tell them what they could do next time
+	if (gi.argc() == 1)
+		gi.cprintf(ent,PRINT_HIGH,"Other options: race delay <num>, race off, race now, race <demonumber>\n");
 
 #endif
 }
