@@ -4169,6 +4169,44 @@ void SP_jump_cpwall (edict_t *ent) {
 	gi.linkentity(ent);
 }
 
+//one-way-wall
+void one_way_wall_touch(edict_t *self, edict_t *other) {
+
+	if (!other->client)
+		return;
+
+	vec3_t   vel;
+	float	 dot;
+	vec3_t	 forward;
+
+	//
+	VectorCopy(other->velocity, vel);
+	VectorNormalize(vel);
+	AngleVectors(self->s.angles, forward, NULL, NULL);		//get angle vector of the wall
+
+	dot = DotProduct(vel, forward);
+
+	//dot < 0 means we're moving against the wall
+	if (dot <= 0) {
+		VectorCopy(other->s.old_origin, other->s.origin);
+		VectorClear(other->velocity);
+
+		if (trigger_timer(5)) {
+			gi.cprintf(other, PRINT_HIGH, "You cannot pass this way.\n");
+		}
+	}
+}
+
+void SP_one_way_wall(edict_t *self) {
+
+	self->solid = SOLID_TRIGGER;
+	self->movetype = MOVETYPE_NONE;
+	gi.setmodel(self, self->model);
+	self->svflags = SVF_NOCLIENT;
+
+	self->touch = one_way_wall_touch;
+}
+
 /*void SP_misc_ball (edict_t *ent)
 {
 	ent->classname = "misc_ball";
