@@ -4179,7 +4179,6 @@ void one_way_wall_touch(edict_t *self, edict_t *other) {
 	float	 dot;
 	vec3_t	 forward;
 
-	//
 	VectorCopy(other->velocity, vel);
 	VectorNormalize(vel);
 	AngleVectors(self->s.angles, forward, NULL, NULL);		//get angle vector of the wall
@@ -4188,11 +4187,21 @@ void one_way_wall_touch(edict_t *self, edict_t *other) {
 
 	//dot < 0 means we're moving against the wall
 	if (dot <= 0) {
+
+		if ((self->spawnflags & 1) && other->client->resp.cur_speed >= self->count) {
+			return;
+		}
+
 		VectorCopy(other->s.old_origin, other->s.origin);
 		VectorClear(other->velocity);
 
 		if (trigger_timer(5)) {
-			gi.cprintf(other, PRINT_HIGH, "You cannot pass this way.\n");
+			if (!(self->spawnflags & 1)) {
+				gi.cprintf(other, PRINT_HIGH, "You cannot pass this way.\n");
+			}
+			else {
+				gi.cprintf(other, PRINT_HIGH, "You need %i speed to pass the wall this way.\n", self->count);
+			}
 		}
 	}
 }
