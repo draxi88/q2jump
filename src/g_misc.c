@@ -1870,13 +1870,22 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
         return;
     }
 
-
 	CTFPlayerResetGrapple(other);
 
+	// speed teleport, need specific speed to use a teleporter
+	// set speed to the value you want the player to need to use it
+	if (other->client->resp.cur_speed < self->speed) {
+		if (trigger_timer(2)) {
+			gi.dprintf("Your speed is %i, you need %.0f to use the teleporter.\n", other->client->resp.cur_speed, self->speed);
+		}
+		return;
+	}
+
+	// check for total checkpoints a player has
 	// count is set on the teleporter
-	// count is compared to TOTAL number of cps a player has
-	// if count matches cp total, tele works
-	// if style is set to 1337, count can match or be greater than cp total
+	// compare count to player's checkpoint total
+	// if equal, teleporter works
+	// if style is set to 1337, equal to or greater than
     if (self->count > 0) {
         if (self->style == 1337) {
             if (other->client->pers.checkpoints < self->count)
@@ -1887,13 +1896,17 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
         }
     }
 
-	// checking for specific checkpoints
+	// checking for specific checkpoints and velocity
+		// style 1000-1063:
+			// -go with cpbox counts of 0-63
+			// -if you have the specific checkpoint, you CANT use the teleporter
+		// style 2000-2063:
+			// -go with cpbox counts of 0-63
+			// -if you have the specific checkpoint, you CAN use the teleporter
 	if (self->style > 0) {
 		for (i=0; i < sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int); i++) {
 
 			// style 1000-1063:
-			// -go with cpbox counts of 0-63
-			// -if you have the specific checkpoint, you CANT use the teleporter
 			if (self->style == i+1000) {
 				if (other->client->pers.cpbox_checkpoint[i] == 1) {
 					if (trigger_timer(5))
@@ -1903,8 +1916,6 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 			}
 
 			// style 2000-2063:
-			// -go with cpbox counts of 0-63
-			// -if you have the specific checkpoint, you CAN use the teleporter
 			if (self->style == i+2000) {
 				if (other->client->pers.cpbox_checkpoint[i] != 1) {
 					if (trigger_timer(5))
@@ -1919,7 +1930,7 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	gi.unlinkentity (other);
 
 	//spawn x distance from the spawn..?
-	if(self->message && Q_stricmp(self->message,"telehack")==0){
+	if (self->message && Q_stricmp(self->message, "telehack") == 0) {
 		VectorSubtract(self->absmax,self->absmin,center);
 		VectorScale(center,0.5,center);
 		VectorAdd(self->absmin,center,center);
