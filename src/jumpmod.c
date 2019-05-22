@@ -42,6 +42,7 @@ static char *help_main[] = {
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
+	"velstore - toggles velocity storing for your store markers", //velocity store feature
 	"playerlist - list the players in game\n",
 	"\nΣτατιστιγσ\n",
 	"maptimes - view best times on a map\n",
@@ -2826,14 +2827,13 @@ void Cmd_Store_f (edict_t *ent) {
 				gi.linkentity (ent->client->resp.stored_ent);
 
 				//velocity store feature - support recall 1, 2 and 3
-				if (ent->client->pers.store_velocity) {
-					// move velocity2 to velocity3
-					VectorCopy(ent->client->pers.stored_velocity2, ent->client->pers.stored_velocity3);
-					// move velocity1 to velocity2
-					VectorCopy(ent->client->pers.stored_velocity1, ent->client->pers.stored_velocity2);
-					// store the new value in velocity1
-					VectorCopy(ent->velocity, ent->client->pers.stored_velocity1);
-				}
+				//we always store velocity so it can be ready when toggled on
+				// move velocity2 to velocity3
+				VectorCopy(ent->client->pers.stored_velocity2, ent->client->pers.stored_velocity3);
+				// move velocity1 to velocity2
+				VectorCopy(ent->client->pers.stored_velocity1, ent->client->pers.stored_velocity2);
+				// store the new value in velocity1
+				VectorCopy(ent->velocity, ent->client->pers.stored_velocity1);
 
 			} else
 				gi.cprintf(ent,PRINT_HIGH,"Can only store on ground\n");

@@ -1115,13 +1115,6 @@ void Velocity_store_toggle(edict_t *ent) {
 
 	//let the player know the state of velocity storing
 	gi.cprintf(ent, PRINT_CHAT, "Velocity storing is %s\n", (ent->client->pers.store_velocity ? "ON." : "OFF."));
-
-	//if the velocity storing is toggled off clear the stored vectors
-	if (!(ent->client->pers.store_velocity)) {
-		VectorClear(ent->client->pers.stored_velocity1);
-		VectorClear(ent->client->pers.stored_velocity2);
-		VectorClear(ent->client->pers.stored_velocity3);
-	}
 }
 
 void Infinite_Loop ()
