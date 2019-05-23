@@ -4169,6 +4169,78 @@ void SP_jump_cpwall (edict_t *ent) {
 	gi.linkentity(ent);
 }
 
+//---one-way-wall start
+void one_way_wall_touch(edict_t *self, edict_t *other) {
+
+	//not a client...
+	if (!other->client)
+		return;
+
+	vec3_t   vel;
+	float	 dot;
+	vec3_t	 forward;
+
+	VectorCopy(other->velocity, vel); //I'm fairly sure I have to copy the velocity before normalizing it.
+	VectorNormalize(vel);
+	AngleVectors(self->s.angles, forward, NULL, NULL);		//get angle vector of the wall
+
+	dot = DotProduct(vel, forward); //dot product less than zero means we're going against the wall.
+
+	//setting positive values here will result in the angle to be more strict (for example (dot <= 0.7) should
+	//only allow 45 degrees deviations from the specified angle). It's up to you if you want to tweak this.
+	//Or maybe it should be a variable?
+	if (dot <= 0) {
+
+		//player's got enough speed, no need to do anything more
+		if ((self->spawnflags & 1) && other->client->resp.cur_speed >= self->speed) {
+			return;
+		}
+
+		//push player back and kill his velocity
+		VectorCopy(other->s.old_origin, other->s.origin);
+		VectorClear(other->velocity);
+
+		//display apropriate message
+		if (trigger_timer(5)) {
+			if (!(self->spawnflags & 1)) {
+				gi.cprintf(other, PRINT_HIGH, "You cannot pass this way.\n");
+			}
+			else {
+				gi.cprintf(other, PRINT_HIGH, "You need %.0f speed to pass the wall this way.\n", self->speed);
+			}
+		}
+	}
+}
+
+// one-way-wall - description
+// Allows the player to go through this entity only if his direction matches the angle set by mapper.
+// There is an option to make the player able go against the direction if he reaches a certain speed.
+//
+// Settings:
+//		- angle/angles - this property specifies the direction player is allowed to pass in.
+//		- spawnflags - if set to 1 this entity will validate player's speed. Once his speed is equal
+//					   or higher he can go through, no matter the angle
+//		- speed - set this property so entity can validate it. Works only with spawnflags 1.
+//
+// Notes:
+// The angle can be within 90 degrees from the entity's angle and the player will still pass through.
+// This can be altered with dot product comparison (if you guys want the angle window to be smaller).
+//
+// IMPORTANT: THE WALL MUST BE THICK - otherwise at high speeds you can pass through with 20fps. For 
+// 4000ups I think at least 192 units. Maybe more - I'll do more tests.
+
+void SP_one_way_wall(edict_t *self) {
+
+	//spawns like a trigger
+	self->solid = SOLID_TRIGGER;
+	self->movetype = MOVETYPE_NONE;
+	gi.setmodel(self, self->model);
+	self->svflags = SVF_NOCLIENT;
+
+	self->touch = one_way_wall_touch;
+}
+//---one-way-wall end
+
 /*void SP_misc_ball (edict_t *ent)
 {
 	ent->classname = "misc_ball";
