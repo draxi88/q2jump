@@ -14069,6 +14069,7 @@ void ClearCheckpoints(client_persistant_t* pers) {
 
 	// lap counter
 	pers->lapcount = 0;
+	pers->laptime = 0;
 
 	// cp lap checkpoints
 	pers->lap_cps = 0;

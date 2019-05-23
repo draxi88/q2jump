@@ -158,9 +158,11 @@ void SP_trigger_multiple (edict_t *ent)
 }
 
 /*QUAKED trigger_lapcounter (.5 .5 .5) ?
-resizable ent that acts as a lap counter
--count: how many checkpoints needed to finish a lap
--speed: how much speed you need to pass the ent
+-resizable ent that acts as a lap counter
+-does not end a run, you still need a weapon_finish or railgun
+-count: how many lap checkpoints needed to finish a lap, min 1
+-angle: set in direction you want players to go, required or ent will be broken
+-speed: how much speed you need to pass the ent, not required
 */
 void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
@@ -169,7 +171,7 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		return;
 
 	// check for 0 count
-	if (self->count == 0) {
+	if (self->count < 0) {
 		if (trigger_timer(3)) {
 			gi.cprintf(other, PRINT_HIGH, "Mapper Error: count set to 0.\n");
 		}
@@ -194,10 +196,11 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 
 	hud_footer(other);
 
-	// setting up the internal one-way-wall checking
+	// setting up the internal one-way-wall checking and laptime
 	vec3_t   vel;
 	float	 dot;
 	vec3_t	 forward;
+	float	 current_laptime;
 
 	// normalize vector, get angle of the wall, get dot product
 	VectorCopy(other->velocity, vel);
@@ -212,7 +215,6 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		if (trigger_timer(3)) {
 			gi.cprintf(other, PRINT_HIGH, "You need %.0f speed to pass the wall.\n", self->speed);
 		}
-		return;
 	}
 
 	// check if the player enters at the right angle
@@ -222,30 +224,24 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		if (trigger_timer(3)) {
 			gi.cprintf(other, PRINT_HIGH, "You are going the wrong way.\n");
 		}
-		return;
 	}
 
 	// check if they have enough checkpoints to increase laps_player?
 	else if (other->client->pers.lap_cps >= self->count) {
-		other->client->pers.lapcount = other->client->pers.lapcount + 1;
 
-		/*
-		// split stuff
-		int my_time;
-		float my_time_decimal;
+		// getting the laptime of the player
+		float my_time;
 
-		// get the clients time in .xxx format
+		// get current laptime
 		my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
-		my_time_decimal = (float)my_time / 1000.0f;
+		my_time = (float)my_time / 1000.0f;
+		current_laptime = my_time - other->client->pers.laptime;
 
-		// in easy give them the int, in hard give them the float, in replay give them relative
-		if (other->client->resp.ctf_team == CTF_TEAM1)
-			other->client->pers.cp_split = other->client->resp.item_timer;
-		else if (other->client->resp.ctf_team == CTF_TEAM2)
-			other->client->pers.cp_split = my_time_decimal;
-		else if (other->client->resp.ctf_team == CTF_NOTEAM && other->client->resp.replaying && !other->client->resp.mute_cprep)
-			other->client->pers.cp_split = (other->client->resp.replay_frame / 10) - 0.1;
-		*/
+		// setup next lap
+		other->client->pers.laptime = other->client->pers.laptime + current_laptime;
+
+		// increment lapcount
+		other->client->pers.lapcount = other->client->pers.lapcount + 1;
 
 		// reset lap cp's
 		int i;
@@ -257,27 +253,42 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		// check if this made them finish
 		if (other->client->pers.lapcount >= mset_vars->lap_total) {
 			if (trigger_timer(3)) {
-				gi.cprintf(other, PRINT_HIGH, "You are finished, grab the gun.\n");
+				if (other->client->resp.ctf_team == CTF_TEAM2) { // display last lap time to hard team
+					gi.cprintf(other, PRINT_HIGH, "(Lap Time = %.3f)\n", current_laptime);
+				}
+				else { // display a msg in easy for when the laps are completed
+					gi.cprintf(other, PRINT_HIGH, "Laps Finished\n");
+				}
 			}
-			return;
 		}
 
 		// display laps left
 		else {
-			if (trigger_timer(3))
-				if (mset_vars->lap_total - other->client->pers.lapcount == 1)
-					gi.cprintf(other, PRINT_HIGH, "1 lap left\n");
-				else
-					gi.cprintf(other, PRINT_HIGH, "%d laps left\n", mset_vars->lap_total - other->client->pers.lapcount);
+			if (trigger_timer(3)) {
+				if (other->client->resp.ctf_team == CTF_TEAM1) { // easy team, dont give lap times
+					if (mset_vars->lap_total - other->client->pers.lapcount == 1) {
+						gi.cprintf(other, PRINT_HIGH, "1 lap left\n");
+					}
+					else {
+						gi.cprintf(other, PRINT_HIGH, "%d laps left\n", mset_vars->lap_total - other->client->pers.lapcount);
+					}
+				}
+				else { // hard team, give lap times
+					if (mset_vars->lap_total - other->client->pers.lapcount == 1) {
+						gi.cprintf(other, PRINT_HIGH, "1 lap left (Lap Time = %.3f)\n", current_laptime);
+					}
+					else {
+						gi.cprintf(other, PRINT_HIGH, "%d laps left (Lap Time = %.3f)\n", mset_vars->lap_total - other->client->pers.lapcount, current_laptime);
+					}
+				}
+			}
 		}
-		return;
 	}
 
 	// they don't have enough lap checkpoints, tell them how many they missed
-	else if (other->client->pers.lap_cps < self->count) {
+	if (other->client->pers.lap_cps < self->count) {
 		if (trigger_timer(3))
 			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints needed to complete this lap.\n", other->client->pers.lap_cps, self->count);
-		return;
 	}
 
 	self->activator = other;
