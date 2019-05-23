@@ -42,6 +42,7 @@ static char *help_main[] = {
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
+	"velstore - toggles velocity storing for your store markers", //velocity store feature
 	"playerlist - list the players in game\n",
 	"\nΣτατιστιγσ\n",
 	"maptimes - view best times on a map\n",
@@ -2737,7 +2738,6 @@ void Cmd_Store_f (edict_t *ent) {
 			ent->client->pers.stored_rs19_checkpoint3 = ent->client->pers.stored_rs19_checkpoint2;
 			ent->client->pers.stored_rs20_checkpoint3 = ent->client->pers.stored_rs20_checkpoint2;
 
-
 			// stored 1 moves to stored 2
 			ent->client->pers.stored_checkpoints2 = ent->client->pers.stored_checkpoints1;
 			ent->client->pers.stored_red_checkpoint2 = ent->client->pers.stored_red_checkpoint1;
@@ -2825,6 +2825,15 @@ void Cmd_Store_f (edict_t *ent) {
 				ent->client->resp.stored_ent->dmg = 0;
 				ent->client->resp.stored_ent->classname = "stored_ent";
 				gi.linkentity (ent->client->resp.stored_ent);
+
+				//velocity store feature - support recall 1, 2 and 3
+				//we always store velocity so it can be ready when toggled on
+				// move velocity2 to velocity3
+				VectorCopy(ent->client->pers.stored_velocity2, ent->client->pers.stored_velocity3);
+				// move velocity1 to velocity2
+				VectorCopy(ent->client->pers.stored_velocity1, ent->client->pers.stored_velocity2);
+				// store the new value in velocity1
+				VectorCopy(ent->velocity, ent->client->pers.stored_velocity1);
 
 			} else
 				gi.cprintf(ent,PRINT_HIGH,"Can only store on ground\n");
@@ -4907,10 +4916,12 @@ void Cmd_Recall(edict_t *ent)
 
 			client = ent->client;
 
+
 			if (gi.argc()==2) {
 				i = atoi(gi.argv(1));
 				switch (i) {
 					case 1 :
+					VectorCopy(ent->client->pers.stored_velocity1, ent->velocity); //velocity store feature
 					VectorCopy(ent->client->resp.store_pos,spawn_origin);
 					VectorCopy(ent->client->resp.store_angles,spawn_angles);
 					ent->client->pers.checkpoints = ent->client->pers.stored_checkpoints1;
@@ -4945,6 +4956,7 @@ void Cmd_Recall(edict_t *ent)
                     memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint1,sizeof(ent->client->pers.cpbox_checkpoint));
 						break;
 					case 2 :
+					VectorCopy(ent->client->pers.stored_velocity2, ent->velocity); //velocity store feature
 					VectorCopy(ent->client->resp.store_pos2,spawn_origin);
 					VectorCopy(ent->client->resp.store_angles2,spawn_angles);
 					ent->client->pers.checkpoints = ent->client->pers.stored_checkpoints2;
@@ -4979,6 +4991,7 @@ void Cmd_Recall(edict_t *ent)
                     memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint2,sizeof(ent->client->pers.cpbox_checkpoint));
 						break;
 					case 3 :
+					VectorCopy(ent->client->pers.stored_velocity3, ent->velocity); //velocity store feature
 					VectorCopy(ent->client->resp.store_pos3,spawn_origin);
 					VectorCopy(ent->client->resp.store_angles3,spawn_angles);
 					ent->client->pers.checkpoints = ent->client->pers.stored_checkpoints3;
@@ -5013,6 +5026,7 @@ void Cmd_Recall(edict_t *ent)
                     memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint3,sizeof(ent->client->pers.cpbox_checkpoint));
 						break;
 					default :
+					VectorCopy(ent->client->pers.stored_velocity1, ent->velocity); //velocity store feature
 					VectorCopy(ent->client->resp.store_pos,spawn_origin);
 					VectorCopy(ent->client->resp.store_angles,spawn_angles);
 					ent->client->pers.checkpoints = ent->client->pers.stored_checkpoints1;
@@ -5048,6 +5062,7 @@ void Cmd_Recall(edict_t *ent)
 						break;
 				}
 			} else {
+				VectorCopy(ent->client->pers.stored_velocity1, ent->velocity); //velocity store feature
 				VectorCopy(ent->client->resp.store_pos,spawn_origin);
 				VectorCopy(ent->client->resp.store_angles,spawn_angles);
 
@@ -5083,7 +5098,10 @@ void Cmd_Recall(edict_t *ent)
                 memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint1,sizeof(ent->client->pers.cpbox_checkpoint));
 			}
 		
-			VectorClear (ent->velocity);
+			//velocity store feature - kill player's velocity if the toggle isn't on
+			if (!(ent->client->pers.store_velocity)) {
+				VectorClear(ent->velocity);
+			}
 
 			client->ps.pmove.origin[0] = spawn_origin[0]*8;
 			client->ps.pmove.origin[1] = spawn_origin[1]*8;

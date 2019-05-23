@@ -677,10 +677,21 @@ void InitClientPersistant(gclient_t *client)
 	unsigned long banlevel;
 	int			idletime;
 	qboolean	idle;
+	qboolean	velstore;
+	vec3_t		vel1;
+	vec3_t		vel2;
+	vec3_t		vel3;
 
 	//idle trough mapchange?
 	idletime = client->pers.frames_without_movement;
 	idle = client->pers.idle_player;
+
+	//velocity store feature - carry through the stored velocities and toggle state
+	velstore = client->pers.store_velocity;
+	VectorCopy(client->pers.stored_velocity1, vel1); 
+	VectorCopy(client->pers.stored_velocity2, vel2);
+	VectorCopy(client->pers.stored_velocity3, vel3);
+
 	//char		user_temp[1024];
 
 	//ww - hang on to user ip and banlevel
@@ -728,6 +739,12 @@ void InitClientPersistant(gclient_t *client)
 	//idle trough mapchange?
 	client->pers.frames_without_movement = idletime;
 	client->pers.idle_player = idle;
+
+	//velocity store feature - restore the values
+	client->pers.store_velocity = velstore; 
+	VectorCopy(vel1, client->pers.stored_velocity1);
+	VectorCopy(vel2, client->pers.stored_velocity2);
+	VectorCopy(vel3, client->pers.stored_velocity3);
 }
 
 

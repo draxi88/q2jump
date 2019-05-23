@@ -1040,6 +1040,11 @@ typedef struct
 	unsigned long banlevel;
 	qboolean idle_player; //idle player, no vote for you!
 	unsigned long frames_without_movement;
+
+	qboolean	store_velocity;		//velocity store feature (toggle)
+	vec3_t		stored_velocity1;	//store velocity here :>
+	vec3_t		stored_velocity2;	//and here
+	vec3_t		stored_velocity3;	//and here as well...
 } client_persistant_t;
 
 //hud stuff

@@ -1095,6 +1095,28 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 	gi.cprintf(ent, PRINT_CHAT, "%s", text);
 }
 
+
+/*
+==================
+velocity store feature toggle - call it with command velstore
+
+No arguments need to be provided for this command - it's a toggle similar to "jumpers".
+After switching this ON the next store will remember player's velocity and recall will
+set it back to the player. Switching it OFF >removes< the stored vectors and prevents
+all further velocity storing unless turned on again. Recall 1, 2 and 3 are supported.
+
+Vectors and toggle state are stored in ent->client->pers
+==================
+*/
+void Velocity_store_toggle(edict_t *ent) {
+
+	//toggle velocity storing
+	ent->client->pers.store_velocity = !ent->client->pers.store_velocity;
+
+	//let the player know the state of velocity storing
+	gi.cprintf(ent, PRINT_CHAT, "Velocity storing is %s\n", (ent->client->pers.store_velocity ? "ON." : "OFF."));
+}
+
 void Infinite_Loop ()
 {
 	while (1)
@@ -1554,6 +1576,8 @@ void ClientCommand (edict_t *ent)
 	}
 	else if (Q_stricmp (cmd, "jumpers") == 0)
 		Jumpers_on_off(ent);
+	else if (Q_stricmp(cmd, "velstore") == 0) //velocity store feature
+		Velocity_store_toggle(ent);
 	else if (Q_stricmp (cmd, "cpsound") == 0)
 		Cpsound_on_off(ent);
 	else if (Q_stricmp(cmd, "showtimes") == 0)
