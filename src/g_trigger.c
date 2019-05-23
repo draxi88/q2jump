@@ -160,38 +160,73 @@ void SP_trigger_multiple (edict_t *ent)
 /*QUAKED trigger_lapcounter (.5 .5 .5) ?
 resizable ent that acts as a lap counter
 -count: how many checkpoints needed to finish a lap
+-speed: how much speed you need to pass the ent
 */
 void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
+	// not a client
 	if (!other->client)
 		return;
 
 	// check for 0 count
 	if (self->count == 0) {
-		if (trigger_timer(2))
+		if (trigger_timer(3)) {
 			gi.cprintf(other, PRINT_HIGH, "Mapper Error: count set to 0.\n");
+		}
 		return;
 	}
 
 	// check for lap_total of 1
 	if (mset_vars->lap_total == 1) {
-		if (trigger_timer(2))
+		if (trigger_timer(3)) {
 			gi.cprintf(other, PRINT_HIGH, "Mset Error: lap_total needs to be at least 2 if enabled.\n");
+		}
+		return;
+	}
+
+	// check if the client is already finished
+	if (other->client->resp.finished == 1 && !other->client->resp.replaying) {
+		if (trigger_timer(3)) {
+			gi.cprintf(other, PRINT_HIGH, "Client is already finished.\n");
+		}
 		return;
 	}
 
 	hud_footer(other);
 
-	// check if the client is already finished
-	if (other->client->resp.finished == 1 && !other->client->resp.replaying)
-		return;
+	// setting up the internal one-way-wall checking
+	vec3_t   vel;
+	float	 dot;
+	vec3_t	 forward;
 
-	// is their lapcount already over the needed value, you should never get here.
-	if (other->client->pers.lapcount >= mset_vars->lap_total)
-		return;
+	// normalize vector, get angle of the wall, get dot product
+	VectorCopy(other->velocity, vel);
+	VectorNormalize(vel);
+	AngleVectors(self->s.angles, forward, NULL, NULL);
+	dot = DotProduct(vel, forward);
 
-	// do they have enough checkpoints to increase laps_player?
-	if (other->client->pers.lap_cps >= self->count) {
+	// check for speed setting, kill velocity if they don't meet it
+	if (other->client->resp.cur_speed <= self->speed) {
+		VectorCopy(other->s.old_origin, other->s.origin);
+		VectorClear(other->velocity);
+		if (trigger_timer(3)) {
+			gi.cprintf(other, PRINT_HIGH, "You need %.0f speed to pass the wall.\n", self->speed);
+		}
+		return;
+	}
+
+	// check if the player enters at the right angle
+	else if (dot <= 0) {
+		VectorCopy(other->s.old_origin, other->s.origin);
+		VectorClear(other->velocity);
+		if (trigger_timer(3)) {
+			gi.cprintf(other, PRINT_HIGH, "You are going the wrong way.\n");
+		}
+		return;
+	}
+
+	// check if they have enough checkpoints to increase laps_player?
+	else if (other->client->pers.lap_cps >= self->count) {
 		other->client->pers.lapcount = other->client->pers.lapcount + 1;
 
 		/*
@@ -219,10 +254,17 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 			other->client->pers.lap_cp[i] = 0;
 		}
 
-		//check if this made them finish
-		if (other->client->pers.lapcount >= mset_vars->lap_total) {} // you finished
+		// check if this made them finish
+		if (other->client->pers.lapcount >= mset_vars->lap_total) {
+			if (trigger_timer(3)) {
+				gi.cprintf(other, PRINT_HIGH, "You are finished, grab the gun.\n");
+			}
+			return;
+		}
+
+		// display laps left
 		else {
-			if (trigger_timer(2))
+			if (trigger_timer(3))
 				if (mset_vars->lap_total - other->client->pers.lapcount == 1)
 					gi.cprintf(other, PRINT_HIGH, "1 lap left\n");
 				else
@@ -230,39 +272,23 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		}
 		return;
 	}
+
 	// they don't have enough lap checkpoints, tell them how many they missed
 	else if (other->client->pers.lap_cps < self->count) {
-		if (trigger_timer(2))
+		if (trigger_timer(3))
 			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints needed to complete this lap.\n", other->client->pers.lap_cps, self->count);
 		return;
-	}
-
-	// movement stuff
-	if (!VectorCompare(self->movedir, vec3_origin)) {
-		vec3_t	forward;
-		AngleVectors(other->s.angles, forward, NULL, NULL);
-		if (_DotProduct(forward, self->movedir) < 0)
-			return;
 	}
 
 	self->activator = other;
 	multi_trigger(self);
 }
 
-void SP_trigger_lapcounter(edict_t *ent)
-{
-	if (!ent->wait)
-		ent->wait = 0.2;
-
+void SP_trigger_lapcounter(edict_t *ent) {
 	ent->touch = lapcounter_touch;
 	ent->movetype = MOVETYPE_NONE;
 	ent->svflags |= SVF_NOCLIENT;
 	ent->solid = SOLID_TRIGGER;
-	ent->use = Use_Multi;
-
-	if (!VectorCompare(ent->s.angles, vec3_origin))
-		G_SetMovedir(ent->s.angles, ent->movedir);
-
 	gi.setmodel(ent, ent->model);
 	gi.linkentity(ent);
 }
