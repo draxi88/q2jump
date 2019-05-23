@@ -896,6 +896,7 @@ typedef struct
 
 	// lapcounter things
 	int			lapcount;
+	float		laptime;
 	int			lap_cps;
 	int         lap_cp[64];
 
