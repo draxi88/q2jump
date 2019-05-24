@@ -50,6 +50,7 @@ static int	power_shield_index;
 #define HEALTH_IGNORE_MAX	1
 #define HEALTH_TIMED		2
 
+qboolean Pickup_Quad (edict_t *ent, edict_t *other);
 void Use_Quad (edict_t *ent, gitem_t *item);
 static int	quad_drop_timeout_hack;
 
@@ -427,6 +428,18 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 
 //======================================================================
 
+// new separate pickup function for quad damage
+// can remove the quad damage with a weapon_clear trigger
+qboolean Pickup_Quad(edict_t *ent, edict_t *other) {
+	other->client->pers.has_quad = true;
+	if (trigger_timer(2)) {
+		gi.cprintf(other, PRINT_HIGH, "You now have quad damage.\n");
+	}
+	return false;
+}
+
+//======================================================================
+
 void Use_Quad (edict_t *ent, gitem_t *item)
 {
 	int		timeout;
@@ -561,6 +574,7 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 	if (Q_stricmp(ent->item->pickup_name,"weapon clear")==0) {
 
 		memset(other->client->pers.inventory, 0, sizeof(other->client->pers.inventory)); // reset their inventory
+		other->client->pers.has_quad = false;
 
 		item = FindItem("Blaster"); // set their equiped item to a blaster
 		other->client->newweapon = item;
@@ -2218,7 +2232,7 @@ always owned, never in the world
 */
 	{
 		"item_quad", 
-		Pickup_Powerup,
+		Pickup_Quad,
 		Use_Quad,
 		Drop_General,
 		NULL,

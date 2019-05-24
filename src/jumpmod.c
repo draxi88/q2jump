@@ -14095,6 +14095,9 @@ void ClearCheckpoints(client_persistant_t* pers) {
 		pers->lap_cp[i] = 0;
 	}
 
+	// quad damage trigger clear
+	pers->has_quad = false;
+
 	//memcpy for anyone chasing us...
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;

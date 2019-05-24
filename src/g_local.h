@@ -891,6 +891,9 @@ typedef struct
 	int			max_cells;
 	int			max_slugs;
 
+	// quad pickup
+	qboolean	has_quad;
+
 	// recall counter
 	int			total_recall;
 
