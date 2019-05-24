@@ -362,7 +362,7 @@ void SP_trigger_lapcp(edict_t *ent)
 	gi.linkentity(ent);
 }
 
-/*QUAKED trigger_quad (.5 .5 .5) ?
+/*QUAKED trigger_quad (.5 .5 .5) ? SHOW_MSG
 resizable ent that gives quad damage to players
 -set spawnflag 1 for message to play
 */
@@ -393,7 +393,7 @@ void SP_trigger_quad(edict_t *ent) {
 	ent->touch = quad_touch;
 }
 
-/*QUAKED trigger_quad_clear (.5 .5 .5) ?
+/*QUAKED trigger_quad_clear (.5 .5 .5) ? SHOW_MSG
 resizable ent that takes quad damage from players
 -set spawnflag 1 for message to play
 */
