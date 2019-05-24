@@ -431,10 +431,17 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 // new separate pickup function for quad damage
 // can remove the quad damage with a weapon_clear trigger
 qboolean Pickup_Quad(edict_t *ent, edict_t *other) {
-	other->client->pers.has_quad = true;
+
+	if (other->client->pers.has_quad == true && trigger_timer(2)) {
+		gi.cprintf(other, PRINT_HIGH, "You already have quad damage.\n");
+		return false;
+	}
+
 	if (trigger_timer(2)) {
 		gi.cprintf(other, PRINT_HIGH, "You now have quad damage.\n");
 	}
+
+	other->client->pers.has_quad = true;
 	return false;
 }
 
@@ -571,24 +578,14 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 	}
 
 	// resizable ent that removes all weapons on touch, as well as quad damage
-	if (Q_stricmp(ent->item->pickup_name,"weapon clear")==0) {
+	if (Q_stricmp(ent->item->pickup_name, "weapon clear") == 0) {
 
 		memset(other->client->pers.inventory, 0, sizeof(other->client->pers.inventory)); // reset their inventory
 		other->client->pers.has_quad = false;
 
 		item = FindItem("Blaster"); // set their equiped item to a blaster
 		other->client->newweapon = item;
-		ChangeWeapon (other);
-	}
-
-	// resizable ent that gives quad damage on touch
-	if (Q_stricmp(ent->item->pickup_name, "quad give") == 0) {
-		other->client->pers.has_quad = true;
-	}
-
-	// resizable ent that removes quad damage on touch
-	if (Q_stricmp(ent->item->pickup_name, "quad clear") == 0) {
-		other->client->pers.has_quad = false;
+		ChangeWeapon(other);
 	}
 	
 	// resizable starting line, timer is reset when you pass over it, cp's also removed
@@ -2680,54 +2677,6 @@ removes all weapons from a player's inventory
 		NULL,
 		"k_redkey",
 		"weapon clear",
-		2,
-		0,
-		NULL,
-		IT_STAY_COOP|IT_KEY,
-		0,
-		NULL,
-		0,
-/* precache */ ""
-	},
-
-/*QUAKED quad_give (.5 .5 .5) ?
-gives quad to a player
-*/
-	{
-		"quad_give",
-		Pickup_Key,
-		NULL,
-		Drop_General,
-		NULL,
-		NULL,
-		"models/items/keys/red_key/tris.md2", EF_GIB,
-		NULL,
-		"k_redkey",
-		"quad give",
-		2,
-		0,
-		NULL,
-		IT_STAY_COOP|IT_KEY,
-		0,
-		NULL,
-		0,
-/* precache */ ""
-	},
-
-/*QUAKED quad_clear (.5 .5 .5) ?
-removes quad from a player
-*/
-	{
-		"quad_clear",
-		Pickup_Key,
-		NULL,
-		Drop_General,
-		NULL,
-		NULL,
-		"models/items/keys/red_key/tris.md2", EF_GIB,
-		NULL,
-		"k_redkey",
-		"quad clear",
 		2,
 		0,
 		NULL,

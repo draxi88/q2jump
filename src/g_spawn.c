@@ -60,6 +60,8 @@ void SP_trigger_once (edict_t *ent);
 void SP_trigger_multiple (edict_t *ent);
 void SP_trigger_lapcounter(edict_t *ent);
 void SP_trigger_lapcp(edict_t *ent);
+void SP_trigger_quad(edict_t *ent);
+void SP_trigger_quad_clear(edict_t *ent);
 void SP_trigger_relay (edict_t *ent);
 void SP_trigger_push (edict_t *ent);
 void SP_trigger_hurt (edict_t *ent);
@@ -215,6 +217,8 @@ spawn_t	spawns[] = {
 	{"trigger_multiple", SP_trigger_multiple},
 	{"trigger_lapcounter", SP_trigger_lapcounter},
 	{"trigger_lapcp", SP_trigger_lapcp},
+	{"trigger_quad", SP_trigger_quad},
+	{"trigger_quad_clear", SP_trigger_quad_clear},
 	{"trigger_relay", SP_trigger_relay},
 	{"trigger_push", SP_trigger_push},
 	{"trigger_hurt", SP_trigger_hurt},

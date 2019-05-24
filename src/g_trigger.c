@@ -362,6 +362,62 @@ void SP_trigger_lapcp(edict_t *ent)
 	gi.linkentity(ent);
 }
 
+/*QUAKED trigger_quad (.5 .5 .5) ?
+resizable ent that gives quad damage to players
+-set spawnflag 1 for message to play
+*/
+void quad_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
+
+	// client check
+	if (!other->client)
+		return;
+
+	// already have it, tell them so if:
+	// -spawnflag 1
+	if (self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(2)) {
+		gi.cprintf(other, PRINT_HIGH, "You already have quad damage.\n");
+		return;
+	}
+
+	// tell them they have it if:
+	// -spawnflag 1
+	if (self->spawnflags & 1 && trigger_timer(2)) {
+		gi.cprintf(other, PRINT_HIGH, "You have quad damage.\n");
+	}
+
+	other->client->pers.has_quad = true;
+}
+
+void SP_trigger_quad(edict_t *ent) {
+	InitTrigger(ent);
+	ent->touch = quad_touch;
+}
+
+/*QUAKED trigger_quad_clear (.5 .5 .5) ?
+resizable ent that takes quad damage from players
+-set spawnflag 1 for message to play
+*/
+void quad_clear_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
+
+	// client check
+	if (!other->client)
+		return;
+
+	// tell them they no longer have quad if:
+	// -spawnflag 1
+	// -currently have quad
+	if (self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(2)) {
+		gi.cprintf(other, PRINT_HIGH, "You no longer have quad damage.\n");
+	}
+	other->client->pers.has_quad = false;
+}
+
+void SP_trigger_quad_clear(edict_t *ent) {
+
+	InitTrigger(ent);
+	ent->touch = quad_clear_touch;
+}
+
 /*QUAKED trigger_once (.5 .5 .5) ? x x TRIGGERED
 Triggers once, then removes itself.
 You must set the key "target" to the name of another object in the level that has a matching "targetname".
