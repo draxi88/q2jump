@@ -595,14 +595,14 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->resp.item_timer = 0; // internal timer reset 1
 		other->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
 		other->client->resp.race_frame = 0; //reset race frame if racing
-		ClearCheckpoints(&other->client->pers);
+		ClearPersistants(&other->client->pers);
 	}
 
 	// resizable ent that can clear checkpoints, print msg if they had some
 	if (Q_stricmp(ent->item->pickup_name,"cp clear")==0) {
 		if (other->client->pers.checkpoints > 0)
 			gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->pers.checkpoints);
-		ClearCheckpoints(&other->client->pers);
+		ClearPersistants(&other->client->pers);
 	}
 
 	// get the clients time in .xxx format
@@ -3544,7 +3544,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		if(Q_stricmp(self->target,"cp_clear")==0){
 			if (player->client->pers.checkpoints > 0)
 				gi.cprintf(player,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", player->client->pers.checkpoints);
-			ClearCheckpoints(&player->client->pers);
+			ClearPersistants(&player->client->pers);
 			return;
 		} 
 		//ckeck if it should reset timer++
@@ -3560,7 +3560,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			player->client->resp.item_timer = 0; // internal timer reset 1
 			player->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
 			player->client->resp.race_frame = 0; //reset race frame if racing
-			ClearCheckpoints(&player->client->pers);
+			ClearPersistants(&player->client->pers);
 			return;
 		} 
 	}

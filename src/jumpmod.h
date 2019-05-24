@@ -306,7 +306,7 @@ void		Apply_Nominated_Map(char *mapname);
 int			get_admin_id(char *givenpass,char *givenname);
 qboolean	trigger_timer(int timeBetweenMessages);
 qboolean    song_timer(int timeBetweenMessages);
-void		ClearCheckpoints(client_persistant_t* pers);
+void		ClearPersistants(client_persistant_t* pers);
 void		CPSoundCheck(edict_t *ent);
 void        Cmd_Show_Maptimes_Wireplay(edict_t* ent);
 

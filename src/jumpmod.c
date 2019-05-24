@@ -4281,7 +4281,7 @@ void apply_time(edict_t *other, edict_t *ent)
 
 		other->client->resp.item_timer = add_item_to_queue(other,other->client->resp.item_timer,other->client->pers.netname,ent->item->pickup_name);
 
-		ClearCheckpoints(&other->client->pers);
+		ClearPersistants(&other->client->pers);
 		hud_footer(other);
 		
 		if (((other->client->resp.item_timer+0.0001)<level_items.item_time) || (level_items.item_time==0))
@@ -4898,7 +4898,7 @@ void Cmd_Recall(edict_t *ent)
 	int i;
 	vec3_t	spawn_origin, spawn_angles;
 
-	ClearCheckpoints(&ent->client->pers);
+	ClearPersistants(&ent->client->pers);
 
 	if (gametype->value==GAME_CTF)
 		return;
@@ -14035,7 +14035,7 @@ qboolean song_timer(int timeBetweenMessages) {
 }
 
 // fxn to clear all checkpoints from a player
-void ClearCheckpoints(client_persistant_t* pers) {
+void ClearPersistants(client_persistant_t* pers) {
 	edict_t *cl_ent;
 	int i;
 

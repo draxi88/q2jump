@@ -3635,7 +3635,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 
 	PMenu_Close(ent);
 
-	ClearCheckpoints(&ent->client->pers);
+	ClearPersistants(&ent->client->pers);
 
 	if (level.status==LEVEL_STATUS_OVERTIME)
 	{
@@ -3727,7 +3727,7 @@ Notify_Of_Team_Commands(ent);
 void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 {
 	char *s;
-	ClearCheckpoints(&ent->client->pers);
+	ClearPersistants(&ent->client->pers);
 	PMenu_Close(ent);
 
 

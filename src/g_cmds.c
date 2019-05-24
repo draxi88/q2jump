@@ -740,7 +740,7 @@ void Cmd_Kill_f (edict_t *ent)
 {	
 	// if team hard, clear cps
 	if (ent->client->resp.ctf_team==CTF_TEAM2) {
-		ClearCheckpoints(&ent->client->pers);
+		ClearPersistants(&ent->client->pers);
 	}
 	hud_footer(ent);
 
