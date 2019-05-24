@@ -50,6 +50,7 @@ static int	power_shield_index;
 #define HEALTH_IGNORE_MAX	1
 #define HEALTH_TIMED		2
 
+qboolean Pickup_Quad (edict_t *ent, edict_t *other);
 void Use_Quad (edict_t *ent, gitem_t *item);
 static int	quad_drop_timeout_hack;
 
@@ -427,6 +428,25 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 
 //======================================================================
 
+// new separate pickup function for quad damage
+// can remove the quad damage with a weapon_clear trigger
+qboolean Pickup_Quad(edict_t *ent, edict_t *other) {
+
+	if (other->client->pers.has_quad == true && trigger_timer(2)) {
+		gi.cprintf(other, PRINT_HIGH, "You already have quad damage.\n");
+		return false;
+	}
+
+	if (trigger_timer(2)) {
+		gi.cprintf(other, PRINT_HIGH, "You now have quad damage.\n");
+	}
+
+	other->client->pers.has_quad = true;
+	return false;
+}
+
+//======================================================================
+
 void Use_Quad (edict_t *ent, gitem_t *item)
 {
 	int		timeout;
@@ -557,14 +577,15 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		return true;
 	}
 
-	// resizable ent that removes all weapons on touch
-	if (Q_stricmp(ent->item->pickup_name,"weapon clear")==0) {
+	// resizable ent that removes all weapons on touch, as well as quad damage
+	if (Q_stricmp(ent->item->pickup_name, "weapon clear") == 0) {
 
 		memset(other->client->pers.inventory, 0, sizeof(other->client->pers.inventory)); // reset their inventory
+		other->client->pers.has_quad = false;
 
 		item = FindItem("Blaster"); // set their equiped item to a blaster
 		other->client->newweapon = item;
-		ChangeWeapon (other);
+		ChangeWeapon(other);
 	}
 	
 	// resizable starting line, timer is reset when you pass over it, cp's also removed
@@ -581,14 +602,14 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->resp.item_timer = 0; // internal timer reset 1
 		other->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
 		other->client->resp.race_frame = 0; //reset race frame if racing
-		ClearCheckpoints(&other->client->pers);
+		ClearPersistants(&other->client->pers);
 	}
 
 	// resizable ent that can clear checkpoints, print msg if they had some
 	if (Q_stricmp(ent->item->pickup_name,"cp clear")==0) {
 		if (other->client->pers.checkpoints > 0)
 			gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->pers.checkpoints);
-		ClearCheckpoints(&other->client->pers);
+		ClearPersistants(&other->client->pers);
 	}
 
 	// get the clients time in .xxx format
@@ -2218,7 +2239,7 @@ always owned, never in the world
 */
 	{
 		"item_quad", 
-		Pickup_Powerup,
+		Pickup_Quad,
 		Use_Quad,
 		Drop_General,
 		NULL,
@@ -3530,7 +3551,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		if(Q_stricmp(self->target,"cp_clear")==0){
 			if (player->client->pers.checkpoints > 0)
 				gi.cprintf(player,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", player->client->pers.checkpoints);
-			ClearCheckpoints(&player->client->pers);
+			ClearPersistants(&player->client->pers);
 			return;
 		} 
 		//ckeck if it should reset timer++
@@ -3546,7 +3567,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			player->client->resp.item_timer = 0; // internal timer reset 1
 			player->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
 			player->client->resp.race_frame = 0; //reset race frame if racing
-			ClearCheckpoints(&player->client->pers);
+			ClearPersistants(&player->client->pers);
 			return;
 		} 
 	}
