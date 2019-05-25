@@ -172,7 +172,7 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 
 	// check for 0 count
 	if (self->count < 0) {
-		if (trigger_timer(3)) {
+		if (trigger_timer(self->wait)) {
 			gi.cprintf(other, PRINT_HIGH, "Mapper Error: count set to 0.\n");
 		}
 		return;
@@ -180,21 +180,32 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 
 	// check for lap_total of 1
 	if (mset_vars->lap_total == 1) {
-		if (trigger_timer(3)) {
+		if (trigger_timer(self->wait)) {
 			gi.cprintf(other, PRINT_HIGH, "Mset Error: lap_total needs to be at least 2 if enabled.\n");
 		}
 		return;
 	}
 
+	// check if the client is replaying, display nothing
+	if (other->client->resp.replaying) {
+		return;
+	}
+
 	// check if the client is already finished
 	if (other->client->resp.finished == 1 && !other->client->resp.replaying) {
-		if (trigger_timer(3)) {
-			gi.cprintf(other, PRINT_HIGH, "Client is already finished.\n");
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You already finished.\n");
 		}
 		return;
 	}
 
-	hud_footer(other);
+	// check for doing extra lap, if finish isnt on top of the lapcounter
+	if (other->client->pers.lapcount >= mset_vars->lap_total) {
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You did too many laps.\n");
+		}
+		return;
+	}
 
 	// setting up the internal one-way-wall checking and laptime
 	vec3_t   vel;
@@ -209,11 +220,13 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	dot = DotProduct(vel, forward);
 
 	// check for speed setting, kill velocity if they don't meet it
-	if (other->client->resp.cur_speed <= self->speed) {
-		VectorCopy(other->s.old_origin, other->s.origin);
-		VectorClear(other->velocity);
-		if (trigger_timer(3)) {
-			gi.cprintf(other, PRINT_HIGH, "You need %.0f speed to pass the wall.\n", self->speed);
+	if (self->speed) { // without this the error msg sometimes leaks through
+		if (other->client->resp.cur_speed <= self->speed) {
+			VectorCopy(other->s.old_origin, other->s.origin);
+			VectorClear(other->velocity);
+			if (trigger_timer(self->wait)) {
+				gi.cprintf(other, PRINT_HIGH, "You need %.0f speed to pass the wall.\n", self->speed);
+			}
 		}
 	}
 
@@ -221,7 +234,7 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	else if (dot <= 0) {
 		VectorCopy(other->s.old_origin, other->s.origin);
 		VectorClear(other->velocity);
-		if (trigger_timer(3)) {
+		if (trigger_timer(self->wait)) {
 			gi.cprintf(other, PRINT_HIGH, "You are going the wrong way.\n");
 		}
 	}
@@ -243,6 +256,8 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		// increment lapcount
 		other->client->pers.lapcount = other->client->pers.lapcount + 1;
 
+		hud_footer(other);
+
 		// reset lap cp's
 		int i;
 		other->client->pers.lap_cps = 0;
@@ -251,10 +266,10 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		}
 
 		// check if this made them finish
-		if (other->client->pers.lapcount >= mset_vars->lap_total) {
-			if (trigger_timer(3)) {
+		if (other->client->pers.lapcount == mset_vars->lap_total) {
+			if (trigger_timer(self->wait)) {
 				if (other->client->resp.ctf_team == CTF_TEAM2) { // display last lap time to hard team
-					gi.cprintf(other, PRINT_HIGH, "(Lap Time = %.3f)\n", current_laptime);
+					gi.cprintf(other, PRINT_HIGH, "Finished (Lap Time = %.3f)\n", current_laptime);
 				}
 				else { // display a msg in easy for when the laps are completed
 					gi.cprintf(other, PRINT_HIGH, "Laps Finished\n");
@@ -264,7 +279,7 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 
 		// display laps left
 		else {
-			if (trigger_timer(3)) {
+			if (trigger_timer(self->wait)) {
 				if (other->client->resp.ctf_team == CTF_TEAM1) { // easy team, dont give lap times
 					if (mset_vars->lap_total - other->client->pers.lapcount == 1) {
 						gi.cprintf(other, PRINT_HIGH, "1 lap left\n");
@@ -287,21 +302,20 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 
 	// they don't have enough lap checkpoints, tell them how many they missed
 	if (other->client->pers.lap_cps < self->count) {
-		if (trigger_timer(3))
+		if (trigger_timer(self->wait)) {
 			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints needed to complete this lap.\n", other->client->pers.lap_cps, self->count);
+		}
 	}
-
-	self->activator = other;
-	multi_trigger(self);
 }
 
-void SP_trigger_lapcounter(edict_t *ent) {
-	ent->touch = lapcounter_touch;
-	ent->movetype = MOVETYPE_NONE;
-	ent->svflags |= SVF_NOCLIENT;
-	ent->solid = SOLID_TRIGGER;
-	gi.setmodel(ent, ent->model);
-	gi.linkentity(ent);
+void SP_trigger_lapcounter(edict_t *self) {
+
+	if (self->wait < .5) {
+		self->wait = .5;
+	}
+
+	InitTrigger(self);
+	self->touch = lapcounter_touch;
 }
 
 /*QUAKED trigger_lapcp (.5 .5 .5) ?
@@ -315,7 +329,9 @@ void lapcp_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 	// check for bad count values
 	if (self->count >= sizeof(other->client->pers.lap_cp) / sizeof(int)) {
 		if (trigger_timer(5))
-			gi.dprintf("Mapper Error: Your count of %i is higher than the max value of %i.\n", self->count, sizeof(other->client->pers.lap_cp) / sizeof(int) - 1);
+			gi.cprintf(other, PRINT_HIGH, 
+				"Mapper Error: Your count of %i is higher than the max value of %i.\n", 
+				self->count, sizeof(other->client->pers.lap_cp) / sizeof(int) - 1);
 		return;
 	}
 
@@ -331,40 +347,21 @@ void lapcp_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *sur
 		// play a sound for it
 		CPSoundCheck(other);
 	}
-
-	// movement stuff
-	if (!VectorCompare(self->movedir, vec3_origin)) {
-		vec3_t	forward;
-		AngleVectors(other->s.angles, forward, NULL, NULL);
-		if (_DotProduct(forward, self->movedir) < 0)
-			return;
-	}
-
-	self->activator = other;
-	multi_trigger(self);
 }
 
-void SP_trigger_lapcp(edict_t *ent)
-{
-	if (!ent->wait)
-		ent->wait = 0.2;
+void SP_trigger_lapcp(edict_t *self) {
 
-	ent->touch = lapcp_touch;
-	ent->movetype = MOVETYPE_NONE;
-	ent->svflags |= SVF_NOCLIENT;
-	ent->solid = SOLID_TRIGGER;
-	ent->use = Use_Multi;
+	if (self->wait < .5) {
+		self->wait = .5;
+	}
 
-	if (!VectorCompare(ent->s.angles, vec3_origin))
-		G_SetMovedir(ent->s.angles, ent->movedir);
-
-	gi.setmodel(ent, ent->model);
-	gi.linkentity(ent);
+	InitTrigger(self);
+	self->touch = lapcp_touch;
 }
 
 /*QUAKED trigger_quad (.5 .5 .5) ? SHOW_MSG
 resizable ent that gives quad damage to players
--set spawnflag 1 for message to play
+-set spawnflag 1 to disable messages
 */
 void quad_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
 
@@ -373,29 +370,34 @@ void quad_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 		return;
 
 	// already have it, tell them so if:
-	// -spawnflag 1
-	if (self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(2)) {
+	// -not spawnflag 1
+	if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait)) {
 		gi.cprintf(other, PRINT_HIGH, "You already have quad damage.\n");
 		return;
 	}
 
 	// tell them they have it if:
-	// -spawnflag 1
-	if (self->spawnflags & 1 && trigger_timer(2)) {
+	// -not spawnflag 1
+	if (!self->spawnflags & 1 && trigger_timer(self->wait)) {
 		gi.cprintf(other, PRINT_HIGH, "You have quad damage.\n");
 	}
 
 	other->client->pers.has_quad = true;
 }
 
-void SP_trigger_quad(edict_t *ent) {
-	InitTrigger(ent);
-	ent->touch = quad_touch;
+void SP_trigger_quad(edict_t *self) {
+
+	if (self->wait < .5) {
+		self->wait = .5;
+	}
+
+	InitTrigger(self);
+	self->touch = quad_touch;
 }
 
 /*QUAKED trigger_quad_clear (.5 .5 .5) ? SHOW_MSG
 resizable ent that takes quad damage from players
--set spawnflag 1 for message to play
+-set spawnflag 1 to disable messages
 */
 void quad_clear_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
 
@@ -404,18 +406,22 @@ void quad_clear_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		return;
 
 	// tell them they no longer have quad if:
-	// -spawnflag 1
+	// -not spawnflag 1
 	// -currently have quad
-	if (self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(2)) {
+	if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait)) {
 		gi.cprintf(other, PRINT_HIGH, "You no longer have quad damage.\n");
 	}
 	other->client->pers.has_quad = false;
 }
 
-void SP_trigger_quad_clear(edict_t *ent) {
+void SP_trigger_quad_clear(edict_t *self) {
 
-	InitTrigger(ent);
-	ent->touch = quad_clear_touch;
+	if (self->wait < .5) {
+		self->wait = .5;
+	}
+
+	InitTrigger(self);
+	self->touch = quad_clear_touch;
 }
 
 /*QUAKED trigger_once (.5 .5 .5) ? x x TRIGGERED
