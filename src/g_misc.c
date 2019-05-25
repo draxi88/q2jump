@@ -1863,6 +1863,16 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	if (!other->client)
 		return;
 
+	//team teleporter check:
+	//add spawnflags 128 and tele will ignore team easy
+	//spawnflags 256 make teleporter ignore team hard
+	if ((self->spawnflags & 128) && other->client->resp.ctf_team == CTF_TEAM1) {
+		return;
+	}
+	else if ((self->spawnflags & 256) && other->client->resp.ctf_team == CTF_TEAM2) {
+		return;
+	}
+
 	dest = G_Find (NULL, FOFS(targetname), self->target);
 
 	// target is set, but destination is bad
