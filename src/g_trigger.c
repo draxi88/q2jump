@@ -361,7 +361,7 @@ void SP_trigger_lapcp(edict_t *self) {
 
 /*QUAKED trigger_quad (.5 .5 .5) ? SHOW_MSG
 resizable ent that gives quad damage to players
--set spawnflag 1 for message to play
+-set spawnflag 1 to disable messages
 */
 void quad_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
 
@@ -397,7 +397,7 @@ void SP_trigger_quad(edict_t *self) {
 
 /*QUAKED trigger_quad_clear (.5 .5 .5) ? SHOW_MSG
 resizable ent that takes quad damage from players
--set spawnflag 1 for message to play
+-set spawnflag 1 to disable messages
 */
 void quad_clear_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
 
