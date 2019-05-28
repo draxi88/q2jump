@@ -1080,9 +1080,11 @@ void ClientEndServerFrame (edict_t *ent)
 		current_client->ps.pmove.velocity[i] = ent->velocity[i]*8.0;
 	}
 
+	//speedometer fix
 	temp_velocity[0] = ent->velocity[0];
 	temp_velocity[1] = ent->velocity[1];
-	cur_speed = (int)fabs(VectorLength(temp_velocity));
+	temp_velocity[2] = 0;
+	cur_speed = VectorNormalize(temp_velocity);
 		ent->client->resp.cur_speed  = cur_speed;
 		if (cur_speed>ent->client->resp.max_speed)
 		{
@@ -1199,7 +1201,7 @@ void ClientEndServerFrame (edict_t *ent)
 			sizeof(ent->client->ps.stats));		
 		e->client->ps.stats[STAT_LAYOUTS] = 1;
 		//allow spectator to see a players speed regardless of their team
-		e->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.cur_speed;
+		e->client->ps.stats[STAT_JUMP_SPEED_MAX] =  ent->client->resp.cur_speed;
 //		break; // LilRed: This is the fix to the chasecam bug... commenting out break; =)
 	}
 //ZOID
