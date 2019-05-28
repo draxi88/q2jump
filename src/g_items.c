@@ -3575,19 +3575,6 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			ClearCheckpoints(player);
 			return;
 		} 
-		else if (Q_stricmp(self->target, "ordered") == 0) {
-			for (i = 1; i <= self->count; i++) { //should it start at 0?
-				if (i == self->count) {
-					break;
-				}
-				if (player->client->resp.store[0].cpbox_checkpoint[i] == 0) {
-					if (trigger_timer(5)) {
-						gi.cprintf(player, PRINT_HIGH, "You need to pick these checkpoints up in the correct order!\n");//or something like that?!
-					}
-					return;
-				}
-			}
-		}
 	}
 	// rest is for regular cpboxes..
 
