@@ -553,7 +553,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 //ZOID
 		//pooy
 		if (gametype->value!=GAME_CTF)
-		if ((self->client->resp.store) && (self->client->resp.ctf_team==CTF_TEAM1))
+		if ((self->client->resp.can_store) && (self->client->resp.ctf_team==CTF_TEAM1))
 		{
 			self->client->resp.item_timer_allow = true;
 		}
@@ -681,6 +681,7 @@ void InitClientPersistant(gclient_t *client)
 	vec3_t		vel1;
 	vec3_t		vel2;
 	vec3_t		vel3;
+	store_struct savestore;
 
 	//idle trough mapchange?
 	idletime = client->pers.frames_without_movement;
@@ -688,9 +689,6 @@ void InitClientPersistant(gclient_t *client)
 
 	//velocity store feature - carry through the stored velocities and toggle state
 	velstore = client->pers.store_velocity;
-	VectorCopy(client->pers.stored_velocity1, vel1); 
-	VectorCopy(client->pers.stored_velocity2, vel2);
-	VectorCopy(client->pers.stored_velocity3, vel3);
 
 	//char		user_temp[1024];
 
@@ -741,10 +739,7 @@ void InitClientPersistant(gclient_t *client)
 	client->pers.idle_player = idle;
 
 	//velocity store feature - restore the values
-	client->pers.store_velocity = velstore; 
-	VectorCopy(vel1, client->pers.stored_velocity1);
-	VectorCopy(vel2, client->pers.stored_velocity2);
-	VectorCopy(vel3, client->pers.stored_velocity3);
+	client->pers.store_velocity = velstore;
 }
 
 
@@ -1086,7 +1081,7 @@ void respawn (edict_t *self)
 	{
 		self->client->resp.client_think_begin = 0;
 		self->client->resp.item_timer = 0;
-		//self->client->resp.item_timer = self->client->resp.stored_item_timer;
+		//self->client->resp.item_timer = self->client->resp.store[0].stored_item_timer;
 
 	}
 
@@ -1165,7 +1160,6 @@ void PutClientInServer (edict_t *ent)
 	gitem_t		*item;
 
 	unpause_client(ent);
-
 	if ((ent->client->resp.ctf_team==CTF_TEAM2) || (gametype->value==GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1))
 	{
 
@@ -1183,17 +1177,12 @@ void PutClientInServer (edict_t *ent)
 	//pooy
 	if (gametype->value!=GAME_CTF)
 	{
-			if (
-			(ent->client->resp.store) &&
-				(
-				(ent->client->resp.ctf_team==CTF_TEAM1)
-				)
-			)
+		if ((ent->client->resp.can_store) && ((ent->client->resp.ctf_team==CTF_TEAM1)))
 		{
 			for (i=0 ; i<2 ; i++)
 				ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - ent->client->resp.cmd_angles[i]);
-			VectorCopy(ent->client->resp.store_pos,spawn_origin);
-			VectorCopy(ent->client->resp.store_angles,spawn_angles);
+			VectorCopy(ent->client->resp.store[1].store_pos,spawn_origin);
+			VectorCopy(ent->client->resp.store[1].store_angles,spawn_angles);
 		}
 	}
 	ent->client->resp.finished = false;
@@ -1206,7 +1195,6 @@ void PutClientInServer (edict_t *ent)
 	if (deathmatch->value)
 	{
 		char		userinfo[MAX_INFO_STRING];
-
 		resp = client->resp;
 		memcpy (userinfo, client->pers.userinfo, sizeof(userinfo));
 		InitClientPersistant (client);
@@ -2383,6 +2371,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		{
 			if (ent->client->resp.replay_frame < 5) {
 				ClearPersistants(&ent->client->pers);
+				ClearCheckpoints(ent);
 				hud_footer(ent);
 			}
 			if ((ucmd->upmove>=10) && (!ent->client->resp.going_up))

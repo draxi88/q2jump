@@ -2676,7 +2676,7 @@ void Cmd_Commands_f (edict_t *ent)
 }
 
 void Cmd_Store_f (edict_t *ent) {
-
+	int i;
 	// set default to false
 	qboolean can_store = false;
 
@@ -2696,125 +2696,31 @@ void Cmd_Store_f (edict_t *ent) {
 
 		// can we store?
 		if (can_store) {
-			ent->client->resp.stored_item_timer = ent->client->resp.item_timer;
-			VectorCopy(ent->client->resp.store_pos2,ent->client->resp.store_pos3);
-			VectorCopy(ent->client->resp.store_angles2,ent->client->resp.store_angles3);
-			VectorCopy(ent->client->resp.store_pos,ent->client->resp.store_pos2);
-			VectorCopy(ent->client->resp.store_angles,ent->client->resp.store_angles2);
-			VectorCopy(ent->s.origin,ent->client->resp.store_pos);
-			VectorCopy(ent->s.angles,ent->client->resp.store_angles);
-			ent->client->resp.store_angles[2] = 0;
-			ent->client->resp.store = 1;
-
-			// recall has a 3 store memory, so here is this shit that should be in an array
-			// stored 2 moves to stored 3
-			ent->client->pers.stored_checkpoints3 = ent->client->pers.stored_checkpoints2;
-			ent->client->pers.stored_red_checkpoint3 = ent->client->pers.stored_red_checkpoint2;
-			ent->client->pers.stored_target_checkpoint3 = ent->client->pers.stored_target_checkpoint2;
-			ent->client->pers.stored_blue_checkpoint3 = ent->client->pers.stored_blue_checkpoint2;
-			ent->client->pers.stored_cd_checkpoint3 = ent->client->pers.stored_cd_checkpoint2;
-			ent->client->pers.stored_cube_checkpoint3 = ent->client->pers.stored_cube_checkpoint2;
-			ent->client->pers.stored_pyramid_checkpoint3 = ent->client->pers.stored_pyramid_checkpoint2;
-			ent->client->pers.stored_pass_checkpoint3 = ent->client->pers.stored_pass_checkpoint2;
-			ent->client->pers.stored_spinner_checkpoint3 = ent->client->pers.stored_spinner_checkpoint2;
-			ent->client->pers.stored_rs1_checkpoint3 = ent->client->pers.stored_rs1_checkpoint2;
-			ent->client->pers.stored_rs2_checkpoint3 = ent->client->pers.stored_rs2_checkpoint2;
-			ent->client->pers.stored_rs3_checkpoint3 = ent->client->pers.stored_rs3_checkpoint2;
-			ent->client->pers.stored_rs4_checkpoint3 = ent->client->pers.stored_rs4_checkpoint2;
-			ent->client->pers.stored_rs5_checkpoint3 = ent->client->pers.stored_rs5_checkpoint2;
-			ent->client->pers.stored_rs6_checkpoint3 = ent->client->pers.stored_rs6_checkpoint2;
-			ent->client->pers.stored_rs7_checkpoint3 = ent->client->pers.stored_rs7_checkpoint2;
-			ent->client->pers.stored_rs8_checkpoint3 = ent->client->pers.stored_rs8_checkpoint2;
-			ent->client->pers.stored_rs9_checkpoint3 = ent->client->pers.stored_rs9_checkpoint2;
-			ent->client->pers.stored_rs10_checkpoint3 = ent->client->pers.stored_rs10_checkpoint2;
-			ent->client->pers.stored_rs11_checkpoint3 = ent->client->pers.stored_rs11_checkpoint2;
-			ent->client->pers.stored_rs12_checkpoint3 = ent->client->pers.stored_rs12_checkpoint2;
-			ent->client->pers.stored_rs13_checkpoint3 = ent->client->pers.stored_rs13_checkpoint2;
-			ent->client->pers.stored_rs14_checkpoint3 = ent->client->pers.stored_rs14_checkpoint2;
-			ent->client->pers.stored_rs15_checkpoint3 = ent->client->pers.stored_rs15_checkpoint2;
-			ent->client->pers.stored_rs16_checkpoint3 = ent->client->pers.stored_rs16_checkpoint2;
-			ent->client->pers.stored_rs17_checkpoint3 = ent->client->pers.stored_rs17_checkpoint2;
-			ent->client->pers.stored_rs18_checkpoint3 = ent->client->pers.stored_rs18_checkpoint2;
-			ent->client->pers.stored_rs19_checkpoint3 = ent->client->pers.stored_rs19_checkpoint2;
-			ent->client->pers.stored_rs20_checkpoint3 = ent->client->pers.stored_rs20_checkpoint2;
-
-			// stored 1 moves to stored 2
-			ent->client->pers.stored_checkpoints2 = ent->client->pers.stored_checkpoints1;
-			ent->client->pers.stored_red_checkpoint2 = ent->client->pers.stored_red_checkpoint1;
-			ent->client->pers.stored_target_checkpoint2 = ent->client->pers.stored_target_checkpoint1;
-			ent->client->pers.stored_blue_checkpoint2 = ent->client->pers.stored_blue_checkpoint1;
-			ent->client->pers.stored_cd_checkpoint2 = ent->client->pers.stored_cd_checkpoint1;
-			ent->client->pers.stored_cube_checkpoint2 = ent->client->pers.stored_cube_checkpoint1;
-			ent->client->pers.stored_pyramid_checkpoint2 = ent->client->pers.stored_pyramid_checkpoint1;
-			ent->client->pers.stored_pass_checkpoint2 = ent->client->pers.stored_pass_checkpoint1;
-			ent->client->pers.stored_spinner_checkpoint2 = ent->client->pers.stored_spinner_checkpoint1;
-			ent->client->pers.stored_rs1_checkpoint2 = ent->client->pers.stored_rs1_checkpoint1;
-			ent->client->pers.stored_rs2_checkpoint2 = ent->client->pers.stored_rs2_checkpoint1;
-			ent->client->pers.stored_rs3_checkpoint2 = ent->client->pers.stored_rs3_checkpoint1;
-			ent->client->pers.stored_rs4_checkpoint2 = ent->client->pers.stored_rs4_checkpoint1;
-			ent->client->pers.stored_rs5_checkpoint2 = ent->client->pers.stored_rs5_checkpoint1;
-			ent->client->pers.stored_rs6_checkpoint2 = ent->client->pers.stored_rs6_checkpoint1;
-			ent->client->pers.stored_rs7_checkpoint2 = ent->client->pers.stored_rs7_checkpoint1;
-			ent->client->pers.stored_rs8_checkpoint2 = ent->client->pers.stored_rs8_checkpoint1;
-			ent->client->pers.stored_rs9_checkpoint2 = ent->client->pers.stored_rs9_checkpoint1;
-			ent->client->pers.stored_rs10_checkpoint2 = ent->client->pers.stored_rs10_checkpoint1;
-			ent->client->pers.stored_rs11_checkpoint2 = ent->client->pers.stored_rs11_checkpoint1;
-			ent->client->pers.stored_rs12_checkpoint2 = ent->client->pers.stored_rs12_checkpoint1;
-			ent->client->pers.stored_rs13_checkpoint2 = ent->client->pers.stored_rs13_checkpoint1;
-			ent->client->pers.stored_rs14_checkpoint2 = ent->client->pers.stored_rs14_checkpoint1;
-			ent->client->pers.stored_rs15_checkpoint2 = ent->client->pers.stored_rs15_checkpoint1;
-			ent->client->pers.stored_rs16_checkpoint2 = ent->client->pers.stored_rs16_checkpoint1;
-			ent->client->pers.stored_rs17_checkpoint2 = ent->client->pers.stored_rs17_checkpoint1;
-			ent->client->pers.stored_rs18_checkpoint2 = ent->client->pers.stored_rs18_checkpoint1;
-			ent->client->pers.stored_rs19_checkpoint2 = ent->client->pers.stored_rs19_checkpoint1;
-			ent->client->pers.stored_rs20_checkpoint2 = ent->client->pers.stored_rs20_checkpoint1;
-
-			// current moves to stored 1
-			ent->client->pers.stored_checkpoints1 = ent->client->pers.checkpoints;
-			ent->client->pers.stored_red_checkpoint1 = ent->client->pers.red_checkpoint;
-			ent->client->pers.stored_target_checkpoint1 = ent->client->pers.target_checkpoint;
-			ent->client->pers.stored_blue_checkpoint1 = ent->client->pers.blue_checkpoint;
-			ent->client->pers.stored_cd_checkpoint1 = ent->client->pers.cd_checkpoint;
-			ent->client->pers.stored_cube_checkpoint1 = ent->client->pers.cube_checkpoint;
-			ent->client->pers.stored_pyramid_checkpoint1 = ent->client->pers.pyramid_checkpoint;
-			ent->client->pers.stored_pass_checkpoint1 = ent->client->pers.pass_checkpoint;
-			ent->client->pers.stored_spinner_checkpoint1 = ent->client->pers.spinner_checkpoint;
-			ent->client->pers.stored_rs1_checkpoint1 = ent->client->pers.rs1_checkpoint;
-			ent->client->pers.stored_rs2_checkpoint1 = ent->client->pers.rs2_checkpoint;
-			ent->client->pers.stored_rs3_checkpoint1 = ent->client->pers.rs3_checkpoint;
-			ent->client->pers.stored_rs4_checkpoint1 = ent->client->pers.rs4_checkpoint;
-			ent->client->pers.stored_rs5_checkpoint1 = ent->client->pers.rs5_checkpoint;
-			ent->client->pers.stored_rs6_checkpoint1 = ent->client->pers.rs6_checkpoint;
-			ent->client->pers.stored_rs7_checkpoint1 = ent->client->pers.rs7_checkpoint;
-			ent->client->pers.stored_rs8_checkpoint1 = ent->client->pers.rs8_checkpoint;
-			ent->client->pers.stored_rs9_checkpoint1 = ent->client->pers.rs9_checkpoint;
-			ent->client->pers.stored_rs10_checkpoint1 = ent->client->pers.rs10_checkpoint;
-			ent->client->pers.stored_rs11_checkpoint1 = ent->client->pers.rs11_checkpoint;
-			ent->client->pers.stored_rs12_checkpoint1 = ent->client->pers.rs12_checkpoint;
-			ent->client->pers.stored_rs13_checkpoint1 = ent->client->pers.rs13_checkpoint;
-			ent->client->pers.stored_rs14_checkpoint1 = ent->client->pers.rs14_checkpoint;
-			ent->client->pers.stored_rs15_checkpoint1 = ent->client->pers.rs15_checkpoint;
-			ent->client->pers.stored_rs16_checkpoint1 = ent->client->pers.rs16_checkpoint;
-			ent->client->pers.stored_rs17_checkpoint1 = ent->client->pers.rs17_checkpoint;
-			ent->client->pers.stored_rs18_checkpoint1 = ent->client->pers.rs18_checkpoint;
-			ent->client->pers.stored_rs19_checkpoint1 = ent->client->pers.rs19_checkpoint;
-			ent->client->pers.stored_rs20_checkpoint1 = ent->client->pers.rs20_checkpoint;
-
-            memcpy(ent->client->pers.cpbox_checkpoint3,ent->client->pers.cpbox_checkpoint2,sizeof(ent->client->pers.cpbox_checkpoint));
-            memcpy(ent->client->pers.cpbox_checkpoint2,ent->client->pers.cpbox_checkpoint1,sizeof(ent->client->pers.cpbox_checkpoint));
-            memcpy(ent->client->pers.cpbox_checkpoint1,ent->client->pers.cpbox_checkpoint,sizeof(ent->client->pers.cpbox_checkpoint));
+			for (i = MAX_STORES-1; i >= 1; i--) {
+				ent->client->resp.store[i] = ent->client->resp.store[i-1]; //move old stores +1
+			}
+			ent->client->resp.store[1].stored_item_timer = ent->client->resp.item_timer;
+			VectorCopy(ent->s.origin,ent->client->resp.store[1].store_pos);
+			VectorCopy(ent->s.angles,ent->client->resp.store[1].store_angles);
+			ent->client->resp.store[1].store_angles[2] = 0;
+			ent->client->resp.store[1].stored = true;
+			ent->client->resp.can_store = true;
+			//velocity store feature 
+			//we always store velocity so it can be ready when toggled on
+			VectorCopy(ent->velocity, ent->client->resp.store[1].stored_velocity);
+			
 
 			if (jump_show_stored_ent) {
 				if (ent->client->resp.stored_ent)	
 					G_FreeEdict(ent->client->resp.stored_ent);
 
 				ent->client->resp.stored_ent = G_Spawn();
-				VectorCopy (ent->client->resp.store_pos, ent->client->resp.stored_ent->s.origin);
-				VectorCopy (ent->client->resp.store_pos, ent->client->resp.stored_ent->s.old_origin);
+				VectorCopy (ent->client->resp.store[1].store_pos, ent->client->resp.stored_ent->s.origin);
+				VectorCopy (ent->client->resp.store[1].store_pos, ent->client->resp.stored_ent->s.old_origin);
 				ent->client->resp.stored_ent->s.old_origin[2] -=10;
 				ent->client->resp.stored_ent->s.origin[2] -=10;
 				ent->client->resp.stored_ent->svflags = SVF_PROJECTILE;
-				VectorCopy(ent->client->resp.store_angles, ent->client->resp.stored_ent->s.angles);
+				VectorCopy(ent->client->resp.store[0].store_angles, ent->client->resp.stored_ent->s.angles);
 				ent->client->resp.stored_ent->movetype = MOVETYPE_NONE;
 				ent->client->resp.stored_ent->clipmask = MASK_PLAYERSOLID;
 				ent->client->resp.stored_ent->solid = SOLID_NOT;
@@ -2825,15 +2731,6 @@ void Cmd_Store_f (edict_t *ent) {
 				ent->client->resp.stored_ent->dmg = 0;
 				ent->client->resp.stored_ent->classname = "stored_ent";
 				gi.linkentity (ent->client->resp.stored_ent);
-
-				//velocity store feature - support recall 1, 2 and 3
-				//we always store velocity so it can be ready when toggled on
-				// move velocity2 to velocity3
-				VectorCopy(ent->client->pers.stored_velocity2, ent->client->pers.stored_velocity3);
-				// move velocity1 to velocity2
-				VectorCopy(ent->client->pers.stored_velocity1, ent->client->pers.stored_velocity2);
-				// store the new value in velocity1
-				VectorCopy(ent->velocity, ent->client->pers.stored_velocity1);
 
 			} else
 				gi.cprintf(ent,PRINT_HIGH,"Can only store on ground\n");
@@ -2859,7 +2756,7 @@ void Cmd_Time_f (edict_t *ent)
 
 void Cmd_Reset_f (edict_t *ent)
 {
-	ent->client->resp.store = 0;
+	ent->client->resp.can_store = false;
 	ent->client->resp.item_timer_allow = true;
 	if (jump_show_stored_ent)
 	{
@@ -4282,6 +4179,7 @@ void apply_time(edict_t *other, edict_t *ent)
 		other->client->resp.item_timer = add_item_to_queue(other,other->client->resp.item_timer,other->client->pers.netname,ent->item->pickup_name);
 
 		ClearPersistants(&other->client->pers);
+		ClearCheckpoints(other);
 		hud_footer(other);
 		
 		if (((other->client->resp.item_timer+0.0001)<level_items.item_time) || (level_items.item_time==0))
@@ -4898,204 +4796,49 @@ void Cmd_Recall(edict_t *ent)
 	int i;
 	vec3_t	spawn_origin, spawn_angles;
 
+	if (ent->client->chase_target)
+		return;
+
 	ClearPersistants(&ent->client->pers);
+	ClearCheckpoints(ent);
 
 	if (gametype->value==GAME_CTF)
 		return;
 
 	// if we can store
-	if (ent->client->resp.store) {
+	if (ent->client->resp.can_store) {
 
 		// if team easy
 		if ( ent->client->resp.ctf_team==CTF_TEAM1 || mset_vars->ezmode == 1) {
 			if (ent->deadflag)
 				respawn(ent);
-			ent->client->resp.item_timer = ent->client->resp.stored_item_timer;	
+			ent->client->resp.item_timer = ent->client->resp.store[0].stored_item_timer;	
 			ent->client->resp.recalls--;
 			ent->client->pers.total_recall++;
 
 			client = ent->client;
 
 
-			if (gi.argc()==2) {
+			if (gi.argc()==2) { //recall + number
 				i = atoi(gi.argv(1));
-				switch (i) {
-					case 1 :
-					VectorCopy(ent->client->pers.stored_velocity1, ent->velocity); //velocity store feature
-					VectorCopy(ent->client->resp.store_pos,spawn_origin);
-					VectorCopy(ent->client->resp.store_angles,spawn_angles);
-					ent->client->pers.checkpoints = ent->client->pers.stored_checkpoints1;
-					ent->client->pers.red_checkpoint = ent->client->pers.stored_red_checkpoint1;
-					ent->client->pers.target_checkpoint = ent->client->pers.stored_target_checkpoint1;
-					ent->client->pers.blue_checkpoint = ent->client->pers.stored_blue_checkpoint1;
-					ent->client->pers.cd_checkpoint = ent->client->pers.stored_cd_checkpoint1;
-					ent->client->pers.cube_checkpoint = ent->client->pers.stored_cube_checkpoint1;
-					ent->client->pers.pyramid_checkpoint = ent->client->pers.stored_pyramid_checkpoint1;
-					ent->client->pers.pass_checkpoint = ent->client->pers.stored_pass_checkpoint1;
-					ent->client->pers.spinner_checkpoint = ent->client->pers.stored_spinner_checkpoint1;
-					ent->client->pers.rs1_checkpoint = ent->client->pers.stored_rs1_checkpoint1;
-					ent->client->pers.rs2_checkpoint = ent->client->pers.stored_rs2_checkpoint1;
-					ent->client->pers.rs3_checkpoint = ent->client->pers.stored_rs3_checkpoint1;
-					ent->client->pers.rs4_checkpoint = ent->client->pers.stored_rs4_checkpoint1;
-					ent->client->pers.rs5_checkpoint = ent->client->pers.stored_rs5_checkpoint1;
-					ent->client->pers.rs6_checkpoint = ent->client->pers.stored_rs6_checkpoint1;
-					ent->client->pers.rs7_checkpoint = ent->client->pers.stored_rs7_checkpoint1;
-					ent->client->pers.rs8_checkpoint = ent->client->pers.stored_rs8_checkpoint1;
-					ent->client->pers.rs9_checkpoint = ent->client->pers.stored_rs9_checkpoint1;
-					ent->client->pers.rs10_checkpoint = ent->client->pers.stored_rs10_checkpoint1;
-					ent->client->pers.rs11_checkpoint = ent->client->pers.stored_rs11_checkpoint1;
-					ent->client->pers.rs12_checkpoint = ent->client->pers.stored_rs12_checkpoint1;
-					ent->client->pers.rs13_checkpoint = ent->client->pers.stored_rs13_checkpoint1;
-					ent->client->pers.rs14_checkpoint = ent->client->pers.stored_rs14_checkpoint1;
-					ent->client->pers.rs15_checkpoint = ent->client->pers.stored_rs15_checkpoint1;
-					ent->client->pers.rs16_checkpoint = ent->client->pers.stored_rs16_checkpoint1;
-					ent->client->pers.rs17_checkpoint = ent->client->pers.stored_rs17_checkpoint1;
-					ent->client->pers.rs18_checkpoint = ent->client->pers.stored_rs18_checkpoint1;
-					ent->client->pers.rs19_checkpoint = ent->client->pers.stored_rs19_checkpoint1;
-					ent->client->pers.rs20_checkpoint = ent->client->pers.stored_rs20_checkpoint1;
-                    memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint1,sizeof(ent->client->pers.cpbox_checkpoint));
-						break;
-					case 2 :
-					VectorCopy(ent->client->pers.stored_velocity2, ent->velocity); //velocity store feature
-					VectorCopy(ent->client->resp.store_pos2,spawn_origin);
-					VectorCopy(ent->client->resp.store_angles2,spawn_angles);
-					ent->client->pers.checkpoints = ent->client->pers.stored_checkpoints2;
-					ent->client->pers.red_checkpoint = ent->client->pers.stored_red_checkpoint2;
-					ent->client->pers.target_checkpoint = ent->client->pers.stored_target_checkpoint2;
-					ent->client->pers.blue_checkpoint = ent->client->pers.stored_blue_checkpoint2;
-					ent->client->pers.cd_checkpoint = ent->client->pers.stored_cd_checkpoint2;
-					ent->client->pers.cube_checkpoint = ent->client->pers.stored_cube_checkpoint2;
-					ent->client->pers.pyramid_checkpoint = ent->client->pers.stored_pyramid_checkpoint2;
-					ent->client->pers.pass_checkpoint = ent->client->pers.stored_pass_checkpoint2;
-					ent->client->pers.spinner_checkpoint = ent->client->pers.stored_spinner_checkpoint2;
-					ent->client->pers.rs1_checkpoint = ent->client->pers.stored_rs1_checkpoint2;
-					ent->client->pers.rs2_checkpoint = ent->client->pers.stored_rs2_checkpoint2;
-					ent->client->pers.rs3_checkpoint = ent->client->pers.stored_rs3_checkpoint2;
-					ent->client->pers.rs4_checkpoint = ent->client->pers.stored_rs4_checkpoint2;
-					ent->client->pers.rs5_checkpoint = ent->client->pers.stored_rs5_checkpoint2;
-					ent->client->pers.rs6_checkpoint = ent->client->pers.stored_rs6_checkpoint2;
-					ent->client->pers.rs7_checkpoint = ent->client->pers.stored_rs7_checkpoint2;
-					ent->client->pers.rs8_checkpoint = ent->client->pers.stored_rs8_checkpoint2;
-					ent->client->pers.rs9_checkpoint = ent->client->pers.stored_rs9_checkpoint2;
-					ent->client->pers.rs10_checkpoint = ent->client->pers.stored_rs10_checkpoint2;
-					ent->client->pers.rs11_checkpoint = ent->client->pers.stored_rs11_checkpoint2;
-					ent->client->pers.rs12_checkpoint = ent->client->pers.stored_rs12_checkpoint2;
-					ent->client->pers.rs13_checkpoint = ent->client->pers.stored_rs13_checkpoint2;
-					ent->client->pers.rs14_checkpoint = ent->client->pers.stored_rs14_checkpoint2;
-					ent->client->pers.rs15_checkpoint = ent->client->pers.stored_rs15_checkpoint2;
-					ent->client->pers.rs16_checkpoint = ent->client->pers.stored_rs16_checkpoint2;
-					ent->client->pers.rs17_checkpoint = ent->client->pers.stored_rs17_checkpoint2;
-					ent->client->pers.rs18_checkpoint = ent->client->pers.stored_rs18_checkpoint2;
-					ent->client->pers.rs19_checkpoint = ent->client->pers.stored_rs19_checkpoint2;
-					ent->client->pers.rs20_checkpoint = ent->client->pers.stored_rs20_checkpoint2;
-                    memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint2,sizeof(ent->client->pers.cpbox_checkpoint));
-						break;
-					case 3 :
-					VectorCopy(ent->client->pers.stored_velocity3, ent->velocity); //velocity store feature
-					VectorCopy(ent->client->resp.store_pos3,spawn_origin);
-					VectorCopy(ent->client->resp.store_angles3,spawn_angles);
-					ent->client->pers.checkpoints = ent->client->pers.stored_checkpoints3;
-					ent->client->pers.red_checkpoint = ent->client->pers.stored_red_checkpoint3;
-					ent->client->pers.target_checkpoint = ent->client->pers.stored_target_checkpoint3;
-					ent->client->pers.blue_checkpoint = ent->client->pers.stored_blue_checkpoint3;
-					ent->client->pers.cd_checkpoint = ent->client->pers.stored_cd_checkpoint3;
-					ent->client->pers.cube_checkpoint = ent->client->pers.stored_cube_checkpoint3;
-					ent->client->pers.pyramid_checkpoint = ent->client->pers.stored_pyramid_checkpoint3;
-					ent->client->pers.pass_checkpoint = ent->client->pers.stored_pass_checkpoint3;
-					ent->client->pers.spinner_checkpoint = ent->client->pers.stored_spinner_checkpoint3;
-					ent->client->pers.rs1_checkpoint = ent->client->pers.stored_rs1_checkpoint3;
-					ent->client->pers.rs2_checkpoint = ent->client->pers.stored_rs2_checkpoint3;
-					ent->client->pers.rs3_checkpoint = ent->client->pers.stored_rs3_checkpoint3;
-					ent->client->pers.rs4_checkpoint = ent->client->pers.stored_rs4_checkpoint3;
-					ent->client->pers.rs5_checkpoint = ent->client->pers.stored_rs5_checkpoint3;
-					ent->client->pers.rs6_checkpoint = ent->client->pers.stored_rs6_checkpoint3;
-					ent->client->pers.rs7_checkpoint = ent->client->pers.stored_rs7_checkpoint3;
-					ent->client->pers.rs8_checkpoint = ent->client->pers.stored_rs8_checkpoint3;
-					ent->client->pers.rs9_checkpoint = ent->client->pers.stored_rs9_checkpoint3;
-					ent->client->pers.rs10_checkpoint = ent->client->pers.stored_rs10_checkpoint3;
-					ent->client->pers.rs11_checkpoint = ent->client->pers.stored_rs11_checkpoint3;
-					ent->client->pers.rs12_checkpoint = ent->client->pers.stored_rs12_checkpoint3;
-					ent->client->pers.rs13_checkpoint = ent->client->pers.stored_rs13_checkpoint3;
-					ent->client->pers.rs14_checkpoint = ent->client->pers.stored_rs14_checkpoint3;
-					ent->client->pers.rs15_checkpoint = ent->client->pers.stored_rs15_checkpoint3;
-					ent->client->pers.rs16_checkpoint = ent->client->pers.stored_rs16_checkpoint3;
-					ent->client->pers.rs17_checkpoint = ent->client->pers.stored_rs17_checkpoint3;
-					ent->client->pers.rs18_checkpoint = ent->client->pers.stored_rs18_checkpoint3;
-					ent->client->pers.rs19_checkpoint = ent->client->pers.stored_rs19_checkpoint3;
-					ent->client->pers.rs20_checkpoint = ent->client->pers.stored_rs20_checkpoint3;
-                    memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint3,sizeof(ent->client->pers.cpbox_checkpoint));
-						break;
-					default :
-					VectorCopy(ent->client->pers.stored_velocity1, ent->velocity); //velocity store feature
-					VectorCopy(ent->client->resp.store_pos,spawn_origin);
-					VectorCopy(ent->client->resp.store_angles,spawn_angles);
-					ent->client->pers.checkpoints = ent->client->pers.stored_checkpoints1;
-					ent->client->pers.red_checkpoint = ent->client->pers.stored_red_checkpoint1;
-					ent->client->pers.target_checkpoint = ent->client->pers.stored_target_checkpoint1;
-					ent->client->pers.blue_checkpoint = ent->client->pers.stored_blue_checkpoint1;
-					ent->client->pers.cd_checkpoint = ent->client->pers.stored_cd_checkpoint1;
-					ent->client->pers.cube_checkpoint = ent->client->pers.stored_cube_checkpoint1;
-					ent->client->pers.pyramid_checkpoint = ent->client->pers.stored_pyramid_checkpoint1;
-					ent->client->pers.pass_checkpoint = ent->client->pers.stored_pass_checkpoint1;
-					ent->client->pers.spinner_checkpoint = ent->client->pers.stored_spinner_checkpoint1;
-					ent->client->pers.rs1_checkpoint = ent->client->pers.stored_rs1_checkpoint1;
-					ent->client->pers.rs2_checkpoint = ent->client->pers.stored_rs2_checkpoint1;
-					ent->client->pers.rs3_checkpoint = ent->client->pers.stored_rs3_checkpoint1;
-					ent->client->pers.rs4_checkpoint = ent->client->pers.stored_rs4_checkpoint1;
-					ent->client->pers.rs5_checkpoint = ent->client->pers.stored_rs5_checkpoint1;
-					ent->client->pers.rs6_checkpoint = ent->client->pers.stored_rs6_checkpoint1;
-					ent->client->pers.rs7_checkpoint = ent->client->pers.stored_rs7_checkpoint1;
-					ent->client->pers.rs8_checkpoint = ent->client->pers.stored_rs8_checkpoint1;
-					ent->client->pers.rs9_checkpoint = ent->client->pers.stored_rs9_checkpoint1;
-					ent->client->pers.rs10_checkpoint = ent->client->pers.stored_rs10_checkpoint1;
-					ent->client->pers.rs11_checkpoint = ent->client->pers.stored_rs11_checkpoint1;
-					ent->client->pers.rs12_checkpoint = ent->client->pers.stored_rs12_checkpoint1;
-					ent->client->pers.rs13_checkpoint = ent->client->pers.stored_rs13_checkpoint1;
-					ent->client->pers.rs14_checkpoint = ent->client->pers.stored_rs14_checkpoint1;
-					ent->client->pers.rs15_checkpoint = ent->client->pers.stored_rs15_checkpoint1;
-					ent->client->pers.rs16_checkpoint = ent->client->pers.stored_rs16_checkpoint1;
-					ent->client->pers.rs17_checkpoint = ent->client->pers.stored_rs17_checkpoint1;
-					ent->client->pers.rs18_checkpoint = ent->client->pers.stored_rs18_checkpoint1;
-					ent->client->pers.rs19_checkpoint = ent->client->pers.stored_rs19_checkpoint1;
-					ent->client->pers.rs20_checkpoint = ent->client->pers.stored_rs20_checkpoint1;
-                    memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint1,sizeof(ent->client->pers.cpbox_checkpoint));
-						break;
+				if (i<1 || i>MAX_STORES-1) {
+					gi.cprintf(ent,PRINT_HIGH,"Invalid number.\n");
+					return;
 				}
-			} else {
-				VectorCopy(ent->client->pers.stored_velocity1, ent->velocity); //velocity store feature
-				VectorCopy(ent->client->resp.store_pos,spawn_origin);
-				VectorCopy(ent->client->resp.store_angles,spawn_angles);
-
-				ent->client->pers.checkpoints = ent->client->pers.stored_checkpoints1;
-				ent->client->pers.red_checkpoint = ent->client->pers.stored_red_checkpoint1;
-				ent->client->pers.target_checkpoint = ent->client->pers.stored_target_checkpoint1;
-				ent->client->pers.blue_checkpoint = ent->client->pers.stored_blue_checkpoint1;
-				ent->client->pers.cd_checkpoint = ent->client->pers.stored_cd_checkpoint1;
-				ent->client->pers.cube_checkpoint = ent->client->pers.stored_cube_checkpoint1;
-				ent->client->pers.pyramid_checkpoint = ent->client->pers.stored_pyramid_checkpoint1;
-				ent->client->pers.pass_checkpoint = ent->client->pers.stored_pass_checkpoint1;
-				ent->client->pers.spinner_checkpoint = ent->client->pers.stored_spinner_checkpoint1;
-				ent->client->pers.rs1_checkpoint = ent->client->pers.stored_rs1_checkpoint1;
-				ent->client->pers.rs2_checkpoint = ent->client->pers.stored_rs2_checkpoint1;
-				ent->client->pers.rs3_checkpoint = ent->client->pers.stored_rs3_checkpoint1;
-				ent->client->pers.rs4_checkpoint = ent->client->pers.stored_rs4_checkpoint1;
-				ent->client->pers.rs5_checkpoint = ent->client->pers.stored_rs5_checkpoint1;
-				ent->client->pers.rs6_checkpoint = ent->client->pers.stored_rs6_checkpoint1;
-				ent->client->pers.rs7_checkpoint = ent->client->pers.stored_rs7_checkpoint1;
-				ent->client->pers.rs8_checkpoint = ent->client->pers.stored_rs8_checkpoint1;
-				ent->client->pers.rs9_checkpoint = ent->client->pers.stored_rs9_checkpoint1;
-				ent->client->pers.rs10_checkpoint = ent->client->pers.stored_rs10_checkpoint1;
-				ent->client->pers.rs11_checkpoint = ent->client->pers.stored_rs11_checkpoint1;
-				ent->client->pers.rs12_checkpoint = ent->client->pers.stored_rs12_checkpoint1;
-				ent->client->pers.rs13_checkpoint = ent->client->pers.stored_rs13_checkpoint1;
-				ent->client->pers.rs14_checkpoint = ent->client->pers.stored_rs14_checkpoint1;
-				ent->client->pers.rs15_checkpoint = ent->client->pers.stored_rs15_checkpoint1;
-				ent->client->pers.rs16_checkpoint = ent->client->pers.stored_rs16_checkpoint1;
-				ent->client->pers.rs17_checkpoint = ent->client->pers.stored_rs17_checkpoint1;
-				ent->client->pers.rs18_checkpoint = ent->client->pers.stored_rs18_checkpoint1;
-				ent->client->pers.rs19_checkpoint = ent->client->pers.stored_rs19_checkpoint1;
-				ent->client->pers.rs20_checkpoint = ent->client->pers.stored_rs20_checkpoint1;
-                memcpy(ent->client->pers.cpbox_checkpoint,ent->client->pers.cpbox_checkpoint1,sizeof(ent->client->pers.cpbox_checkpoint));
+				if (!(ent->client->resp.store[i].stored)) { //don't use it if it isn't set..
+					gi.cprintf(ent, PRINT_HIGH, "No recall for number:%i\n",i);
+					return;
+				}
+					VectorCopy(ent->client->resp.store[i].stored_velocity, ent->velocity); //velocity store feature
+					VectorCopy(ent->client->resp.store[i].store_pos,spawn_origin);
+					VectorCopy(ent->client->resp.store[i].store_angles,spawn_angles);
+					ent->client->resp.store[0] = ent->client->resp.store[i];
+					
+			} else { //recall without any number..
+				VectorCopy(ent->client->resp.store[1].stored_velocity, ent->velocity); //velocity store feature
+				VectorCopy(ent->client->resp.store[1].store_pos,spawn_origin);
+				VectorCopy(ent->client->resp.store[1].store_angles,spawn_angles);
+				ent->client->resp.store[0] = ent->client->resp.store[1];
 			}
 		
 			//velocity store feature - kill player's velocity if the toggle isn't on
@@ -5481,7 +5224,7 @@ void Add_Box(edict_t *ent)
 		VectorCopy (ent->s.origin, level_items.newent->s.old_origin);
 		box_num = atoi(gi.argv(1));
         cp = atoi(gi.argv(2));
-        cpsize = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int);
+        cpsize = sizeof(ent->client->resp.store[0].cpbox_checkpoint)/sizeof(int);
          if ((box_num>3) && (box_num<7)){
             if (gi.argc() > 2){
                 if ((cp<0) || (cp>cpsize-1)) {
@@ -7631,7 +7374,7 @@ void Notify_Of_Team_Commands(edict_t *ent)
 
 	if (ent->client->resp.ctf_team==CTF_TEAM1) {
 		gi.cprintf(ent,PRINT_HIGH,"Team Easy: Use the commands store and recall to practice jumps.\n");
-		if (ent->client->resp.store != 1) { // this only happens if a person has not placed a store
+		if (!ent->client->resp.can_store) { // this only happens if a person has not placed a store
 			M_droptofloor(ent); // drop them to the floor in case spawn is raised
 			Cmd_Store_f(ent);
 		}
@@ -7683,7 +7426,7 @@ void JumpChase(edict_t *ent)
 		e = g_edicts + i;
 		if (e->inuse && e->solid != SOLID_NOT) {
 			ent->client->chase_target = e;
-			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint)); //copy checkpoints
+			memcpy(ent->client->resp.store[0].cpbox_checkpoint, e->client->resp.store[0].cpbox_checkpoint, sizeof(e->client->resp.store[0].cpbox_checkpoint)); //copy checkpoints
 			hud_footer(ent);
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
@@ -10348,7 +10091,7 @@ void add_clip(edict_t *ent)
 	}
 
 	// set max cp value
-	cpmax = sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int)-1;
+	cpmax = sizeof(ent->client->resp.store[0].cpbox_checkpoint)/sizeof(int)-1;
 
 	//no args, show ent list
 	if (gi.argc() < 2) {
@@ -10451,7 +10194,7 @@ void add_clip(edict_t *ent)
 			cp = atoi(gi.argv(2));
 
 			// check for right cp values
-			if (cp < 0 || cp > (sizeof(ent->client->pers.cpbox_checkpoint)/sizeof(int)) - 1) {
+			if (cp < 0 || cp > (sizeof(ent->client->resp.store[0].cpbox_checkpoint)/sizeof(int)) - 1) {
 				gi.cprintf(ent, PRINT_HIGH, "Checkpoint value can only be between 0 and %i\n", cpmax);
 				return;
 			}
@@ -14034,53 +13777,69 @@ qboolean song_timer(int timeBetweenMessages) {
 		return false;
 }
 
+void ClearCheckpoints(edict_t *ent) {
+	client_respawn_t *resp;
+	edict_t	*cl_ent;
+	int			  i;
+	resp = &ent->client->resp;
+
+	// total count
+	resp->store[0].checkpoints = 0;
+
+	// resizable cps
+	resp->store[0].rs1_checkpoint = 0;
+	resp->store[0].rs2_checkpoint = 0;
+	resp->store[0].rs3_checkpoint = 0;
+	resp->store[0].rs4_checkpoint = 0;
+	resp->store[0].rs5_checkpoint = 0;
+	resp->store[0].rs6_checkpoint = 0;
+	resp->store[0].rs7_checkpoint = 0;
+	resp->store[0].rs8_checkpoint = 0;
+	resp->store[0].rs9_checkpoint = 0;
+	resp->store[0].rs10_checkpoint = 0;
+	resp->store[0].rs11_checkpoint = 0;
+	resp->store[0].rs12_checkpoint = 0;
+	resp->store[0].rs13_checkpoint = 0;
+	resp->store[0].rs14_checkpoint = 0;
+	resp->store[0].rs15_checkpoint = 0;
+	resp->store[0].rs16_checkpoint = 0;
+	resp->store[0].rs17_checkpoint = 0;
+	resp->store[0].rs18_checkpoint = 0;
+	resp->store[0].rs19_checkpoint = 0;
+	resp->store[0].rs20_checkpoint = 0;
+
+	// key cps
+	resp->store[0].target_checkpoint = 0;
+	resp->store[0].blue_checkpoint = 0;
+	resp->store[0].cd_checkpoint = 0;
+	resp->store[0].spinner_checkpoint = 0;
+	resp->store[0].pass_checkpoint = 0;
+	resp->store[0].red_checkpoint = 0;
+	resp->store[0].pyramid_checkpoint = 0;
+
+	// cp box checkpoints
+	for (i = 0; i < sizeof(resp->store[0].cpbox_checkpoint) / sizeof(int); i++) {
+		resp->store[0].cpbox_checkpoint[i] = 0;
+	}
+
+	//memcpy for anyone chasing us...
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+		if (!cl_ent->inuse)
+			continue;
+		if ((cl_ent->client->chase_target) && (cl_ent->client->chase_target->client->resp.uid == resp->uid)) {
+			memcpy(cl_ent->client->resp.store[0].cpbox_checkpoint, resp->store[0].cpbox_checkpoint, sizeof(resp->store[0].cpbox_checkpoint));
+		}
+	}
+}
+
 // fxn to clear all checkpoints from a player
 void ClearPersistants(client_persistant_t* pers) {
-	edict_t *cl_ent;
 	int i;
 
     if (pers == 0) {
         return;
     }
-
-	// total count
-    pers->checkpoints = 0;
-
-	// resizable cps
-	pers->rs1_checkpoint = 0;
-	pers->rs2_checkpoint = 0;
-	pers->rs3_checkpoint = 0;
-	pers->rs4_checkpoint = 0;
-	pers->rs5_checkpoint = 0;
-	pers->rs6_checkpoint = 0;
-	pers->rs7_checkpoint = 0;
-	pers->rs8_checkpoint = 0;
-	pers->rs9_checkpoint = 0;
-	pers->rs10_checkpoint = 0;
-	pers->rs11_checkpoint = 0;
-	pers->rs12_checkpoint = 0;
-	pers->rs13_checkpoint = 0;
-	pers->rs14_checkpoint = 0;
-	pers->rs15_checkpoint = 0;
-	pers->rs16_checkpoint = 0;
-	pers->rs17_checkpoint = 0;
-	pers->rs18_checkpoint = 0;
-	pers->rs19_checkpoint = 0;
-	pers->rs20_checkpoint = 0;
-
-	// key cps
-	pers->target_checkpoint = 0;
-	pers->blue_checkpoint = 0;
-	pers->cd_checkpoint = 0;
-	pers->spinner_checkpoint = 0;
-	pers->pass_checkpoint = 0;
-	pers->red_checkpoint = 0;
-	pers->pyramid_checkpoint = 0;
-
-	// cp box checkpoints
-	for (i = 0; i < sizeof(pers->cpbox_checkpoint) / sizeof(int); i++) {
-		pers->cpbox_checkpoint[i] = 0;
-	}
 
 	// cp split
 	pers->cp_split = 0;
@@ -14097,16 +13856,6 @@ void ClearPersistants(client_persistant_t* pers) {
 
 	// quad damage trigger clear
 	pers->has_quad = false;
-
-	//memcpy for anyone chasing us...
-	for (i = 0; i < maxclients->value; i++) {
-		cl_ent = g_edicts + 1 + i;
-		if (!cl_ent->inuse)
-			continue;
-		if (cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname, pers->netname) == 0) {
-			memcpy(cl_ent->client->pers.cpbox_checkpoint, pers->cpbox_checkpoint, sizeof(pers->cpbox_checkpoint));
-		}
-	}
 }
 
 
@@ -14221,6 +13970,7 @@ void hud_footer(edict_t *ent) {
 
 	if (!ent->client)
 		return;
+
 	strcpy(this_map, prev_levels[0].mapname);
 	for (i = 0; i < strlen(this_map); i++)
 		this_map[i] |= 128;
@@ -14229,6 +13979,22 @@ void hud_footer(edict_t *ent) {
 	for (i = 0; i < 4; i++) {
 		sprintf(ent->client->resp.hud[i].string, "");
 	}
+
+	// update statusbar for client if it's chasing someone...
+	if (ent->client->chase_target) {
+		for (i = 0; i < 4; i++) {
+			sprintf(ent->client->resp.hud[i].string, ent->client->chase_target->client->resp.hud[i].string);
+		}
+		Com_sprintf(str, sizeof(str), ctf_statusbar,
+			ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
+			this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CS_STATUSBAR);
+		gi.WriteString(str);
+		gi.unicast(ent, true);
+		return;
+	}
+	//else if client is not chasing someone......
 
 	//team
 	if (ent->client->resp.ctf_team == CTF_TEAM1)
@@ -14253,7 +14019,7 @@ void hud_footer(edict_t *ent) {
 	strcpy(cpstring, "");
 	if (mset_vars->checkpoint_total) {
 		sprintf(cptotal, "%d", mset_vars->checkpoint_total);
-		sprintf(cp, "%d", ent->client->pers.checkpoints);
+		sprintf(cp, "%d", ent->client->resp.store[0].checkpoints);
 		sprintf(cpstring, "Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
 	}
 
@@ -14286,7 +14052,7 @@ void hud_footer(edict_t *ent) {
 	if (strlen(racestring) > 1 && strlen(cpstring) > 1 && strlen(lapstring) > 1)
 		sprintf(ent->client->resp.hud[3].string, lapstring);
 
-	//update for chasers!
+	//Find chasers....
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
 
@@ -14305,15 +14071,28 @@ void hud_footer(edict_t *ent) {
 		for (i = 0; i < 4; i++) {
 			strcpy(cl_ent->client->resp.hud[i].string, ent->client->resp.hud[i].string);
 		}
+		//update statusbar for chasers..
+		Com_sprintf(str, sizeof(str), ctf_statusbar,
+			cl_ent->client->resp.hud[0].string, cl_ent->client->resp.hud[1].string, cl_ent->client->resp.hud[2].string, cl_ent->client->resp.hud[3].string,
+			this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CS_STATUSBAR);
+		gi.WriteString(str);
+		gi.unicast(cl_ent, true);
 	}
-	//check if client is using cleanhud..
+
+	//check if the client itself is using cleanhud..
 	if (ent->client->resp.cleanhud) {
 		for (i = 0; i < 4; i++) {
 			sprintf(ent->client->resp.hud[i].string, "");
 		}
 	}
+	// update statusbar for client.
 	Com_sprintf(str, sizeof(str), ctf_statusbar,
 		ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
-		this_map,prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
-	gi.configstring(CS_STATUSBAR, str);
+		this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
+	gi.WriteByte(svc_configstring);
+	gi.WriteShort(CS_STATUSBAR);
+	gi.WriteString(str);
+	gi.unicast(ent, true);
 }
