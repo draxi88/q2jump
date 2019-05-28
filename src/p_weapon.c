@@ -158,9 +158,9 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 	// checkpoint check
 	if (mset_vars->checkpoint_total > 0 && (pickup != 1 && pickup != 2)) {
-		if (other->client->pers.checkpoints < mset_vars->checkpoint_total) {
+		if (other->client->resp.store[0].checkpoints < mset_vars->checkpoint_total) {
 			if (trigger_timer(5))
-				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d. Find more checkpoints!\n", mset_vars->checkpoint_total, other->client->pers.checkpoints);
+				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d. Find more checkpoints!\n", mset_vars->checkpoint_total, other->client->resp.store[0].checkpoints);
 			pickup = 2;
 		}
 	}

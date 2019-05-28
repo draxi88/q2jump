@@ -741,6 +741,7 @@ void Cmd_Kill_f (edict_t *ent)
 	// if team hard, clear cps
 	if (ent->client->resp.ctf_team==CTF_TEAM2) {
 		ClearPersistants(&ent->client->pers);
+		ClearCheckpoints(ent);
 	}
 	hud_footer(ent);
 
@@ -789,7 +790,7 @@ void Cmd_Kill_f (edict_t *ent)
 		ent->client->respawn_time = level.framenum + gset_vars->kill_delay;
 		return;
 	}
-	if ((ent->client->resp.ctf_team==CTF_TEAM1) && (ent->client->resp.store))
+	if ((ent->client->resp.ctf_team==CTF_TEAM1) && (ent->client->resp.can_store))
 	{
 		Cmd_Recall(ent);
 		return;

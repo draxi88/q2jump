@@ -862,7 +862,6 @@ qboolean SV_FilterPacket (char *from);
 #define	ANIM_DEATH		5
 #define	ANIM_REVERSE	6
 
-
 // client data that stays across multiple level loads
 typedef struct
 {
@@ -902,8 +901,31 @@ typedef struct
 	float		laptime;
 	int			lap_cps;
 	int         lap_cp[64];
+	float		cp_split;	
 
-	// checkpoint things
+	gitem_t		*weapon;
+	gitem_t		*lastweapon;
+
+	int			power_cubes;	// used for tracking the cubes in coop games
+	int			score;			// for calculating total unit score in coop games
+	int			recalls;			// for calculating total unit score in coop games
+
+	char		userip[32];
+	unsigned long banlevel;
+	qboolean idle_player; //idle player, no vote for you!
+	unsigned long frames_without_movement;
+
+	qboolean	store_velocity;		//velocity store feature (toggle)
+} client_persistant_t;
+
+//hud stuff
+typedef struct
+{
+	char string[32];
+} hud_struct;
+
+typedef struct { //everything that needs to be saved for each store.
+
 	int			checkpoints;
 	int			red_checkpoint;
 	int			target_checkpoint;
@@ -933,129 +955,16 @@ typedef struct
 	int			rs18_checkpoint;
 	int			rs19_checkpoint;
 	int			rs20_checkpoint;
-    int         cpbox_checkpoint[64];
-	float		cp_split;
+	int         cpbox_checkpoint[64];
 
-	// stored checkpoints 1
-	int			stored_checkpoints1;
-	int			stored_red_checkpoint1;
-	int			stored_target_checkpoint1;
-	int			stored_blue_checkpoint1;
-	int			stored_cd_checkpoint1;
-	int			stored_cube_checkpoint1;
-	int			stored_pyramid_checkpoint1;
-	int			stored_pass_checkpoint1;
-	int			stored_spinner_checkpoint1;
-	int			stored_rs1_checkpoint1;
-	int			stored_rs2_checkpoint1;
-	int			stored_rs3_checkpoint1;
-	int			stored_rs4_checkpoint1;
-	int			stored_rs5_checkpoint1;
-	int			stored_rs6_checkpoint1;
-	int			stored_rs7_checkpoint1;
-	int			stored_rs8_checkpoint1;
-	int			stored_rs9_checkpoint1;
-	int			stored_rs10_checkpoint1;
-	int			stored_rs11_checkpoint1;
-	int			stored_rs12_checkpoint1;
-	int			stored_rs13_checkpoint1;
-	int			stored_rs14_checkpoint1;
-	int			stored_rs15_checkpoint1;
-	int			stored_rs16_checkpoint1;
-	int			stored_rs17_checkpoint1;
-	int			stored_rs18_checkpoint1;
-	int			stored_rs19_checkpoint1;
-	int			stored_rs20_checkpoint1;
-    int         cpbox_checkpoint1[64];
+	qboolean	stored;
+	vec3_t		store_pos;
+	vec3_t		store_angles;
+	vec3_t		stored_velocity;
+	float		stored_item_timer;
+}store_struct;
 
-	// stored checkpoints 2
-	int			stored_checkpoints2;
-	int			stored_red_checkpoint2;
-	int			stored_target_checkpoint2;
-	int			stored_blue_checkpoint2;
-	int			stored_cd_checkpoint2;
-	int			stored_cube_checkpoint2;
-	int			stored_pyramid_checkpoint2;
-	int			stored_pass_checkpoint2;
-	int			stored_spinner_checkpoint2;
-	int			stored_rs1_checkpoint2;
-	int			stored_rs2_checkpoint2;
-	int			stored_rs3_checkpoint2;
-	int			stored_rs4_checkpoint2;
-	int			stored_rs5_checkpoint2;
-	int			stored_rs6_checkpoint2;
-	int			stored_rs7_checkpoint2;
-	int			stored_rs8_checkpoint2;
-	int			stored_rs9_checkpoint2;
-	int			stored_rs10_checkpoint2;
-	int			stored_rs11_checkpoint2;
-	int			stored_rs12_checkpoint2;
-	int			stored_rs13_checkpoint2;
-	int			stored_rs14_checkpoint2;
-	int			stored_rs15_checkpoint2;
-	int			stored_rs16_checkpoint2;
-	int			stored_rs17_checkpoint2;
-	int			stored_rs18_checkpoint2;
-	int			stored_rs19_checkpoint2;
-	int			stored_rs20_checkpoint2;
-    int         cpbox_checkpoint2[64];
-
-	// stored checkpoints 3
-	int			stored_checkpoints3;
-	int			stored_red_checkpoint3;
-	int			stored_target_checkpoint3;
-	int			stored_blue_checkpoint3;
-	int			stored_cd_checkpoint3;
-	int			stored_cube_checkpoint3;
-	int			stored_pyramid_checkpoint3;
-	int			stored_pass_checkpoint3;
-	int			stored_spinner_checkpoint3;
-	int			stored_rs1_checkpoint3;
-	int			stored_rs2_checkpoint3;
-	int			stored_rs3_checkpoint3;
-	int			stored_rs4_checkpoint3;
-	int			stored_rs5_checkpoint3;
-	int			stored_rs6_checkpoint3;
-	int			stored_rs7_checkpoint3;
-	int			stored_rs8_checkpoint3;
-	int			stored_rs9_checkpoint3;
-	int			stored_rs10_checkpoint3;
-	int			stored_rs11_checkpoint3;
-	int			stored_rs12_checkpoint3;
-	int			stored_rs13_checkpoint3;
-	int			stored_rs14_checkpoint3;
-	int			stored_rs15_checkpoint3;
-	int			stored_rs16_checkpoint3;
-	int			stored_rs17_checkpoint3;
-	int			stored_rs18_checkpoint3;
-	int			stored_rs19_checkpoint3;
-	int			stored_rs20_checkpoint3;
-    int         cpbox_checkpoint3[64];
-
-	gitem_t		*weapon;
-	gitem_t		*lastweapon;
-
-	int			power_cubes;	// used for tracking the cubes in coop games
-	int			score;			// for calculating total unit score in coop games
-	int			recalls;			// for calculating total unit score in coop games
-
-	char		userip[32];
-	unsigned long banlevel;
-	qboolean idle_player; //idle player, no vote for you!
-	unsigned long frames_without_movement;
-
-	qboolean	store_velocity;		//velocity store feature (toggle)
-	vec3_t		stored_velocity1;	//store velocity here :>
-	vec3_t		stored_velocity2;	//and here
-	vec3_t		stored_velocity3;	//and here as well...
-} client_persistant_t;
-
-//hud stuff
-typedef struct
-{
-	char string[32];
-} hud_struct;
-
+#define MAX_STORES 7 // = 6 different stores... since the 1st one (0) is the standard one..
 // client data that stays across deathmatch respawns
 typedef struct
 {
@@ -1083,19 +992,12 @@ typedef struct
 	int			helpchanged;
 	//pooy
 
-
-	edict_t	*stored_ent;
-	vec3_t		store_pos;
-	vec3_t		store_angles;
-	vec3_t		store_pos2;
-	vec3_t		store_angles2;
-	vec3_t		store_pos3;
-	vec3_t		store_angles3;
-	int			store;
+	store_struct store[MAX_STORES];
+	edict_t		*stored_ent;
+	qboolean	can_store;
 
 	int client_think_begin;
 	float			item_timer;
-	float			stored_item_timer;
 	qboolean	item_timer_allow;
 	int			num_votes;
 	qboolean	got_time;
@@ -1169,6 +1071,7 @@ typedef struct
 	int         welcome_count[10];
 
 	hud_struct hud[4];
+
 } client_respawn_t;
 
 

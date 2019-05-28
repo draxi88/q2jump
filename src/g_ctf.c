@@ -3636,6 +3636,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 	PMenu_Close(ent);
 
 	ClearPersistants(&ent->client->pers);
+	ClearCheckpoints(ent);
 
 	if (level.status==LEVEL_STATUS_OVERTIME)
 	{
@@ -3677,6 +3678,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 		ent->client->resp.item_timer = 0;
 		ent->client->resp.client_think_begin = 0;
 		ent->client->resp.item_timer_allow = true;
+		Cmd_Recall(ent);
 	} else {
 		ent->client->resp.jumps = 0;
 		ent->client->resp.client_think_begin = 0;
@@ -3728,6 +3730,7 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 {
 	char *s;
 	ClearPersistants(&ent->client->pers);
+	ClearCheckpoints(ent);
 	PMenu_Close(ent);
 
 
@@ -3747,7 +3750,6 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 	// hold in place briefly
 	ent->client->ps.pmove.pm_flags = PMF_TIME_TELEPORT;
 	ent->client->ps.pmove.pm_time = 14;
-
 }
 
 
@@ -3791,7 +3793,7 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 		e = g_edicts + i;
 		if (e->inuse && e->solid != SOLID_NOT) {
 			ent->client->chase_target = e;
-			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
+			memcpy(ent->client->resp.store[0].cpbox_checkpoint, e->client->resp.store[0].cpbox_checkpoint, sizeof(e->client->resp.store[0].cpbox_checkpoint));//copy checkpoints
 			hud_footer(ent);
 			PMenu_Close(ent);
 			ent->client->update_chase = true;

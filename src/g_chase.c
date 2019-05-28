@@ -36,7 +36,6 @@ void UpdateChaseCam(edict_t *ent)
 		ent->client->chase_target = NULL;
 		return;
 	}
-
 	targ = ent->client->chase_target;
 
 if (!ent->client->resp.chase_ineye)
@@ -186,7 +185,7 @@ void ChaseNext(edict_t *ent)
 
 	ent->client->chase_target = e;
 	ent->client->update_chase = true;
-	memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
+	memcpy(ent->client->resp.store[0].cpbox_checkpoint, e->client->resp.store[0].cpbox_checkpoint, sizeof(e->client->resp.store[0].cpbox_checkpoint));//copy checkpoints
 	hud_footer(ent);
 }
 
@@ -213,6 +212,6 @@ void ChasePrev(edict_t *ent)
 
 	ent->client->chase_target = e;
 	ent->client->update_chase = true;
-	memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
+	memcpy(ent->client->resp.store[0].cpbox_checkpoint, e->client->resp.store[0].cpbox_checkpoint, sizeof(e->client->resp.store[0].cpbox_checkpoint));//copy checkpoints
 	hud_footer(ent);
 }

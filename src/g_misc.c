@@ -601,7 +601,7 @@ void light_think(edict_t *self) {
 			continue;
 		gi.WriteByte(svc_configstring);
 		gi.WriteShort(CS_LIGHTS + self->style);
-		if (cl_ent->client->pers.cpbox_checkpoint[self->style - substyle] == 1) {
+		if (cl_ent->client->resp.store[0].cpbox_checkpoint[self->style - substyle] == 1) {
 			if (self->style>199) { //start off
 				gi.WriteString("m");
 			} else {
@@ -1888,10 +1888,10 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	// if style is set to 1337, equal to or greater than
     if (self->count > 0) {
         if (self->style == 1337) {
-            if (other->client->pers.checkpoints < self->count)
+            if (other->client->resp.store[0].checkpoints < self->count)
                 return;
         } else {
-            if (other->client->pers.checkpoints != self->count)
+            if (other->client->resp.store[0].checkpoints != self->count)
                 return;
         }
     }
@@ -1904,11 +1904,11 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 			// -go with cpbox counts of 0-63
 			// -if you have the specific checkpoint, you CAN use the teleporter
 	if (self->style > 0) {
-		for (i=0; i < sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int); i++) {
+		for (i=0; i < sizeof(other->client->resp.store[0].cpbox_checkpoint)/sizeof(int); i++) {
 
 			// style 1000-1063:
 			if (self->style == i+1000) {
-				if (other->client->pers.cpbox_checkpoint[i] == 1) {
+				if (other->client->resp.store[0].cpbox_checkpoint[i] == 1) {
 					if (trigger_timer(5))
 						gi.dprintf ("You already grabbed the checkpoint from this area!\n");
 					return;
@@ -1917,7 +1917,7 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 
 			// style 2000-2063:
 			if (self->style == i+2000) {
-				if (other->client->pers.cpbox_checkpoint[i] != 1) {
+				if (other->client->resp.store[0].cpbox_checkpoint[i] != 1) {
 					if (trigger_timer(5))
 						gi.dprintf ("You need a specific checkpoint for this teleporter!\n");
 					return;

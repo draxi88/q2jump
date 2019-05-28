@@ -682,7 +682,7 @@ void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurfac
 {
 	if(self->target) {
         if (strncmp(self->target, "checkpoint", strlen("checkpoint")) == 0 && strcmp(other->classname, "player") == 0) {
-			if (other->client->pers.checkpoints >= self->count)
+			if (other->client->resp.store[0].checkpoints >= self->count)
 				return;
 			else {
 				if (trigger_timer(5))
