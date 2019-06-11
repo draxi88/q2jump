@@ -90,6 +90,7 @@ void SP_target_earthquake (edict_t *ent);
 void SP_target_character (edict_t *ent);
 void SP_target_string (edict_t *ent);
 void SP_model_spawner (edict_t *ent);
+void SP_light_torch(edict_t *ent);
 
 void SP_worldspawn (edict_t *ent);
 void SP_viewthing (edict_t *ent);
@@ -254,6 +255,7 @@ spawn_t	spawns[] = {
 	{"viewthing", SP_viewthing},
 
 	{"light", SP_light},
+	{"light_torch", SP_light_torch},
 	{"light_mine1", SP_light_mine1},
 	{"light_mine2", SP_light_mine2},
 	{"info_null", SP_info_null},
@@ -1273,7 +1275,18 @@ void SP_worldspawn (edict_t *ent)
 
 		// 11 SLOW PULSE NOT FADE TO BLACK
 		gi.configstring(CS_LIGHTS+11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
-		// styles 32-62 are assigned by the l   ight program for switchable lights
+		// styles 32-62 are assigned by the light program for switchable lights
+
+		// 64 -> 70 = FLICKER q2jump
+		gi.configstring(CS_LIGHTS + 64, "mmnmmommommnonmmonqnmmllmmooommmonlmoo");
+		gi.configstring(CS_LIGHTS + 65, "mlmnmommnnmnonmmonlnmmoommooommmonlmoo");
+		gi.configstring(CS_LIGHTS + 66, "onnmllmmommnonmnqnmmoopqqooomnmmonlmmm");
+		gi.configstring(CS_LIGHTS + 67, "pppomommommnonmmonqnmmllmmooommmonlmoo");
+		gi.configstring(CS_LIGHTS + 68, "mlmnmompppnonmmonlnmmoommooommmonlmopo");
+		gi.configstring(CS_LIGHTS + 69, "poqopopqqooomnnmmommoommmmnokhkmnonlmo");
+		gi.configstring(CS_LIGHTS + 70, "onnmllmmopoqoplmlnmmoopqqooomnmmonlmmm");
+
+
 
 		gi.configstring (CONFIG_JUMP_KEY_FORWARD,    "  Forward");
 		gi.configstring (CONFIG_JUMP_KEY_LEFT,       "Left");
