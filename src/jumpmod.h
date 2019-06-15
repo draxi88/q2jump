@@ -462,6 +462,7 @@ typedef struct
 	int jetpack;
 	int transparent;
 	int walkthru;
+	int whitelist;
 	int debug;
 	char model_store[256];
 	char numberone_wav[256];
@@ -864,3 +865,4 @@ void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float v
 void jumpmod_pos_sound(vec3_t pos, edict_t *ent, int sound, int channel, float volume, int attenuation);
 void hud_footer(edict_t *ent);
 void ClearCheckpoints(edict_t *ent);
+void ClientCheck(edict_t *ent);
