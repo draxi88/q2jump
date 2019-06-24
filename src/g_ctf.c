@@ -3632,13 +3632,8 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 {
 	char *s;
 	qboolean can_join = false;
-	PMenu_Close(ent); 
-	
-	//fucking cheater
-	if (!ent->client->resp.supported_client && gset_vars->whitelist) {
-		gi.cprintf(ent, PRINT_HIGH, "%s is not a supported client!\n", ent->client->resp.clientname);
-		return;
-	}
+
+	PMenu_Close(ent);
 
 	ClearPersistants(&ent->client->pers);
 	ClearCheckpoints(ent);

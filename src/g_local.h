@@ -1071,8 +1071,6 @@ typedef struct
 	int         welcome_count[10];
 
 	hud_struct hud[4];
-	qboolean	supported_client;
-	char		clientname[128];
 
 } client_respawn_t;
 

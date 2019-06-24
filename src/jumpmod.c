@@ -838,13 +838,6 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &gset_vars->weapon_fire_min_delay,
   },
-  {
-	0,1,1,
-	"whitelist",
-	CMDWHERE_CFGFILE | CMD_GSET,
-	CMDTYPE_NUMBER,
-	&gset_vars->whitelist,
-  },
 
   //----------------------------
   //         aset's
@@ -6316,7 +6309,6 @@ void SetDefaultValues(void)
 	gset_vars->votingtime = 20;
 	gset_vars->walkthru = 1;
 	gset_vars->weapon_fire_min_delay = 500;
-	gset_vars->whitelist = 0;
 
 	// asets
 	aset_vars->ADMIN_ADDBALL_LEVEL=1;
@@ -14103,53 +14095,4 @@ void hud_footer(edict_t *ent) {
 	gi.WriteShort(CS_STATUSBAR);
 	gi.WriteString(str);
 	gi.unicast(ent, true);
-}
-
-void ClientCheck(edict_t *ent) {
-	char	name[256];
-	char	temp[1024];
-	char	*output;
-	char	WLclient[128];
-	cvar_t	*tgame;
-	FILE	*logfile;
-	FILE	*whitelist;
-	int		length;
-
-	length = 60;
-	tgame = gi.cvar("game", "", 0);
-	ent->client->resp.supported_client = false;
-
-	//get client from logfile.
-	sprintf(name, "%s/logs/console.log", tgame->string);
-	logfile = fopen(name, "r");
-	if (!logfile){
-		gi.dprintf("Could not load logfile.\n");
-		return;
-	}
-	fseek(logfile, -length, SEEK_END);
-	fgets(temp, length, logfile);
-	output = strtok(temp, "]");
-	output = strtok(NULL, " ");
-	output = strtok(NULL, "\n\r");
-	fclose(logfile);
-	sprintf(ent->client->resp.clientname, "%s", output);
-
-	//check whitelist
-	sprintf(name, "%s/logs/whitelist.txt", tgame->string);
-	whitelist = fopen(name, "r");
-	if (!whitelist) {
-		gi.dprintf("Could not load whitelist.\n");
-		return;
-	}
-
-	while (fgets(temp, 1000, whitelist)!=NULL) {
-		output = strtok(temp, "\n\r");
-		sprintf(WLclient, "%s", output);
-		if (Q_stricmp(ent->client->resp.clientname, WLclient) == 0) {
-			ent->client->resp.supported_client = true;
-			return;
-		}
-	}
-	fclose(whitelist);
-	gi.bprintf(PRINT_HIGH, "%s connected using an unsupported client!\n", ent->client->pers.netname);
 }

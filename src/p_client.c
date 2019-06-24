@@ -1633,7 +1633,6 @@ void ClientBeginDeathmatch (edict_t *ent)
 
 		addCmdQueue(ent,QCMD_DOWNLOAD,5,0,0);
 		addCmdQueue(ent,QCMD_CHECK_ADMIN,10,0,0);
-		ClientCheck(ent);
 
 		// custom connections
 		if (Q_stricmp (ent->client->pers.netname, "test") == 0)
