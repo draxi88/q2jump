@@ -1509,7 +1509,7 @@ void ClientCommand (edict_t *ent)
 		CTFAdmin(ent);
 	} else if (Q_stricmp(cmd, "stats") == 0) {
 		CTFStats(ent);
-	} else if (Q_stricmp(cmd, "mapvote") == 0) {
+	} else if ((Q_stricmp(cmd, "mapvote") == 0) || (Q_stricmp(cmd, "votemap") == 0)) {
 		if (gset_vars->tourney)
 		{
 			return;
