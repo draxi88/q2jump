@@ -1884,7 +1884,7 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 
 	// speed teleport, need specific speed to use a teleporter
 	// set speed to the value you want the player to need to use it
-	if (other->client->resp.cur_speed < self->speed) {
+	if (other->client->resp.cur_speed < self->speed && self->speed >= 0) {
 		if (trigger_timer(2)) {
 			gi.dprintf("Your speed is %i, you need %.0f to use the teleporter.\n", other->client->resp.cur_speed, self->speed);
 		}
