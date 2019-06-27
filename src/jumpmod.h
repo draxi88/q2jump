@@ -3,7 +3,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.31ger"
+#define CTF_VERSION_S		"1.32ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -214,7 +214,6 @@ void		ShowPlayerTimes(edict_t *ent);
 void		ShowPlayerScores(edict_t *ent);
 void sort_users_4( int n );
 void		Cmd_Show_Help(edict_t *ent);
-void		Cmd_Show_Glue(edict_t *ent);
 void		show_ent_list(edict_t *ent,int page);
 qboolean	AddNewEnt(void);
 void		ClearNewEnt(void);
@@ -271,7 +270,7 @@ void		CloseFile(FILE *fp);
 void		sort_queue( int n );
 void		AddUser(char *name,int i);
 int			GetPlayerUid(char *name);
-float		add_item_to_queue(edict_t *ent, float item_time,float item_time_penalty,char *owner,char *name);
+float		add_item_to_queue(edict_t *ent, float item_time,char *owner,char *name);
 void		sort_users_2( int n );
 void		sort_users(void);
 qboolean	Jet_AvoidGround( edict_t *ent );
@@ -307,7 +306,7 @@ void		Apply_Nominated_Map(char *mapname);
 int			get_admin_id(char *givenpass,char *givenname);
 qboolean	trigger_timer(int timeBetweenMessages);
 qboolean    song_timer(int timeBetweenMessages);
-void		ClearCheckpoints(client_persistant_t* pers);
+void		ClearPersistants(client_persistant_t* pers);
 void		CPSoundCheck(edict_t *ent);
 void        Cmd_Show_Maptimes_Wireplay(edict_t* ent);
 
@@ -430,6 +429,7 @@ typedef struct
 	int ghost_model;
 	int gravity;
 	int health;
+	int lap_total;
 	int regen;
 	int rocket;
 	int singlespawn;
@@ -447,9 +447,6 @@ typedef struct
 	int admin_max_addtime;
 	char admin_model[255];
 	int allow_admin_boot;
-	int antiglue;
-	int antiglue_allow1st;
-	int antiglue_penalty;
 	int autotime;
 	int best_time_glow;
 	int flashlight;
@@ -641,7 +638,7 @@ void removeClientCommands(edict_t *ent);
 
 void AutoPutClientInServer (edict_t *ent);
 
-qboolean tourney_log(edict_t *ent, int uid, float time, float item_time_penalty, char *date );
+qboolean tourney_log(edict_t *ent, int uid, float time, char *date );
 void sort_tourney_records();
 void open_tourney_file(char *filename,qboolean apply);
 void write_tourney_file(char *filename,int mapnum);
@@ -865,4 +862,5 @@ extern qboolean removed_map;
 
 void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float volume, int attenuation);
 void jumpmod_pos_sound(vec3_t pos, edict_t *ent, int sound, int channel, float volume, int attenuation);
-void cphud();
+void hud_footer(edict_t *ent);
+void ClearCheckpoints(edict_t *ent);

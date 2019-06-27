@@ -1,9 +1,9 @@
-#libs
+# libs
 library(rvest)
 library(psych)
 library(stringi)
 
-#strip html, spaces, line breaks
+# strip html, spaces, line breaks
 strip <- function(a) {
   a <- gsub("<.*?>", "", a)
   a <- gsub("\n", "", a)
@@ -11,14 +11,14 @@ strip <- function(a) {
 }
 
 # maplist
-maplist <- strip(html_nodes(read_html("http://195.93.242.155/~quake2/quake2/jump/_html/maps.html"), "div")) 
+maplist <- strip(html_nodes(read_html("http://46.165.236.118/~quake2/quake2/jump/_html/maps.html"), "div")) 
 maplist <- data.frame(matrix(maplist, ncol = 5, byrow = TRUE))
 maplist <- maplist[-1,]
 maplist <- data.frame(maplist$X2)
 
 # map loop
 length <- length(maplist[[1]])
-prefix <- "http://195.93.242.155/~quake2/quake2/jump/_html/"
+prefix <- "http://46.165.236.118/~quake2/quake2/jump/_html/"
 suffix <- ".html"
 usermaps <- data.frame(NULL)
 i <- 1
@@ -35,7 +35,7 @@ while (i < length + 1) {
   i <- i + 1
 }
 
-#manually add railjump#1 and railjump#2, their url's are broke
+# manually add railjump#1 and railjump#2, their url's are broke
 for(i in (1:2)) {
   mapfile <- strip(html_nodes(read_html(paste(prefix, paste0("railjump%23" , i), suffix, sep = "")), "div"))
   mapfile <- data.frame(matrix(mapfile, ncol = 5, byrow = TRUE))
@@ -46,7 +46,7 @@ colnames(mapfile) <- colnames(usermaps)
 usermaps <- rbind(usermaps, mapfile)
 
 
-#final files
+# final files
 colnames(usermaps) <- c("pos", "name", "date", "time", "map")
 ace <- subset(usermaps, name == "ace")
 first <- subset(usermaps, pos == 1)

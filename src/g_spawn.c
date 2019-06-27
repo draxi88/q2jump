@@ -58,6 +58,10 @@ void SP_func_killbox (edict_t *ent);
 void SP_trigger_always (edict_t *ent);
 void SP_trigger_once (edict_t *ent);
 void SP_trigger_multiple (edict_t *ent);
+void SP_trigger_lapcounter(edict_t *ent);
+void SP_trigger_lapcp(edict_t *ent);
+void SP_trigger_quad(edict_t *ent);
+void SP_trigger_quad_clear(edict_t *ent);
 void SP_trigger_relay (edict_t *ent);
 void SP_trigger_push (edict_t *ent);
 void SP_trigger_hurt (edict_t *ent);
@@ -158,6 +162,7 @@ void SP_cpbox_medium (edict_t *ent);
 void SP_cpbox_large (edict_t *ent);
 void SP_jump_cpwall (edict_t *ent);
 void SP_jump_cpeffect (edict_t *ent);
+void SP_one_way_wall(edict_t *self);
 
 //ww +ed ents
 //void SP_misc_ball (edict_t *ent);
@@ -175,6 +180,7 @@ spawn_t	spawns[] = {
 	{"cpbox_large", SP_cpbox_large},
 	{"jump_cpwall", SP_jump_cpwall},
 	{"jump_cpeffect", SP_jump_cpeffect},
+	{"one_way_wall", SP_one_way_wall},
 	{"item_health", SP_item_health},
 	{"item_health_small", SP_item_health_small},
 	{"item_health_large", SP_item_health_large},
@@ -209,6 +215,10 @@ spawn_t	spawns[] = {
 	{"trigger_always", SP_trigger_always},
 	{"trigger_once", SP_trigger_once},
 	{"trigger_multiple", SP_trigger_multiple},
+	{"trigger_lapcounter", SP_trigger_lapcounter},
+	{"trigger_lapcp", SP_trigger_lapcp},
+	{"trigger_quad", SP_trigger_quad},
+	{"trigger_quad_clear", SP_trigger_quad_clear},
 	{"trigger_relay", SP_trigger_relay},
 	{"trigger_push", SP_trigger_push},
 	{"trigger_hurt", SP_trigger_hurt},
@@ -890,11 +900,11 @@ debug_log(text);
 	nominated_map = false;
 	GenerateVoteMaps();
 	Update_Next_Maps();
-	if (gametype->value==GAME_CTF)
+	/*if (gametype->value==GAME_CTF)
 	{
 		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    team  RED");
 		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    team BLUE");
-	}
+	}*/
 	
 }
 
@@ -1290,15 +1300,8 @@ void SP_worldspawn (edict_t *ent)
 		strcpy(prev_levels[0].mapname,this_map);
 		for (i=0;i<strlen(this_map);i++)
 			this_map[i] |= 128;
-		gi.configstring (CONFIG_JUMP_ANTIGLUE,         "Antiglue    Ïî");			
-		gi.configstring (CONFIG_JUMP_ANTIGLUE_OFF,     "Antiglue   ÏÆÆ");			
-		gi.configstring (CONFIG_JUMP_ANTIGLUE_DISABLED,"Antiglue   Î¯Á");
-		cphud(); //cphud gi.configstring(CONFIG_CP_ON, va("  Chkpts: 0/%s", HighAscii(cptotal)));
-		gi.configstring (CONFIG_CP_OFF,                "");
-        gi.configstring (CONFIG_JUMP_RACE_OFF,         ""); // old "    Race: ÏÆÆ"
-		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    Team: Åáóù");
-		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    Team: Èáòä");
-		gi.configstring (CONFIG_JUMP_TEAM_OBSERVER,    "    Team: Ïâóåòöåò");
+		hud_footer(ent);
+
 		gi.configstring (CONFIG_JUMP_EMPTY,    " ");
 
 		gi.configstring (CONFIG_JUMP_MAPCOUNT,va("%4d",maplist.nummaps));
@@ -1315,9 +1318,9 @@ void SP_worldspawn (edict_t *ent)
 	if (deathmatch->value)
 //ZOID
 		if (ctf->value) {
-			Com_sprintf(str,sizeof(str),ctf_statusbar,this_map,prev_levels[1].mapname,prev_levels[2].mapname,prev_levels[3].mapname);
-			//gi.dprintf("%d %s\n",strlen(str),str);
-			gi.configstring (CS_STATUSBAR, str);
+			Com_sprintf(str, sizeof(str), ctf_statusbar,"","","","",
+				this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
+			gi.configstring(CS_STATUSBAR, str);
 			CTFPrecache();
 		} else
 //ZOID

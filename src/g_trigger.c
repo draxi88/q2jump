@@ -157,6 +157,272 @@ void SP_trigger_multiple (edict_t *ent)
 	gi.linkentity (ent);
 }
 
+/*QUAKED trigger_lapcounter (.5 .5 .5) ?
+-resizable ent that acts as a lap counter
+-does not end a run, you still need a weapon_finish or railgun
+-count: how many lap checkpoints needed to finish a lap, min 1
+-angle: set in direction you want players to go, required or ent will be broken
+-speed: how much speed you need to pass the ent, not required
+*/
+void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	// not a client
+	if (!other->client)
+		return;
+
+	// check for 0 count
+	if (self->count < 0) {
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "Mapper Error: count set to 0.\n");
+		}
+		return;
+	}
+
+	// check for lap_total of 1
+	if (mset_vars->lap_total == 1) {
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "Mset Error: lap_total needs to be at least 2 if enabled.\n");
+		}
+		return;
+	}
+
+	// check if the client is replaying, display nothing
+	if (other->client->resp.replaying) {
+		return;
+	}
+
+	// check if the client is already finished
+	if (other->client->resp.finished == 1 && !other->client->resp.replaying) {
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You already finished.\n");
+		}
+		return;
+	}
+
+	// check for doing extra lap, if finish isnt on top of the lapcounter
+	if (other->client->pers.lapcount >= mset_vars->lap_total) {
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You did too many laps.\n");
+		}
+		return;
+	}
+
+	// setting up the internal one-way-wall checking and laptime
+	vec3_t   vel;
+	float	 dot;
+	vec3_t	 forward;
+	float	 current_laptime;
+
+	// normalize vector, get angle of the wall, get dot product
+	VectorCopy(other->velocity, vel);
+	VectorNormalize(vel);
+	AngleVectors(self->s.angles, forward, NULL, NULL);
+	dot = DotProduct(vel, forward);
+
+	// check for speed setting, kill velocity if they don't meet it
+	if (self->speed) { // without this the error msg sometimes leaks through
+		if (other->client->resp.cur_speed <= self->speed) {
+			VectorCopy(other->s.old_origin, other->s.origin);
+			VectorClear(other->velocity);
+			if (trigger_timer(self->wait)) {
+				gi.cprintf(other, PRINT_HIGH, "You need %.0f speed to pass the wall.\n", self->speed);
+			}
+		}
+	}
+
+	// check if the player enters at the right angle
+	else if (dot <= 0) {
+		VectorCopy(other->s.old_origin, other->s.origin);
+		VectorClear(other->velocity);
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You are going the wrong way.\n");
+		}
+	}
+
+	// check if they have enough checkpoints to increase laps_player?
+	else if (other->client->pers.lap_cps >= self->count) {
+
+		// getting the laptime of the player
+		float my_time;
+
+		// get current laptime
+		my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
+		my_time = (float)my_time / 1000.0f;
+		current_laptime = my_time - other->client->pers.laptime;
+
+		// setup next lap
+		other->client->pers.laptime = other->client->pers.laptime + current_laptime;
+
+		// increment lapcount
+		other->client->pers.lapcount = other->client->pers.lapcount + 1;
+
+		hud_footer(other);
+
+		// reset lap cp's
+		int i;
+		other->client->pers.lap_cps = 0;
+		for (i = 0; i < sizeof(other->client->pers.lap_cp) / sizeof(int); i++) {
+			other->client->pers.lap_cp[i] = 0;
+		}
+
+		// check if this made them finish
+		if (other->client->pers.lapcount == mset_vars->lap_total) {
+			if (trigger_timer(self->wait)) {
+				if (other->client->resp.ctf_team == CTF_TEAM2) { // display last lap time to hard team
+					gi.cprintf(other, PRINT_HIGH, "Finished (Lap Time = %.3f)\n", current_laptime);
+				}
+				else { // display a msg in easy for when the laps are completed
+					gi.cprintf(other, PRINT_HIGH, "Laps Finished\n");
+				}
+			}
+		}
+
+		// display laps left
+		else {
+			if (trigger_timer(self->wait)) {
+				if (other->client->resp.ctf_team == CTF_TEAM1) { // easy team, dont give lap times
+					if (mset_vars->lap_total - other->client->pers.lapcount == 1) {
+						gi.cprintf(other, PRINT_HIGH, "1 lap left\n");
+					}
+					else {
+						gi.cprintf(other, PRINT_HIGH, "%d laps left\n", mset_vars->lap_total - other->client->pers.lapcount);
+					}
+				}
+				else { // hard team, give lap times
+					if (mset_vars->lap_total - other->client->pers.lapcount == 1) {
+						gi.cprintf(other, PRINT_HIGH, "1 lap left (Lap Time = %.3f)\n", current_laptime);
+					}
+					else {
+						gi.cprintf(other, PRINT_HIGH, "%d laps left (Lap Time = %.3f)\n", mset_vars->lap_total - other->client->pers.lapcount, current_laptime);
+					}
+				}
+			}
+		}
+	}
+
+	// they don't have enough lap checkpoints, tell them how many they missed
+	if (other->client->pers.lap_cps < self->count) {
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints needed to complete this lap.\n", other->client->pers.lap_cps, self->count);
+		}
+	}
+}
+
+void SP_trigger_lapcounter(edict_t *self) {
+
+	if (self->wait < .5) {
+		self->wait = .5;
+	}
+
+	InitTrigger(self);
+	self->touch = lapcounter_touch;
+}
+
+/*QUAKED trigger_lapcp (.5 .5 .5) ?
+resizable ent that acts as a checkpoint for maps with a lapcounter
+-count: count of the cp, 0-63
+*/
+void lapcp_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {	
+	if (!other->client)
+		return;
+
+	// check for bad count values
+	if (self->count >= sizeof(other->client->pers.lap_cp) / sizeof(int)) {
+		if (trigger_timer(5))
+			gi.cprintf(other, PRINT_HIGH, 
+				"Mapper Error: Your count of %i is higher than the max value of %i.\n", 
+				self->count, sizeof(other->client->pers.lap_cp) / sizeof(int) - 1);
+		return;
+	}
+
+	// check if the client is already finished
+	if (other->client->resp.finished == 1 && !other->client->resp.replaying)
+		return;
+
+	// check if they have it already, increase it if they don't
+	if (other->client->pers.lap_cp[self->count] != 1) {
+		other->client->pers.lap_cp[self->count] = 1;
+		other->client->pers.lap_cps += 1;
+
+		// play a sound for it
+		CPSoundCheck(other);
+	}
+}
+
+void SP_trigger_lapcp(edict_t *self) {
+
+	if (self->wait < .5) {
+		self->wait = .5;
+	}
+
+	InitTrigger(self);
+	self->touch = lapcp_touch;
+}
+
+/*QUAKED trigger_quad (.5 .5 .5) ? SHOW_MSG
+resizable ent that gives quad damage to players
+-set spawnflag 1 to disable messages
+*/
+void quad_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
+
+	// client check
+	if (!other->client)
+		return;
+
+	// already have it, tell them so if:
+	// -not spawnflag 1
+	if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait)) {
+		gi.cprintf(other, PRINT_HIGH, "You already have quad damage.\n");
+		return;
+	}
+
+	// tell them they have it if:
+	// -not spawnflag 1
+	if (!self->spawnflags & 1 && trigger_timer(self->wait)) {
+		gi.cprintf(other, PRINT_HIGH, "You have quad damage.\n");
+	}
+
+	other->client->pers.has_quad = true;
+}
+
+void SP_trigger_quad(edict_t *self) {
+
+	if (self->wait < .5) {
+		self->wait = .5;
+	}
+
+	InitTrigger(self);
+	self->touch = quad_touch;
+}
+
+/*QUAKED trigger_quad_clear (.5 .5 .5) ? SHOW_MSG
+resizable ent that takes quad damage from players
+-set spawnflag 1 to disable messages
+*/
+void quad_clear_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
+
+	// client check
+	if (!other->client)
+		return;
+
+	// tell them they no longer have quad if:
+	// -not spawnflag 1
+	// -currently have quad
+	if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait)) {
+		gi.cprintf(other, PRINT_HIGH, "You no longer have quad damage.\n");
+	}
+	other->client->pers.has_quad = false;
+}
+
+void SP_trigger_quad_clear(edict_t *self) {
+
+	if (self->wait < .5) {
+		self->wait = .5;
+	}
+
+	InitTrigger(self);
+	self->touch = quad_clear_touch;
+}
 
 /*QUAKED trigger_once (.5 .5 .5) ? x x TRIGGERED
 Triggers once, then removes itself.
@@ -378,7 +644,6 @@ void SP_trigger_counter (edict_t *self)
 	self->use = trigger_counter_use;
 }
 
-
 /*
 ==============================================================================
 
@@ -410,11 +675,14 @@ trigger_push
 
 static int windsound;
 
+
+// checkpoint usage is left here for compatibility with a few maps
+// ent is not advised to be used for checkpoints anymore, use jump_cpwall, it is better in every way
 void trigger_push_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
 	if(self->target) {
         if (strncmp(self->target, "checkpoint", strlen("checkpoint")) == 0 && strcmp(other->classname, "player") == 0) {
-			if (other->client->pers.checkpoints >= self->count)
+			if (other->client->resp.store[0].checkpoints >= self->count)
 				return;
 			else {
 				if (trigger_timer(5))

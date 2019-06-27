@@ -53,8 +53,6 @@ int imageindex_ctfsb1;
 int imageindex_ctfsb2;*/
 
 char *ctf_statusbar =
-
-
 "if 1 "
 // health
 "yb	-32 "
@@ -169,21 +167,24 @@ char *ctf_statusbar =
 
 "if 16 "
   "xv 72 "
-  "yb -24 "
-  "stat_string 29 "
-  "yb -16 "
-  "stat_string 25 "
-  "yb -8 "
-  "stat_string 26 "
+  "yb -32 "			// hud_string1
+  "string \"%s\" "	// hud_string1
+  "yb -24 "			// hud_string2
+  "string \"%s\" "	// hud_string2
+  "yb -16 "			// hud_string3
+  "string \"%s\" "	// hud_string3
+  "yb -8 "			// hud_string4
+  "string \"%s\" "  // hud_string4
+
   "xr -128 "
   "yt 2 "
-  "string \"%s\" "
+  "string \"%s\" " //current map
   "yt 10 "
-  "string \"%s\" "
+  "string \"%s\" " //last map 1
   "yt 18 "
-  "string \"%s\" "
+  "string \"%s\" " //last map 2
   "yt 26 "
-  "string \"%s\" "
+  "string \"%s\" " //last map 3
 "endif "
 
   "xr -32 "
@@ -888,9 +889,6 @@ qboolean CTFPickup_Flag(edict_t *ent, edict_t *other)
 	Start_Recording(other);
 
 	other->client->resp.item_timer = 0;
-	other->client->resp.item_timer_penalty = 0;
-	other->client->resp.item_timer_penalty_delay = 0;
-	other->client->resp.glued = 0;
 	other->client->resp.jumps = 0;
 	// pick up the flag
 	// if it's not a dropped flag, we just make is disappear
@@ -1233,15 +1231,6 @@ void SetCTFStats(edict_t *ent)
 	{
 		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.cur_speed;
-		//no fucking antiglue anymore..
-		/*if (gset_vars->antiglue==0)
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
-		else
-		if (ent->client->resp.antiglue)
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE;
-		else
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;*/
-
 	}
 	else {
 		if (ent->client->resp.replaying)
@@ -1255,16 +1244,7 @@ void SetCTFStats(edict_t *ent)
 			ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		}
-		
-		/*if (gset_vars->antiglue==0)
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_DISABLED;
-		else
-		if (ent->client->resp.antiglue)
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE;
-		else
-			ent->client->ps.stats[STAT_JUMP_ANTIGLUE] = CONFIG_JUMP_ANTIGLUE_OFF;*/
 	}
-	//ent->client->ps.stats[STAT_JUMP_GLUED] = ent->client->resp.glued;
 	//ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 999999999;
 	
 
@@ -1406,82 +1386,12 @@ void SetCTFStats(edict_t *ent)
 	else {
 		ent->client->ps.stats[STAT_CTF_ID_VIEW] = 0;
 	}
-	if (mset_vars->checkpoint_total >= 1)
-		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_ON;
-	else
-		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_CP_OFF;
-	if (ent->client->resp.rep_racing && !ent->client->resp.replaying){
-		if (ent->client->resp.rep_race_number==MAX_HIGHSCORES){
-			gi.configstring (CONFIG_JUMP_RACE_ON,"    Race: нов"); //race now.
-			ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_ON;
-		} else {
-			sprintf(racenr,"%d",ent->client->resp.rep_race_number+1);
-			if(ent->client->resp.rep_race_number==0) {
-				gi.configstring (CONFIG_JUMP_RACE_1,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_1;
-			} else if(ent->client->resp.rep_race_number==1) {
-				gi.configstring (CONFIG_JUMP_RACE_2,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_2;
-			} else if(ent->client->resp.rep_race_number==2) {
-				gi.configstring (CONFIG_JUMP_RACE_3,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_3;
-			} else if(ent->client->resp.rep_race_number==3) {
-				gi.configstring (CONFIG_JUMP_RACE_4,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_4;
-			} else if(ent->client->resp.rep_race_number==4) {
-				gi.configstring (CONFIG_JUMP_RACE_5,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_5;
-			} else if(ent->client->resp.rep_race_number==5) {
-				gi.configstring (CONFIG_JUMP_RACE_6,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_6;
-			} else if(ent->client->resp.rep_race_number==6) {
-				gi.configstring (CONFIG_JUMP_RACE_7,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_7;
-			} else if(ent->client->resp.rep_race_number==7) {
-				gi.configstring (CONFIG_JUMP_RACE_8,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_8;
-			} else if(ent->client->resp.rep_race_number==8) {
-				gi.configstring (CONFIG_JUMP_RACE_9,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_9;
-			} else if(ent->client->resp.rep_race_number==9) {
-				gi.configstring (CONFIG_JUMP_RACE_10,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_10;
-			} else if(ent->client->resp.rep_race_number==10) {
-				gi.configstring (CONFIG_JUMP_RACE_11,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_11;
-			} else if(ent->client->resp.rep_race_number==11) {
-				gi.configstring (CONFIG_JUMP_RACE_12,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_12;
-			} else if(ent->client->resp.rep_race_number==12) {
-				gi.configstring (CONFIG_JUMP_RACE_13,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_13;
-			} else if(ent->client->resp.rep_race_number==13) {
-				gi.configstring (CONFIG_JUMP_RACE_14,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_14;
-			} else if(ent->client->resp.rep_race_number==14) {
-				gi.configstring (CONFIG_JUMP_RACE_15,va("    Race: %s",HighAscii(racenr)));
-				ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_15;
-			}
-		}
-	} else {
-		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_RACE_OFF;
-	}
-	if (ent->client->resp.ctf_team==CTF_TEAM1)
-		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_EASY;
-	else
-	if (ent->client->resp.ctf_team==CTF_TEAM2)
-		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_HARD;
-	else
-		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_TEAM_OBSERVER;
+
 
 	if (ent->client->resp.cleanhud)
 	{
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		ent->client->ps.stats[STAT_JUMP_MAPCOUNT] = 0;
-		ent->client->ps.stats[STAT_JUMP_GLUED] = 0;
-		ent->client->ps.stats[STAT_JUMP_TEAM] = CONFIG_JUMP_EMPTY;
-		ent->client->ps.stats[STAT_JUMP_RACE] = CONFIG_JUMP_EMPTY;
-		ent->client->ps.stats[STAT_JUMP_CPS] = CONFIG_JUMP_EMPTY;
 		if (!ent->client->resp.replaying)
 		{
 			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
@@ -2141,7 +2051,16 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 			y = 48 + (8 *(total+total_easy+total_specs));
 		}
 
-		//idle spectator
+		//add idle tag if spectator is idle.
+		if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000) //add idle tag to chaser
+		{
+			Com_sprintf(entry, sizeof(entry),
+				"xv %d yv %d string \" (idle)\"", 56 + (strlen(cl->pers.netname) * 8), y);
+			j = strlen(entry);
+			strcpy(string + stringlength, entry);
+			stringlength += j;
+		}
+		
 		if (cl->resp.replaying)
 		{
 			if (cl->resp.replaying==MAX_HIGHSCORES+1)
@@ -2163,14 +2082,6 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		}
 		else
 		{
-			if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000) //add idle tag to chaser
-			{
-				Com_sprintf(entry, sizeof(entry),
-					"xv %d yv %d string \" (idle)\"", 56 + (strlen(cl->pers.netname) * 8), y);
-				j = strlen(entry);
-				strcpy(string + stringlength, entry);
-				stringlength += j;
-			}
 			Com_sprintf(entry, sizeof(entry),
 				"ctf %d %d %d %d %d xv %d string \"%s%s\"",
 				-8, y, i,
@@ -3546,7 +3457,6 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p);
 void CTFHelp(edict_t *ent, pmenuhnd_t *p);
 void CTFHelp_main(edict_t *ent, pmenuhnd_t *p);
 void CTFHelp_misc(edict_t *ent, pmenuhnd_t *p);
-void CTFHelp_antiglue(edict_t *ent, pmenuhnd_t *p);
 void CTFHelp_vote(edict_t *ent, pmenuhnd_t *p);
 
 pmenu_t creditsmenu[] = {
@@ -3632,27 +3542,6 @@ pmenu_t helpmenu_misc[] = {
 	{ "*time",					PMENU_ALIGN_LEFT, NULL },
 	{ "*cmsg",					PMENU_ALIGN_LEFT, NULL },
 	{ NULL,								PMENU_ALIGN_LEFT, NULL },
-	{ NULL,								PMENU_ALIGN_LEFT, NULL },
-	{ NULL,								PMENU_ALIGN_LEFT, NULL },
-	{ "Return to Main Menu",			PMENU_ALIGN_LEFT, CTFReturnToMain }
-};
-
-pmenu_t helpmenu_antiglue[] = {
-	{ "*Quake II JumpMod",						PMENU_ALIGN_CENTER, NULL },
-	{ "* ",	PMENU_ALIGN_CENTER, NULL },
-	{ NULL,								PMENU_ALIGN_LEFT, NULL },
-	{ NULL,					PMENU_ALIGN_LEFT, NULL },
-	{ "Glue is caused by jumping",					PMENU_ALIGN_LEFT, NULL },
-	{ "too soon on hitting the",								PMENU_ALIGN_LEFT, NULL },
-	{ "floor. This server allows",				PMENU_ALIGN_LEFT, NULL },
-	{ "you to prevent glue by",					PMENU_ALIGN_LEFT, NULL },
-	{ "typing:",								PMENU_ALIGN_LEFT, NULL },
-	{ "*antiglue",							PMENU_ALIGN_LEFT, NULL },
-	{ NULL,								PMENU_ALIGN_LEFT, NULL },
-	{ "For every jump fixed you",					PMENU_ALIGN_LEFT, NULL },
-	{ "will be given a time",		PMENU_ALIGN_LEFT, NULL },
-	{ "penalty.",					PMENU_ALIGN_LEFT, NULL },
-	{ "",					PMENU_ALIGN_LEFT, NULL },
 	{ NULL,								PMENU_ALIGN_LEFT, NULL },
 	{ NULL,								PMENU_ALIGN_LEFT, NULL },
 	{ "Return to Main Menu",			PMENU_ALIGN_LEFT, CTFReturnToMain }
@@ -3746,8 +3635,8 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 
 	PMenu_Close(ent);
 
-	ClearCheckpoints(&ent->client->pers);
-	cphud(); // update checkpoints@hud.
+	ClearPersistants(&ent->client->pers);
+	ClearCheckpoints(ent);
 
 	if (level.status==LEVEL_STATUS_OVERTIME)
 	{
@@ -3788,20 +3677,15 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 	{
 		ent->client->resp.item_timer = 0;
 		ent->client->resp.client_think_begin = 0;
-		ent->client->resp.glued = 0;
-		ent->client->resp.item_timer_penalty_delay = 0;
-		ent->client->resp.item_timer_penalty = 0;
 		ent->client->resp.item_timer_allow = true;
+		Cmd_Recall(ent);
 	} else {
 		ent->client->resp.jumps = 0;
 		ent->client->resp.client_think_begin = 0;
-		ent->client->resp.glued = 0;
 		ent->client->resp.item_timer = 0;
-		ent->client->resp.item_timer_penalty_delay = 0;
-		ent->client->resp.item_timer_penalty = 0;
 		ent->client->resp.item_timer_allow = true;
 	}
-
+	hud_footer(ent);
 	s = Info_ValueForKey (ent->client->pers.userinfo, "skin");
 	CTFAssignSkin(ent, s);
 
@@ -3825,10 +3709,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 	ent->client->ps.pmove.pm_time = 14;
 	ent->client->resp.item_timer_allow = true;
 	ent->client->resp.item_timer = 0;
-	ent->client->resp.glued = 0;
 	ent->client->resp.client_think_begin = 0;
-	ent->client->resp.item_timer_penalty = 0;
-	ent->client->resp.item_timer_penalty_delay = 0;
 	if (!level.status)
 Notify_Of_Team_Commands(ent);
 //	gi.bprintf(PRINT_HIGH, "%s joined the %s team.\n",
@@ -3848,7 +3729,8 @@ Notify_Of_Team_Commands(ent);
 void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 {
 	char *s;
-	ClearCheckpoints(&ent->client->pers);
+	ClearPersistants(&ent->client->pers);
+	ClearCheckpoints(ent);
 	PMenu_Close(ent);
 
 
@@ -3859,9 +3741,6 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 
 	ent->client->resp.client_think_begin = 0;
 	ent->client->resp.item_timer = 0;
-	ent->client->resp.glued = 0;
-	ent->client->resp.item_timer_penalty = 0;
-	ent->client->resp.item_timer_penalty_delay = 0;
 	ent->client->resp.item_timer_allow = true;
 
 	s = Info_ValueForKey (ent->client->pers.userinfo, "skin");
@@ -3871,7 +3750,6 @@ void CTFAutoJoinTeam(edict_t *ent, int desired_team)
 	// hold in place briefly
 	ent->client->ps.pmove.pm_flags = PMF_TIME_TELEPORT;
 	ent->client->ps.pmove.pm_time = 14;
-
 }
 
 
@@ -3898,9 +3776,9 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 	if (ent->client->resp.replaying)
 		ent->client->resp.replaying = 0;
 	// =====================================
-	cphud(); // update checkpoints@hud.
+	hud_footer(ent);
 
-	if (ent->client->resp.ctf_team!=CTF_NOTEAM)
+	if (ent->client->resp.ctf_team!=CTF_NOTEAM || ent->client->resp.replaying)
 		CTFObserver(ent);
 
 	ent->client->resp.chasecam_type = 0;
@@ -3915,8 +3793,8 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 		e = g_edicts + i;
 		if (e->inuse && e->solid != SOLID_NOT) {
 			ent->client->chase_target = e;
-			cphud(); // update checkpoints@hud.
-			memcpy(ent->client->pers.cpbox_checkpoint, e->client->pers.cpbox_checkpoint, sizeof(e->client->pers.cpbox_checkpoint));//copy checkpoints
+			memcpy(ent->client->resp.store[0].cpbox_checkpoint, e->client->resp.store[0].cpbox_checkpoint, sizeof(e->client->resp.store[0].cpbox_checkpoint));//copy checkpoints
+			hud_footer(ent);
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
 			return;
@@ -5723,12 +5601,6 @@ void CTFHelp_misc(edict_t *ent, pmenuhnd_t *p)
 {
 	PMenu_Close(ent);
 	PMenu_Open(ent, helpmenu_misc, -1, sizeof(helpmenu_misc) / sizeof(pmenu_t), NULL);
-}
-
-void CTFHelp_antiglue(edict_t *ent, pmenuhnd_t *p)
-{
-	PMenu_Close(ent);
-	PMenu_Open(ent, helpmenu_antiglue, -1, sizeof(helpmenu_antiglue) / sizeof(pmenu_t), NULL);
 }
 
 void CTFHelp_vote(edict_t *ent, pmenuhnd_t *p)

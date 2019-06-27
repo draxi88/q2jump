@@ -740,9 +740,10 @@ void Cmd_Kill_f (edict_t *ent)
 {	
 	// if team hard, clear cps
 	if (ent->client->resp.ctf_team==CTF_TEAM2) {
-		ClearCheckpoints(&ent->client->pers);
+		ClearPersistants(&ent->client->pers);
+		ClearCheckpoints(ent);
 	}
-	cphud(); // update checkpoints@hud.
+	hud_footer(ent);
 
 //ZOID
 	if (ent->solid == SOLID_NOT)
@@ -776,7 +777,7 @@ void Cmd_Kill_f (edict_t *ent)
 
 	if (ent->health<=0)
 	{
-		return;
+		respawn(ent);
 	}
 	if (ent->client->resp.ctf_team==CTF_TEAM2 || (gametype->value==GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1))
 	{
@@ -789,7 +790,7 @@ void Cmd_Kill_f (edict_t *ent)
 		ent->client->respawn_time = level.framenum + gset_vars->kill_delay;
 		return;
 	}
-	if ((ent->client->resp.ctf_team==CTF_TEAM1) && (ent->client->resp.store))
+	if ((ent->client->resp.ctf_team==CTF_TEAM1) && (ent->client->resp.can_store))
 	{
 		Cmd_Recall(ent);
 		return;
@@ -1093,6 +1094,28 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		gi.cprintf(other, PRINT_CHAT, "%s", text);
 	}
 	gi.cprintf(ent, PRINT_CHAT, "%s", text);
+}
+
+
+/*
+==================
+velocity store feature toggle - call it with command velstore
+
+No arguments need to be provided for this command - it's a toggle similar to "jumpers".
+After switching this ON the next store will remember player's velocity and recall will
+set it back to the player. Switching it OFF >removes< the stored vectors and prevents
+all further velocity storing unless turned on again. Recall 1, 2 and 3 are supported.
+
+Vectors and toggle state are stored in ent->client->pers
+==================
+*/
+void Velocity_store_toggle(edict_t *ent) {
+
+	//toggle velocity storing
+	ent->client->pers.store_velocity = !ent->client->pers.store_velocity;
+
+	//let the player know the state of velocity storing
+	gi.cprintf(ent, PRINT_CHAT, "Velocity storing is %s\n", (ent->client->pers.store_velocity ? "ON." : "OFF."));
 }
 
 void Infinite_Loop ()
@@ -1409,8 +1432,6 @@ void ClientCommand (edict_t *ent)
         Cmd_Show_Maptimes_Wireplay(ent);
 	else if ((Q_stricmp (cmd, "!help") == 0) || (Q_stricmp (cmd, "!commands") == 0))
 		Cmd_Show_Help(ent);
-	else if (Q_stricmp (cmd, "!glue") == 0)
-		Cmd_Show_Glue(ent);
 	else if (Q_stricmp (cmd, "compare") == 0)
 		Compare_Users(ent);
 	else if (Q_stricmp (cmd, "reset") == 0)
@@ -1463,8 +1484,6 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp (cmd, "flashlight") == 0)
 		FlashLight(ent);
-	//else if (Q_stricmp (cmd, "antiglue") == 0) //Disabled to not cause crashes..
-		//AntiGlue(ent);
 	else if (Q_stricmp(cmd, "team") == 0) {
 		if (Q_stricmp(gi.argv(1), "easy") == 0)
 			CTFJoinTeam(ent, CTF_TEAM1);
@@ -1490,7 +1509,7 @@ void ClientCommand (edict_t *ent)
 		CTFAdmin(ent);
 	} else if (Q_stricmp(cmd, "stats") == 0) {
 		CTFStats(ent);
-	} else if (Q_stricmp(cmd, "mapvote") == 0) {
+	} else if ((Q_stricmp(cmd, "mapvote") == 0) || (Q_stricmp(cmd, "votemap") == 0)) {
 		if (gset_vars->tourney)
 		{
 			return;
@@ -1558,6 +1577,8 @@ void ClientCommand (edict_t *ent)
 	}
 	else if (Q_stricmp (cmd, "jumpers") == 0)
 		Jumpers_on_off(ent);
+	else if (Q_stricmp(cmd, "velstore") == 0) //velocity store feature
+		Velocity_store_toggle(ent);
 	else if (Q_stricmp (cmd, "cpsound") == 0)
 		Cpsound_on_off(ent);
 	else if (Q_stricmp(cmd, "showtimes") == 0)

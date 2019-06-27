@@ -553,7 +553,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 //ZOID
 		//pooy
 		if (gametype->value!=GAME_CTF)
-		if ((self->client->resp.store) && (self->client->resp.ctf_team==CTF_TEAM1))
+		if ((self->client->resp.can_store) && (self->client->resp.ctf_team==CTF_TEAM1))
 		{
 			self->client->resp.item_timer_allow = true;
 		}
@@ -677,10 +677,19 @@ void InitClientPersistant(gclient_t *client)
 	unsigned long banlevel;
 	int			idletime;
 	qboolean	idle;
+	qboolean	velstore;
+	vec3_t		vel1;
+	vec3_t		vel2;
+	vec3_t		vel3;
+	store_struct savestore;
 
 	//idle trough mapchange?
 	idletime = client->pers.frames_without_movement;
 	idle = client->pers.idle_player;
+
+	//velocity store feature - carry through the stored velocities and toggle state
+	velstore = client->pers.store_velocity;
+
 	//char		user_temp[1024];
 
 	//ww - hang on to user ip and banlevel
@@ -728,6 +737,9 @@ void InitClientPersistant(gclient_t *client)
 	//idle trough mapchange?
 	client->pers.frames_without_movement = idletime;
 	client->pers.idle_player = idle;
+
+	//velocity store feature - restore the values
+	client->pers.store_velocity = velstore;
 }
 
 
@@ -1063,19 +1075,13 @@ void respawn (edict_t *self)
 	{
 		self->client->resp.item_timer = 0;
 		self->client->resp.client_think_begin = 0;
-		self->client->resp.glued = 0;
-		self->client->resp.item_timer_penalty = 0;
-		self->client->resp.item_timer_penalty_delay = 0;
 		self->client->resp.jumps = 0;
 	}
 	else
 	{
 		self->client->resp.client_think_begin = 0;
-		self->client->resp.glued = 0;
 		self->client->resp.item_timer = 0;
-		self->client->resp.item_timer_penalty = 0;
-		self->client->resp.item_timer_penalty_delay = 0;
-		//self->client->resp.item_timer = self->client->resp.stored_item_timer;
+		//self->client->resp.item_timer = self->client->resp.store[0].stored_item_timer;
 
 	}
 
@@ -1154,14 +1160,11 @@ void PutClientInServer (edict_t *ent)
 	gitem_t		*item;
 
 	unpause_client(ent);
-
 	if ((ent->client->resp.ctf_team==CTF_TEAM2) || (gametype->value==GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1))
 	{
 
 		ent->client->resp.item_timer = 0;
-		ent->client->resp.item_timer_penalty_delay = 0;
 		ent->client->resp.client_think_begin = 0;
-		ent->client->resp.item_timer_penalty = 0;
 		ent->client->resp.jumps = 0;
 		pause_client(ent);
 	}
@@ -1174,17 +1177,12 @@ void PutClientInServer (edict_t *ent)
 	//pooy
 	if (gametype->value!=GAME_CTF)
 	{
-			if (
-			(ent->client->resp.store) &&
-				(
-				(ent->client->resp.ctf_team==CTF_TEAM1)
-				)
-			)
+		if ((ent->client->resp.can_store) && ((ent->client->resp.ctf_team==CTF_TEAM1)))
 		{
 			for (i=0 ; i<2 ; i++)
 				ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - ent->client->resp.cmd_angles[i]);
-			VectorCopy(ent->client->resp.store_pos,spawn_origin);
-			VectorCopy(ent->client->resp.store_angles,spawn_angles);
+			VectorCopy(ent->client->resp.store[1].store_pos,spawn_origin);
+			VectorCopy(ent->client->resp.store[1].store_angles,spawn_angles);
 		}
 	}
 	ent->client->resp.finished = false;
@@ -1197,7 +1195,6 @@ void PutClientInServer (edict_t *ent)
 	if (deathmatch->value)
 	{
 		char		userinfo[MAX_INFO_STRING];
-
 		resp = client->resp;
 		memcpy (userinfo, client->pers.userinfo, sizeof(userinfo));
 		InitClientPersistant (client);
@@ -2203,40 +2200,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 
 	if (gametype->value!=GAME_CTF)
-	if ((pm.s.pm_flags & PMF_TIME_LAND) && (pm.s.pm_time==25 || pm.s.pm_time==18))
-	{
-		//antiglue is always off now unless turned on
-		if (ent->client->resp.antiglue)
-		{
-			//antiglue is enabled or we are on easy team
-			if (gset_vars->antiglue || ent->client->resp.ctf_team==CTF_TEAM1)
-			//if (!(gset_vars->antiglue==0 && ent->client->resp.ctf_team!=CTF_TEAM1))
-			{
-				pm.s.pm_flags &= ~(PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_TELEPORT);
-				pm.s.pm_time = 0;
-				//apply a penalty if available
-				if (gset_vars->antiglue_penalty)
-				{
-					//penalty delay
-					if (ent->client->resp.item_timer_penalty_delay<level.framenum)
-					{
-						if (!level_items.stored_item_times_count)
-						{
-							ent->client->resp.item_timer += 5;
-							ent->client->resp.item_timer_penalty += 50;
-						}
-						else
-						{
-							ent->client->resp.item_timer += (gset_vars->antiglue_penalty/10);
-							ent->client->resp.item_timer_penalty += gset_vars->antiglue_penalty;
-						}
-						ent->client->resp.item_timer_penalty_delay = level.framenum + 5;
-					}
-				}
-			}
-		}
-		ent->client->resp.glued++;
-	}
 
 	if (ent->client->resp.showjumpdistance)
 	if (!pm.groundentity)
@@ -2406,6 +2369,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		if (ent->client->resp.replaying)
 		{
+			if (ent->client->resp.replay_frame < 5) {
+				ClearPersistants(&ent->client->pers);
+				ClearCheckpoints(ent);
+				hud_footer(ent);
+			}
 			if ((ucmd->upmove>=10) && (!ent->client->resp.going_up))
 				ent->client->resp.going_up = true;
 

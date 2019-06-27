@@ -50,6 +50,7 @@ static int	power_shield_index;
 #define HEALTH_IGNORE_MAX	1
 #define HEALTH_TIMED		2
 
+qboolean Pickup_Quad (edict_t *ent, edict_t *other);
 void Use_Quad (edict_t *ent, gitem_t *item);
 static int	quad_drop_timeout_hack;
 
@@ -427,6 +428,25 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 
 //======================================================================
 
+// new separate pickup function for quad damage
+// can remove the quad damage with a weapon_clear trigger
+qboolean Pickup_Quad(edict_t *ent, edict_t *other) {
+
+	if (other->client->pers.has_quad == true && trigger_timer(2)) {
+		gi.cprintf(other, PRINT_HIGH, "You already have quad damage.\n");
+		return false;
+	}
+
+	if (trigger_timer(2)) {
+		gi.cprintf(other, PRINT_HIGH, "You now have quad damage.\n");
+	}
+
+	other->client->pers.has_quad = true;
+	return false;
+}
+
+//======================================================================
+
 void Use_Quad (edict_t *ent, gitem_t *item)
 {
 	int		timeout;
@@ -557,14 +577,15 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		return true;
 	}
 
-	// resizable ent that removes all weapons on touch
-	if (Q_stricmp(ent->item->pickup_name,"weapon clear")==0) {
+	// resizable ent that removes all weapons on touch, as well as quad damage
+	if (Q_stricmp(ent->item->pickup_name, "weapon clear") == 0) {
 
 		memset(other->client->pers.inventory, 0, sizeof(other->client->pers.inventory)); // reset their inventory
+		other->client->pers.has_quad = false;
 
 		item = FindItem("Blaster"); // set their equiped item to a blaster
 		other->client->newweapon = item;
-		ChangeWeapon (other);
+		ChangeWeapon(other);
 	}
 	
 	// resizable starting line, timer is reset when you pass over it, cp's also removed
@@ -581,14 +602,16 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 		other->client->resp.item_timer = 0; // internal timer reset 1
 		other->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
 		other->client->resp.race_frame = 0; //reset race frame if racing
-		ClearCheckpoints(&other->client->pers);
+		ClearPersistants(&other->client->pers);
+		ClearCheckpoints(other);
 	}
 
 	// resizable ent that can clear checkpoints, print msg if they had some
 	if (Q_stricmp(ent->item->pickup_name,"cp clear")==0) {
-		if (other->client->pers.checkpoints > 0)
-			gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->pers.checkpoints);
-		ClearCheckpoints(&other->client->pers);
+		if (other->client->resp.store[0].checkpoints > 0)
+			gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->resp.store[0].checkpoints);
+		ClearPersistants(&other->client->pers);
+		ClearCheckpoints(other);
 	}
 
 	// get the clients time in .xxx format
@@ -596,260 +619,260 @@ qboolean Pickup_Key (edict_t *ent, edict_t *other)
 	my_time_decimal = (float)my_time / 1000.0f;
 
 	// check if checkpoints have been picked up
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 1")==0 && other->client->pers.rs1_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs1_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 1")==0 && other->client->resp.store[0].rs1_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs1_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 2")==0 && other->client->pers.rs2_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs2_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 2")==0 && other->client->resp.store[0].rs2_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs2_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 3")==0 && other->client->pers.rs3_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs3_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 3")==0 && other->client->resp.store[0].rs3_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs3_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 4")==0 && other->client->pers.rs4_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs4_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 4")==0 && other->client->resp.store[0].rs4_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs4_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 5")==0 && other->client->pers.rs5_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs5_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 5")==0 && other->client->resp.store[0].rs5_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs5_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 6")==0 && other->client->pers.rs6_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs6_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 6")==0 && other->client->resp.store[0].rs6_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs6_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 7")==0 && other->client->pers.rs7_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs7_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 7")==0 && other->client->resp.store[0].rs7_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs7_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 8")==0 && other->client->pers.rs8_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs8_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 8")==0 && other->client->resp.store[0].rs8_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs8_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 9")==0 && other->client->pers.rs9_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs9_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 9")==0 && other->client->resp.store[0].rs9_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs9_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 10")==0 && other->client->pers.rs10_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs10_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 10")==0 && other->client->resp.store[0].rs10_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs10_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 11")==0 && other->client->pers.rs11_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs11_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 11")==0 && other->client->resp.store[0].rs11_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs11_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 12")==0 && other->client->pers.rs12_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs12_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 12")==0 && other->client->resp.store[0].rs12_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs12_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 13")==0 && other->client->pers.rs13_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs13_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 13")==0 && other->client->resp.store[0].rs13_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs13_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 14")==0 && other->client->pers.rs14_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs14_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 14")==0 && other->client->resp.store[0].rs14_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs14_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 15")==0 && other->client->pers.rs15_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs15_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 15")==0 && other->client->resp.store[0].rs15_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs15_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 16")==0 && other->client->pers.rs16_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs16_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 16")==0 && other->client->resp.store[0].rs16_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs16_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 17")==0 && other->client->pers.rs17_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs17_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 17")==0 && other->client->resp.store[0].rs17_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs17_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 18")==0 && other->client->pers.rs18_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs18_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 18")==0 && other->client->resp.store[0].rs18_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs18_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 19")==0 && other->client->pers.rs19_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs19_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 19")==0 && other->client->resp.store[0].rs19_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs19_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"cp resize 20")==0 && other->client->pers.rs20_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.rs20_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"cp resize 20")==0 && other->client->resp.store[0].rs20_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].rs20_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"Airstrike Marker")==0 && other->client->pers.target_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.target_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"Airstrike Marker")==0 && other->client->resp.store[0].target_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].target_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"Blue Key")==0 && other->client->pers.blue_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.blue_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"Blue Key")==0 && other->client->resp.store[0].blue_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].blue_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"Data CD")==0 && other->client->pers.cd_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.cd_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"Data CD")==0 && other->client->resp.store[0].cd_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].cd_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"Data Spinner")==0 && other->client->pers.spinner_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.spinner_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"Data Spinner")==0 && other->client->resp.store[0].spinner_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].spinner_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"Security Pass")==0 && other->client->pers.pass_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.pass_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"Security Pass")==0 && other->client->resp.store[0].pass_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].pass_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"Power Cube")==0 && other->client->pers.cube_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.cube_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"Power Cube")==0 && other->client->resp.store[0].cube_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].cube_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"Pyramid Key")==0 && other->client->pers.pyramid_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.pyramid_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"Pyramid Key")==0 && other->client->resp.store[0].pyramid_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].pyramid_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
-	if (Q_stricmp(ent->item->pickup_name,"Red Key")==0 && other->client->pers.red_checkpoint != 1) {
-		other->client->pers.checkpoints = other->client->pers.checkpoints + 1;
-		other->client->pers.red_checkpoint = 1;
+	if (Q_stricmp(ent->item->pickup_name,"Red Key")==0 && other->client->resp.store[0].red_checkpoint != 1) {
+		other->client->resp.store[0].checkpoints = other->client->resp.store[0].checkpoints + 1;
+		other->client->resp.store[0].red_checkpoint = 1;
 		CPSoundCheck(other);
 		if (other->client->resp.ctf_team==CTF_TEAM1)
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.1f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer);
 		else
-			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal);
+			gi.cprintf(other,PRINT_HIGH,"You reached checkpoint %d/%d in %1.3f seconds.\n", other->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal);
 	}
 
-	cphud(); // update checkpoints@hud.
+	hud_footer(other);
 
 	return false; // leave item on the ground
 }
@@ -2218,7 +2241,7 @@ always owned, never in the world
 */
 	{
 		"item_quad", 
-		Pickup_Powerup,
+		Pickup_Quad,
 		Use_Quad,
 		Drop_General,
 		NULL,
@@ -3486,22 +3509,42 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
     float		my_time_decimal;
 	gitem_t		*item;
 	edict_t		*cl_ent;
+	edict_t		*player;
 	int			i;
 	char		cpstring[256];
 
-	// make sure it's a player touching it
-	if (!other->client)
+	player = NULL;
+	// make sure it's a player or players projectile touching it
+	if (self->health && self->health > 0) {
+		if (other->client)
+			player = other;
+		else if (other->owner->client)
+			player = other->owner;
+		else
+			return;
+	}
+	else if (!self->health) {
+		if (other->client)
+			player = other;
+		else
+			return;
+	}
+	else if (!other->client || !player->client)
 		return;
-
-	// check for retard mappers
-	if (self->count >= sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int)) {
-		if (trigger_timer(5))
-			gi.dprintf ("Your count of %i is higher than the max value of %i, you are a shit mapper.\n", self->count, sizeof(other->client->pers.cpbox_checkpoint)/sizeof(int)-1);
+	
+	//check for stuff that shouldn't trigger the cp.. hook etc.
+	if (Q_stricmp(player->classname, "hook") == 0) {
 		return;
 	}
-	
+
+	// check for retard mappers
+	if (self->count >= sizeof(player->client->resp.store[0].cpbox_checkpoint)/sizeof(int)) {
+		if (trigger_timer(5))
+			gi.dprintf ("Your count of %i is higher than the max value of %i, you are a shit mapper.\n", self->count, sizeof(player->client->resp.store[0].cpbox_checkpoint)/sizeof(int)-1);
+		return;
+	}
 	// check if the client is already finished
-	if (other->client->resp.finished == 1 && !other->client->resp.replaying)
+	if (player->client->resp.finished == 1 && !player->client->resp.replaying)
 		return;
 
 	//check if cpbox has a target...
@@ -3509,72 +3552,87 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 
 		//check if it should clear all cp's.
 		if(Q_stricmp(self->target,"cp_clear")==0){
-			if (other->client->pers.checkpoints > 0)
-				gi.cprintf(other,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", other->client->pers.checkpoints);
-			ClearCheckpoints(&other->client->pers);
+			if (player->client->resp.store[0].checkpoints > 0)
+				gi.cprintf(player,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", player->client->resp.store[0].checkpoints);
+			ClearPersistants(&player->client->pers);
+			ClearCheckpoints(player);
 			return;
 		} 
 		//ckeck if it should reset timer++
 		else if (Q_stricmp(self->target,"start_line")==0) {
-			memset(other->client->pers.inventory, 0, sizeof(other->client->pers.inventory)); // reset their inventory
+			memset(player->client->pers.inventory, 0, sizeof(player->client->pers.inventory)); // reset their inventory
 
 			item = FindItem("Blaster"); // set their equiped item to a blaster
-			other->client->newweapon = item;
-			ChangeWeapon (other);
+			player->client->newweapon = item;
+			ChangeWeapon (player);
 
-			Stop_Recording(other); // stop the recording for race line alignment
-			Start_Recording(other); // start another recording for this rep
-			other->client->resp.item_timer = 0; // internal timer reset 1
-			other->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
-			other->client->resp.race_frame = 0; //reset race frame if racing
-			ClearCheckpoints(&other->client->pers);
+			Stop_Recording(player); // stop the recording for race line alignment
+			Start_Recording(player); // start another recording for this rep
+			player->client->resp.item_timer = 0; // internal timer reset 1
+			player->client->resp.client_think_begin = Sys_Milliseconds(); // ui timer reset and internal timer reset 2
+			player->client->resp.race_frame = 0; //reset race frame if racing
+			ClearPersistants(&player->client->pers);
+			ClearCheckpoints(player);
 			return;
 		} 
+		else if (Q_stricmp(self->target, "ordered") == 0) {
+			for (i = 1; i <= self->count; i++) { //should it start at 0?
+				if (i == self->count) {
+					break;
+				}
+				if (player->client->resp.store[0].cpbox_checkpoint[i] == 0) {
+					if (trigger_timer(5)) {
+						gi.cprintf(player, PRINT_HIGH, "You need to pick these checkpoints up in the correct order!\n");//or something like that?!
+					}
+					return;
+				}
+			}
+		}
 	}
 	// rest is for regular cpboxes..
 
 	// get the clients time in .xxx format
-	my_time = Sys_Milliseconds() - other->client->resp.client_think_begin;
+	my_time = Sys_Milliseconds() - player->client->resp.client_think_begin;
 	my_time_decimal = (float)my_time / 1000.0f;
 
-	
 	// check if they have it already, increase it if they don't
-	if (other->client->pers.cpbox_checkpoint[self->count] != 1) {
-		other->client->pers.cpbox_checkpoint[self->count] = 1;
-		other->client->pers.checkpoints += 1;
-
-		// play a sound for it
-		CPSoundCheck(other);
-
+	if (player->client->resp.store[0].cpbox_checkpoint[self->count] != 1) {
+		player->client->resp.store[0].cpbox_checkpoint[self->count] = 1;
+		player->client->resp.store[0].checkpoints += 1;
 		// in easy give them the int, in hard give them the float, in replay give them relative
-		if (other->client->resp.ctf_team==CTF_TEAM1){
+		if (player->client->resp.ctf_team==CTF_TEAM1){
 			sprintf(cpstring,"reached checkpoint %d/%d in %1.1f seconds. (split: %1.1f)\n",
-			other->client->pers.checkpoints, mset_vars->checkpoint_total, other->client->resp.item_timer, other->client->resp.item_timer - other->client->pers.cp_split);
-			other->client->pers.cp_split = other->client->resp.item_timer;
-			gi.cprintf(other, PRINT_HIGH, "You %s", cpstring);
-		} else if (other->client->resp.ctf_team==CTF_TEAM2){
+			player->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, player->client->resp.item_timer, player->client->resp.item_timer - player->client->pers.cp_split);
+			player->client->pers.cp_split = player->client->resp.item_timer;
+			gi.cprintf(player, PRINT_HIGH, "You %s", cpstring);
+		} else if (player->client->resp.ctf_team==CTF_TEAM2){
 			sprintf(cpstring, "reached checkpoint %d/%d in %1.3f seconds. (split: %1.3f)\n",
-			other->client->pers.checkpoints, mset_vars->checkpoint_total, my_time_decimal, my_time_decimal - other->client->pers.cp_split);
-			other->client->pers.cp_split = my_time_decimal;
-			gi.cprintf(other, PRINT_HIGH, "You %s",cpstring);
-		} else if (other->client->resp.ctf_team==CTF_NOTEAM && other->client->resp.replaying && !other->client->resp.mute_cprep) {
-			gi.cprintf(other, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds. (split: %1.1f)\n", 
-				level_items.stored_item_times[other->client->resp.replaying-1].owner, other->client->pers.checkpoints, 
-				mset_vars->checkpoint_total, (other->client->resp.replay_frame / 10) - 0.1, ((other->client->resp.replay_frame / 10) - 0.1) - other->client->pers.cp_split);
-			other->client->pers.cp_split = (other->client->resp.replay_frame / 10) - 0.1;
+			player->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal, my_time_decimal - player->client->pers.cp_split);
+			player->client->pers.cp_split = my_time_decimal;
+			gi.cprintf(player, PRINT_HIGH, "You %s",cpstring);
+		} else if (player->client->resp.ctf_team==CTF_NOTEAM && player->client->resp.replaying && !player->client->resp.mute_cprep) {
+			gi.cprintf(player, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds. (split: %1.1f)\n", 
+				level_items.stored_item_times[player->client->resp.replaying-1].owner, player->client->resp.store[0].checkpoints, 
+				mset_vars->checkpoint_total, (player->client->resp.replay_frame / 10) - 0.1, ((player->client->resp.replay_frame / 10) - 0.1) - player->client->pers.cp_split);
+			player->client->pers.cp_split = (player->client->resp.replay_frame / 10) - 0.1;
 		}
 		//memcpy+msg for anyone chasing us...
 		for (i = 0; i < maxclients->value; i++) {
 			cl_ent = g_edicts + 1 + i;
-			if (!cl_ent->inuse)
+			if (!cl_ent->inuse || !cl_ent->client->chase_target)
 				continue;
-			if (cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname, other->client->pers.netname) == 0) {
-				gi.cprintf(cl_ent, PRINT_HIGH, "%s %s", other->client->pers.netname, cpstring);
-				memcpy(cl_ent->client->pers.cpbox_checkpoint, other->client->pers.cpbox_checkpoint, sizeof(other->client->pers.cpbox_checkpoint));
+			if (cl_ent->client->chase_target->client->resp.ctf_team == CTF_NOTEAM)
+				continue;
+			if (Q_stricmp(cl_ent->client->chase_target->client->pers.netname, player->client->pers.netname) == 0) {
+				gi.cprintf(cl_ent, PRINT_HIGH, "%s %s", player->client->pers.netname, cpstring);
+				memcpy(cl_ent->client->resp.store[0].cpbox_checkpoint, player->client->resp.store[0].cpbox_checkpoint, sizeof(player->client->resp.store[0].cpbox_checkpoint));
 			}
 		}
+		// play a sound for it
+		CPSoundCheck(player);
+		//update hud
+		hud_footer(player);
 	}
-	cphud(); // update checkpoints@hud.
 }
 
 void SP_cpbox_small (edict_t *ent)
@@ -4020,7 +4078,7 @@ void cpeffect_think(edict_t *self){
 		temp_ent = g_edicts + 1 + i;
 		if (!temp_ent->inuse || !temp_ent->client)
 			continue;
-		if(temp_ent->client->pers.cpbox_checkpoint[self->count] == 1)
+		if(temp_ent->client->resp.store[0].cpbox_checkpoint[self->count] == 1)
 			continue;
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_FLASHLIGHT);
@@ -4053,6 +4111,10 @@ void SP_jump_cpeffect (edict_t *ent){
 
 	gi.linkentity(ent);
 }
+
+// resizable trigger that repels people without the needed items
+// count - number of the things you need, defaults to checkpoints
+// style - set this to 1 to change the needed items to lap checkpoints
 void cpwall_think (edict_t *self){
 	edict_t *temp_ent;
 	int i;
@@ -4061,7 +4123,9 @@ void cpwall_think (edict_t *self){
 		temp_ent = g_edicts + 1 + i;
 		if (!temp_ent->inuse || !temp_ent->client)
 			continue;
-		if(temp_ent->client->pers.checkpoints>=self->count)
+		if(self->style != 1 && temp_ent->client->resp.store[0].checkpoints >= self->count)
+			continue;
+		if (self->style == 1 && temp_ent->client->pers.lap_cps >= self->count)
 			continue;
 		gi.WriteByte (svc_temp_entity);
 		gi.WriteByte (TE_FORCEWALL);
@@ -4071,20 +4135,24 @@ void cpwall_think (edict_t *self){
 		gi.unicast(temp_ent,true);
 	}
 	self->nextthink = level.time + FRAMETIME;
-	
 }
 
-void cpwall_touch (edict_t *self, edict_t *other)
-{
+void cpwall_touch (edict_t *self, edict_t *other) {
 	if (!other->client)
 		return;
 	if (other->client->resp.ctf_team == CTF_TEAM1 || other->client->resp.ctf_team == CTF_TEAM2){
-		if (other->client->pers.checkpoints < self->count) {
+		if (self->style != 1 && other->client->resp.store[0].checkpoints < self->count) {
 			VectorCopy(other->s.old_origin, other->s.origin);
 			VectorClear(other->velocity);
 			if (trigger_timer(5)) {
 				gi.cprintf(other, PRINT_HIGH, "You need %d checkpoint(s) to pass this barrier.\n", self->count);
 			}
+		}
+		else if (self->style == 1 && other->client->pers.lap_cps < self->count) {
+			VectorCopy(other->s.old_origin, other->s.origin);
+			VectorClear(other->velocity);
+			if (trigger_timer(2))
+				gi.cprintf(other, PRINT_HIGH, "You need %d lap checkpoint(s) to pass this barrier.\n", self->count);
 		}
 	}
 }
@@ -4099,7 +4167,7 @@ void SP_jump_cpwall (edict_t *ent) {
 	ent->svflags |= SVF_NOCLIENT;
 	ent->s.modelindex = 1;
 	gi.setmodel(ent, ent->model);
-	
+
 
 	VectorSubtract(ent->absmax,ent->absmin,center);
 	VectorScale(center,0.5,center);
@@ -4139,6 +4207,78 @@ void SP_jump_cpwall (edict_t *ent) {
 
 	gi.linkentity(ent);
 }
+
+//---one-way-wall start
+void one_way_wall_touch(edict_t *self, edict_t *other) {
+
+	//not a client...
+	if (!other->client)
+		return;
+
+	vec3_t   vel;
+	float	 dot;
+	vec3_t	 forward;
+
+	VectorCopy(other->velocity, vel); //I'm fairly sure I have to copy the velocity before normalizing it.
+	VectorNormalize(vel);
+	AngleVectors(self->s.angles, forward, NULL, NULL);		//get angle vector of the wall
+
+	dot = DotProduct(vel, forward); //dot product less than zero means we're going against the wall.
+
+	//setting positive values here will result in the angle to be more strict (for example (dot <= 0.7) should
+	//only allow 45 degrees deviations from the specified angle). It's up to you if you want to tweak this.
+	//Or maybe it should be a variable?
+	if (dot <= 0) {
+
+		//player's got enough speed, no need to do anything more
+		if ((self->spawnflags & 1) && other->client->resp.cur_speed >= self->speed) {
+			return;
+		}
+
+		//push player back and kill his velocity
+		VectorCopy(other->s.old_origin, other->s.origin);
+		VectorClear(other->velocity);
+
+		//display apropriate message
+		if (trigger_timer(5)) {
+			if (!(self->spawnflags & 1)) {
+				gi.cprintf(other, PRINT_HIGH, "You cannot pass this way.\n");
+			}
+			else {
+				gi.cprintf(other, PRINT_HIGH, "You need %.0f speed to pass the wall this way.\n", self->speed);
+			}
+		}
+	}
+}
+
+// one-way-wall - description
+// Allows the player to go through this entity only if his direction matches the angle set by mapper.
+// There is an option to make the player able go against the direction if he reaches a certain speed.
+//
+// Settings:
+//		- angle/angles - this property specifies the direction player is allowed to pass in.
+//		- spawnflags - if set to 1 this entity will validate player's speed. Once his speed is equal
+//					   or higher he can go through, no matter the angle
+//		- speed - set this property so entity can validate it. Works only with spawnflags 1.
+//
+// Notes:
+// The angle can be within 90 degrees from the entity's angle and the player will still pass through.
+// This can be altered with dot product comparison (if you guys want the angle window to be smaller).
+//
+// IMPORTANT: THE WALL MUST BE THICK - otherwise at high speeds you can pass through with 20fps. For 
+// 4000ups I think at least 192 units. Maybe more - I'll do more tests.
+
+void SP_one_way_wall(edict_t *self) {
+
+	//spawns like a trigger
+	self->solid = SOLID_TRIGGER;
+	self->movetype = MOVETYPE_NONE;
+	gi.setmodel(self, self->model);
+	self->svflags = SVF_NOCLIENT;
+
+	self->touch = one_way_wall_touch;
+}
+//---one-way-wall end
 
 /*void SP_misc_ball (edict_t *ent)
 {

@@ -1,3 +1,78 @@
+#####v1.32ger#####
+-added trigger_lapcounter:
+	-resizable ent that acts as a lap counter
+	-prints out laptimes to the player, and how many laps left
+	-does not end a run, still need a weapon_finish or railgun
+	-count: how many lap checkpoints are needed to finish a lap, min 1
+	-angle: set in the direction you want players to go, required field
+	-speed: speed needed to pass the ent, not required, default 0
+	-wait: time between trigger activations
+-added trigger_lapcp:
+	-resizable ent that acts as internal checkpoints for a trigger_lapcounter
+	-count: which cp is it, limited to 0-63 per lap
+-added mset/gset for lap_total
+	-sets the number of laps needed to finish a map
+-store changes:
+	-added velocity storing with velstore:
+		-toggle command similar to jumpers
+		-uses the normal store/recall commands
+		-store now always stores full velocity of the player
+		-if velstore is toggled on, recall will retrieve it
+	-store now has it's own data structure
+		-max stores is now 7, recall 0-6
+-added one_way_wall ent/trigger:
+	-allows player through in one direction only
+	-angle: angle the player is allowed to pass in, required
+	-speed: threshold speed used below
+	-spawnflags: if 1, and the player's speed > ent speed, pass regardless of angle
+-added two new triggers, trigger_quad, trigger_quad_clear
+	-gives/takes away quad damage
+	-wait: time between trigger activations
+	-set spawnflag 1 to disable message feedback
+	-weapon_clear trigger now removes quad damage
+	-quad pickup is no longer handled by pickup_powerup, has it's own fxn pickup_quad
+	-quad is now infinite
+-jump_cpwall changes:
+	-will now function without the need for setting checkpoint_total
+	-added `style 1`, will check for lap checkpoints instead of normal checkpoints
+-cpbox changes:
+	-can now be shot if given the `health` field
+		-health: health the box has, recommend 1
+		-hitting it gives the player the checkpoint
+		-recommend not using the smallest box
+	-if `target` field is set to `ordered`, players have to pick up cp's in order
+-added the ability to gate a trigger_teleport by speed
+	-speed: minimum speed to use the teleporter
+-bottom hud is new and shiny, praise draxlord
+	-dynamically hugs the bottom of the screen, depending on what is being used
+	-lap count added to hud
+-race changes:
+	-gives who you are racing in the feedback
+	-removed and added some new feedback messages
+-teleporters can be limited to specific teams
+	-spawnflag 128 ignores team easy
+	-spawnflag 256 ignores team hard
+	-this has some use mostly in testing
+	-also for quick teleporting around a map for team easy users
+-remmap now removes completions and score from users, then deletes its tourney_file
+	-also now works on current map being played
+
+Fixes:
+-can now recall when dead, no longer need to +attack
+-fully removed glue references, we are free at last
+-mapsleft and mapsdone now start at 1 instead of 0
+-speedometer no longer gets speed of nearby ents
+-fixed a logic error in picking up weapons
+-cleanhud should be cleaner
+-hud now updates when chasing a player, also when switching specs
+-added idle tag to specs who are idle AND watching a replay
+-fixed weird hud issue when specing someone mid them watching a replay
+-checkpoints now cleared on start of replays
+-wording fixed for when there are no demos to watch
+-trigger_push cpwalls are no longer advised, use jump_cpwall or one way walls
+-cpsounds should now only play locally when in a replay
+-fixed some issues with what team a player joins after a replay
+
 #####v1.31ger#####
 -idle changes:
 	-crash from loading previous player's idle status fixed
@@ -8,8 +83,8 @@
 	-all other votes, boot, silence, etc, all clients vote regardess of idle status
 -split:
 	-added a check for the "you finished in" situation
-checkpoints:
-	-ui is now live updated with your checkpoint value and total checkpoints
+-checkpoints:
+	-ui is now live updated with your checkpoint value and total checkpoints due to cphud()
 	-chasers now see how many checkpoints you have
 	-chasers now see checkpoint based lights and effects
 	-chasers now see checkpoint splits
