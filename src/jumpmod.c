@@ -4871,7 +4871,6 @@ void Cmd_Recall(edict_t *ent)
 				if (ent->client->resp.ezmsg)
 					gi.cprintf(ent,PRINT_HIGH,"You have recalled %i time(s).\n", ent->client->pers.total_recall);
 			}
-
 		} else // must be team hard
 			Cmd_Kill_f(ent);
 
@@ -8461,7 +8460,7 @@ void open_tourney_file(char *filename,qboolean apply)
 		rewind(f);
 	}
     fscanf(f,"%s",&temp);
-	gi.dprintf("%s\n", &temp);
+	//gi.dprintf("%s\n", &temp);
     if(Q_stricmp(temp,"Jump067")==0){
 	    while (!feof(f))
 	    {
@@ -8731,7 +8730,7 @@ void open_users_file()
 
     i = 0;
     if(!newusers){
-		gi.dprintf("Old users file....\n");
+		//gi.dprintf("Old users file....\n");
 	    while (!feof(f))
 	    {
 		    fscanf(f, "%i", &uid);
@@ -8760,7 +8759,7 @@ void open_users_file()
 		    maplist.num_users++;
 	    }
     } else { //new users.t version..
-		gi.dprintf("New!! users file!\n");
+		//gi.dprintf("New!! users file!\n");
         while (!feof(f))
 	    {
             fscanf(f, "%i", &uid);
@@ -14008,10 +14007,18 @@ void hud_footer(edict_t *ent) {
 
 	// race
 	strcpy(racestring, "");
-	if (ent->client->resp.rep_racing) {
-		sprintf(race, "%d", ent->client->resp.rep_race_number + 1);
-		if (Q_stricmp(race, "16") == 0)
+	if (ent->client->resp.replaying) { //if player is replaying, print replay string instead.
+		sprintf(race, "%d", ent->client->resp.replaying);
+		if (Q_stricmp(race, "16") == 0) {
 			sprintf(race, "NOW");
+		}
+		sprintf(racestring, "Replay: %s", HighAscii(race));
+	}
+	else if (ent->client->resp.rep_racing) {
+		sprintf(race, "%d", ent->client->resp.rep_race_number + 1);
+		if (Q_stricmp(race, "16") == 0) {
+			sprintf(race, "NOW");
+		}
 		sprintf(racestring, "  Race: %s", HighAscii(race));
 	}
 

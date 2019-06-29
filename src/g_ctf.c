@@ -3663,6 +3663,7 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 	{
 	    ent->client->Jet_framenum = 0;
 		CTFAutoJoinTeam(ent,desired_team);
+		hud_footer(ent);
 		return;
 	}
 
@@ -3685,7 +3686,6 @@ void CTFJoinTeam(edict_t *ent, int desired_team)
 		ent->client->resp.item_timer = 0;
 		ent->client->resp.item_timer_allow = true;
 	}
-	hud_footer(ent);
 	s = Info_ValueForKey (ent->client->pers.userinfo, "skin");
 	CTFAssignSkin(ent, s);
 
@@ -3721,6 +3721,7 @@ Notify_Of_Team_Commands(ent);
 //								"to ready up.\n"
 //								"***********************");
 	}
+	hud_footer(ent);
 }
 
 
@@ -3770,13 +3771,13 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 {
 	int i;
 	edict_t *e;
-
+	ClearPersistants(&ent->client->pers);
+	ClearCheckpoints(ent);
 	// =====================================
 	// added by lilred
 	if (ent->client->resp.replaying)
 		ent->client->resp.replaying = 0;
 	// =====================================
-	hud_footer(ent);
 
 	if (ent->client->resp.ctf_team!=CTF_NOTEAM || ent->client->resp.replaying)
 		CTFObserver(ent);
@@ -3786,6 +3787,7 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 		ent->client->chase_target = NULL;
 		ent->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
 		PMenu_Close(ent);
+		hud_footer(ent);
 		return;
 	}
 
@@ -3797,6 +3799,7 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 			hud_footer(ent);
 			PMenu_Close(ent);
 			ent->client->update_chase = true;
+			hud_footer(ent);
 			return;
 		}
 	}
@@ -3805,6 +3808,7 @@ void CTFChaseCam(edict_t *ent, pmenuhnd_t *p)
 
 	PMenu_Close(ent);
 	PMenu_Open(ent, nochasemenu, -1, sizeof(nochasemenu) / sizeof(pmenu_t), NULL);
+	hud_footer(ent);
 }
 
 void CTFReturnToMain(edict_t *ent, pmenuhnd_t *p)
@@ -4024,6 +4028,7 @@ void CTFReplayer(edict_t *ent)
 	memcpy (userinfo, ent->client->pers.userinfo, sizeof(userinfo));
 	InitClientPersistant(ent->client);
 	ClientUserinfoChanged (ent, userinfo);
+	hud_footer(ent);
 	gi.linkentity (ent);
 }
 
