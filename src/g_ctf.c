@@ -70,15 +70,6 @@ char *ctf_statusbar =
 "pic 6 "
 "endif "
 
-"if 31 "
-"yb	-32 "
-"xv 310 "
-"num 3 31 "
-"yb -8 "
-"xv 312 "
-"string2 \"Replay\" "
-"endif "
-
 // Max Speed
 "if 7 "
 "yb -32 "
@@ -115,27 +106,22 @@ char *ctf_statusbar =
 "xr -18 "
 "num 1 19 "
 
+//keystrokes
 "xl 2 "
 "yb -42 "
-"stat_string 30 "
-
+"stat_string 30 " //forward key
 "yb -34 "
-"stat_string 20 "
-
+"stat_string 20 " //left/right key
 "yb -26 "
-"stat_string 21 "
+"stat_string 21 " //back key
 "yb -18 "
-"stat_string 24 "
-//attack key
+"stat_string 24 " //crouch key
 "yb -10 "
-"stat_string 16 "
-
-
-//pooy_key
+"stat_string 25 " //attack key
 "yb -50 "
-"stat_string 22 "
+"stat_string 22 " //!jump key
 
-//pooy_key
+//FPS
 "if 23 "
   "xl 0 "
   "yb -76 "
@@ -165,27 +151,25 @@ char *ctf_statusbar =
 "string \"Maps\" "
 "endif "
 
-"if 16 "
-  "xv 72 "
-  "yb -32 "			// hud_string1
-  "string \"%s\" "	// hud_string1
-  "yb -24 "			// hud_string2
-  "string \"%s\" "	// hud_string2
-  "yb -16 "			// hud_string3
-  "string \"%s\" "	// hud_string3
-  "yb -8 "			// hud_string4
-  "string \"%s\" "  // hud_string4
+"xv 72 "
+"yb -32 "			// hud_string1
+"string \"%s\" "	// hud_string1
+"yb -24 "			// hud_string2
+"string \"%s\" "	// hud_string2
+"yb -16 "			// hud_string3
+"string \"%s\" "	// hud_string3
+"yb -8 "			// hud_string4
+"string \"%s\" "  // hud_string4
 
-  "xr -128 "
-  "yt 2 "
-  "string \"%s\" " //current map
-  "yt 10 "
-  "string \"%s\" " //last map 1
-  "yt 18 "
-  "string \"%s\" " //last map 2
-  "yt 26 "
-  "string \"%s\" " //last map 3
-"endif "
+"xr -128 "
+"yt 2 "
+"string \"%s\" " //current map
+"yt 10 "
+"string \"%s\" " //last map 1
+"yt 18 "
+"string \"%s\" " //last map 2
+"yt 26 "
+"string \"%s\" " //last map 3
 
   "xr -32 "
   "yt 100 "
@@ -1220,7 +1204,6 @@ static void CTFSetIDView(edict_t *ent)
 void SetCTFStats(edict_t *ent)
 {
 	int keys;
-	char racenr[2];
 
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
@@ -1229,19 +1212,16 @@ void SetCTFStats(edict_t *ent)
 
 	if (ent->client->resp.ctf_team==CTF_TEAM1 || ent->client->resp.ctf_team == CTF_TEAM2)
 	{
-		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.cur_speed;
 	}
 	else {
 		if (ent->client->resp.replaying)
 		{
-			ent->client->ps.stats[STAT_JUMP_REPLAY] = ent->client->resp.replaying;
 			ent->client->ps.stats[STAT_HEALTH] = 0;
 			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.rep_speed;
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		}
 	}

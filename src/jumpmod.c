@@ -4472,6 +4472,11 @@ void Cmd_Replay(edict_t *ent)
 		//gi.cprintf(ent,PRINT_HIGH,"You can type 'replay now' to see a demo of fastest run this map.\n");
 	}
 	CTFReplayer(ent);
+	ClearPersistants(&ent->client->pers);
+	if (ent->client->resp.store->checkpoints > 0) {
+		ClearCheckpoints(ent);
+	}
+	hud_footer(ent);
 }
 
 void Load_Recording(void)
@@ -13981,11 +13986,11 @@ void hud_footer(edict_t *ent) {
 
 	// update statusbar for client if it's chasing someone...
 	if (ent->client->chase_target) {
-		for (i = 0; i < 4; i++) {
-			sprintf(ent->client->resp.hud[i].string, ent->client->chase_target->client->resp.hud[i].string);
-		}
 		Com_sprintf(str, sizeof(str), ctf_statusbar,
-			ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
+			ent->client->chase_target->client->resp.hud[0].string,
+			ent->client->chase_target->client->resp.hud[1].string,
+			ent->client->chase_target->client->resp.hud[2].string,
+			ent->client->chase_target->client->resp.hud[3].string,
 			this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
 		gi.WriteByte(svc_configstring);
 		gi.WriteShort(CS_STATUSBAR);
@@ -14069,18 +14074,9 @@ void hud_footer(edict_t *ent) {
 			continue;
 		if (cl_ent->client->chase_target->client != ent->client)
 			continue;
-		if (cl_ent->client->resp.cleanhud) {
-			for (i = 0; i < 4; i++) {
-				sprintf(cl_ent->client->resp.hud[i].string, "");
-			}
-			continue;
-		}
-		for (i = 0; i < 4; i++) {
-			strcpy(cl_ent->client->resp.hud[i].string, ent->client->resp.hud[i].string);
-		}
 		//update statusbar for chasers..
 		Com_sprintf(str, sizeof(str), ctf_statusbar,
-			cl_ent->client->resp.hud[0].string, cl_ent->client->resp.hud[1].string, cl_ent->client->resp.hud[2].string, cl_ent->client->resp.hud[3].string,
+			ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
 			this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
 		gi.WriteByte(svc_configstring);
 		gi.WriteShort(CS_STATUSBAR);

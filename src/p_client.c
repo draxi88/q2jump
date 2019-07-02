@@ -2369,12 +2369,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		if (ent->client->resp.replaying)
 		{
-			if (ent->client->resp.replay_frame == 0) {
-				ClearPersistants(&ent->client->pers);
-				if (ent->client->resp.store->checkpoints > 0) {
-					ClearCheckpoints(ent);
-				}
-			}
 			if ((ucmd->upmove>=10) && (!ent->client->resp.going_up))
 				ent->client->resp.going_up = true;
 
