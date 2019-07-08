@@ -14157,9 +14157,8 @@ void CheckCmdFile() {
 				strncat(cmd, temp, 128);
 			}
 		}
-	} 
-	status = remove(f); //delete file.
-	if (status != 0) {
-		gi.dprintf("file not deleted....\n");
 	}
+	freopen(name, "w", f);
+	fprintf(f, ""); //remove everything from the file.
+	fclose(f);
 }
