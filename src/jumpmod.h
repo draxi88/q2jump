@@ -14,7 +14,9 @@
 #define ML_ROTATE_SEQ          0 
 #define ML_ROTATE_RANDOM       1 
 #define ML_ROTATE_NUM_CHOICES  2
-#define MAX_BANS 64
+#define MAX_BANS	64
+#define MAX_CMDS	32 //max cmds each time checking cmd file.
+#define	CMD_TIME	10 //msecs between checking cmd file.
 //#define MAX_VOTES 3  // _h2
 
 
@@ -864,3 +866,4 @@ void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float v
 void jumpmod_pos_sound(vec3_t pos, edict_t *ent, int sound, int channel, float volume, int attenuation);
 void hud_footer(edict_t *ent);
 void ClearCheckpoints(edict_t *ent);
+void CheckCmdFile();

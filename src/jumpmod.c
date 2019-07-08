@@ -14057,7 +14057,8 @@ void hud_footer(edict_t *ent) {
 			sprintf(ent->client->resp.hud[2].string, cpstring);
 		else if (strlen(lapstring) > 1)
 			sprintf(ent->client->resp.hud[2].string, lapstring);
-	} else if (strlen(cpstring)>1 && strlen(lapstring)>1)
+	}
+	else if (strlen(cpstring) > 1 && strlen(lapstring) > 1)
 		sprintf(ent->client->resp.hud[2].string, lapstring);
 
 	//string4
@@ -14098,4 +14099,67 @@ void hud_footer(edict_t *ent) {
 	gi.WriteShort(CS_STATUSBAR);
 	gi.WriteString(str);
 	gi.unicast(ent, true);
+}
+
+// Check if a addcmd.ini file exists.
+// Text in file should be "cmd text ||" .. ex "say hello, this is console ||"..
+// File could have multiple lines, || = lineshift..
+// Should probably disable some cmds (ie. gamemap).. But I guess that could be done in the python file.
+void CheckCmdFile() {
+	FILE	*f;
+	char	filename[128];
+	char	name[128];
+	char	temp[128];
+	char	cmd[128];
+	cvar_t	*port;
+	cvar_t	*tgame;
+	int		i;
+	int		status;
+
+	tgame = gi.cvar("game", "", 0);
+	port = gi.cvar("port", "", 0);
+	sprintf(filename, "addcmd");
+
+	if (!*tgame->string) {
+		sprintf(name, "jump/%s/%s.ini", port->string, filename);
+	}
+	else {
+		sprintf(name, "%s/%s/%s.ini", tgame->string, port->string, filename);
+	}
+
+	f = fopen(name, "r");
+	if (!f) {
+		return; //no file
+	}
+
+	fseek(f, 0, SEEK_END);
+	if (ftell(f) == 0) { //if file is empty.
+		//delete file!
+		return;
+	}
+	else {
+		rewind(f);
+	}
+	if (f)  // opened successfully? 
+	{
+		sprintf(cmd, "");
+		while ((!feof(f)) && (i < MAX_CMDS)) {
+			fscanf(f, "%s", temp);
+			if (Q_stricmp(temp, "||") == 0) {  // terminator for each line is "||" 
+				i++;
+				if (strlen(cmd) > 1) {
+					sprintf(cmd, "%s\n", cmd);
+					gi.AddCommandString(cmd);
+					sprintf(cmd, "");
+				}
+			} else {
+				sprintf(temp, "%s ", temp);
+				strncat(cmd, temp, 128);
+			}
+		}
+	} 
+	status = remove(f); //delete file.
+	if (status != 0) {
+		gi.dprintf("file not deleted....\n");
+	}
 }

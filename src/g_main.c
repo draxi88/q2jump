@@ -861,12 +861,13 @@ void G_RunFrame (void)
 	int itemp;
 	int j = 0;
 
-  byte command;
-  unsigned long data;
-  char *str;
+	byte command;
+	unsigned long data;
+	char *str;
 	time_t curr_time;	// hann
 	char *time_str;		// hann
 	cvar_t  *port;		// hann
+	time_t	cmd_time;
 
 
 	// hann: Print a timestamp to the console every 10 mins like OSP tourney does.
@@ -879,6 +880,11 @@ void G_RunFrame (void)
 		time_str[strlen(time_str)-1] = 0;	// hann: remove "\n"
 		Com_Printf("[ SERVERTIME (port %s) : %s ]\n",port->string, time_str);  // hann: print it.
 	}  // hann
+
+	//check for cmds
+	if (server_time % CMD_TIME == 0) {
+		CheckCmdFile();
+	}
 
 	temp2 = (int)(
 			((mset_vars->timelimit*60)+
