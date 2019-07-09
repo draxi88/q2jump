@@ -14140,6 +14140,7 @@ void CheckCmdFile() {
 	else {
 		rewind(f);
 	}
+	i = 0;
 	if (f)  // opened successfully? 
 	{
 		sprintf(cmd, "");
