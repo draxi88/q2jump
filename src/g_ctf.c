@@ -4755,6 +4755,7 @@ void CTFWarp(edict_t *ent)
 	int	notimes[MAX_MAPS];
 	int temp_num;
 	int index;
+	int skill[MAX_MAPS];
 	
 	if (!map_allow_voting)
 		return;
@@ -4819,6 +4820,7 @@ void CTFWarp(edict_t *ent)
 		gi.cprintf(ent, PRINT_HIGH, "mapvote prev - the previous map.\n");
 		gi.cprintf(ent, PRINT_HIGH, "mapvote new - the newest map.\n");
 		gi.cprintf(ent, PRINT_HIGH, "mapvote newtodo - the newest map you haven't done.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote skill [#] - map with a specific skill (1 to 5).\n");
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		return;
 	}
@@ -5077,6 +5079,46 @@ void CTFWarp(edict_t *ent)
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[map]));
 			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
 			if (ctfgame.needvotes==0)
+				CTFWinElection(0, NULL);
+		}
+	}
+	else
+	if ((strcmp(temp, "SKILL") == 0) || (strcmp(temp, "skill") == 0))
+	{
+		if (gi.argc() < 3) {
+			gi.cprintf(ent, PRINT_HIGH, "mapvote skill [#] (1 to 5).\n");
+			return;
+		}
+		temp_num = atoi(gi.argv(2));
+		if (temp_num < 1 || temp_num > 5) {
+			gi.cprintf(ent, PRINT_HIGH, "mapvote skill [#] (1 to 5).\n");
+			return;
+		}
+
+		i2 = 0;
+		for (i = 0; i < maplist.nummaps; i++)
+		{
+			if (maplist.skill[i] == temp_num)
+			{
+				skill[i2] = i;
+				i2++;
+			}
+		}
+		if (!i2)
+		{
+			gi.cprintf(ent, PRINT_HIGH, "No maps with this specific skill.\n");
+			return;
+		}
+		map = skill[rand() % i2];
+
+		sprintf(text, "%s: Request to change map to %s (skill: %i)",
+			ent->client->pers.netname, maplist.mapnames[map], temp_num);
+		if (CTFBeginElection(ent, ELECT_MAP, text, false))
+		{
+			gi.configstring(CONFIG_JUMP_VOTE_INITIATED, HighAscii(va("Vote by %s", ent->client->pers.netname)));
+			gi.configstring(CONFIG_JUMP_VOTE_TYPE, va("Map: %s", maplist.mapnames[map]));
+			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
+			if (ctfgame.needvotes == 0)
 				CTFWinElection(0, NULL);
 		}
 	}
