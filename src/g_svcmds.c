@@ -276,6 +276,43 @@ void SVCmd_WriteIP_f (void)
 	fclose (f);
 }
 
+//SVCmd to use a say function without getting the console: stuff at start..
+void SVCmd_Say()
+{
+	int		i;
+	char	*p;
+	int len;
+	char	text[2048];
+
+	if (gi.argc() < 3)
+		return;
+
+	p = gi.args();
+
+	if (*p == '"')
+	{
+		p++;
+		p[strlen(p) - 1] = 0;
+	}
+	strcat(text, p);
+	memmove(text, text + 4, strlen(text) - 4 + 1); //remove "say " from text
+	// don't let text be too long for malicious reasons
+	if (strlen(text) > 150)
+		text[150] = 0;
+
+	len = strlen(text);
+	for (i = 0; i < len; i++)
+	{
+		text[i] &= ~128;
+		if (text[i] < 32)
+			text[i] = 32;
+	}
+
+	strcat(text, "\n");
+
+	gi.bprintf(PRINT_CHAT, "%s", text);
+}
+
 /*
 =================
 ServerCommand
@@ -290,8 +327,10 @@ void	ServerCommand (void)
 	char	*cmd;
 
 	cmd = gi.argv(1);
-	if (Q_stricmp (cmd, "addmaps") == 0)
-		SVCmd_AddMaps ();
+	if (Q_stricmp(cmd, "addmaps") == 0)
+		SVCmd_AddMaps();
+	else if (Q_stricmp(cmd, "say") == 0)
+		SVCmd_Say();
 	else if (Q_stricmp (cmd, "addsinglemap") == 0)
 		SVCmd_AddSingleMap();
 	else if (Q_stricmp (cmd, "changepass") == 0)
