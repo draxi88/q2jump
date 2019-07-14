@@ -1070,7 +1070,8 @@ typedef struct
 	// trigger_welcome
 	int         welcome_count[10];
 
-	hud_struct hud[4];
+	hud_struct	hud[4];
+	char		hudstring[2048];
 
 } client_respawn_t;
 

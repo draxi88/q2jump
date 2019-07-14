@@ -13979,6 +13979,7 @@ void hud_footer(edict_t *ent) {
 	for (i = 0; i < strlen(this_map); i++)
 		this_map[i] |= 128;
 
+
 	//rem old strings
 	for (i = 0; i < 4; i++) {
 		sprintf(ent->client->resp.hud[i].string, "");
@@ -13986,20 +13987,14 @@ void hud_footer(edict_t *ent) {
 
 	// update statusbar for client if it's chasing someone...
 	if (ent->client->chase_target) {
-		Com_sprintf(str, sizeof(str), ctf_statusbar,
-			ent->client->chase_target->client->resp.hud[0].string,
-			ent->client->chase_target->client->resp.hud[1].string,
-			ent->client->chase_target->client->resp.hud[2].string,
-			ent->client->chase_target->client->resp.hud[3].string,
-			this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
 		gi.WriteByte(svc_configstring);
 		gi.WriteShort(CS_STATUSBAR);
-		gi.WriteString(str);
+		gi.WriteString(ent->client->chase_target->client->resp.hudstring);
 		gi.unicast(ent, true);
 		return;
 	}
 	//else if client is not chasing someone......
-
+	
 	//team
 	if (ent->client->resp.ctf_team == CTF_TEAM1)
 		sprintf(teamstring, "  Team: ≈бущ");
@@ -14008,7 +14003,7 @@ void hud_footer(edict_t *ent) {
 	else
 		sprintf(teamstring, "  Team: ѕвуетцет");
 	//string 1
-	sprintf(ent->client->resp.hud[0].string, teamstring);
+	sprintf(ent->client->resp.hud[0].string, teamstring); //Team is always string1.
 
 	// race
 	strcpy(racestring, "");
@@ -14065,6 +14060,17 @@ void hud_footer(edict_t *ent) {
 	if (strlen(racestring) > 1 && strlen(cpstring) > 1 && strlen(lapstring) > 1)
 		sprintf(ent->client->resp.hud[3].string, lapstring);
 
+	//complete hudstring.
+	Com_sprintf(str, sizeof(str), ctf_statusbar,
+		ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
+		this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
+	
+	//check if we need to update it.
+	if (Q_stricmp(ent->client->resp.hudstring, str) == 0) {
+		return; //not updated.
+	}
+	sprintf(ent->client->resp.hudstring, str);
+
 	//Find chasers....
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
@@ -14076,12 +14082,9 @@ void hud_footer(edict_t *ent) {
 		if (cl_ent->client->chase_target->client != ent->client)
 			continue;
 		//update statusbar for chasers..
-		Com_sprintf(str, sizeof(str), ctf_statusbar,
-			ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
-			this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
 		gi.WriteByte(svc_configstring);
 		gi.WriteShort(CS_STATUSBAR);
-		gi.WriteString(str);
+		gi.WriteString(ent->client->resp.hudstring);
 		gi.unicast(cl_ent, true);
 	}
 
@@ -14092,12 +14095,9 @@ void hud_footer(edict_t *ent) {
 		}
 	}
 	// update statusbar for client.
-	Com_sprintf(str, sizeof(str), ctf_statusbar,
-		ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
-		this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
 	gi.WriteByte(svc_configstring);
 	gi.WriteShort(CS_STATUSBAR);
-	gi.WriteString(str);
+	gi.WriteString(ent->client->resp.hudstring);
 	gi.unicast(ent, true);
 }
 
