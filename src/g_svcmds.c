@@ -282,20 +282,21 @@ void SVCmd_Say()
 	int		i;
 	char	*p;
 	int len;
+	char	temp[2048];
 	char	text[2048];
 
 	if (gi.argc() < 3)
 		return;
 
 	p = gi.args();
-
+	
 	if (*p == '"')
 	{
 		p++;
 		p[strlen(p) - 1] = 0;
 	}
-	strcat(text, p);
-	memmove(text, text + 4, strlen(text) - 4 + 1); //remove "say " from text
+	strcat(temp, p);
+	sprintf(text,"%.*s", strlen(temp)-5, temp+5); //remove "say " from text
 	// don't let text be too long for malicious reasons
 	if (strlen(text) > 150)
 		text[150] = 0;
