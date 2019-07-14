@@ -14149,12 +14149,12 @@ void CheckCmdFile() {
 			if (Q_stricmp(temp, "||") == 0) {  // terminator for each line is "||" 
 				i++;
 				if (strlen(cmd) > 1) {
-					sprintf(cmd, "%s\n", cmd);
+					strcat(cmd, "\n");
 					gi.AddCommandString(cmd);
 					sprintf(cmd, "");
 				}
 			} else {
-				sprintf(temp, "%s ", temp);
+				strcat(temp, " ");
 				strncat(cmd, temp, 128);
 			}
 		}
