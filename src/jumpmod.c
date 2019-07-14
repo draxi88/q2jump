@@ -14134,7 +14134,7 @@ void CheckCmdFile() {
 
 	fseek(f, 0, SEEK_END);
 	if (ftell(f) == 0) { //if file is empty.
-		//delete file!
+		fclose(f);
 		return;
 	}
 	else {
