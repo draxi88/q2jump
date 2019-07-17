@@ -109,17 +109,22 @@ char *ctf_statusbar =
 //keystrokes
 "xl 2 "
 "yb -42 "
-"stat_string 30 " //forward key
-"yb -34 "
-"stat_string 20 " //left/right key
-"yb -26 "
-"stat_string 21 " //back key
-"yb -18 "
-"stat_string 24 " //crouch key
-"yb -10 "
-"stat_string 25 " //attack key
-"yb -50 "
-"stat_string 22 " //!jump key
+
+"if 20 "
+"pic 20 " //left/right key
+"endif "
+
+"if 21 " //forward and back key
+"pic 21 " 
+"endif "
+
+"if 22 " //jump and crouch key
+"pic 22 "
+"endif "
+
+"if 25 "
+"pic 25 " //attack key
+"endif "
 
 //FPS
 "if 23 "
@@ -1243,54 +1248,48 @@ void SetCTFStats(edict_t *ent)
 	{
 		if (ent->client->resp.key_forward)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_KEY_FORWARD;
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = gi.imageindex("forward");
 		}
 		else
 		if (ent->client->resp.key_back)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_KEY_BACK;
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = gi.imageindex("back");
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = 0;
 		}
 
 		if (ent->client->resp.key_left)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_KEY_LEFT;
+			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = gi.imageindex("left");;
 		}
 		else
 		if (ent->client->resp.key_right)
 		{
-				ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_KEY_RIGHT;
+				ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = gi.imageindex("right");;
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = 0;
 		}
 		if (ent->client->buttons & BUTTON_ATTACK)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_KEY_ATTACK;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = gi.imageindex("attack");
 		} else {
-			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = 0;
 		}
 		if (ent->client->resp.key_up)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_KEY_JUMP;
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = gi.imageindex("jump");
 		}
 		else if (ent->client->resp.key_down)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_KEY_CROUCH;
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = gi.imageindex("duck");
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = 0;
 		}
 		ent->client->ps.stats[STAT_JUMP_FPS] = ent->client->pers.fps;
 	}
@@ -1299,57 +1298,51 @@ void SetCTFStats(edict_t *ent)
 		keys = ent->client->resp.replay_data;;
 		if (keys & RECORD_KEY_FORWARD)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_KEY_FORWARD;
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = CONFIG_JUMP_KEY_FORWARD;
 		}
 		else
 		if (keys & RECORD_KEY_BACK)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_KEY_BACK;
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = CONFIG_JUMP_KEY_BACK;
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = 0;
 		}
 
 		if (keys & RECORD_KEY_LEFT)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_KEY_LEFT;
+			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = gi.imageindex("left");;
 		}
 		else
 		if (keys & RECORD_KEY_RIGHT)
 		{
-				ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_KEY_RIGHT;
+				ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = gi.imageindex("right");;
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = 0;
 		}
 		if(keys & RECORD_KEY_ATTACK)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_KEY_ATTACK;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = gi.imageindex("attack");
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = 0;
 		}	
 
 		if (keys & RECORD_KEY_UP)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_KEY_JUMP;
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = gi.imageindex("jump");
 		}
 		else if (keys & RECORD_KEY_DOWN)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_KEY_CROUCH;
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = gi.imageindex("duck");
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = 0;
 		}
 		ent->client->ps.stats[STAT_JUMP_FPS] = (keys & RECORD_FPS_MASK)>>RECORD_FPS_SHIFT;
 	}
@@ -1374,13 +1367,11 @@ void SetCTFStats(edict_t *ent)
 		ent->client->ps.stats[STAT_JUMP_MAPCOUNT] = 0;
 		if (!ent->client->resp.replaying)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = 0;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = 0;
 			ent->client->ps.stats[STAT_JUMP_FPS] = 0;
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = 0;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = 0;
 		}
 	}
 }

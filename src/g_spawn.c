@@ -1122,6 +1122,15 @@ void SP_worldspawn (edict_t *ent)
 	gi.imageindex ("help");
 	gi.imageindex ("field_3");
 
+	//jump icons
+	gi.imageindex("forward");
+	gi.imageindex("back");
+	gi.imageindex("left");
+	gi.imageindex("right");
+	gi.imageindex("duck");
+	gi.imageindex("jump");
+	gi.imageindex("attack");
+
 	if (!st.gravity)
 	{
 		gi.cvar_set("sv_gravity", "800");
@@ -1275,15 +1284,7 @@ void SP_worldspawn (edict_t *ent)
 		gi.configstring(CS_LIGHTS+11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
 		// styles 32-62 are assigned by the l   ight program for switchable lights
 
-		gi.configstring (CONFIG_JUMP_KEY_FORWARD,    "  Forward");
-		gi.configstring (CONFIG_JUMP_KEY_LEFT,       "Left");
-//		gi.configstring (CONFIG_JUMP_KEY_FPS, "fps");
-		gi.configstring (CONFIG_JUMP_KEY_RIGHT,      "      Right");
 		gi.configstring (CONFIG_JUMP_ADDED_TIME,      "  +0");
-		gi.configstring (CONFIG_JUMP_KEY_JUMP,       "   JUMP!");
-		gi.configstring (CONFIG_JUMP_KEY_CROUCH,       " DUCK  DUCK");
-		gi.configstring (CONFIG_JUMP_KEY_BACK,       "    Back");
-		gi.configstring (CONFIG_JUMP_KEY_ATTACK,       "   Attack!");
 
 
 		//create mapname at 20chars long
