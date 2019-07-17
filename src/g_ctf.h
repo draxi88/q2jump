@@ -54,16 +54,26 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define STAT_JUMP_KEY_BACK_FORWARD	21
 #define STAT_JUMP_KEY_JUMP_CROUCH	22
 #define STAT_JUMP_FPS				23
-//#define STAT_						24
+//#define STAT_						24 //used in STAT_HUD_STRING1
 #define STAT_JUMP_KEY_ATTACK	    25
-//#define STAT_						26
+//#define STAT_						26 //used in STAT_HUD_STRING2
 #define STAT_CTF_ID_VIEW			27
 #define STAT_TIME_LEFT				28
-//#define STAT_JUMP_KEY_FORWARD		30
-//#define STAT_						31
+
+//hud_footer
+#define STAT_HUD_STRING1			24
+#define STAT_HUD_STRING2			26
+#define STAT_HUD_STRING3			30
+#define STAT_HUD_STRING4			31
 
 #define CONFIG_JUMP_EMPTY 1609
 #define CONFIG_JUMP_ADDED_TIME 1612
+
+//hud_footer
+#define CONFIG_JUMP_HUDSTRING1 1613
+#define CONFIG_JUMP_HUDSTRING2 1614
+#define CONFIG_JUMP_HUDSTRING3 1615
+#define CONFIG_JUMP_HUDSTRING4 1616
 
 
 #define CONFIG_JUMP_VOTE_REMAINING 1620

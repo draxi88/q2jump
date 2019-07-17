@@ -158,13 +158,13 @@ char *ctf_statusbar =
 
 "xv 72 "
 "yb -32 "			// hud_string1
-"string \"%s\" "	// hud_string1
+"stat_string 24 "	// hud_string1
 "yb -24 "			// hud_string2
-"string \"%s\" "	// hud_string2
+"stat_string 26 "	// hud_string2
 "yb -16 "			// hud_string3
-"string \"%s\" "	// hud_string3
+"stat_string 30 "	// hud_string3
 "yb -8 "			// hud_string4
-"string \"%s\" "  // hud_string4
+"stat_string 31 "   // hud_string4
 
 "xr -128 "
 "yt 2 "
@@ -1213,6 +1213,12 @@ void SetCTFStats(edict_t *ent)
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP3] = CONFIG_JUMP_NEXT_MAP3;
+
+	ent->client->ps.stats[STAT_HUD_STRING1] = CONFIG_JUMP_HUDSTRING1;
+	ent->client->ps.stats[STAT_HUD_STRING2] = CONFIG_JUMP_HUDSTRING2;
+	ent->client->ps.stats[STAT_HUD_STRING3] = CONFIG_JUMP_HUDSTRING3;
+	ent->client->ps.stats[STAT_HUD_STRING4] = CONFIG_JUMP_HUDSTRING4;
+
 	
 
 	if (ent->client->resp.ctf_team==CTF_TEAM1 || ent->client->resp.ctf_team == CTF_TEAM2)

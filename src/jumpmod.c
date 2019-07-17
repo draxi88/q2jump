@@ -12482,7 +12482,6 @@ void ToggleHud(edict_t *ent)
 	if (showhud)
 	{
 		Com_sprintf(str,sizeof(str),ctf_statusbar,
-			ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
 			this_map,prev_levels[1].mapname,prev_levels[2].mapname,prev_levels[3].mapname);
 		gi.configstring (CS_STATUSBAR, str);
 //		gi.configstring (CS_STATUSBAR, ctf_statusbar);
@@ -13960,145 +13959,116 @@ void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float vo
 void hud_footer(edict_t *ent) {
 	edict_t *cl_ent;
 	int i;
-	char teamstring[32];
-	char racestring[32];
-	char cpstring[32];
-	char lapstring[32];
 	char cp[2];
 	char cptotal[2];
 	char race[10];
 	char lap[10];
 	char laptotal[10];
-	char this_map[64];
-	char str[2048];
+	int strnr;
 
 	if (!ent->client)
 		return;
 
-	strcpy(this_map, prev_levels[0].mapname);
-	for (i = 0; i < strlen(this_map); i++)
-		this_map[i] |= 128;
-
+	// update statusbar for client if it's chasing someone...
+	if (ent->client->chase_target) {
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING1);
+		gi.WriteString(ent->client->chase_target->client->resp.hud[0].string);
+		gi.unicast(ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING2);
+		gi.WriteString(ent->client->chase_target->client->resp.hud[1].string);
+		gi.unicast(ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING3);
+		gi.WriteString(ent->client->chase_target->client->resp.hud[2].string);
+		gi.unicast(ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING4);
+		gi.WriteString(ent->client->chase_target->client->resp.hud[3].string);
+		gi.unicast(ent, true);
+		return;
+	}
+	//else if client is not chasing someone......
 
 	//rem old strings
 	for (i = 0; i < 4; i++) {
 		sprintf(ent->client->resp.hud[i].string, "");
 	}
-
-	// update statusbar for client if it's chasing someone...
-	if (ent->client->chase_target) {
-		gi.WriteByte(svc_configstring);
-		gi.WriteShort(CS_STATUSBAR);
-		gi.WriteString(ent->client->chase_target->client->resp.hudstring);
-		gi.unicast(ent, true);
-		return;
-	}
-	//else if client is not chasing someone......
 	
-	//team
+	//team (Team is always string1.)
 	if (ent->client->resp.ctf_team == CTF_TEAM1)
-		sprintf(teamstring, "  Team: Åáóù");
+		sprintf(ent->client->resp.hud[0].string, "  Team: Åáóù");
 	else if (ent->client->resp.ctf_team == CTF_TEAM2)
-		sprintf(teamstring, "  Team: Èáòä");
+		sprintf(ent->client->resp.hud[0].string, "  Team: Èáòä");
 	else
-		sprintf(teamstring, "  Team: Ïâóåòöåò");
-	//string 1
-	sprintf(ent->client->resp.hud[0].string, teamstring); //Team is always string1.
+		sprintf(ent->client->resp.hud[0].string, "  Team: Ïâóåòöåò");
 
+	//rest of the strings
+	strnr = 1;
 	// race
-	strcpy(racestring, "");
 	if (ent->client->resp.replaying) { //if player is replaying, print replay string instead.
 		sprintf(race, "%d", ent->client->resp.replaying);
 		if (Q_stricmp(race, "16") == 0) {
 			sprintf(race, "NOW");
 		}
-		sprintf(racestring, "Replay: %s", HighAscii(race));
+		sprintf(ent->client->resp.hud[strnr].string, "Replay: %s", HighAscii(race));
+		strnr++;
 	}
 	else if (ent->client->resp.rep_racing) {
 		sprintf(race, "%d", ent->client->resp.rep_race_number + 1);
 		if (Q_stricmp(race, "16") == 0) {
 			sprintf(race, "NOW");
 		}
-		sprintf(racestring, "  Race: %s", HighAscii(race));
+		sprintf(ent->client->resp.hud[strnr].string, "  Race: %s", HighAscii(race));
+		strnr++;
 	}
 
 	// cp
-	strcpy(cpstring, "");
 	if (mset_vars->checkpoint_total) {
 		sprintf(cptotal, "%d", mset_vars->checkpoint_total);
 		sprintf(cp, "%d", ent->client->resp.store[0].checkpoints);
-		sprintf(cpstring, "Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
+		sprintf(ent->client->resp.hud[strnr].string, "Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
+		strnr++;
 	}
 
 	// lap
-	strcpy(lapstring, "");
 	if (mset_vars->lap_total) {
 		sprintf(laptotal, "%d", mset_vars->lap_total);
 		sprintf(lap, "%d", ent->client->pers.lapcount);
-		sprintf(lapstring, "  Laps: %s/%s", HighAscii(lap), HighAscii(laptotal));
+		sprintf(ent->client->resp.hud[strnr].string, "  Laps: %s/%s", HighAscii(lap), HighAscii(laptotal));
 	}
 
-	//string2
-	if (strlen(racestring) > 1)
-		sprintf(ent->client->resp.hud[1].string, racestring);
-	else if (strlen(cpstring) > 1)
-		sprintf(ent->client->resp.hud[1].string, cpstring);
-	else if (strlen(lapstring) > 1)
-		sprintf(ent->client->resp.hud[1].string, lapstring);
-
-	//string3
-	if (strlen(racestring) > 1) {
-		if (strlen(cpstring) > 1)
-			sprintf(ent->client->resp.hud[2].string, cpstring);
-		else if (strlen(lapstring) > 1)
-			sprintf(ent->client->resp.hud[2].string, lapstring);
-	}
-	else if (strlen(cpstring) > 1 && strlen(lapstring) > 1)
-		sprintf(ent->client->resp.hud[2].string, lapstring);
-
-	//string4
-	if (strlen(racestring) > 1 && strlen(cpstring) > 1 && strlen(lapstring) > 1)
-		sprintf(ent->client->resp.hud[3].string, lapstring);
-
-	//complete hudstring.
-	Com_sprintf(str, sizeof(str), ctf_statusbar,
-		ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
-		this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
-	
-	//check if we need to update it.
-	if (Q_stricmp(ent->client->resp.hudstring, str) == 0) {
-		return; //not updated.
-	}
-	sprintf(ent->client->resp.hudstring, str);
-
-	//Find chasers....
+	//UPDATE IT, also for chasers....
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
 
 		if (!(cl_ent->client && cl_ent->inuse))
 			continue;
-		if (!cl_ent->client->chase_target)
-			continue;
-		if (cl_ent->client->chase_target->client != ent->client)
-			continue;
-		//update statusbar for chasers..
+
+		if (cl_ent != ent) {
+			if (!cl_ent->client->chase_target)
+				continue;
+			if (cl_ent->client->chase_target->client != ent->client)
+				continue;
+		}
 		gi.WriteByte(svc_configstring);
-		gi.WriteShort(CS_STATUSBAR);
-		gi.WriteString(ent->client->resp.hudstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING1);
+		gi.WriteString(ent->client->resp.hud[0].string);
+		gi.unicast(cl_ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING2);
+		gi.WriteString(ent->client->resp.hud[1].string);
+		gi.unicast(cl_ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING3);
+		gi.WriteString(ent->client->resp.hud[2].string);
+		gi.unicast(cl_ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING4);
+		gi.WriteString(ent->client->resp.hud[3].string);
 		gi.unicast(cl_ent, true);
 	}
-
-	//check if the client itself is using cleanhud..
-	if (ent->client->resp.cleanhud) {
-		for (i = 0; i < 4; i++) {
-			sprintf(ent->client->resp.hud[i].string, "");
-		}
-	}
-	// update statusbar for client.
-	gi.WriteByte(svc_configstring);
-	gi.WriteShort(CS_STATUSBAR);
-	gi.WriteString(ent->client->resp.hudstring);
-	gi.unicast(ent, true);
 }
 
 // Check if a addcmd.ini file exists.

@@ -1304,6 +1304,10 @@ void SP_worldspawn (edict_t *ent)
 		hud_footer(ent);
 
 		gi.configstring (CONFIG_JUMP_EMPTY,    " ");
+		gi.configstring(CONFIG_JUMP_HUDSTRING1, "");
+		gi.configstring(CONFIG_JUMP_HUDSTRING2, "");
+		gi.configstring(CONFIG_JUMP_HUDSTRING3, "");
+		gi.configstring(CONFIG_JUMP_HUDSTRING4, "");
 
 		gi.configstring (CONFIG_JUMP_MAPCOUNT,va("%4d",maplist.nummaps));
 
@@ -1319,7 +1323,7 @@ void SP_worldspawn (edict_t *ent)
 	if (deathmatch->value)
 //ZOID
 		if (ctf->value) {
-			Com_sprintf(str, sizeof(str), ctf_statusbar,"","","","",
+			Com_sprintf(str, sizeof(str), ctf_statusbar,
 				this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
 			gi.configstring(CS_STATUSBAR, str);
 			CTFPrecache();
