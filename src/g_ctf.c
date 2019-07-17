@@ -1298,12 +1298,12 @@ void SetCTFStats(edict_t *ent)
 		keys = ent->client->resp.replay_data;;
 		if (keys & RECORD_KEY_FORWARD)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = CONFIG_JUMP_KEY_FORWARD;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = gi.imageindex("forward");;
 		}
 		else
 		if (keys & RECORD_KEY_BACK)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = CONFIG_JUMP_KEY_BACK;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = gi.imageindex("back");
 		}
 		else
 		{
