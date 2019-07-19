@@ -2161,7 +2161,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->ps.pmove.pm_type = PM_FREEZE;
 	}
 
-	if (client->hook_state == HOOK_ON || client->resp.replaying)
+	if (client->hook_state == HOOK_ON)
 		client->ps.pmove.gravity = 0;
 	else
 		client->ps.pmove.gravity = mset_vars->gravity * ent->gravity * ent->gravity2;
@@ -2293,7 +2293,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	if (ent->movetype != MOVETYPE_NOCLIP)
 		G_TouchTriggers (ent);
-
+	if (ent->movetype == MOVETYPE_NOCLIP && ent->client->resp.replaying)
+		G_TouchTriggers(ent);
 	// touch other objects
 	for (i=0 ; i<pm.numtouch ; i++)
 	{
@@ -2408,7 +2409,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 					gi.cprintf(ent,PRINT_HIGH,"Replaying at %2.1f speed\n",replay_speed_modifier[ent->client->resp.replay_speed]);
 			}
 		}
-		else if (ent->movetype==MOVETYPE_WALK) { //Has been watching a replay, gotta put player to observer
+		else { //Has been watching a replay, gotta put player to observer
 			CTFObserver(ent);
 		}
 	}
