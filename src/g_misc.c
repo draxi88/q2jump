@@ -585,9 +585,6 @@ static void light_use (edict_t *self, edict_t *other, edict_t *activator)
 	}
 }
 void torch_think(edict_t *self) {
-	if (self->count == 1) {
-		gi.configstring(CS_LIGHTS + self->style, "aaaaaaa");
-	}
 	if (++self->s.frame < 6)
 		self->nextthink = level.time + FRAMETIME;
 	else
