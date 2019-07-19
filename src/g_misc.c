@@ -584,6 +584,30 @@ static void light_use (edict_t *self, edict_t *other, edict_t *activator)
 		self->spawnflags |= START_OFF;
 	}
 }
+void torch_think(edict_t *self) {
+	if (++self->s.frame < 6)
+		self->nextthink = level.time + FRAMETIME;
+	else
+	{
+		self->s.frame = rand() & 2; //random start between frame 0 and 2
+		self->nextthink = level.time + FRAMETIME;
+	}
+	
+}
+void SP_light_torch(edict_t *ent) {
+	ent->movetype = MOVETYPE_NONE;
+	ent->solid = SOLID_BBOX;
+	if (ent->model) { //use some other torch model?
+		ent->s.modelindex = gi.modelindex(ent->model);
+	}
+	else {
+		ent->s.modelindex = gi.modelindex("models/bits/torch/tris.md2");
+	}
+	ent->think = torch_think;
+	ent->nextthink = level.time + FRAMETIME;
+
+	gi.linkentity(ent);
+}
 void light_think(edict_t *self) {
 	int i;
 	edict_t *cl_ent;
@@ -622,10 +646,12 @@ void light_think(edict_t *self) {
 void SP_light(edict_t *self)
 {
 	// no targeted lights in deathmatch, because they cause global messages
-	if (!self->targetname && self->style<100 || self->style>255)
+	if (!self->targetname)
 	{
-		G_FreeEdict(self);
-		return;
+		if (self->style < 100 || self->style>255) { //if it's not CP_light or Flicker_light @q2jump
+			G_FreeEdict(self);
+			return;
+		}
 	}
 
 	if (self->style>=100 && self->style<256) {
@@ -638,7 +664,7 @@ void SP_light(edict_t *self)
 		self->nextthink = level.time + 1;
 	}
 
-	else if (self->style >= 32 && self->style < 100)
+	else 
 	{
 		self->use = light_use;
 		if (self->spawnflags & START_OFF)
