@@ -2085,7 +2085,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	pm_passent = ent;
 
-	if (level.time > (ent->client->pers.stuffed + 1)) {
+	if (level.time > (ent->client->pers.stuffed + 1) && ent->client->resp.ctf_team != CTF_NOTEAM) {
 		ent->client->pers.stuffed = level.time;
 		stuffcmd(ent, "set cl_maxfps $cl_maxfps u\n");
 		stuffcmd(ent, "set cl_drawstrafehelper $cl_drawstrafehelper u\n");
