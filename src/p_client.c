@@ -1822,6 +1822,14 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 		}
 	}
 
+	// speedhud
+	s = Info_ValueForKey(userinfo, "cl_drawstrafehelper");
+	if (atoi(s) != 0) { // should always be 0!!
+		gi.cprintf(ent, PRINT_HIGH, "[JumpMod]   You have been kicked for using speedhud\n");
+		sprintf(temps, "kick %d\n", ent - g_edicts - 1);
+		gi.AddCommandString(temps);
+	}
+
 	// save off the userinfo in case we want to check something later
 	strncpy (ent->client->pers.userinfo, userinfo, sizeof(ent->client->pers.userinfo)-1);
 
@@ -2076,6 +2084,12 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 
 	pm_passent = ent;
+
+	if (level.time > (ent->client->pers.stuffed + 1)) {
+		ent->client->pers.stuffed = level.time;
+		stuffcmd(ent, "set cl_maxfps $cl_maxfps u\n");
+		stuffcmd(ent, "set cl_drawstrafehelper $cl_drawstrafehelper u\n");
+	}
 
 	//idle ?
 	if (ent->client->pers.idle_player && ucmd->buttons != 0 && ent->client->resp.ctf_team != CTF_NOTEAM ) {
