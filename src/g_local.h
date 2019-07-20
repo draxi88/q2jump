@@ -916,7 +916,7 @@ typedef struct
 	unsigned long frames_without_movement;
 
 	qboolean	store_velocity;		//velocity store feature (toggle)
-	time_t	stuffed;
+	qboolean	stuffed;
 } client_persistant_t;
 
 //hud stuff

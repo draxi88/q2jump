@@ -1806,6 +1806,9 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 
 	// fps
 	s = Info_ValueForKey (userinfo, "cl_maxfps");
+	if (!s) { //needs stuffing
+		ent->client->pers.stuffed = false;
+	}
 
 	// check for the string, fpskick mset
 	if (strlen(s) && gset_vars->fpskick == 1) {
@@ -1824,10 +1827,11 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 
 	// speedhud
 	s = Info_ValueForKey(userinfo, "cl_drawstrafehelper");
+	if (!s) { //needs stuffing
+		ent->client->pers.stuffed = false;
+	}
 	if (atoi(s) != 0) { // should always be 0!!
-		gi.cprintf(ent, PRINT_HIGH, "[JumpMod]   You have been kicked for using speedhud\n");
-		sprintf(temps, "kick %d\n", ent - g_edicts - 1);
-		gi.AddCommandString(temps);
+		ent->client->pers.stuffed = false;
 	}
 
 	// save off the userinfo in case we want to check something later
@@ -2085,10 +2089,10 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	pm_passent = ent;
 
-	if (level.time > (ent->client->pers.stuffed + 1) && ent->client->resp.ctf_team != CTF_NOTEAM) {
-		ent->client->pers.stuffed = level.time;
+	if (!ent->client->pers.stuffed && ent->client->resp.ctf_team != CTF_NOTEAM) {
+		ent->client->pers.stuffed = true;
 		stuffcmd(ent, "set cl_maxfps $cl_maxfps u\n");
-		stuffcmd(ent, "set cl_drawstrafehelper $cl_drawstrafehelper u\n");
+		stuffcmd(ent, "set cl_drawstrafehelper 0 u\n");
 	}
 
 	//idle ?
