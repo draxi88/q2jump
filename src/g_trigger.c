@@ -625,7 +625,7 @@ void trigger_counter_use(edict_t *self, edict_t *other, edict_t *activator)
 	if (! (self->spawnflags & 1))
 	{
 	if (!mset_vars->cmsg)
-	if (!other->client->resp.cmsg)
+	if (other->client && !other->client->resp.cmsg)
 	{
 		gi.centerprintf(activator, "Sequence completed!");
 		gi.sound (activator, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
