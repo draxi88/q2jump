@@ -867,3 +867,4 @@ void jumpmod_pos_sound(vec3_t pos, edict_t *ent, int sound, int channel, float v
 void hud_footer(edict_t *ent);
 void ClearCheckpoints(edict_t *ent);
 void CheckCmdFile();
+void worldspawn_mset();
