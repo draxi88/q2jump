@@ -1141,6 +1141,9 @@ void SP_worldspawn (edict_t *ent)
 	{
 		gi.cvar_set("sv_gravity", st.gravity);
 	}
+	if (st.mset) {
+		worldspawn_mset();
+	}
 
 	snd_fry = gi.soundindex ("player/fry.wav");	// standing in lava / slime
 

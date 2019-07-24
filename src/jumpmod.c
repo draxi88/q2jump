@@ -14133,3 +14133,35 @@ void CheckCmdFile() {
 	fprintf(f, ""); //remove everything from the file.
 	fclose(f);
 }
+
+//msets to put in worldspawn... 
+//Guess we can't let people add whatever mset they'd like.
+//just do "Key = <mset>,Value = <checkpoint_total 3 rocket 1 bfg 1>" in your editor.
+//Probably some other cmds that whould be added aswell?
+void worldspawn_mset() {
+	int i,w;
+	char *p = strtok(st.mset," ");
+	char *temp[100];
+
+	if (strlen(st.mset) > 256) {
+		gi.dprintf("Error: Too much info in worldspawn mset! (max 256)\n");
+		return;
+	}
+	w = 0;
+	while (p != NULL) {
+		temp[w++] = p;
+		p = strtok(NULL, " ");
+	}
+	for(i=0;i<w;i++){
+		if (Q_stricmp(temp[i], "checkpoint_total") == 0) {//Checkpoint total.
+			mset_vars->checkpoint_total = atoi(temp[i+1]);
+		}
+		else if (Q_stricmp(temp[i], "rocket") == 0) {//Checkpoint total.
+			mset_vars->rocket = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "bfg") == 0) {//Checkpoint total.
+			mset_vars->gravity = atoi(temp[i + 1]);
+		}
+	}
+	return;
+}

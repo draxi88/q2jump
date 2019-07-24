@@ -394,6 +394,7 @@ typedef struct
 	float		maxyaw;
 	float		minpitch;
 	float		maxpitch;
+	char		*mset;
 } spawn_temp_t;
 
 
