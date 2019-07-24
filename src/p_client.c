@@ -1828,6 +1828,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	// speedhud
 	s = Info_ValueForKey(userinfo, "cl_drawstrafehelper");
 	if (!s) { //needs stuffing
+		gi.dprintf("testing stuff\n");
 		ent->client->pers.stuffed = false;
 	}
 	if (atoi(s) != 0) { // should always be 0!!
