@@ -282,7 +282,6 @@ void SVCmd_Say()
 	int		i;
 	char	*p;
 	int len;
-	char	temp[2048];
 	char	text[2048];
 
 	if (gi.argc() < 3)
@@ -295,6 +294,7 @@ void SVCmd_Say()
 		p++;
 		p[strlen(p) - 1] = 0;
 	}
+	text[0] = '\0';
 	strcat(text, p);
 
 	// don't let text be too long for malicious reasons
