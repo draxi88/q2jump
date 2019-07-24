@@ -288,15 +288,15 @@ void SVCmd_Say()
 	if (gi.argc() < 3)
 		return;
 
-	p = gi.args();
+	p = gi.args()+4; //remove "say "..
 	
 	if (*p == '"')
 	{
 		p++;
 		p[strlen(p) - 1] = 0;
 	}
-	strcat(temp, p);
-	sprintf(text,"%.*s", strlen(temp)-5, temp+5); //remove "say " from text
+	strcat(text, p);
+
 	// don't let text be too long for malicious reasons
 	if (strlen(text) > 150)
 		text[150] = 0;
@@ -332,7 +332,7 @@ void	ServerCommand (void)
 		SVCmd_AddMaps();
 	else if (Q_stricmp(cmd, "say") == 0)
 		SVCmd_Say();
-	else if (Q_stricmp (cmd, "addsinglemap") == 0)
+	else if (Q_stricmp(cmd, "addsinglemap") == 0)
 		SVCmd_AddSingleMap();
 	else if (Q_stricmp (cmd, "changepass") == 0)
 		SVCmd_ChangePass_f ();
