@@ -2720,7 +2720,7 @@ void Cmd_Store_f (edict_t *ent) {
 				ent->client->resp.stored_ent->s.old_origin[2] -=10;
 				ent->client->resp.stored_ent->s.origin[2] -=10;
 				ent->client->resp.stored_ent->svflags = SVF_PROJECTILE;
-				VectorCopy(ent->client->resp.store[0].store_angles, ent->client->resp.stored_ent->s.angles);
+				VectorCopy(ent->client->resp.store[1].store_angles, ent->client->resp.stored_ent->s.angles);
 				ent->client->resp.stored_ent->movetype = MOVETYPE_NONE;
 				ent->client->resp.stored_ent->clipmask = MASK_PLAYERSOLID;
 				ent->client->resp.stored_ent->solid = SOLID_NOT;
@@ -12772,6 +12772,7 @@ void Update_Skill(void)
 	int i,i2;
 	int skill;
 	float diff;
+	gi.dprintf("Update skill!\n");
 	memset(map_skill,0,sizeof(map_skill));
 	for (i=0;i<10;i++)
 	{
@@ -12813,6 +12814,7 @@ void Update_Skill(void)
 			//wont happen but ya never know
 			if (i2<0)
 			{
+				gi.dprintf("i2 = %i\n", i2);
 				skill = 1;
 			}
 			else
