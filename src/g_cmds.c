@@ -1194,7 +1194,8 @@ void ClientCommand (edict_t *ent)
 
 	if (level.votingtime) {
 		//dissallow anything else but talk in voting
-		Cmd_Say_f(ent, false, true); 
+		//adding line below adds a bug, all cmds can spam in chat
+		//Cmd_Say_f(ent, false, true); 
 		return;
 	}
 
