@@ -204,7 +204,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 	// easy team timer
 	if (other->client->resp.ctf_team==CTF_TEAM1) {
-		if (pickup == 0 && trigger_timer(5)) {
+		if (pickup == 0) {
 			if (other->client->pers.cp_split > 0) {
 				gi.cprintf(other, PRINT_HIGH, "You would have got this weapon in %3.1f seconds. (split: %3.1f)\n",
 					other->client->resp.item_timer, other->client->resp.item_timer - other->client->pers.cp_split);
@@ -213,6 +213,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 			else 
 				gi.cprintf(other,PRINT_HIGH,"You would have got this weapon in %3.1f seconds.\n",other->client->resp.item_timer);
 		}
+		other->client->resp.finished = true;
 	}
 	// hard team timer
 	int my_time;

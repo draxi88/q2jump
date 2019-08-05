@@ -2700,6 +2700,7 @@ void Cmd_Store_f (edict_t *ent) {
 				ent->client->resp.store[i] = ent->client->resp.store[i-1]; //move old stores +1
 			}
 			ent->client->resp.store[1].stored_item_timer = ent->client->resp.item_timer;
+			ent->client->resp.store[1].stored_finished = ent->client->resp.finished;
 			VectorCopy(ent->s.origin,ent->client->resp.store[1].store_pos);
 			VectorCopy(ent->s.angles,ent->client->resp.store[1].store_angles);
 			ent->client->resp.store[1].store_angles[2] = 0;
@@ -4818,6 +4819,7 @@ void Cmd_Recall(edict_t *ent)
 			if (ent->deadflag)
 				respawn(ent);
 			ent->client->resp.item_timer = ent->client->resp.store[0].stored_item_timer;	
+			ent->client->resp.finished = ent->client->resp.store[0].stored_finished;
 			ent->client->resp.recalls--;
 			ent->client->pers.total_recall++;
 
