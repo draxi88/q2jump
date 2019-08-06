@@ -432,6 +432,7 @@ typedef struct
 	int gravity;
 	int health;
 	int lap_total;
+	int quad_damage;
 	int regen;
 	int rocket;
 	int singlespawn;

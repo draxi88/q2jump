@@ -209,6 +209,13 @@ zbotcmd_t zbotCommands[] =
 	CMDTYPE_NUMBER,
 	&mset_vars->lap_total,
   },
+  {
+	0,6,0,
+	"quad_damage",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->quad_damage,
+  },
   { 
 	-100,100,100,
     "regen",
@@ -718,6 +725,13 @@ zbotcmd_t zbotCommands[] =
 	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
 	&gset_vars->pvote_announce,
+  },
+  {
+	0,6,0,
+	"quad_damage",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->quad_damage,
   },
   { 
 	-100,100,100,
@@ -6299,6 +6313,7 @@ void SetDefaultValues(void)
 	gset_vars->playtag = 0;
 	gset_vars->pvote_announce = 1;
 	gset_vars->mset->regen = 100;
+	gset_vars->mset->quad_damage = 0;
 	gset_vars->respawn_sound = 1;
 	gset_vars->mset->rocket = 0;
 	gset_vars->store_safe = 0;

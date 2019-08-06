@@ -371,24 +371,27 @@ void quad_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 
 	// already have it, tell them so if:
 	// -not spawnflag 1
-	if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait)) {
-		gi.cprintf(other, PRINT_HIGH, "You already have quad damage.\n");
-		return;
-	}
+	if (mset_vars->quad_damage) {
+		if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You already have %ix quad damage.\n", mset_vars->quad_damage);
+			return;
+		}
 
-	// tell them they have it if:
-	// -not spawnflag 1
-	if (!self->spawnflags & 1 && trigger_timer(self->wait)) {
-		gi.cprintf(other, PRINT_HIGH, "You have quad damage.\n");
+		// tell them they have it if:
+		// -not spawnflag 1
+		if (!self->spawnflags & 1 && trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You have %ix quad damage.\n", mset_vars->quad_damage);
+		}
 	}
 
 	other->client->pers.has_quad = true;
+	// add
 }
 
 void SP_trigger_quad(edict_t *self) {
 
-	if (self->wait < .5) {
-		self->wait = .5;
+	if (self->wait < 1) {
+		self->wait = 1;
 	}
 
 	InitTrigger(self);
@@ -408,16 +411,16 @@ void quad_clear_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	// tell them they no longer have quad if:
 	// -not spawnflag 1
 	// -currently have quad
-	if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait)) {
-		gi.cprintf(other, PRINT_HIGH, "You no longer have quad damage.\n");
+	if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait) && mset_vars->quad_damage) {
+		gi.cprintf(other, PRINT_HIGH, "You no longer have %ix quad damage.\n", mset_vars->quad_damage);
 	}
 	other->client->pers.has_quad = false;
 }
 
 void SP_trigger_quad_clear(edict_t *self) {
 
-	if (self->wait < .5) {
-		self->wait = .5;
+	if (self->wait < 1) {
+		self->wait = 1;
 	}
 
 	InitTrigger(self);

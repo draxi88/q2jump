@@ -367,7 +367,7 @@ void Think_Weapon (edict_t *ent)
 	// call active weapon think routine
 	if (ent->client->pers.weapon && ent->client->pers.weapon->weaponthink)
 	{
-		if (ent->client->pers.has_quad) {
+		if (ent->client->pers.has_quad && mset_vars->quad_damage > 0) {
 			is_quad = true;
 		}
 		else {
@@ -646,7 +646,7 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 
 	radius = damage+40;
 	if (is_quad)
-		damage *= 4;
+		damage *= mset_vars->quad_damage;
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
@@ -805,7 +805,7 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 
 	radius = damage+40;
 	if (is_quad)
-		damage *= 4;
+		damage *= mset_vars->quad_damage;
 
 	//anti super rocket jump code
 	if (!mset_vars->allowsrj)
@@ -870,8 +870,8 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	damage_radius = 120;
 	if (is_quad)
 	{
-		damage *= 4;
-		radius_damage *= 4;
+		damage *= mset_vars->quad_damage;
+		radius_damage *= mset_vars->quad_damage;
 	}
 	//anti super rocket jump code
 	if (!mset_vars->allowsrj)
@@ -930,7 +930,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	vec3_t	offset;
 
 	if (is_quad)
-		damage *= 4;
+		damage *= mset_vars->quad_damage;
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
 	VectorAdd (offset, g_offset, offset);
@@ -1096,8 +1096,8 @@ void Machinegun_Fire (edict_t *ent)
 
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= mset_vars->quad_damage;
+		kick *= mset_vars->quad_damage;
 	}
 
 	for (i=1 ; i<3 ; i++)
@@ -1240,8 +1240,8 @@ void Chaingun_Fire (edict_t *ent)
 
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= mset_vars->quad_damage;
+		kick *= mset_vars->quad_damage;
 	}
 
 	for (i=0 ; i<3 ; i++)
@@ -1316,8 +1316,8 @@ void weapon_shotgun_fire (edict_t *ent)
 
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= mset_vars->quad_damage;
+		kick *= mset_vars->quad_damage;
 	}
 	if (mset_vars->weapons)
 	{
@@ -1367,8 +1367,8 @@ void weapon_supershotgun_fire (edict_t *ent)
 
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= mset_vars->quad_damage;
+		kick *= mset_vars->quad_damage;
 	}
 
 	v[PITCH] = ent->client->v_angle[PITCH];
@@ -1434,8 +1434,8 @@ void weapon_railgun_fire (edict_t *ent)
 
 	if (is_quad)
 	{
-		damage *= 4;
-		kick *= 4;
+		damage *= mset_vars->quad_damage;
+		kick *= mset_vars->quad_damage;
 	}
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
@@ -1514,7 +1514,7 @@ void weapon_bfg_fire (edict_t *ent)
 	}
 
 	if (is_quad)
-		damage *= 4;
+		damage *= mset_vars->quad_damage;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 

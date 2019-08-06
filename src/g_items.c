@@ -432,13 +432,15 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 // can remove the quad damage with a weapon_clear trigger
 qboolean Pickup_Quad(edict_t *ent, edict_t *other) {
 
-	if (other->client->pers.has_quad == true && trigger_timer(2)) {
-		gi.cprintf(other, PRINT_HIGH, "You already have quad damage.\n");
-		return false;
-	}
+	if (mset_vars->quad_damage) {
+		if (other->client->pers.has_quad == true && trigger_timer(2)) {
+			gi.cprintf(other, PRINT_HIGH, "You already have %ix quad damage.\n", mset_vars->quad_damage);
+			return false;
+		}
 
-	if (trigger_timer(2)) {
-		gi.cprintf(other, PRINT_HIGH, "You now have quad damage.\n");
+		if (trigger_timer(2)) {
+			gi.cprintf(other, PRINT_HIGH, "You now have %ix quad damage.\n", mset_vars->quad_damage);
+		}
 	}
 
 	other->client->pers.has_quad = true;
