@@ -14161,8 +14161,15 @@ void worldspawn_mset() {
 	int i,w;
 	char *p = strtok(st.mset," ");
 	char *temp[100];
+	char file[256];
+	cvar_t	*game_dir;
+	FILE *cfg;
 
-	if (strlen(mset_vars->edited_by) > 0) {
+	game_dir = gi.cvar("game", "", 0);
+	sprintf(file, "%s/ent/%s.cfg", game_dir->string, level.mapname);
+	cfg = fopen(file, "r");
+	if (cfg) { //mset file found = set by an admin ingame.
+		fclose(cfg);
 		return;
 	}
 
