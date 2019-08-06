@@ -814,6 +814,7 @@ void SP_trigger_hurt (edict_t *self)
 	self->noise_index = gi.soundindex ("world/electro.wav");
 	self->touch = hurt_touch;
 
+	// give it a negative dmg value to add health to a player
 	if (!self->dmg)
 		self->dmg = 5;
 
