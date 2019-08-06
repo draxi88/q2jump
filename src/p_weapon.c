@@ -210,10 +210,11 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 					other->client->resp.item_timer, other->client->resp.item_timer - other->client->pers.cp_split);
 				other->client->pers.cp_split = other->client->resp.item_timer;
 			}
-			else 
-				gi.cprintf(other,PRINT_HIGH,"You would have got this weapon in %3.1f seconds.\n",other->client->resp.item_timer);
+			else {
+				gi.cprintf(other, PRINT_HIGH, "You would have got this weapon in %3.1f seconds.\n", other->client->resp.item_timer);
+			}
+			other->client->resp.finished = true;
 		}
-		other->client->resp.finished = true;
 	}
 	// hard team timer
 	int my_time;
