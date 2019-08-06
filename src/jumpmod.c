@@ -14162,6 +14162,10 @@ void worldspawn_mset() {
 	char *p = strtok(st.mset," ");
 	char *temp[100];
 
+	if (strlen(mset_vars->edited_by) > 0) {
+		return;
+	}
+
 	if (strlen(st.mset) > 256) {
 		gi.dprintf("Error: Too much info in worldspawn mset! (max 256)\n");
 		return;
@@ -14175,11 +14179,20 @@ void worldspawn_mset() {
 		if (Q_stricmp(temp[i], "checkpoint_total") == 0) {//Checkpoint total.
 			mset_vars->checkpoint_total = atoi(temp[i+1]);
 		}
-		else if (Q_stricmp(temp[i], "rocket") == 0) {//Checkpoint total.
+		else if (Q_stricmp(temp[i], "rocket") == 0) {//Rocket
 			mset_vars->rocket = atoi(temp[i + 1]);
 		}
-		else if (Q_stricmp(temp[i], "bfg") == 0) {//Checkpoint total.
-			mset_vars->gravity = atoi(temp[i + 1]);
+		else if (Q_stricmp(temp[i], "bfg") == 0) {//BFG
+			mset_vars->bfg = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "lap_total") == 0) {//Lap total.
+			mset_vars->lap_total = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "blaster") == 0) {//Blaster
+			mset_vars->blaster = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "quad_damage") == 0) {//Quad damage
+			mset_vars->quad_damage = atoi(temp[i + 1]);
 		}
 	}
 	return;
