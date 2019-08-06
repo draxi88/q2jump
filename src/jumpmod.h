@@ -435,6 +435,7 @@ typedef struct
 	int quad_damage;
 	int regen;
 	int rocket;
+	int rocketjump_fix;
 	int singlespawn;
 	int slowdoors;	
 	int timelimit;

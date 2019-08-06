@@ -792,6 +792,7 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 	edict_t	*ent = NULL;
 	vec3_t	v;
 	vec3_t	dir;
+	float vlength;
 
 	while ((ent = findradius(ent, inflictor->s.origin, radius)) != NULL)
 	{
@@ -813,13 +814,18 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 		VectorAdd (ent->mins, ent->maxs, v);
 		VectorMA (ent->s.origin, 0.5, v, v);
 		VectorSubtract (inflictor->s.origin, v, v);
-		points = damage - 0.5 * VectorLength (v);
+		vlength = VectorLength(v);
+		if (mset_vars->rocketjump_fix && vlength > 28.1 && vlength < 48.3) {
+			vlength = 28.1;
+		}
+		points = damage - 0.5 * vlength;
 		if (ent == attacker)
 			points = points * 0.5;
 		if (points > 0)
 		{
 			if (CanDamage (ent, inflictor))
 			{
+				gi.cprintf(attacker, PRINT_HIGH, "points: %f - length: %f\n", points, VectorLength(v));
 				VectorSubtract (ent->s.origin, inflictor->s.origin, dir);				
 				T_Damage (ent, inflictor, attacker, dir, inflictor->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, mod);
 			}

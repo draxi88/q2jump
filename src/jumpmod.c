@@ -230,6 +230,13 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &mset_vars->rocket,
   },
+  {
+	0,1,0,
+	"rocketjump_fix",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->rocketjump_fix,
+  },
   { 
 	0,1,0,
     "singlespawn", 
@@ -12789,7 +12796,6 @@ void Update_Skill(void)
 	int i,i2;
 	int skill;
 	float diff;
-	gi.dprintf("Update skill!\n");
 	memset(map_skill,0,sizeof(map_skill));
 	for (i=0;i<10;i++)
 	{
