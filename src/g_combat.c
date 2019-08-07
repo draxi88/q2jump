@@ -825,7 +825,6 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 		{
 			if (CanDamage (ent, inflictor))
 			{
-				gi.cprintf(attacker, PRINT_HIGH, "points: %f - length: %f\n", points, VectorLength(v));
 				VectorSubtract (ent->s.origin, inflictor->s.origin, dir);				
 				T_Damage (ent, inflictor, attacker, dir, inflictor->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, mod);
 			}
