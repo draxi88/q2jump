@@ -1033,7 +1033,8 @@ void G_RunFrame (void)
 //				gi.bprintf (PRINT_HIGH, kick_msg, ent->client->pers.netname,ent->client->pers.frames_without_movement);
                 tempf = (1+ent->client->pers.frames_without_movement)/1000;
 
-                if (tempf>=autokick_time->value) {
+				// only kick if server has a lot of people
+                if (tempf>=autokick_time->value && Get_Connected_Clients() > 12) {
 					strcpy(kick_msg, "[JumpMod]   %s has been idle for %d seconds, removing from server\n");
 
                     gi.bprintf (PRINT_HIGH, kick_msg, ent->client->pers.netname,tempf);
