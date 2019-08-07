@@ -596,7 +596,7 @@ void torch_think(edict_t *self) {
 }
 void SP_light_torch(edict_t *ent) {
 	ent->movetype = MOVETYPE_NONE;
-	ent->solid = SOLID_BBOX;
+	ent->solid = SOLID_NOT;
 	if (ent->model) { //use some other torch model?
 		ent->s.modelindex = gi.modelindex(ent->model);
 	}
