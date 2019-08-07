@@ -4218,13 +4218,13 @@ void apply_time(edict_t *other, edict_t *ent)
 			{
 				if (!Neuro_RedKey_Overide && map_added_time<5)
 				{
-					gi.bprintf(PRINT_HIGH,"%s has set a 1st place, adding 5 minutes extra time.\n",other->client->pers.netname);
+					gi.bprintf(PRINT_CHAT,"%s has set a 1st place, adding 5 minutes extra time.\n",other->client->pers.netname);
 					map_added_time += 5;
 					Update_Added_Time();
 				}
 				else
 				{
-					gi.bprintf(PRINT_HIGH,"%s has set a 1st place.\n",other->client->pers.netname);
+					gi.bprintf(PRINT_CHAT,"%s has set a 1st place.\n",other->client->pers.netname);
 				}
 			}
 
@@ -8222,8 +8222,10 @@ qboolean tourney_log(edict_t *ent,int uid, float time,char *date )
 
 		//setting a first
 		if (time < level_items.stored_item_times[0].time) {
-			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB %1.3f | 1st %1.3f", 
-				ent->client->pers.netname, time, time - oldtime, time - level_items.stored_item_times[0].time);
+			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
+			gi.bprintf(PRINT_CHAT, "%1.3f ", time - oldtime);
+			gi.bprintf(PRINT_HIGH, "| 1st ");
+			gi.bprintf(PRINT_CHAT, "%1.3f", time - level_items.stored_item_times[0].time);
 			if (ent->client->pers.cp_split > 0)
 				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
 			gi.bprintf(PRINT_HIGH, ")\n");
@@ -8232,8 +8234,9 @@ qboolean tourney_log(edict_t *ent,int uid, float time,char *date )
 		
 		// beat pb, show to server
 		if (time < oldtime) {
-			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f",
-				ent->client->pers.netname, time, time - oldtime, time - level_items.stored_item_times[0].time);
+			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
+			gi.bprintf(PRINT_CHAT, "%1.3f ", time - oldtime);
+			gi.bprintf(PRINT_HIGH, "| 1st +%1.3f", time - level_items.stored_item_times[0].time);
 			if (ent->client->pers.cp_split > 0)
 				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
 			gi.bprintf(PRINT_HIGH, ")\n");
@@ -8300,8 +8303,9 @@ qboolean tourney_log(edict_t *ent,int uid, float time,char *date )
 
 				// 1st comp AND 1st place
 				if (time < level_items.stored_item_times[0].time) {
-					gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st %1.3f | ",
-						ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
+					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (1st ", ent->client->pers.netname, time);
+					gi.bprintf(PRINT_CHAT, "%1.3f ", time - level_items.stored_item_times[0].time);
+					gi.bprintf(PRINT_HIGH, "| ");
 					if (ent->client->pers.cp_split > 0)
 						gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
 					gi.bprintf(PRINT_HIGH, "1st completion)\n");
