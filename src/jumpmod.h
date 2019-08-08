@@ -870,3 +870,4 @@ void hud_footer(edict_t *ent);
 void ClearCheckpoints(edict_t *ent);
 void CheckCmdFile();
 void worldspawn_mset();
+qboolean	Pickup_Weapon(edict_t *ent, edict_t *other); //trigger_finish uses this.

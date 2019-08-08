@@ -121,6 +121,9 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	gitem_t		*ammo;
 	int			pickup;
 
+	if (!other->client) { //not a player (could make it so players can complete the map if they shoot at the trigger_finish?) :thinking:
+		return;
+	}
 	// check if the client is already finished
 	if (other->client->resp.finished == 1)
 		return false;
@@ -181,7 +184,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		else
 			Add_Ammo (other, ammo, ammo->quantity);
 
-		if (! (ent->spawnflags & DROPPED_PLAYER_ITEM) ) {
+		if (! (ent->spawnflags & DROPPED_PLAYER_ITEM) && (Q_stricmp(ent->classname, "trigger_finish") != 0)) { //Added stricmp for trigger_finish so it doesn't mess it up.
 			if (deathmatch->value) {
 				if ((int)(dmflags->value) & DF_WEAPONS_STAY)
 					ent->flags |= FL_RESPAWN;
