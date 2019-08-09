@@ -13988,8 +13988,8 @@ void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float vo
 void hud_footer(edict_t *ent) {
 	edict_t *cl_ent;
 	int i;
-	char cp[2];
-	char cptotal[2];
+	char cp[4];
+	char cptotal[4];
 	char race[10];
 	char lap[10];
 	char laptotal[10];

@@ -951,7 +951,7 @@ void SP_trigger_finish(edict_t *ent)
 	ent->svflags |= SVF_NOCLIENT;
 	ent->solid = SOLID_TRIGGER;
 	ent->item = wep;
-	ent->item->pickup_name = wep->pickup_name;
+	//ent->item->pickup_name = wep->pickup_name;
 	ent->touch = Pickup_Weapon;
 	gi.setmodel(ent, ent->model);
 	gi.linkentity(ent);
