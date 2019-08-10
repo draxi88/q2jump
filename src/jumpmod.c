@@ -14193,23 +14193,47 @@ void worldspawn_mset() {
 		p = strtok(NULL, " ");
 	}
 	for(i=0;i<w;i++){
-		if (Q_stricmp(temp[i], "checkpoint_total") == 0) {//Checkpoint total.
-			mset_vars->checkpoint_total = atoi(temp[i+1]);
-		}
-		else if (Q_stricmp(temp[i], "rocket") == 0) {//Rocket
-			mset_vars->rocket = atoi(temp[i + 1]);
-		}
-		else if (Q_stricmp(temp[i], "bfg") == 0) {//BFG
+		if (Q_stricmp(temp[i], "bfg") == 0) {
 			mset_vars->bfg = atoi(temp[i + 1]);
 		}
-		else if (Q_stricmp(temp[i], "lap_total") == 0) {//Lap total.
-			mset_vars->lap_total = atoi(temp[i + 1]);
-		}
-		else if (Q_stricmp(temp[i], "blaster") == 0) {//Blaster
+		else if (Q_stricmp(temp[i], "blaster") == 0) {
 			mset_vars->blaster = atoi(temp[i + 1]);
 		}
-		else if (Q_stricmp(temp[i], "quad_damage") == 0) {//Quad damage
+		else if (Q_stricmp(temp[i], "checkpoint_total") == 0) {
+			mset_vars->checkpoint_total = atoi(temp[i+1]);
+		}
+		else if (Q_stricmp(temp[i], "damage") == 0) {
+			mset_vars->damage = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fast_firing") == 0) {
+			mset_vars->fast_firing = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fastdoors") == 0) {
+			mset_vars->fastdoors = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fasttele") == 0) {
+			mset_vars->fasttele = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "gravity") == 0) {
+			mset_vars->gravity = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "health") == 0) {
+			mset_vars->health = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "lap_total") == 0) {
+			mset_vars->lap_total = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "regen") == 0) {
+			mset_vars->regen = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "rocket") == 0) {
+			mset_vars->rocket = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "quad_damage") == 0) {
 			mset_vars->quad_damage = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "weapons") == 0) {
+			mset_vars->weapons = atoi(temp[i + 1]);
 		}
 	}
 	return;
