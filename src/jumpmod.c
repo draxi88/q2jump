@@ -13812,21 +13812,6 @@ void ClearCheckpoints(edict_t *ent) {
 	resp->store[0].rs3_checkpoint = 0;
 	resp->store[0].rs4_checkpoint = 0;
 	resp->store[0].rs5_checkpoint = 0;
-	resp->store[0].rs6_checkpoint = 0;
-	resp->store[0].rs7_checkpoint = 0;
-	resp->store[0].rs8_checkpoint = 0;
-	resp->store[0].rs9_checkpoint = 0;
-	resp->store[0].rs10_checkpoint = 0;
-	resp->store[0].rs11_checkpoint = 0;
-	resp->store[0].rs12_checkpoint = 0;
-	resp->store[0].rs13_checkpoint = 0;
-	resp->store[0].rs14_checkpoint = 0;
-	resp->store[0].rs15_checkpoint = 0;
-	resp->store[0].rs16_checkpoint = 0;
-	resp->store[0].rs17_checkpoint = 0;
-	resp->store[0].rs18_checkpoint = 0;
-	resp->store[0].rs19_checkpoint = 0;
-	resp->store[0].rs20_checkpoint = 0;
 
 	// key cps
 	resp->store[0].target_checkpoint = 0;

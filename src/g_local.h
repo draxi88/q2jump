@@ -942,21 +942,6 @@ typedef struct { //everything that needs to be saved for each store.
 	int			rs3_checkpoint;
 	int			rs4_checkpoint;
 	int			rs5_checkpoint;
-	int			rs6_checkpoint;
-	int			rs7_checkpoint;
-	int			rs8_checkpoint;
-	int			rs9_checkpoint;
-	int			rs10_checkpoint;
-	int			rs11_checkpoint;
-	int			rs12_checkpoint;
-	int			rs13_checkpoint;
-	int			rs14_checkpoint;
-	int			rs15_checkpoint;
-	int			rs16_checkpoint;
-	int			rs17_checkpoint;
-	int			rs18_checkpoint;
-	int			rs19_checkpoint;
-	int			rs20_checkpoint;
 	int         cpbox_checkpoint[64];
 
 	qboolean	stored;
