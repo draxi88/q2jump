@@ -572,8 +572,6 @@ int getLastLine(char *buffer, FILE *dumpfile, long *fpos);
 void q_strupr(char *c);
 extern char moddir[256];
 
-void Output_Debug(edict_t *ent);
-
 void CopyLocalToGlobal(void);
 void CopyGlobalToLocal(void);
 void processCommand(int cmdidx, int startarg, edict_t *ent);

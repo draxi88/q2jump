@@ -122,8 +122,9 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	int			pickup;
 
 	if (!other->client) { //not a player (could make it so players can complete the map if they shoot at the trigger_finish?) :thinking:
-		return;
+		return false;
 	}
+
 	// check if the client is already finished
 	if (other->client->resp.finished == 1)
 		return false;
