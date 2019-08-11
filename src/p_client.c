@@ -1806,6 +1806,9 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 
 	// fps
 	s = Info_ValueForKey (userinfo, "cl_maxfps");
+	if (!s) { //needs stuffing
+		ent->client->pers.stuffed = false;
+	}
 
 	// check for the string, fpskick mset
 	if (strlen(s) && gset_vars->fpskick == 1) {
@@ -1820,6 +1823,15 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 			sprintf(temps,"kick %d\n",ent-g_edicts-1);
 			gi.AddCommandString(temps);
 		}
+	}
+
+	// speedhud
+	s = Info_ValueForKey(userinfo, "cl_drawstrafehelper");
+	if (!s) { //needs stuffing
+		ent->client->pers.stuffed = false;
+	}
+	if (atoi(s) != 0) { // should always be 0!!
+		ent->client->pers.stuffed = false;
 	}
 
 	// save off the userinfo in case we want to check something later
@@ -2077,6 +2089,12 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	pm_passent = ent;
 
+	if (!ent->client->pers.stuffed && ent->client->resp.ctf_team != CTF_NOTEAM) {
+		ent->client->pers.stuffed = true;
+		stuffcmd(ent, "set cl_maxfps $cl_maxfps u\n");
+		stuffcmd(ent, "set cl_drawstrafehelper 0 u\n");
+	}
+
 	//idle ?
 	if (ent->client->pers.idle_player && ucmd->buttons != 0 && ent->client->resp.ctf_team != CTF_NOTEAM ) {
 		if (!(Q_stricmp(gi.argv(0), "score") == 0)) {
@@ -2161,7 +2179,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->ps.pmove.pm_type = PM_FREEZE;
 	}
 
-	if (client->hook_state == HOOK_ON || client->resp.replaying)
+	if (client->hook_state == HOOK_ON)
 		client->ps.pmove.gravity = 0;
 	else
 		client->ps.pmove.gravity = mset_vars->gravity * ent->gravity * ent->gravity2;
@@ -2293,7 +2311,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	if (ent->movetype != MOVETYPE_NOCLIP)
 		G_TouchTriggers (ent);
-
+	if (ent->movetype == MOVETYPE_NOCLIP && ent->client->resp.replaying)
+		G_TouchTriggers(ent);
 	// touch other objects
 	for (i=0 ; i<pm.numtouch ; i++)
 	{
@@ -2369,12 +2388,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		if (ent->client->resp.replaying)
 		{
-			if (ent->client->resp.replay_frame == 0) {
-				ClearPersistants(&ent->client->pers);
-				if (ent->client->resp.store->checkpoints > 0) {
-					ClearCheckpoints(ent);
-				}
-			}
 			if ((ucmd->upmove>=10) && (!ent->client->resp.going_up))
 				ent->client->resp.going_up = true;
 
@@ -2414,7 +2427,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 					gi.cprintf(ent,PRINT_HIGH,"Replaying at %2.1f speed\n",replay_speed_modifier[ent->client->resp.replay_speed]);
 			}
 		}
-		else if (ent->movetype==MOVETYPE_WALK) { //Has been watching a replay, gotta put player to observer
+		else { //Has been watching a replay, gotta put player to observer
 			CTFObserver(ent);
 		}
 	}

@@ -70,15 +70,6 @@ char *ctf_statusbar =
 "pic 6 "
 "endif "
 
-"if 31 "
-"yb	-32 "
-"xv 310 "
-"num 3 31 "
-"yb -8 "
-"xv 312 "
-"string2 \"Replay\" "
-"endif "
-
 // Max Speed
 "if 7 "
 "yb -32 "
@@ -115,27 +106,27 @@ char *ctf_statusbar =
 "xr -18 "
 "num 1 19 "
 
+//keystrokes
 "xl 2 "
 "yb -42 "
-"stat_string 30 "
 
-"yb -34 "
-"stat_string 20 "
+"if 20 "
+"pic 20 " //left/right key
+"endif "
 
-"yb -26 "
-"stat_string 21 "
-"yb -18 "
-"stat_string 24 "
-//attack key
-"yb -10 "
-"stat_string 16 "
+"if 21 " //forward and back key
+"pic 21 " 
+"endif "
 
+"if 22 " //jump and crouch key
+"pic 22 "
+"endif "
 
-//pooy_key
-"yb -50 "
-"stat_string 22 "
+"if 25 "
+"pic 25 " //attack key
+"endif "
 
-//pooy_key
+//FPS
 "if 23 "
   "xl 0 "
   "yb -76 "
@@ -165,27 +156,25 @@ char *ctf_statusbar =
 "string \"Maps\" "
 "endif "
 
-"if 16 "
-  "xv 72 "
-  "yb -32 "			// hud_string1
-  "string \"%s\" "	// hud_string1
-  "yb -24 "			// hud_string2
-  "string \"%s\" "	// hud_string2
-  "yb -16 "			// hud_string3
-  "string \"%s\" "	// hud_string3
-  "yb -8 "			// hud_string4
-  "string \"%s\" "  // hud_string4
+"xv 72 "
+"yb -32 "			// hud_string1
+"stat_string 24 "	// hud_string1
+"yb -24 "			// hud_string2
+"stat_string 26 "	// hud_string2
+"yb -16 "			// hud_string3
+"stat_string 30 "	// hud_string3
+"yb -8 "			// hud_string4
+"stat_string 31 "   // hud_string4
 
-  "xr -128 "
-  "yt 2 "
-  "string \"%s\" " //current map
-  "yt 10 "
-  "string \"%s\" " //last map 1
-  "yt 18 "
-  "string \"%s\" " //last map 2
-  "yt 26 "
-  "string \"%s\" " //last map 3
-"endif "
+"xr -128 "
+"yt 2 "
+"string \"%s\" " //current map
+"yt 10 "
+"string \"%s\" " //last map 1
+"yt 18 "
+"string \"%s\" " //last map 2
+"yt 26 "
+"string \"%s\" " //last map 3
 
   "xr -32 "
   "yt 100 "
@@ -1220,28 +1209,30 @@ static void CTFSetIDView(edict_t *ent)
 void SetCTFStats(edict_t *ent)
 {
 	int keys;
-	char racenr[2];
 
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP1] = CONFIG_JUMP_NEXT_MAP1;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP2] = CONFIG_JUMP_NEXT_MAP2;
 	ent->client->ps.stats[STAT_JUMP_NEXT_MAP3] = CONFIG_JUMP_NEXT_MAP3;
+
+	ent->client->ps.stats[STAT_HUD_STRING1] = CONFIG_JUMP_HUDSTRING1;
+	ent->client->ps.stats[STAT_HUD_STRING2] = CONFIG_JUMP_HUDSTRING2;
+	ent->client->ps.stats[STAT_HUD_STRING3] = CONFIG_JUMP_HUDSTRING3;
+	ent->client->ps.stats[STAT_HUD_STRING4] = CONFIG_JUMP_HUDSTRING4;
+
 	
 
 	if (ent->client->resp.ctf_team==CTF_TEAM1 || ent->client->resp.ctf_team == CTF_TEAM2)
 	{
-		ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 		ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.cur_speed;
 	}
 	else {
 		if (ent->client->resp.replaying)
 		{
-			ent->client->ps.stats[STAT_JUMP_REPLAY] = ent->client->resp.replaying;
 			ent->client->ps.stats[STAT_HEALTH] = 0;
 			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = ent->client->resp.rep_speed;
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_REPLAY] = 0;
 			ent->client->ps.stats[STAT_JUMP_SPEED_MAX] = 0;
 		}
 	}
@@ -1263,54 +1254,48 @@ void SetCTFStats(edict_t *ent)
 	{
 		if (ent->client->resp.key_forward)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_KEY_FORWARD;
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = gi.imageindex("forward");
 		}
 		else
 		if (ent->client->resp.key_back)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_KEY_BACK;
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = gi.imageindex("back");
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = 0;
 		}
 
 		if (ent->client->resp.key_left)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_KEY_LEFT;
+			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = gi.imageindex("left");;
 		}
 		else
 		if (ent->client->resp.key_right)
 		{
-				ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_KEY_RIGHT;
+				ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = gi.imageindex("right");;
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = 0;
 		}
 		if (ent->client->buttons & BUTTON_ATTACK)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_KEY_ATTACK;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = gi.imageindex("attack");
 		} else {
-			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = 0;
 		}
 		if (ent->client->resp.key_up)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_KEY_JUMP;
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = gi.imageindex("jump");
 		}
 		else if (ent->client->resp.key_down)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_KEY_CROUCH;
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = gi.imageindex("duck");
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = 0;
 		}
 		ent->client->ps.stats[STAT_JUMP_FPS] = ent->client->pers.fps;
 	}
@@ -1319,57 +1304,51 @@ void SetCTFStats(edict_t *ent)
 		keys = ent->client->resp.replay_data;;
 		if (keys & RECORD_KEY_FORWARD)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_KEY_FORWARD;
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = gi.imageindex("forward");;
 		}
 		else
 		if (keys & RECORD_KEY_BACK)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_KEY_BACK;
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = gi.imageindex("back");
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = 0;
 		}
 
 		if (keys & RECORD_KEY_LEFT)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_KEY_LEFT;
+			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = gi.imageindex("left");;
 		}
 		else
 		if (keys & RECORD_KEY_RIGHT)
 		{
-				ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_KEY_RIGHT;
+				ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = gi.imageindex("right");;
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = 0;
 		}
 		if(keys & RECORD_KEY_ATTACK)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_KEY_ATTACK;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = gi.imageindex("attack");
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = 0;
 		}	
 
 		if (keys & RECORD_KEY_UP)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_KEY_JUMP;
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = gi.imageindex("jump");
 		}
 		else if (keys & RECORD_KEY_DOWN)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_KEY_CROUCH;
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = gi.imageindex("duck");
 		}
 		else
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = 0;
 		}
 		ent->client->ps.stats[STAT_JUMP_FPS] = (keys & RECORD_FPS_MASK)>>RECORD_FPS_SHIFT;
 	}
@@ -1394,13 +1373,11 @@ void SetCTFStats(edict_t *ent)
 		ent->client->ps.stats[STAT_JUMP_MAPCOUNT] = 0;
 		if (!ent->client->resp.replaying)
 		{
-			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_BACK] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_FORWARD] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_LEFT_RIGHT] = 0;
+			ent->client->ps.stats[STAT_JUMP_KEY_BACK_FORWARD] = 0;
 			ent->client->ps.stats[STAT_JUMP_FPS] = 0;
-			ent->client->ps.stats[STAT_JUMP_KEY_JUMP] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_CROUCH] = CONFIG_JUMP_EMPTY;
-			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = CONFIG_JUMP_EMPTY;
+			ent->client->ps.stats[STAT_JUMP_KEY_JUMP_CROUCH] = 0;
+			ent->client->ps.stats[STAT_JUMP_KEY_ATTACK] = 0;
 		}
 	}
 }
@@ -4019,7 +3996,7 @@ void CTFReplayer(edict_t *ent)
     ent->client->Jet_framenum = 0;
 	ent->deadflag = DEAD_NO;
 	ent->solid = SOLID_NOT;
-	ent->movetype = MOVETYPE_WALK;
+	ent->movetype = MOVETYPE_NOCLIP;
 	ent->svflags |= SVF_NOCLIENT;
 	ent->client->resp.ctf_team = CTF_NOTEAM;
 	ent->client->ps.stats[STAT_ITEM_TIMER] = 0;
@@ -4775,6 +4752,7 @@ void CTFWarp(edict_t *ent)
 	int	notimes[MAX_MAPS];
 	int temp_num;
 	int index;
+	int skill[MAX_MAPS];
 	
 	if (!map_allow_voting)
 		return;
@@ -4839,6 +4817,7 @@ void CTFWarp(edict_t *ent)
 		gi.cprintf(ent, PRINT_HIGH, "mapvote prev - the previous map.\n");
 		gi.cprintf(ent, PRINT_HIGH, "mapvote new - the newest map.\n");
 		gi.cprintf(ent, PRINT_HIGH, "mapvote newtodo - the newest map you haven't done.\n");
+		gi.cprintf(ent, PRINT_HIGH, "mapvote skill [#] - map with a specific skill (1 to 5).\n");
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		return;
 	}
@@ -5097,6 +5076,46 @@ void CTFWarp(edict_t *ent)
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[map]));
 			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
 			if (ctfgame.needvotes==0)
+				CTFWinElection(0, NULL);
+		}
+	}
+	else
+	if ((strcmp(temp, "SKILL") == 0) || (strcmp(temp, "skill") == 0))
+	{
+		if (gi.argc() < 3) {
+			gi.cprintf(ent, PRINT_HIGH, "mapvote skill [#] (1 to 5).\n");
+			return;
+		}
+		temp_num = atoi(gi.argv(2));
+		if (temp_num < 1 || temp_num > 5) {
+			gi.cprintf(ent, PRINT_HIGH, "mapvote skill [#] (1 to 5).\n");
+			return;
+		}
+
+		i2 = 0;
+		for (i = 0; i < maplist.nummaps; i++)
+		{
+			if (maplist.skill[i] == temp_num)
+			{
+				skill[i2] = i;
+				i2++;
+			}
+		}
+		if (!i2)
+		{
+			gi.cprintf(ent, PRINT_HIGH, "No maps with this specific skill.\n");
+			return;
+		}
+		map = skill[rand() % i2];
+
+		sprintf(text, "%s: Request to change map to %s (skill: %i)",
+			ent->client->pers.netname, maplist.mapnames[map], temp_num);
+		if (CTFBeginElection(ent, ELECT_MAP, text, false))
+		{
+			gi.configstring(CONFIG_JUMP_VOTE_INITIATED, HighAscii(va("Vote by %s", ent->client->pers.netname)));
+			gi.configstring(CONFIG_JUMP_VOTE_TYPE, va("Map: %s", maplist.mapnames[map]));
+			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
+			if (ctfgame.needvotes == 0)
 				CTFWinElection(0, NULL);
 		}
 	}

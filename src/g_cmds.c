@@ -1194,7 +1194,8 @@ void ClientCommand (edict_t *ent)
 
 	if (level.votingtime) {
 		//dissallow anything else but talk in voting
-		Cmd_Say_f(ent, false, true); 
+		//adding line below adds a bug, all cmds can spam in chat
+		//Cmd_Say_f(ent, false, true); 
 		return;
 	}
 
@@ -1546,9 +1547,6 @@ void ClientCommand (edict_t *ent)
       CTFUnSilence (ent); 
 	} else if (Q_stricmp (cmd, "race") == 0)
 		Cmd_Race (ent);
-	//else if (Q_stricmp (cmd, "raceline") == 0)
-		//disabled for now
-		//Cmd_Raceline (ent);
 	else if (Q_stricmp (cmd, "whois") == 0)
 		Cmd_Whois (ent);
 	else if (Q_stricmp (cmd, "lastmaps") == 0)

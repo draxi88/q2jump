@@ -70,6 +70,7 @@ void SP_trigger_counter (edict_t *ent);
 void SP_trigger_elevator (edict_t *ent);
 void SP_trigger_gravity (edict_t *ent);
 void SP_trigger_monsterjump (edict_t *ent);
+void SP_trigger_finish(edict_t *ent);
 
 void SP_target_temp_entity (edict_t *ent);
 void SP_target_speaker (edict_t *ent);
@@ -90,6 +91,7 @@ void SP_target_earthquake (edict_t *ent);
 void SP_target_character (edict_t *ent);
 void SP_target_string (edict_t *ent);
 void SP_model_spawner (edict_t *ent);
+void SP_light_torch(edict_t *ent);
 
 void SP_worldspawn (edict_t *ent);
 void SP_viewthing (edict_t *ent);
@@ -227,6 +229,7 @@ spawn_t	spawns[] = {
 	{"trigger_elevator", SP_trigger_elevator},
 	{"trigger_gravity", SP_trigger_gravity},
 	{"trigger_monsterjump", SP_trigger_monsterjump},
+	{"trigger_finish", SP_trigger_finish},
 
 	{"target_temp_entity", SP_target_temp_entity},
 	{"target_speaker", SP_target_speaker},
@@ -254,6 +257,7 @@ spawn_t	spawns[] = {
 	{"viewthing", SP_viewthing},
 
 	{"light", SP_light},
+	{"light_torch", SP_light_torch},
 	{"light_mine1", SP_light_mine1},
 	{"light_mine2", SP_light_mine2},
 	{"info_null", SP_info_null},
@@ -1122,6 +1126,15 @@ void SP_worldspawn (edict_t *ent)
 	gi.imageindex ("help");
 	gi.imageindex ("field_3");
 
+	//jump icons
+	gi.imageindex("forward");
+	gi.imageindex("back");
+	gi.imageindex("left");
+	gi.imageindex("right");
+	gi.imageindex("duck");
+	gi.imageindex("jump");
+	gi.imageindex("attack");
+
 	if (!st.gravity)
 	{
 		gi.cvar_set("sv_gravity", "800");
@@ -1129,6 +1142,9 @@ void SP_worldspawn (edict_t *ent)
 	else
 	{
 		gi.cvar_set("sv_gravity", st.gravity);
+	}
+	if (st.mset) {
+		worldspawn_mset();
 	}
 
 	snd_fry = gi.soundindex ("player/fry.wav");	// standing in lava / slime
@@ -1273,17 +1289,20 @@ void SP_worldspawn (edict_t *ent)
 
 		// 11 SLOW PULSE NOT FADE TO BLACK
 		gi.configstring(CS_LIGHTS+11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
-		// styles 32-62 are assigned by the l   ight program for switchable lights
+		// styles 32-62 are assigned by the light program for switchable lights
 
-		gi.configstring (CONFIG_JUMP_KEY_FORWARD,    "  Forward");
-		gi.configstring (CONFIG_JUMP_KEY_LEFT,       "Left");
-//		gi.configstring (CONFIG_JUMP_KEY_FPS, "fps");
-		gi.configstring (CONFIG_JUMP_KEY_RIGHT,      "      Right");
+		// 64 -> 70 = FLICKER q2jump
+		gi.configstring(CS_LIGHTS + 64, "mmnmmommommnonmmonqnmmllmmooommmonlmoo");
+		gi.configstring(CS_LIGHTS + 65, "mlmnmommnnmnonmmonlnmmoommooommmonlmoo");
+		gi.configstring(CS_LIGHTS + 66, "onnmllmmommnonmnqnmmoopqqooomnmmonlmmm");
+		gi.configstring(CS_LIGHTS + 67, "pppomommommnonmmonqnmmllmmooommmonlmoo");
+		gi.configstring(CS_LIGHTS + 68, "mlmnmompppnonmmonlnmmoommooommmonlmopo");
+		gi.configstring(CS_LIGHTS + 69, "poqopopqqooomnnmmommoommmmnokhkmnonlmo");
+		gi.configstring(CS_LIGHTS + 70, "onnmllmmopoqoplmlnmmoopqqooomnmmonlmmm");
+
+
+
 		gi.configstring (CONFIG_JUMP_ADDED_TIME,      "  +0");
-		gi.configstring (CONFIG_JUMP_KEY_JUMP,       "   JUMP!");
-		gi.configstring (CONFIG_JUMP_KEY_CROUCH,       " DUCK  DUCK");
-		gi.configstring (CONFIG_JUMP_KEY_BACK,       "    Back");
-		gi.configstring (CONFIG_JUMP_KEY_ATTACK,       "   Attack!");
 
 
 		//create mapname at 20chars long
@@ -1303,6 +1322,10 @@ void SP_worldspawn (edict_t *ent)
 		hud_footer(ent);
 
 		gi.configstring (CONFIG_JUMP_EMPTY,    " ");
+		gi.configstring(CONFIG_JUMP_HUDSTRING1, "");
+		gi.configstring(CONFIG_JUMP_HUDSTRING2, "");
+		gi.configstring(CONFIG_JUMP_HUDSTRING3, "");
+		gi.configstring(CONFIG_JUMP_HUDSTRING4, "");
 
 		gi.configstring (CONFIG_JUMP_MAPCOUNT,va("%4d",maplist.nummaps));
 
@@ -1318,7 +1341,7 @@ void SP_worldspawn (edict_t *ent)
 	if (deathmatch->value)
 //ZOID
 		if (ctf->value) {
-			Com_sprintf(str, sizeof(str), ctf_statusbar,"","","","",
+			Com_sprintf(str, sizeof(str), ctf_statusbar,
 				this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
 			gi.configstring(CS_STATUSBAR, str);
 			CTFPrecache();

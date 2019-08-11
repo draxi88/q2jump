@@ -24,5 +24,5 @@ The archive folder contains some documents we don't want to lose. The source fol
 | Name                 | Credit                                                                |
 |----------------------|-----------------------------------------------------------------------|
 | Wireplay Programmers | SadButTrue, ManicMiner, wootwoot, LilRedtheJumper                     |
-| German Programmers   | ace, draxi, slippery                                                  |
+| German Programmers   | ace, draxi, slippery, Mako                                            |
 | Various Additions    | Fish, quadz, maq, SumFuka, Killerbee, Doyoon Kim, Hannibal, DeathJump |

@@ -799,29 +799,36 @@ void SP_target_earthquake (edict_t *self)
 	self->noise_index = gi.soundindex ("world/quake.wav");
 }
 
+//speed = from 1 to 10, where 10 is one frame every 0.1s, and 1 is one frame every 1 sec.
+//count = how mane frames of animation ?
 void model_spawner_think(edict_t *self){
+	int style;
 	if (++self->s.frame < self->count)
 		self->nextthink = level.time + (FRAMETIME*self->speed);
 	else
 	{		
-		self->s.frame = 0;
+		self->s.frame = rand() & 2; //random start between frame 0 and 2
 		self->nextthink = level.time + (FRAMETIME*self->speed);
 	}
 }
 void SP_model_spawner (edict_t *ent)
 {
+	int speed;
+	
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_NOT;
 	ent->s.modelindex = gi.modelindex(ent->model);
 
-	if(ent->speed > 2)
-		ent->speed = 2;
+	if(ent->speed > 10)
+		ent->speed = 10;
 	else if (ent->speed < 0)
 		ent->speed = 0;
 
 	if(ent->speed != 0){
+		speed = 11 - ent->speed;
+		ent->speed = speed;
 		ent->think = model_spawner_think;
-		ent->nextthink = level.time + 2;
+		ent->nextthink = level.time + 0.1;
 	}
 	gi.linkentity (ent);
 }

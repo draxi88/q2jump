@@ -371,24 +371,27 @@ void quad_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 
 	// already have it, tell them so if:
 	// -not spawnflag 1
-	if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait)) {
-		gi.cprintf(other, PRINT_HIGH, "You already have quad damage.\n");
-		return;
-	}
+	if (mset_vars->quad_damage) {
+		if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You already have %ix quad damage.\n", mset_vars->quad_damage);
+			return;
+		}
 
-	// tell them they have it if:
-	// -not spawnflag 1
-	if (!self->spawnflags & 1 && trigger_timer(self->wait)) {
-		gi.cprintf(other, PRINT_HIGH, "You have quad damage.\n");
+		// tell them they have it if:
+		// -not spawnflag 1
+		if (!self->spawnflags & 1 && trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You have %ix quad damage.\n", mset_vars->quad_damage);
+		}
 	}
 
 	other->client->pers.has_quad = true;
+	// add
 }
 
 void SP_trigger_quad(edict_t *self) {
 
-	if (self->wait < .5) {
-		self->wait = .5;
+	if (self->wait < 1) {
+		self->wait = 1;
 	}
 
 	InitTrigger(self);
@@ -408,16 +411,16 @@ void quad_clear_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	// tell them they no longer have quad if:
 	// -not spawnflag 1
 	// -currently have quad
-	if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait)) {
-		gi.cprintf(other, PRINT_HIGH, "You no longer have quad damage.\n");
+	if (!self->spawnflags & 1 && other->client->pers.has_quad == true && trigger_timer(self->wait) && mset_vars->quad_damage) {
+		gi.cprintf(other, PRINT_HIGH, "You no longer have %ix quad damage.\n", mset_vars->quad_damage);
 	}
 	other->client->pers.has_quad = false;
 }
 
 void SP_trigger_quad_clear(edict_t *self) {
 
-	if (self->wait < .5) {
-		self->wait = .5;
+	if (self->wait < 1) {
+		self->wait = 1;
 	}
 
 	InitTrigger(self);
@@ -625,7 +628,7 @@ void trigger_counter_use(edict_t *self, edict_t *other, edict_t *activator)
 	if (! (self->spawnflags & 1))
 	{
 	if (!mset_vars->cmsg)
-	if (!other->client->resp.cmsg)
+	if (other->client && !other->client->resp.cmsg)
 	{
 		gi.centerprintf(activator, "Sequence completed!");
 		gi.sound (activator, CHAN_AUTO, gi.soundindex ("misc/talk1.wav"), 1, ATTN_NORM, 0);
@@ -811,6 +814,7 @@ void SP_trigger_hurt (edict_t *self)
 	self->noise_index = gi.soundindex ("world/electro.wav");
 	self->touch = hurt_touch;
 
+	// give it a negative dmg value to add health to a player
 	if (!self->dmg)
 		self->dmg = 5;
 
@@ -920,4 +924,35 @@ void SP_trigger_monsterjump (edict_t *self)
 	InitTrigger (self);
 	self->touch = trigger_monsterjump_touch;
 	self->movedir[2] = st.height;
+}
+
+//Trigger that works with Pickup_Weapon.
+//Used as a finish (railgun by default)
+//Add a <message> value with a classname of a weapon in the editor to change it to some other weapon.
+//Then it can be used to give players a weapon, like rocket launcher or bfg or whatever.
+//e.g. "message = weapon_rocketlauncher"
+void SP_trigger_finish(edict_t *ent)
+{
+	gitem_t *wep;
+	
+	//if no message, set it to act like a railgun.
+	if (!ent->message) {
+		wep = FindItemByClassname("weapon_railgun");
+	}
+
+	//check for stupid mappers:
+	else if (strstr(ent->message, "weapon_") == 0 || !(wep = FindItemByClassname(ent->message))) {
+		gi.dprintf("trigger_finish with unsupported <message> value. (%s is not a classname of a weapon)\n",ent->message);
+		return;
+	}
+
+	ent->classname = "trigger_finish";
+	ent->movetype = MOVETYPE_NONE;
+	ent->svflags |= SVF_NOCLIENT;
+	ent->solid = SOLID_TRIGGER;
+	ent->item = wep;
+	//ent->item->pickup_name = wep->pickup_name;
+	ent->touch = Pickup_Weapon;
+	gi.setmodel(ent, ent->model);
+	gi.linkentity(ent);
 }

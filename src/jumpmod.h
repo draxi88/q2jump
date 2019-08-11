@@ -3,7 +3,7 @@
 //defines
 #define MAX_USERS 4096
 #define MAX_HIGHSCORES 15
-#define CTF_VERSION_S		"1.32ger"
+#define CTF_VERSION_S		"1.33ger"
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
@@ -14,7 +14,9 @@
 #define ML_ROTATE_SEQ          0 
 #define ML_ROTATE_RANDOM       1 
 #define ML_ROTATE_NUM_CHOICES  2
-#define MAX_BANS 64
+#define MAX_BANS	64
+#define MAX_CMDS	32 //max cmds each time checking cmd file.
+#define	CMD_TIME	10 //msecs between checking cmd file.
 //#define MAX_VOTES 3  // _h2
 
 
@@ -224,10 +226,6 @@ void		RemoveEnt(int remnum);
 void		RemoveAllEnts(char *fname);
 void		remove_ent(edict_t *ent);
 void		remove_times(int mapnum);
-void		CreateRemFile(int v);
-void		DeleteRemFile(void);
-void		Write_Jump_cfg(void);
-void		Read_Jump_cfg(void);
 void		MSET(edict_t *ent);
 void		GSET(edict_t *ent);
 void		Cmd_Chaseme(edict_t *ent);
@@ -280,7 +278,6 @@ void		Jet_ApplyLifting( edict_t *ent );
 void		Jet_ApplySparks ( edict_t *ent );
 void		Jet_ApplyRolling( edict_t *ent, vec3_t right );
 void		Jet_ApplyJet( edict_t *ent, usercmd_t *ucmd );
-void		replay_frame(edict_t *ent);
 void		Cmd_Replay(edict_t *ent);
 void		Record_Frame(edict_t *ent);
 
@@ -292,12 +289,11 @@ void		apply_time(edict_t *other, edict_t *ent);
 void		Replay_Recording(edict_t *ent);
 void		Cmd_Replay(edict_t *ent);
 void		Load_Recording(void);
-void		Say_Person(edict_t *ent);
+void		say_person(edict_t *ent);
 void		Cmd_Recall(edict_t *ent);
 void		List_Admin_Commands(edict_t *ent);
 void		Save_Current_Recording(edict_t *ent);
 void		mvote(edict_t *ent);
-void		reset_server(edict_t *ent);
 void		delete_all_demos(void);
 void		delete_all_times(void);
 void		remall(edict_t *ent);
@@ -430,8 +426,10 @@ typedef struct
 	int gravity;
 	int health;
 	int lap_total;
+	int quad_damage;
 	int regen;
 	int rocket;
+	int rocketjump_fix;
 	int singlespawn;
 	int slowdoors;	
 	int timelimit;
@@ -555,7 +553,6 @@ extern char zbbuffer2[256];
 
 void KillMyRox(edict_t *ent);
 void Cmd_Race (edict_t *ent);
-void Cmd_Raceline (edict_t *ent);
 void stuffcmd(edict_t *e, char *s);
 int Q_stricmp (char *s1, char *s2);
 char *Info_ValueForKey (char *s, char *key);
@@ -568,8 +565,6 @@ qboolean getLogicalValue(char *arg);
 int getLastLine(char *buffer, FILE *dumpfile, long *fpos);
 void q_strupr(char *c);
 extern char moddir[256];
-
-void Output_Debug(edict_t *ent);
 
 void CopyLocalToGlobal(void);
 void CopyGlobalToLocal(void);
@@ -864,3 +859,6 @@ void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float v
 void jumpmod_pos_sound(vec3_t pos, edict_t *ent, int sound, int channel, float volume, int attenuation);
 void hud_footer(edict_t *ent);
 void ClearCheckpoints(edict_t *ent);
+void CheckCmdFile();
+void worldspawn_mset();
+qboolean	Pickup_Weapon(edict_t *ent, edict_t *other); //trigger_finish uses this.

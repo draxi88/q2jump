@@ -209,6 +209,13 @@ zbotcmd_t zbotCommands[] =
 	CMDTYPE_NUMBER,
 	&mset_vars->lap_total,
   },
+  {
+	0,6,0,
+	"quad_damage",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->quad_damage,
+  },
   { 
 	-100,100,100,
     "regen",
@@ -222,6 +229,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_MSET, 
     CMDTYPE_NUMBER,
     &mset_vars->rocket,
+  },
+  {
+	0,1,0,
+	"rocketjump_fix",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->rocketjump_fix,
   },
   { 
 	0,1,0,
@@ -718,6 +732,13 @@ zbotcmd_t zbotCommands[] =
 	CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
 	&gset_vars->pvote_announce,
+  },
+  {
+	0,6,0,
+	"quad_damage",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->quad_damage,
   },
   { 
 	-100,100,100,
@@ -2700,6 +2721,7 @@ void Cmd_Store_f (edict_t *ent) {
 				ent->client->resp.store[i] = ent->client->resp.store[i-1]; //move old stores +1
 			}
 			ent->client->resp.store[1].stored_item_timer = ent->client->resp.item_timer;
+			ent->client->resp.store[1].stored_finished = ent->client->resp.finished;
 			VectorCopy(ent->s.origin,ent->client->resp.store[1].store_pos);
 			VectorCopy(ent->s.angles,ent->client->resp.store[1].store_angles);
 			ent->client->resp.store[1].store_angles[2] = 0;
@@ -2720,7 +2742,7 @@ void Cmd_Store_f (edict_t *ent) {
 				ent->client->resp.stored_ent->s.old_origin[2] -=10;
 				ent->client->resp.stored_ent->s.origin[2] -=10;
 				ent->client->resp.stored_ent->svflags = SVF_PROJECTILE;
-				VectorCopy(ent->client->resp.store[0].store_angles, ent->client->resp.stored_ent->s.angles);
+				VectorCopy(ent->client->resp.store[1].store_angles, ent->client->resp.stored_ent->s.angles);
 				ent->client->resp.stored_ent->movetype = MOVETYPE_NONE;
 				ent->client->resp.stored_ent->clipmask = MASK_PLAYERSOLID;
 				ent->client->resp.stored_ent->solid = SOLID_NOT;
@@ -4196,13 +4218,13 @@ void apply_time(edict_t *other, edict_t *ent)
 			{
 				if (!Neuro_RedKey_Overide && map_added_time<5)
 				{
-					gi.bprintf(PRINT_HIGH,"%s has set a 1st place, adding 5 minutes extra time.\n",other->client->pers.netname);
+					gi.bprintf(PRINT_CHAT,"%s has set a 1st place, adding 5 minutes extra time.\n",other->client->pers.netname);
 					map_added_time += 5;
 					Update_Added_Time();
 				}
 				else
 				{
-					gi.bprintf(PRINT_HIGH,"%s has set a 1st place.\n",other->client->pers.netname);
+					gi.bprintf(PRINT_CHAT,"%s has set a 1st place.\n",other->client->pers.netname);
 				}
 			}
 
@@ -4472,6 +4494,11 @@ void Cmd_Replay(edict_t *ent)
 		//gi.cprintf(ent,PRINT_HIGH,"You can type 'replay now' to see a demo of fastest run this map.\n");
 	}
 	CTFReplayer(ent);
+	ClearPersistants(&ent->client->pers);
+	if (ent->client->resp.store->checkpoints > 0) {
+		ClearCheckpoints(ent);
+	}
+	hud_footer(ent);
 }
 
 void Load_Recording(void)
@@ -4813,6 +4840,7 @@ void Cmd_Recall(edict_t *ent)
 			if (ent->deadflag)
 				respawn(ent);
 			ent->client->resp.item_timer = ent->client->resp.store[0].stored_item_timer;	
+			ent->client->resp.finished = ent->client->resp.store[0].stored_finished;
 			ent->client->resp.recalls--;
 			ent->client->pers.total_recall++;
 
@@ -6292,6 +6320,7 @@ void SetDefaultValues(void)
 	gset_vars->playtag = 0;
 	gset_vars->pvote_announce = 1;
 	gset_vars->mset->regen = 100;
+	gset_vars->mset->quad_damage = 0;
 	gset_vars->respawn_sound = 1;
 	gset_vars->mset->rocket = 0;
 	gset_vars->store_safe = 0;
@@ -8193,8 +8222,10 @@ qboolean tourney_log(edict_t *ent,int uid, float time,char *date )
 
 		//setting a first
 		if (time < level_items.stored_item_times[0].time) {
-			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB %1.3f | 1st %1.3f", 
-				ent->client->pers.netname, time, time - oldtime, time - level_items.stored_item_times[0].time);
+			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
+			gi.bprintf(PRINT_CHAT, "%1.3f ", time - oldtime);
+			gi.bprintf(PRINT_HIGH, "| 1st ");
+			gi.bprintf(PRINT_CHAT, "%1.3f", time - level_items.stored_item_times[0].time);
 			if (ent->client->pers.cp_split > 0)
 				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
 			gi.bprintf(PRINT_HIGH, ")\n");
@@ -8203,8 +8234,9 @@ qboolean tourney_log(edict_t *ent,int uid, float time,char *date )
 		
 		// beat pb, show to server
 		if (time < oldtime) {
-			gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (PB %1.3f | 1st +%1.3f",
-				ent->client->pers.netname, time, time - oldtime, time - level_items.stored_item_times[0].time);
+			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
+			gi.bprintf(PRINT_CHAT, "%1.3f ", time - oldtime);
+			gi.bprintf(PRINT_HIGH, "| 1st +%1.3f", time - level_items.stored_item_times[0].time);
 			if (ent->client->pers.cp_split > 0)
 				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
 			gi.bprintf(PRINT_HIGH, ")\n");
@@ -8271,8 +8303,9 @@ qboolean tourney_log(edict_t *ent,int uid, float time,char *date )
 
 				// 1st comp AND 1st place
 				if (time < level_items.stored_item_times[0].time) {
-					gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st %1.3f | ",
-						ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
+					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (1st ", ent->client->pers.netname, time);
+					gi.bprintf(PRINT_CHAT, "%1.3f ", time - level_items.stored_item_times[0].time);
+					gi.bprintf(PRINT_HIGH, "| ");
 					if (ent->client->pers.cp_split > 0)
 						gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
 					gi.bprintf(PRINT_HIGH, "1st completion)\n");
@@ -11790,18 +11823,6 @@ void Cmd_Idle(edict_t *ent) {
 
 }
 
-void Cmd_Raceline (edict_t *ent){
-	int racenr, i;
-
-	if(ent->client->resp.raceline) {
-		ent->client->resp.raceline = false;
-		gi.cprintf(ent,PRINT_HIGH,"Raceline OFF!\n");
-	} else {
-		ent->client->resp.raceline = true;
-		gi.cprintf(ent,PRINT_HIGH,"Raceline ON!\n");
-	}
-}
-
 void Cmd_Race (edict_t *ent)
 {
 	float delay = 0;
@@ -12477,7 +12498,6 @@ void ToggleHud(edict_t *ent)
 	if (showhud)
 	{
 		Com_sprintf(str,sizeof(str),ctf_statusbar,
-			ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
 			this_map,prev_levels[1].mapname,prev_levels[2].mapname,prev_levels[3].mapname);
 		gi.configstring (CS_STATUSBAR, str);
 //		gi.configstring (CS_STATUSBAR, ctf_statusbar);
@@ -12809,6 +12829,7 @@ void Update_Skill(void)
 			//wont happen but ya never know
 			if (i2<0)
 			{
+				gi.dprintf("i2 = %i\n", i2);
 				skill = 1;
 			}
 			else
@@ -13791,21 +13812,6 @@ void ClearCheckpoints(edict_t *ent) {
 	resp->store[0].rs3_checkpoint = 0;
 	resp->store[0].rs4_checkpoint = 0;
 	resp->store[0].rs5_checkpoint = 0;
-	resp->store[0].rs6_checkpoint = 0;
-	resp->store[0].rs7_checkpoint = 0;
-	resp->store[0].rs8_checkpoint = 0;
-	resp->store[0].rs9_checkpoint = 0;
-	resp->store[0].rs10_checkpoint = 0;
-	resp->store[0].rs11_checkpoint = 0;
-	resp->store[0].rs12_checkpoint = 0;
-	resp->store[0].rs13_checkpoint = 0;
-	resp->store[0].rs14_checkpoint = 0;
-	resp->store[0].rs15_checkpoint = 0;
-	resp->store[0].rs16_checkpoint = 0;
-	resp->store[0].rs17_checkpoint = 0;
-	resp->store[0].rs18_checkpoint = 0;
-	resp->store[0].rs19_checkpoint = 0;
-	resp->store[0].rs20_checkpoint = 0;
 
 	// key cps
 	resp->store[0].target_checkpoint = 0;
@@ -13955,151 +13961,253 @@ void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float vo
 void hud_footer(edict_t *ent) {
 	edict_t *cl_ent;
 	int i;
-	char teamstring[32];
-	char racestring[32];
-	char cpstring[32];
-	char lapstring[32];
-	char cp[2];
-	char cptotal[2];
+	char cp[4];
+	char cptotal[4];
 	char race[10];
 	char lap[10];
 	char laptotal[10];
-	char this_map[64];
-	char str[2048];
+	int strnr;
 
 	if (!ent->client)
 		return;
 
-	strcpy(this_map, prev_levels[0].mapname);
-	for (i = 0; i < strlen(this_map); i++)
-		this_map[i] |= 128;
-
-	//rem old strings
-	for (i = 0; i < 4; i++) {
-		sprintf(ent->client->resp.hud[i].string, "");
-	}
-
 	// update statusbar for client if it's chasing someone...
 	if (ent->client->chase_target) {
-		for (i = 0; i < 4; i++) {
-			sprintf(ent->client->resp.hud[i].string, ent->client->chase_target->client->resp.hud[i].string);
-		}
-		Com_sprintf(str, sizeof(str), ctf_statusbar,
-			ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
-			this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
 		gi.WriteByte(svc_configstring);
-		gi.WriteShort(CS_STATUSBAR);
-		gi.WriteString(str);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING1);
+		gi.WriteString(ent->client->chase_target->client->resp.hud[0].string);
+		gi.unicast(ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING2);
+		gi.WriteString(ent->client->chase_target->client->resp.hud[1].string);
+		gi.unicast(ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING3);
+		gi.WriteString(ent->client->chase_target->client->resp.hud[2].string);
+		gi.unicast(ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING4);
+		gi.WriteString(ent->client->chase_target->client->resp.hud[3].string);
 		gi.unicast(ent, true);
 		return;
 	}
 	//else if client is not chasing someone......
 
-	//team
+	//rem old strings
+	for (i = 0; i < 4; i++) {
+		sprintf(ent->client->resp.hud[i].string, "");
+	}
+	
+	//team (Team is always string1.)
 	if (ent->client->resp.ctf_team == CTF_TEAM1)
-		sprintf(teamstring, "  Team: Åáóù");
+		sprintf(ent->client->resp.hud[0].string, "  Team: Åáóù");
 	else if (ent->client->resp.ctf_team == CTF_TEAM2)
-		sprintf(teamstring, "  Team: Èáòä");
+		sprintf(ent->client->resp.hud[0].string, "  Team: Èáòä");
 	else
-		sprintf(teamstring, "  Team: Ïâóåòöåò");
-	//string 1
-	sprintf(ent->client->resp.hud[0].string, teamstring);
+		sprintf(ent->client->resp.hud[0].string, "  Team: Ïâóåòöåò");
 
+	//rest of the strings
+	strnr = 1;
 	// race
-	strcpy(racestring, "");
 	if (ent->client->resp.replaying) { //if player is replaying, print replay string instead.
 		sprintf(race, "%d", ent->client->resp.replaying);
 		if (Q_stricmp(race, "16") == 0) {
 			sprintf(race, "NOW");
 		}
-		sprintf(racestring, "Replay: %s", HighAscii(race));
+		sprintf(ent->client->resp.hud[strnr].string, "Replay: %s", HighAscii(race));
+		strnr++;
 	}
 	else if (ent->client->resp.rep_racing) {
 		sprintf(race, "%d", ent->client->resp.rep_race_number + 1);
 		if (Q_stricmp(race, "16") == 0) {
 			sprintf(race, "NOW");
 		}
-		sprintf(racestring, "  Race: %s", HighAscii(race));
+		sprintf(ent->client->resp.hud[strnr].string, "  Race: %s", HighAscii(race));
+		strnr++;
 	}
 
 	// cp
-	strcpy(cpstring, "");
 	if (mset_vars->checkpoint_total) {
 		sprintf(cptotal, "%d", mset_vars->checkpoint_total);
 		sprintf(cp, "%d", ent->client->resp.store[0].checkpoints);
-		sprintf(cpstring, "Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
+		sprintf(ent->client->resp.hud[strnr].string, "Chkpts: %s/%s", HighAscii(cp), HighAscii(cptotal));
+		strnr++;
 	}
 
 	// lap
-	strcpy(lapstring, "");
 	if (mset_vars->lap_total) {
 		sprintf(laptotal, "%d", mset_vars->lap_total);
 		sprintf(lap, "%d", ent->client->pers.lapcount);
-		sprintf(lapstring, "  Laps: %s/%s", HighAscii(lap), HighAscii(laptotal));
+		sprintf(ent->client->resp.hud[strnr].string, "  Laps: %s/%s", HighAscii(lap), HighAscii(laptotal));
 	}
 
-	//string2
-	if (strlen(racestring) > 1)
-		sprintf(ent->client->resp.hud[1].string, racestring);
-	else if (strlen(cpstring) > 1)
-		sprintf(ent->client->resp.hud[1].string, cpstring);
-	else if (strlen(lapstring) > 1)
-		sprintf(ent->client->resp.hud[1].string, lapstring);
-
-	//string3
-	if (strlen(racestring) > 1) {
-		if (strlen(cpstring) > 1)
-			sprintf(ent->client->resp.hud[2].string, cpstring);
-		else if (strlen(lapstring) > 1)
-			sprintf(ent->client->resp.hud[2].string, lapstring);
-	} else if (strlen(cpstring)>1 && strlen(lapstring)>1)
-		sprintf(ent->client->resp.hud[2].string, lapstring);
-
-	//string4
-	if (strlen(racestring) > 1 && strlen(cpstring) > 1 && strlen(lapstring) > 1)
-		sprintf(ent->client->resp.hud[3].string, lapstring);
-
-	//Find chasers....
+	//UPDATE IT, also for chasers....
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
 
 		if (!(cl_ent->client && cl_ent->inuse))
 			continue;
-		if (!cl_ent->client->chase_target)
-			continue;
-		if (cl_ent->client->chase_target->client != ent->client)
-			continue;
-		if (cl_ent->client->resp.cleanhud) {
-			for (i = 0; i < 4; i++) {
-				sprintf(cl_ent->client->resp.hud[i].string, "");
-			}
-			continue;
+
+		if (cl_ent != ent) {
+			if (!cl_ent->client->chase_target)
+				continue;
+			if (cl_ent->client->chase_target->client != ent->client)
+				continue;
 		}
-		for (i = 0; i < 4; i++) {
-			strcpy(cl_ent->client->resp.hud[i].string, ent->client->resp.hud[i].string);
-		}
-		//update statusbar for chasers..
-		Com_sprintf(str, sizeof(str), ctf_statusbar,
-			cl_ent->client->resp.hud[0].string, cl_ent->client->resp.hud[1].string, cl_ent->client->resp.hud[2].string, cl_ent->client->resp.hud[3].string,
-			this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
 		gi.WriteByte(svc_configstring);
-		gi.WriteShort(CS_STATUSBAR);
-		gi.WriteString(str);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING1);
+		gi.WriteString(ent->client->resp.hud[0].string);
+		gi.unicast(cl_ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING2);
+		gi.WriteString(ent->client->resp.hud[1].string);
+		gi.unicast(cl_ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING3);
+		gi.WriteString(ent->client->resp.hud[2].string);
+		gi.unicast(cl_ent, true);
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CONFIG_JUMP_HUDSTRING4);
+		gi.WriteString(ent->client->resp.hud[3].string);
 		gi.unicast(cl_ent, true);
 	}
+}
 
-	//check if the client itself is using cleanhud..
-	if (ent->client->resp.cleanhud) {
-		for (i = 0; i < 4; i++) {
-			sprintf(ent->client->resp.hud[i].string, "");
+// Check if a addcmd.ini file exists.
+// Text in file should be "cmd text ||" .. ex "say hello, this is console ||"..
+// File could have multiple lines, || = lineshift..
+// Should probably disable some cmds (ie. gamemap).. But I guess that could be done in the python file.
+void CheckCmdFile() {
+	FILE	*f;
+	char	filename[128];
+	char	name[128];
+	char	temp[128];
+	char	cmd[128];
+	cvar_t	*port;
+	cvar_t	*tgame;
+	int		i;
+	int		status;
+
+	tgame = gi.cvar("game", "", 0);
+	port = gi.cvar("port", "", 0);
+	sprintf(filename, "addcmd");
+
+	if (!*tgame->string) {
+		sprintf(name, "jump/%s/%s.ini", port->string, filename);
+	}
+	else {
+		sprintf(name, "%s/%s/%s.ini", tgame->string, port->string, filename);
+	}
+
+	f = fopen(name, "r");
+	if (!f) {
+		return; //no file
+	}
+
+	fseek(f, 0, SEEK_END);
+	if (ftell(f) == 0) { //if file is empty.
+		fclose(f);
+		return;
+	}
+	else {
+		rewind(f);
+	}
+	i = 0;
+	if (f)  // opened successfully? 
+	{
+		sprintf(cmd, "");
+		while ((!feof(f)) && (i < MAX_CMDS)) {
+			fscanf(f, "%s", temp);
+			if (Q_stricmp(temp, "||") == 0) {  // terminator for each line is "||" 
+				i++;
+				if (strlen(cmd) > 1) {
+					strcat(cmd, "\n");
+					gi.AddCommandString(cmd);
+					sprintf(cmd, "");
+				}
+			} else {
+				strcat(temp, " ");
+				strncat(cmd, temp, 128);
+			}
 		}
 	}
-	// update statusbar for client.
-	Com_sprintf(str, sizeof(str), ctf_statusbar,
-		ent->client->resp.hud[0].string, ent->client->resp.hud[1].string, ent->client->resp.hud[2].string, ent->client->resp.hud[3].string,
-		this_map, prev_levels[1].mapname, prev_levels[2].mapname, prev_levels[3].mapname);
-	gi.WriteByte(svc_configstring);
-	gi.WriteShort(CS_STATUSBAR);
-	gi.WriteString(str);
-	gi.unicast(ent, true);
+	freopen(name, "w", f);
+	fprintf(f, ""); //remove everything from the file.
+	fclose(f);
+}
+
+//msets to put in worldspawn... 
+//Guess we can't let people add whatever mset they'd like.
+//just do "Key = <mset>,Value = <checkpoint_total 3 rocket 1 bfg 1>" in your editor.
+//Probably some other cmds that whould be added aswell?
+void worldspawn_mset() {
+	int i,w;
+	char *p = strtok(st.mset," ");
+	char *temp[100];
+	char file[256];
+	cvar_t	*game_dir;
+	FILE *cfg;
+
+	game_dir = gi.cvar("game", "", 0);
+	sprintf(file, "%s/ent/%s.cfg", game_dir->string, level.mapname);
+	cfg = fopen(file, "r");
+	if (cfg) { //mset file found = set by an admin ingame.
+		fclose(cfg);
+		return;
+	}
+
+	if (strlen(st.mset) > 256) {
+		gi.dprintf("Error: Too much info in worldspawn mset! (max 256)\n");
+		return;
+	}
+	w = 0;
+	while (p != NULL) {
+		temp[w++] = p;
+		p = strtok(NULL, " ");
+	}
+	for(i=0;i<w;i++){
+		if (Q_stricmp(temp[i], "bfg") == 0) {
+			mset_vars->bfg = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "blaster") == 0) {
+			mset_vars->blaster = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "checkpoint_total") == 0) {
+			mset_vars->checkpoint_total = atoi(temp[i+1]);
+		}
+		else if (Q_stricmp(temp[i], "damage") == 0) {
+			mset_vars->damage = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fast_firing") == 0) {
+			mset_vars->fast_firing = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fastdoors") == 0) {
+			mset_vars->fastdoors = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fasttele") == 0) {
+			mset_vars->fasttele = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "gravity") == 0) {
+			mset_vars->gravity = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "health") == 0) {
+			mset_vars->health = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "lap_total") == 0) {
+			mset_vars->lap_total = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "regen") == 0) {
+			mset_vars->regen = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "rocket") == 0) {
+			mset_vars->rocket = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "quad_damage") == 0) {
+			mset_vars->quad_damage = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "weapons") == 0) {
+			mset_vars->weapons = atoi(temp[i + 1]);
+		}
+	}
+	return;
 }

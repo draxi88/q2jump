@@ -394,6 +394,7 @@ typedef struct
 	float		maxyaw;
 	float		minpitch;
 	float		maxpitch;
+	char		*mset;
 } spawn_temp_t;
 
 
@@ -916,6 +917,7 @@ typedef struct
 	unsigned long frames_without_movement;
 
 	qboolean	store_velocity;		//velocity store feature (toggle)
+	qboolean	stuffed;
 } client_persistant_t;
 
 //hud stuff
@@ -940,21 +942,6 @@ typedef struct { //everything that needs to be saved for each store.
 	int			rs3_checkpoint;
 	int			rs4_checkpoint;
 	int			rs5_checkpoint;
-	int			rs6_checkpoint;
-	int			rs7_checkpoint;
-	int			rs8_checkpoint;
-	int			rs9_checkpoint;
-	int			rs10_checkpoint;
-	int			rs11_checkpoint;
-	int			rs12_checkpoint;
-	int			rs13_checkpoint;
-	int			rs14_checkpoint;
-	int			rs15_checkpoint;
-	int			rs16_checkpoint;
-	int			rs17_checkpoint;
-	int			rs18_checkpoint;
-	int			rs19_checkpoint;
-	int			rs20_checkpoint;
 	int         cpbox_checkpoint[64];
 
 	qboolean	stored;
@@ -962,6 +949,7 @@ typedef struct { //everything that needs to be saved for each store.
 	vec3_t		store_angles;
 	vec3_t		stored_velocity;
 	float		stored_item_timer;
+	qboolean	stored_finished;
 }store_struct;
 
 #define MAX_STORES 7 // = 6 different stores... since the 1st one (0) is the standard one..
@@ -1070,7 +1058,8 @@ typedef struct
 	// trigger_welcome
 	int         welcome_count[10];
 
-	hud_struct hud[4];
+	hud_struct	hud[4];
+	char		hudstring[2048];
 
 } client_respawn_t;
 
