@@ -1,37 +1,40 @@
 #####v1.33ger#####
 -added mapvote skill
-	-mapvote skill 1-5, depending on skill of map you want
+    -mapvote skill 1-5, depending on skill of map you want
 -added light_torch ent
-	-use style 64-70 for different light flickering
-	-default model is `models/bits/torch/tris.md`
-	-change the model by setting the model in your editor
+    -use style 64-70 for different light flickering
+    -default model is `models/bits/torch/tris.md2`
+    -change the model by setting the model in your editor
 -mappers can now set mset's in their maps!
-	-bfg
-	-blaster
-	-checkpoint_total
-	-damage
-	-fast_firing
-	-fastdoors
-	-fasttele
-	-gravity
-	-health
-	-lap_total
-	-regen
-	-rocket
-	-quad_damage
-	-weapons
-	-admins can clear this using mset in game
-	-admins can reset using mset clear
+    -bfg
+    -blaster
+    -checkpoint_total
+    -damage
+    -fast_firing
+    -fastdoors
+    -fasttele
+    -gravity
+    -health
+    -lap_total
+    -regen
+    -rocket
+    -quad_damage
+    -weapons
+    -admins can override this using mset in game
+    -admins can reset using mset clear
+-added trigger_finish
+    -can trigger any weapon
+    -default is railgun, add alternatives with `message` keypair with the weapon name
 -added mset `quad damage`
-	-default 0
-	-range is 0-6, weapon damage is multiplied by the value
+    -default 0
+    -range is 0-6, weapon damage is multiplied by the value
 -added mset/gset rocketjump_fix
-	-rocketjumps now approximate vectors
-	-height from rocketjumps from units 28.1 to 48.3 is now equal
-	-this means rocketjumps should now be more consistant!
+    -rocketjumps now approximate vectors
+    -distance from rocket explosion from units 28.1 to 48.3 is now equal
+    -this means rocketjumps should now be more consistant!
 -negative splits will now be shown in green to show you improved
 -finish msg no longer spams in team easy after grabbing the gun
-	-you can now grab the gun multiple times in easy to see your time
+    -you can now grab the gun multiple times in easy to see your time
 -first place messages are now green
 -added addcmd support, secret stuff boys
 -idle kick now only happens when server is close to full
@@ -42,6 +45,7 @@
 -fix for spam commands at the end of a map
 -fix for a store bug nobody found +quiet
 -removed a lot cp_resize stuff, don't use it
+```
 
 #####v1.32ger#####
 -added trigger_lapcounter:
