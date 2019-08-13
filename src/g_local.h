@@ -1000,6 +1000,7 @@ typedef struct
 	qboolean	going_up;
 	qboolean	going_forward;
 	qboolean	going_back;
+	float		repeat_time;
 	qboolean	silence;
 	int silence_until;
 	qboolean key_forward;
@@ -1047,7 +1048,6 @@ typedef struct
 	int			rep_race_number;
 	float	rep_racing_delay;
 	int			race_frame;
-	qboolean	raceline;
 	qboolean	shotproj;
 	qboolean cleanhud;
 	int			max_speed;

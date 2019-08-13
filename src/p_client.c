@@ -2055,6 +2055,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	vec3_t temp_pos;
 	qboolean prev_groundentity;
 	vec_t tlen;
+	qboolean rep_repeat;
 
 	level.current_entity = ent;
 	client = ent->client;
@@ -2150,7 +2151,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		return;
 	}
 //ZOID
-
+	//remove the ability to "jump" while watching a replay..
+	if (client->resp.replaying && ucmd->upmove > 10) { 
+		ucmd->upmove = 0;
+		rep_repeat = true;
+	}
+	else {
+		rep_repeat = false;
+	}
 	// set up for pmove
 	memset (&pm, 0, sizeof(pm));
 
@@ -2179,7 +2187,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->ps.pmove.pm_type = PM_FREEZE;
 	}
 
-	if (client->hook_state == HOOK_ON)
+	if (client->hook_state == HOOK_ON || client->resp.replaying)
 		client->ps.pmove.gravity = 0;
 	else
 		client->ps.pmove.gravity = mset_vars->gravity * ent->gravity * ent->gravity2;
@@ -2388,13 +2396,10 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		if (ent->client->resp.replaying)
 		{
-			if ((ucmd->upmove>=10) && (!ent->client->resp.going_up))
-				ent->client->resp.going_up = true;
-
-			if ((ucmd->upmove<10) && (ent->client->resp.going_up))
+			if (rep_repeat && (client->resp.repeat_time+1<level.time))
 			{
 				Cmd_RepRepeat(ent);
-				ent->client->resp.going_up = false;
+				client->resp.repeat_time = level.time;
 			}
 
 			if ((ucmd->forwardmove>=10) && (!ent->client->resp.going_forward))
@@ -2580,24 +2585,6 @@ void ClientBeginServerFrame (edict_t *ent)
 			PlayerTrail_Add (ent->s.old_origin);
 
 	client->latched_buttons = 0;
-
-	//raceline - Will this be laggy?
-	if(ent->client->resp.raceline){
-		racenr = ent->client->resp.rep_race_number;
-		if (racenr<0 || racenr>MAX_HIGHSCORES)
-			racenr = 0;
-		for (i=0 ; i<MAX_RECORD_FRAMES ; i++) {
-			if (level_items.recorded_time_data[racenr][i+1].origin[0] == 0 && level_items.recorded_time_data[racenr][i+1].origin[1] == 0) {
-				break;
-			}
-			gi.WriteByte (svc_temp_entity);
-			gi.WriteByte (TE_DEBUGTRAIL);
-			gi.WritePosition (level_items.recorded_time_data[racenr][i].origin);
-			gi.WritePosition (level_items.recorded_time_data[racenr][i+2].origin);
-			gi.unicast(ent,true);
-			i += 1;
-		}
-	}
 
 	if (!ent->client->resp.race_frame)
 	{

@@ -3996,7 +3996,7 @@ void CTFReplayer(edict_t *ent)
     ent->client->Jet_framenum = 0;
 	ent->deadflag = DEAD_NO;
 	ent->solid = SOLID_NOT;
-	ent->movetype = MOVETYPE_NOCLIP;
+	ent->movetype = MOVETYPE_WALK;
 	ent->svflags |= SVF_NOCLIENT;
 	ent->client->resp.ctf_team = CTF_NOTEAM;
 	ent->client->ps.stats[STAT_ITEM_TIMER] = 0;
