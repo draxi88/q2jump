@@ -368,6 +368,7 @@ typedef struct
 	edict_t *ghost;
 	edict_t *spinnything;
 	int maptype;
+	edict_t *cpbrushes[MAX_EDICTS];
 } level_locals_t;
 
 

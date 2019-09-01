@@ -641,7 +641,7 @@ void light_think(edict_t *self) {
 		}
 		gi.unicast(cl_ent, true); //send to clients
 	}
-	self->nextthink = level.time + FRAMETIME;
+	//self->nextthink = level.time + FRAMETIME;
 }
 void SP_light(edict_t *self)
 {
@@ -660,6 +660,7 @@ void SP_light(edict_t *self)
 			G_FreeEdict(self);
 			return;
 		}
+		self->classname = "jump_cplight";
 		self->think = light_think;
 		self->nextthink = level.time + 1;
 	}

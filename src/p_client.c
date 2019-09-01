@@ -2035,6 +2035,54 @@ void PrintPmove (pmove_t *pm)
 	Com_Printf ("sv %3i:%i %i\n", pm->cmd.impulse, c1, c2);
 }
 
+//Checks cpbrushes if they need to change solidity.
+void CheckCpbrush(edict_t *ent, qboolean pre_pmove) {
+	vec3_t mins = { -50, -50, -50 };
+	vec3_t maxs = { 50, 50, 50 };
+	vec3_t checkmins, checkmaxs;
+	int		i;
+	edict_t *brush;
+
+	if (pre_pmove) {
+		for (i = 0; i < MAX_EDICTS; i++) {
+			if (level.cpbrushes[i] == NULL) {
+				break;
+			}
+			brush = level.cpbrushes[i];
+			VectorAdd(brush->absmin, mins, checkmins);
+			VectorAdd(brush->absmax, maxs, checkmaxs);
+			if (VectorInside(checkmins, checkmaxs, ent->s.origin)) {
+				if (brush->spawnflags != 1) {
+					if (ent->client->resp.store[0].checkpoints >= brush->count) {
+						brush->solid = SOLID_NOT;
+						stuffcmd(ent, "gl_polyblend 0"); //so players don't see that orangeish blur.
+					}
+				}
+				else if (brush->spawnflags == 1) {
+					if (ent->client->resp.store[0].checkpoints < brush->count) {
+						brush->solid = SOLID_NOT;
+						stuffcmd(ent, "gl_polyblend 0"); //so players don't see that orangeish blur.
+					}
+				}
+			}
+		}
+	}
+	else {
+		for (i = 0; i < MAX_EDICTS; i++) {
+			if (level.cpbrushes[i] == NULL) {
+				break;
+			}
+			brush = level.cpbrushes[i];
+			if (brush->spawnflags != 1 && brush->solid == SOLID_NOT) {
+				brush->solid = SOLID_BSP;
+			}
+			else if (brush->spawnflags == 1 && brush->solid == SOLID_NOT) {
+				brush->solid = SOLID_BSP;
+			}
+		}
+	}
+}
+
 /*
 ==============
 ClientThink
@@ -2213,6 +2261,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 //		gi.dprintf ("pmove changed!\n");
 	}
 
+	CheckCpbrush(ent, true); //set cpbrush SOLID_NOT if needed.
 	pm.cmd = *ucmd;
 
 	if (ent->client->resp.ctf_team==CTF_TEAM2 || (gametype->value==GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1))
@@ -2223,7 +2272,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	// perform a pmove
 	gi.Pmove (&pm);
-
+	CheckCpbrush(ent, false); //reset cpbrush solidity
 
 	if (gametype->value!=GAME_CTF)
 

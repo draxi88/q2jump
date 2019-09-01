@@ -797,6 +797,17 @@ void VectorScale (vec3_t in, vec_t scale, vec3_t out)
 	out[2] = in[2]*scale;
 }
 
+//Check if point is inside a "box" set by mins and maxs.
+qboolean VectorInside(vec3_t mins, vec3_t maxs, vec3_t point) {
+	int i;
+	for (i = 0; i < 3; i++) {
+		if (point[i]<mins[i] || point[i]>maxs[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
 
 int Q_log2(int val)
 {

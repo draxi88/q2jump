@@ -163,6 +163,7 @@ void SP_cpbox_small (edict_t *ent);
 void SP_cpbox_medium (edict_t *ent);
 void SP_cpbox_large (edict_t *ent);
 void SP_jump_cpwall (edict_t *ent);
+void SP_jump_cpbrush (edict_t *ent);
 void SP_jump_cpeffect (edict_t *ent);
 void SP_one_way_wall(edict_t *self);
 
@@ -181,6 +182,7 @@ spawn_t	spawns[] = {
 	{"cpbox_medium", SP_cpbox_medium},
 	{"cpbox_large", SP_cpbox_large},
 	{"jump_cpwall", SP_jump_cpwall},
+	{"jump_cpbrush", SP_jump_cpbrush},
 	{"jump_cpeffect", SP_jump_cpeffect},
 	{"one_way_wall", SP_one_way_wall},
 	{"item_health", SP_item_health},

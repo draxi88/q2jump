@@ -161,6 +161,7 @@ extern long Q_ftol( float f );
 #define VectorSet(v, x, y, z)	(v[0]=(x), v[1]=(y), v[2]=(z))
 
 void VectorMA (vec3_t veca, float scale, vec3_t vecb, vec3_t vecc);
+qboolean VectorInside(vec3_t mins, vec3_t maxs, vec3_t point);
 
 // just in case you do't want to use the macros
 vec_t _DotProduct (vec3_t v1, vec3_t v2);
