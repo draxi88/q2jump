@@ -1837,7 +1837,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		trecid = -1;
 		if (cl->resp.uid>0)
 		{
-			trecid = cl->resp.trecid;		
+			trecid = FindTRecID(cl->resp.uid - 1);
 		}
 
 		// send the layout
@@ -1923,7 +1923,7 @@ void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
 		trecid = -1;
 		if (cl->resp.uid>0)
 		{
-			trecid = cl->resp.trecid;		
+			trecid = FindTRecID(cl->resp.uid - 1);
 		}
 
 		if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000)
