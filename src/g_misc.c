@@ -2080,7 +2080,7 @@ void SP_trigger_teleport (edict_t *ent)
 	}
 
 	ent->svflags |= SVF_NOCLIENT;
-	ent->solid = SOLID_BSP;
+	ent->solid = SOLID_TRIGGER; // ent->solid = SOLID_BSP; lets you make them not rectangular, but it's buggy
 	ent->touch = teleporter_touch;
 	gi.setmodel (ent, ent->model);
 	gi.linkentity (ent);
