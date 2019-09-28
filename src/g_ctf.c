@@ -4760,51 +4760,32 @@ void CTFWarp(edict_t *ent)
 	if (ent->client->resp.silence)
 		return;
 
-	/*// forcing non-idle
-	ent->client->pers.frames_without_movement = 0;
-	ent->client->pers.idle_player = false;*/
-
-/*	if (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)
-	if ((mset_vars->timelimit*60)+(map_added_time*60)-level.time<120){
-		if (Get_Voting_Clients()>1) {
-			gi.cprintf(ent,PRINT_HIGH,"You cannot initiate a vote of this kind when timeleft is under 2 minutes\n");
-			return;
-		}
-	}
-*/
-
-
 	index = ent-g_edicts-1;
-/*	if ((level.time<20) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL))
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Please wait %2.1f seconds before calling a vote\n",20.0-level.time);
-		return;
-	}*/
 
-	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL) && curclients > 2) // 0.84wp_h1
-	{
+	// check for nomapvotetime gset
+	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL) && curclients > 2) {
 		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvotetime);
 		return;
 	}
 
-	if ((ent->client->resp.num_votes>=gset_vars->max_votes) && (ent->client->resp.admin < aset_vars->ADMIN_NOMAXVOTES_LEVEL)) // _h2
-	{
-		gi.cprintf(ent,PRINT_HIGH,"You had %d elections fail and cannot call anymore.\n",gset_vars->max_votes); // _h2
+	// check for having too many failed elections
+	if ((ent->client->resp.num_votes>=gset_vars->max_votes) && (ent->client->resp.admin < aset_vars->ADMIN_NOMAXVOTES_LEVEL)) {
+		gi.cprintf(ent,PRINT_HIGH,"You had %d elections fail and cannot call anymore.\n",gset_vars->max_votes);
 		return;
 	}
 
-	if ((ClientIsBanned(ent,BAN_MAPVOTE)) && (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL))
-	{
+	// check for bans
+	if ((ClientIsBanned(ent,BAN_MAPVOTE)) && (ent->client->resp.admin < aset_vars->ADMIN_VOTE_LEVEL)) {
 		gi.cprintf(ent,PRINT_HIGH,"You are not allowed to mapvote.\n");
 		return;
 	}
 
-	if ((ent->client->resp.num_votes==gset_vars->max_votes) && (ent->client->resp.admin < aset_vars->ADMIN_NOMAXVOTES_LEVEL))
-	{
-		//Last of their 3 votes, ban them from voting for incase they try again.
+	// Last of their 3 votes, ban them from voting
+	if ((ent->client->resp.num_votes==gset_vars->max_votes) && (ent->client->resp.admin < aset_vars->ADMIN_NOMAXVOTES_LEVEL)) {
 		AddTempBan(ent,30);
 	}
 
+	// list of type of mapvotes you can do
 	if (gi.argc() < 2) {
 		gi.cprintf(ent, PRINT_HIGH, "--------------------------------\n");
 		gi.cprintf(ent, PRINT_HIGH, "Type maplist for a list of maps.\n");
@@ -4822,43 +4803,30 @@ void CTFWarp(edict_t *ent)
 		return;
 	}
 
-	if (maplist.nummaps<=0)
-	{
+	// empty maplist check
+	if (maplist.nummaps<=0) {
 		gi.cprintf(ent, PRINT_HIGH, "Maplist is empty.\n");
 		return;
 	}
 
+	// set initial map
 	map = -1;
-
 	strcpy(temp,gi.argv(1));
 
-	if ((strcmp(temp,"RANDOM")==0) || (strcmp(temp,"random")==0))
-	{
+	// random mapvote
+	if ((strcmp(temp,"RANDOM")==0) || (strcmp(temp,"random")==0)) {
 		map = rand() % maplist.nummaps;
-		
-/*		if (ent->client->resp.admin>=ADMIN_VOTE_LEVEL) {
-			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
-			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's random map vote has passed. Level changing to %s.\n", 
-				ent->client->pers.netname, maplist.mapnames[map]);
-			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
-			EndDMLevel();
-			return;
-		}*/
 
-
-		for (i=0;i < gset_vars->maps_pass;i++)
-		{
-			if (Q_stricmp(maplist.mapnames[map],game.lastmaps[i]) == 0)
-			{
+		for (i=0;i < gset_vars->maps_pass;i++) {
+			if (Q_stricmp(maplist.mapnames[map],game.lastmaps[i]) == 0) {
 				map = rand() % maplist.nummaps;
 			}
 		}
 
 		sprintf(text, "%s: Request to change map to %s (Random map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
-		if (CTFBeginElection(ent, ELECT_MAP, text,false))
-		{			
+
+		if (CTFBeginElection(ent, ELECT_MAP, text,false)) {			
 			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[map]));
 			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
@@ -4866,18 +4834,17 @@ void CTFWarp(edict_t *ent)
 				CTFWinElection(0, NULL);
 		}
 	}
-	else
-	if ((strcmp(temp,"NEXT")==0) || (strcmp(temp,"next")==0))
-	{
+	
+	// next mapvote
+	else if ((strcmp(temp,"NEXT")==0) || (strcmp(temp,"next")==0)) {
 		map = level.mapnum;
 		map++;
+
 		if (map>=maplist.nummaps)
 			map = 0;
 		
-		for (i=0;i < gset_vars->maps_pass;i++)
-		{
-			if (Q_stricmp(maplist.mapnames[map],game.lastmaps[i]) == 0)
-			{
+		for (i=0;i < gset_vars->maps_pass;i++) {
+			if (Q_stricmp(maplist.mapnames[map],game.lastmaps[i]) == 0) {
 				if (i == 0)
 					gi.cprintf(ent,PRINT_HIGH,"You cannot vote that map because it is currently being played.\n");
 				else
@@ -4889,8 +4856,8 @@ void CTFWarp(edict_t *ent)
 
 		sprintf(text, "%s: Request to change map to %s (Next map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
-		if (CTFBeginElection(ent, ELECT_MAP, text,false))
-		{
+
+		if (CTFBeginElection(ent, ELECT_MAP, text,false)) {
 			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[map]));
 			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
@@ -4898,15 +4865,46 @@ void CTFWarp(edict_t *ent)
 				CTFWinElection(0, NULL);
 		}
 	}
-	else
-	if ((strcmp(temp,"NEW")==0) || (strcmp(temp,"new")==0))
-	{
+
+	// previous mapvote
+	else if ((strcmp(temp, "PREV") == 0) || (strcmp(temp, "prev") == 0)) {
+		map = level.mapnum;
+		map--;
+
+		if (map < 0)
+			map = maplist.nummaps - 1;
+
+		for (i = 0; i < gset_vars->maps_pass; i++) {
+			if (Q_stricmp(maplist.mapnames[map], game.lastmaps[i]) == 0) {
+				if (i == 0)
+					gi.cprintf(ent, PRINT_HIGH, "You cannot vote that map because it is currently being played.\n");
+				else
+					gi.cprintf(ent, PRINT_HIGH, "You cannot vote that map because it was played %d map(s) ago.\n", i);
+
+				return;
+			}
+		}
+
+		sprintf(text, "%s: Request to change map to %s (Previous map)",
+			ent->client->pers.netname, maplist.mapnames[map]);
+
+		if (CTFBeginElection(ent, ELECT_MAP, text, false)) {
+			gi.configstring(CONFIG_JUMP_VOTE_INITIATED, HighAscii(va("Vote by %s", ent->client->pers.netname)));
+			gi.configstring(CONFIG_JUMP_VOTE_TYPE, va("Map: %s", maplist.mapnames[map]));
+			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
+			if (ctfgame.needvotes == 0)
+				CTFWinElection(0, NULL);
+		}
+	}
+
+	// new mapvote
+	else if ((strcmp(temp,"NEW")==0) || (strcmp(temp,"new")==0)) {
 		map = maplist.nummaps - 1;
 
 		sprintf(text, "%s: Request to change map to %s (Newest map)", 
 				ent->client->pers.netname, maplist.mapnames[map]);
-		if (CTFBeginElection(ent, ELECT_MAP, text,false))
-		{
+
+		if (CTFBeginElection(ent, ELECT_MAP, text,false)) {
 			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[map]));
 			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
@@ -4914,9 +4912,10 @@ void CTFWarp(edict_t *ent)
 				CTFWinElection(0, NULL);
 		}
 	}
-	else
-	if ((strcmp(temp,"NEWTODO")==0) || (strcmp(temp,"newtodo")==0))
-	{
+
+	// new todo mapvote
+	else if ((strcmp(temp,"NEWTODO")==0) || (strcmp(temp,"newtodo")==0)) {
+
 		if (ent->client->resp.uid<=0) { // check for id
 			gi.cprintf(ent,PRINT_HIGH,"Join HARD team to load your identity.\n");
 			return;
@@ -4949,43 +4948,41 @@ void CTFWarp(edict_t *ent)
 				CTFWinElection(0, NULL);
 		}
 	}
-	else
-	if ((strcmp(temp,"TODO")==0) || (strcmp(temp,"todo")==0))
-	{
-		if (ent->client->resp.uid<=0)
-		{
-			//client does not exist yet
+	
+	// todo mapvote
+	else if ((strcmp(temp,"TODO")==0) || (strcmp(temp,"todo")==0)) {
+
+		// client does not exist yet
+		if (ent->client->resp.uid<=0) {
 			gi.cprintf(ent,PRINT_HIGH,"You have not completed ANY maps. Join HARD team to load your identity.\n");
 			return;
 		}
 		
-		//find the map in our list
-		if (!overall_completions[index].loaded)
-		{
+		// find the map in our list
+		if (!overall_completions[index].loaded) {
 			write_tourney_file(level.mapname,level.mapnum);   // 084_h3
-			//open their file
 			open_uid_file(ent->client->resp.uid-1,ent);
 		}
+
 		i2 = 0;
-		for (i=0;i<maplist.nummaps;i++)
-		{
-			if (overall_completions[index].maps[i]!=1)
-			{
+		for (i=0;i<maplist.nummaps;i++) {
+			if (overall_completions[index].maps[i]!=1) {
 				notimes[i2] = i;
 				i2++;
 			}
 		}
-		if (!i2)
-		{
+
+		if (!i2) {
 			gi.cprintf(ent,PRINT_HIGH,"All maps been completed\n");
 			return;
 		}
+
 		map = rand() % i2;
 
 		sprintf(text, "%s: Request to change map to %s (To do)", 
 				ent->client->pers.netname, maplist.mapnames[notimes[map]]);
-		if (CTFBeginElection(ent, ELECT_MAP, text,false))
-		{
+
+		if (CTFBeginElection(ent, ELECT_MAP, text,false)) {
 			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[notimes[map]]));
 			strncpy(ctfgame.elevel, maplist.mapnames[notimes[map]], sizeof(ctfgame.elevel) - 1);
@@ -4993,29 +4990,26 @@ void CTFWarp(edict_t *ent)
 				CTFWinElection(0, NULL);
 		}
 	}
-	else
-	if ((strcmp(temp,"notime")==0) || (strcmp(temp,"NOTIME")==0))
-	{
+	
+	// notime mapvote
+	else if ((strcmp(temp,"notime")==0) || (strcmp(temp,"NOTIME")==0)) {
 		i2 = 0;
-		for (i=0;i<maplist.nummaps;i++)
-		{
-			if (!maplist.times[i][0].time)
-			{
+		for (i=0;i<maplist.nummaps;i++) {
+			if (!maplist.times[i][0].time) {
 				notimes[i2] = i;
 				i2++;
 			}
 		}
-		if (!i2)
-		{
+
+		if (!i2){
 			gi.cprintf(ent,PRINT_HIGH,"All maps have a time set\n");
 			return;
 		}
+
 		map = rand() % i2;
 
-		for (i=0;i < gset_vars->maps_pass;i++)
-		{
-			if (Q_stricmp(maplist.mapnames[notimes[map]],game.lastmaps[i]) == 0)
-			{
+		for (i=0;i < gset_vars->maps_pass;i++) {
+			if (Q_stricmp(maplist.mapnames[notimes[map]],game.lastmaps[i]) == 0) {
 				if (i == 0)
 					gi.cprintf(ent,PRINT_HIGH,"You cannot vote that map because it is currently being played.\n");
 				else
@@ -5027,8 +5021,8 @@ void CTFWarp(edict_t *ent)
 
 		sprintf(text, "%s: Request to change map to %s (No time set)", 
 				ent->client->pers.netname, maplist.mapnames[notimes[map]]);
-		if (CTFBeginElection(ent, ELECT_MAP, text,false))
-		{
+
+		if (CTFBeginElection(ent, ELECT_MAP, text,false)) {
 			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[notimes[map]]));
 			strncpy(ctfgame.elevel, maplist.mapnames[notimes[map]], sizeof(ctfgame.elevel) - 1);
@@ -5036,56 +5030,15 @@ void CTFWarp(edict_t *ent)
 				CTFWinElection(0, NULL);
 		}
 	}
-	else
-	if ((strcmp(temp,"PREV")==0) || (strcmp(temp,"prev")==0))
-	{
-		map = level.mapnum;
-		map--;
-		if (map<0)
-			map = maplist.nummaps-1;
-		
-/*		if (ent->client->resp.admin>=ADMIN_VOTE_LEVEL) {
-			sprintf(text,"changed level to %s.",maplist.mapnames[map]);
-			admin_log(ent,text);
-			gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
-				ent->client->pers.netname, maplist.mapnames[map]);
-			strncpy(level.forcemap, maplist.mapnames[map], sizeof(level.forcemap) - 1);
-			EndDMLevel();
-			return;
-		}
-*/
 
-		for (i=0;i < gset_vars->maps_pass;i++)
-		{
-			if (Q_stricmp(maplist.mapnames[map],game.lastmaps[i]) == 0)
-			{
-				if (i == 0)
-					gi.cprintf(ent,PRINT_HIGH,"You cannot vote that map because it is currently being played.\n");
-				else
-					gi.cprintf(ent,PRINT_HIGH,"You cannot vote that map because it was played %d map(s) ago.\n",i);
-
-				return;
-			}
-		}
-
-		sprintf(text, "%s: Request to change map to %s (Previous map)", 
-				ent->client->pers.netname, maplist.mapnames[map]);
-		if (CTFBeginElection(ent, ELECT_MAP, text,false))
-		{
-			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
-			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",maplist.mapnames[map]));
-			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
-			if (ctfgame.needvotes==0)
-				CTFWinElection(0, NULL);
-		}
-	}
-	else
-	if ((strcmp(temp, "SKILL") == 0) || (strcmp(temp, "skill") == 0))
+	// skill mapvote
+	else if ((strcmp(temp, "SKILL") == 0) || (strcmp(temp, "skill") == 0))
 	{
 		if (gi.argc() < 3) {
 			gi.cprintf(ent, PRINT_HIGH, "mapvote skill [#] (1 to 5).\n");
 			return;
 		}
+
 		temp_num = atoi(gi.argv(2));
 		if (temp_num < 1 || temp_num > 5) {
 			gi.cprintf(ent, PRINT_HIGH, "mapvote skill [#] (1 to 5).\n");
@@ -5093,25 +5046,24 @@ void CTFWarp(edict_t *ent)
 		}
 
 		i2 = 0;
-		for (i = 0; i < maplist.nummaps; i++)
-		{
-			if (maplist.skill[i] == temp_num)
-			{
+		for (i = 0; i < maplist.nummaps; i++) {
+			if (maplist.skill[i] == temp_num) {
 				skill[i2] = i;
 				i2++;
 			}
 		}
-		if (!i2)
-		{
+
+		if (!i2) {
 			gi.cprintf(ent, PRINT_HIGH, "No maps with this specific skill.\n");
 			return;
 		}
+
 		map = skill[rand() % i2];
 
 		sprintf(text, "%s: Request to change map to %s (skill: %i)",
 			ent->client->pers.netname, maplist.mapnames[map], temp_num);
-		if (CTFBeginElection(ent, ELECT_MAP, text, false))
-		{
+
+		if (CTFBeginElection(ent, ELECT_MAP, text, false)) {
 			gi.configstring(CONFIG_JUMP_VOTE_INITIATED, HighAscii(va("Vote by %s", ent->client->pers.netname)));
 			gi.configstring(CONFIG_JUMP_VOTE_TYPE, va("Map: %s", maplist.mapnames[map]));
 			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
@@ -5119,38 +5071,31 @@ void CTFWarp(edict_t *ent)
 				CTFWinElection(0, NULL);
 		}
 	}
-	else
-	{
-		for (i=0;i<maplist.nummaps;i++)
-		{
-			if (Q_stricmp(maplist.mapnames[i],temp)==0)
-			{
+
+	// voting by mapname or id
+	else {
+		for (i = 0; i < maplist.nummaps; i++) {
+			if (Q_stricmp((char*)maplist.mapnames[i], (char*)temp)==0) {
 				map = i;
 				break;
 			}
 		}
-	
-
-		if (map==-1) 
-		{
+		
+		// didnt find the name name, so use the number
+		if (map==-1) {
 			temp_num = atoi(gi.argv(1));
-			if ((temp_num>=1) && (temp_num<=maplist.nummaps))
-			{
-				//mapvote by number
+			if ((temp_num>=1) && (temp_num<=maplist.nummaps)) {
 				strcpy(temp,maplist.mapnames[temp_num-1]);
 				map = temp_num-1;
 			}
-			else
-			{
+			else{
 				gi.cprintf(ent, PRINT_HIGH, "Unknown map, for available maps type maplist.\n");
 				return;
 			}
 		}
 
-		for (i=0;i < gset_vars->maps_pass;i++)
-		{
-			if (Q_stricmp(temp,game.lastmaps[i]) == 0)
-			{
+		for (i=0;i < gset_vars->maps_pass;i++) {
+			if (Q_stricmp(temp,game.lastmaps[i]) == 0) {
 				if (i == 0)
 					gi.cprintf(ent,PRINT_HIGH,"You cannot vote that map because it is currently being played.\n");
 				else
@@ -5162,8 +5107,8 @@ void CTFWarp(edict_t *ent)
 
 		sprintf(text, "%s: Request to change map to %s", 
 				ent->client->pers.netname, temp);
-		if (CTFBeginElection(ent, ELECT_MAP, text,false))
-		{
+
+		if (CTFBeginElection(ent, ELECT_MAP, text,false)) {
 			gi.configstring (CONFIG_JUMP_VOTE_INITIATED,HighAscii(va("Vote by %s",ent->client->pers.netname)));
 			gi.configstring (CONFIG_JUMP_VOTE_TYPE,va("Map: %s",temp));
 			strncpy(ctfgame.elevel, maplist.mapnames[map], sizeof(ctfgame.elevel) - 1);
