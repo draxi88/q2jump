@@ -14205,6 +14205,9 @@ void worldspawn_mset() {
 		else if (Q_stricmp(temp[i], "damage") == 0) {
 			mset_vars->damage = atoi(temp[i + 1]);
 		}
+		else if (Q_stricmp(temp[i], "droptofloor") == 0) {
+			mset_vars->droptofloor = atoi(temp[i + 1]);
+		}
 		else if (Q_stricmp(temp[i], "fast_firing") == 0) {
 			mset_vars->fast_firing = atoi(temp[i + 1]);
 		}
