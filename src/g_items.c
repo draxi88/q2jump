@@ -3670,7 +3670,7 @@ void cpwall_think (edict_t *self){
 		gi.WriteByte (self->s.skinnum);
 		gi.unicast(temp_ent,true);
 	}
-	//self->nextthink = level.time + FRAMETIME;
+	self->nextthink = level.time + FRAMETIME;
 }
 
 void cpwall_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
