@@ -3748,7 +3748,7 @@ void SP_jump_cpwall (edict_t *ent) {
 //wall that's connected to checkpoints.
 //count = how many checkpoints is needed to activate/deactivate the wall.
 //default: deactivates if checkpoint>=count.
-//if spawnflag 1 is set, it works the other way around. Activates when checkpoint>=count.
+//if spawnflag 1 is set, it works the other way around. Activates when checkpoint<=count.
 void cpbrush_think(edict_t *self) {
 	edict_t *ent;
 	int i;
