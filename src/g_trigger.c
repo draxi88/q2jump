@@ -161,8 +161,7 @@ void SP_trigger_multiple (edict_t *ent)
 -resizable ent that acts as a lap counter
 -does not end a run, you still need a weapon_finish or railgun
 -count: how many lap checkpoints needed to finish a lap, min 1
--angle: set in direction you want players to go, required or ent will be broken
--speed: how much speed you need to pass the ent, not required
+-if you want to block a direction that it can be used, set a one_way_wall
 */
 void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
@@ -207,17 +206,18 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		return;
 	}
 
+	/*
 	// setting up the internal one-way-wall checking and laptime
 	vec3_t   vel;
 	float	 dot;
 	vec3_t	 forward;
-	float	 current_laptime;
 
+	
 	// normalize vector, get angle of the wall, get dot product
-	VectorCopy(other->velocity, vel);
-	VectorNormalize(vel);
-	AngleVectors(self->s.angles, forward, NULL, NULL);
-	dot = DotProduct(vel, forward); 
+	vectorcopy(other->velocity, vel);
+	vectornormalize(vel);
+	anglevectors(self->s.angles, forward, null, null);
+	dot = dotproduct(vel, forward); 
 
 	// check for speed setting, kill velocity if they don't meet it
 	if (self->speed) { // without this the error msg sometimes leaks through
@@ -240,6 +240,7 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		}
 		return;
 	}
+	*/
 
 	// they don't have enough lap checkpoints, tell them how many they missed
 	if (other->client->pers.lap_cps < self->count) {
@@ -250,6 +251,8 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	}
 
 	// check if they have enough checkpoints to increase laps_player?
+	float	 current_laptime;
+
 	if (other->client->pers.lap_cps >= self->count) {
 
 		// getting the laptime of the player
