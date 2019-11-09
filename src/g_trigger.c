@@ -217,7 +217,7 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 	VectorCopy(other->velocity, vel);
 	VectorNormalize(vel);
 	AngleVectors(self->s.angles, forward, NULL, NULL);
-	dot = DotProduct(vel, forward);
+	dot = DotProduct(vel, forward); 
 
 	// check for speed setting, kill velocity if they don't meet it
 	if (self->speed) { // without this the error msg sometimes leaks through
@@ -227,20 +227,30 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 			if (trigger_timer(self->wait)) {
 				gi.cprintf(other, PRINT_HIGH, "You need %.0f speed to pass the wall.\n", self->speed);
 			}
+			return;
 		}
 	}
 
 	// check if the player enters at the right angle
-	else if (dot <= 0) {
+	if (dot <= 0) {
 		VectorCopy(other->s.old_origin, other->s.origin);
 		VectorClear(other->velocity);
 		if (trigger_timer(self->wait)) {
 			gi.cprintf(other, PRINT_HIGH, "You are going the wrong way.\n");
 		}
+		return;
+	}
+
+	// they don't have enough lap checkpoints, tell them how many they missed
+	if (other->client->pers.lap_cps < self->count) {
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints needed to complete this lap.\n", other->client->pers.lap_cps, self->count);
+		}
+		return;
 	}
 
 	// check if they have enough checkpoints to increase laps_player?
-	else if (other->client->pers.lap_cps >= self->count) {
+	if (other->client->pers.lap_cps >= self->count) {
 
 		// getting the laptime of the player
 		float my_time;
@@ -299,13 +309,6 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 			}
 		}
 	}
-
-	// they don't have enough lap checkpoints, tell them how many they missed
-	if (other->client->pers.lap_cps < self->count) {
-		if (trigger_timer(self->wait)) {
-			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints needed to complete this lap.\n", other->client->pers.lap_cps, self->count);
-		}
-	}
 }
 
 void SP_trigger_lapcounter(edict_t *self) {
@@ -314,7 +317,10 @@ void SP_trigger_lapcounter(edict_t *self) {
 		self->wait = .5;
 	}
 
-	InitTrigger(self);
+	self->solid = SOLID_TRIGGER;
+	self->movetype = MOVETYPE_NONE;
+	gi.setmodel(self, self->model);
+	self->svflags = SVF_NOCLIENT;
 	self->touch = lapcounter_touch;
 }
 
