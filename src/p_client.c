@@ -1825,6 +1825,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 		}
 	}
 
+	/*
 	// speedhud
 	s = Info_ValueForKey(userinfo, "cl_drawstrafehelper");
 	if (!s) { //needs stuffing
@@ -1833,6 +1834,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	if (atoi(s) != 0) { // should always be 0!!
 		ent->client->pers.stuffed = false;
 	}
+	*/
 
 	// save off the userinfo in case we want to check something later
 	strncpy (ent->client->pers.userinfo, userinfo, sizeof(ent->client->pers.userinfo)-1);
