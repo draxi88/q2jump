@@ -159,7 +159,7 @@ void SP_trigger_multiple (edict_t *ent)
 
 /*QUAKED trigger_lapcounter (.5 .5 .5) ?
 -resizable ent that acts as a lap counter
--does not end a run, you still need a weapon_finish or railgun
+-does not end a run, you still need a trigger_finish or railgun
 -count: how many lap checkpoints needed to finish a lap, min 1
 -if you want to block a direction that it can be used, set a one_way_wall
 */
@@ -935,11 +935,12 @@ void SP_trigger_monsterjump (edict_t *self)
 	self->movedir[2] = st.height;
 }
 
-//Trigger that works with Pickup_Weapon.
-//Used as a finish (railgun by default)
-//Add a <message> value with a classname of a weapon in the editor to change it to some other weapon.
-//Then it can be used to give players a weapon, like rocket launcher or bfg or whatever.
-//e.g. "message = weapon_rocketlauncher"
+// Trigger that works with Pickup_Weapon.
+// Used as a finish (railgun by default)
+// Add a <message> value with a classname of a weapon in the editor to change it to some other weapon.
+// Then it can be used to give players a weapon, like rocket launcher or bfg or whatever.
+// e.g. "message = weapon_rocketlauncher"
+// options: weapon_railgun, weapon_rocketlauncher, weapon_grenadelauncher, weapon_bfg
 void SP_trigger_finish(edict_t *ent)
 {
 	gitem_t *wep;

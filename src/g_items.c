@@ -1935,6 +1935,7 @@ always owned, never in the world
 */
 	{
 		// this ent allows a plane or box to serve as the finish line, instead of a weapon -Ace
+		// DEPRECIATED - trigger_finish should be used instead now
 		"weapon_finish",
 		Pickup_Weapon,
 		Use_Weapon,
