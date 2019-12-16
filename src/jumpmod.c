@@ -42,7 +42,7 @@ static char *help_main[] = {
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
-	"velstore - toggles velocity storing for your store markers", //velocity store feature
+	"velstore - toggles velocity storing for your store markers\n", //velocity store feature
 	"playerlist - list the players in game\n",
 	"\nΣτατιστιγσ\n",
 	"maptimes - view best times on a map\n",
