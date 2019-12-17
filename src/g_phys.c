@@ -360,7 +360,18 @@ retry:
 		mask = MASK_SOLID;
 
 	trace = gi.trace (start, ent->mins, ent->maxs, end, ent, mask);
-	
+	if (Q_stricmp(trace.ent->classname, "jump_cpbrush") == 0) {
+		if (trace.ent->spawnflags != 1) {
+			if (ent->owner && ent->owner->client && ent->owner->client->resp.store[0].checkpoints >= trace.ent->count) {
+				trace = gi.trace(start, ent->mins, ent->maxs, end, trace.ent, mask);
+			}
+		}
+		else {
+			if (ent->owner && ent->owner->client && ent->owner->client->resp.store[0].checkpoints < trace.ent->count) {
+				trace = gi.trace(start, ent->mins, ent->maxs, end, trace.ent, mask);
+			}
+		}
+	}
 	VectorCopy (trace.endpos, ent->s.origin);
 	gi.linkentity (ent);
 

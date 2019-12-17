@@ -1935,6 +1935,7 @@ always owned, never in the world
 */
 	{
 		// this ent allows a plane or box to serve as the finish line, instead of a weapon -Ace
+		// DEPRECIATED - trigger_finish should be used instead now
 		"weapon_finish",
 		Pickup_Weapon,
 		Use_Weapon,
@@ -3673,7 +3674,7 @@ void cpwall_think (edict_t *self){
 	self->nextthink = level.time + FRAMETIME;
 }
 
-void cpwall_touch (edict_t *self, edict_t *other) {
+void cpwall_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
 	if (!other->client)
 		return;
 	if (other->client->resp.ctf_team == CTF_TEAM1 || other->client->resp.ctf_team == CTF_TEAM2){
@@ -3744,8 +3745,65 @@ void SP_jump_cpwall (edict_t *ent) {
 	gi.linkentity(ent);
 }
 
+//jump_cpbrush
+//wall that's connected to checkpoints.
+//count = how many checkpoints is needed to activate/deactivate the wall.
+//default: deactivates if checkpoint>=count.
+//if spawnflag 1 is set, it works the other way around. Activates when checkpoint<=count.
+void cpbrush_think(edict_t *self) {
+	edict_t *ent;
+	int i;
+
+	for (i = 0; i < maxclients->value; i++) {
+		ent = g_edicts + 1 + i;
+		if (!ent->inuse || !ent->client)
+			continue;
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CS_MODELS + self->s.modelindex);
+		if (self->spawnflags == 1) {
+			if (ent->client->resp.store[0].checkpoints < self->count) {
+				gi.WriteString("models/jump/emptymodel/tris.md2");
+			}
+			else {
+				gi.WriteString(self->model);
+			}
+		}
+		else {
+			if (ent->client->resp.store[0].checkpoints >= self->count) {
+				gi.WriteString("models/jump/emptymodel/tris.md2");
+			}
+			else {
+				gi.WriteString(self->model);
+			}
+		}
+		gi.unicast(ent, true);
+	}
+	gi.linkentity(self);
+	//self->nextthink = level.time + FRAMETIME; <-- Done somewhere else now.
+}
+void SP_jump_cpbrush(edict_t *ent) {
+	int i;
+
+	if (!ent->count) {
+		gi.dprintf("CPbrush without count.\n");
+		G_FreeEdict(ent);
+	}
+	ent->think = cpbrush_think;
+	ent->solid = SOLID_BSP;
+	ent->classname = "jump_cpbrush";
+	ent->movetype = MOVETYPE_NONE;
+	gi.setmodel(ent, ent->model);
+	for (i = 0; i < MAX_EDICTS; i++) {
+		if (level.cpbrushes[i] == NULL) {
+			level.cpbrushes[i] = ent;
+			break;
+		}
+	}
+	gi.linkentity(ent);
+}
+
 //---one-way-wall start
-void one_way_wall_touch(edict_t *self, edict_t *other) {
+void one_way_wall_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
 
 	//not a client...
 	if (!other->client)

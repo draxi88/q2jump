@@ -5,7 +5,7 @@ Jump mod isolates the unique movement from Quake II, like strafe and double jump
 
 ***
 ### Compiling
-The code should compile using windows or linux. Included is a makefile for linux and a visual studio solution file for Windows. To compile on linux, run the makefile with gcc. To compile on Windows, Visual Studio 2015 or newer will work. Send us a question on our [discord](https://discord.q2jump.net) if you can't get it to work.
+The code should compile using windows or linux. Included is a makefile for linux and a visual studio solution file for Windows. To compile on linux, run the makefile with gcc. To compile on Windows, visual studio with `MSVC v140 - VS 2015 C++ build tools (v14.00)` and `Windows 8.1 SDK` should work. If something is missing it should tell you. Send us a question on our [discord](https://discord.q2jump.net) if you can't get it to work.
 
 ***
 ### Archive

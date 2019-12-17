@@ -159,10 +159,9 @@ void SP_trigger_multiple (edict_t *ent)
 
 /*QUAKED trigger_lapcounter (.5 .5 .5) ?
 -resizable ent that acts as a lap counter
--does not end a run, you still need a weapon_finish or railgun
+-does not end a run, you still need a trigger_finish or railgun
 -count: how many lap checkpoints needed to finish a lap, min 1
--angle: set in direction you want players to go, required or ent will be broken
--speed: how much speed you need to pass the ent, not required
+-if you want to block a direction that it can be used, set a one_way_wall
 */
 void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
@@ -207,17 +206,18 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		return;
 	}
 
+	/*
 	// setting up the internal one-way-wall checking and laptime
 	vec3_t   vel;
 	float	 dot;
 	vec3_t	 forward;
-	float	 current_laptime;
 
+	
 	// normalize vector, get angle of the wall, get dot product
-	VectorCopy(other->velocity, vel);
-	VectorNormalize(vel);
-	AngleVectors(self->s.angles, forward, NULL, NULL);
-	dot = DotProduct(vel, forward);
+	vectorcopy(other->velocity, vel);
+	vectornormalize(vel);
+	anglevectors(self->s.angles, forward, null, null);
+	dot = dotproduct(vel, forward); 
 
 	// check for speed setting, kill velocity if they don't meet it
 	if (self->speed) { // without this the error msg sometimes leaks through
@@ -227,20 +227,33 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 			if (trigger_timer(self->wait)) {
 				gi.cprintf(other, PRINT_HIGH, "You need %.0f speed to pass the wall.\n", self->speed);
 			}
+			return;
 		}
 	}
 
 	// check if the player enters at the right angle
-	else if (dot <= 0) {
+	if (dot <= 0) {
 		VectorCopy(other->s.old_origin, other->s.origin);
 		VectorClear(other->velocity);
 		if (trigger_timer(self->wait)) {
 			gi.cprintf(other, PRINT_HIGH, "You are going the wrong way.\n");
 		}
+		return;
+	}
+	*/
+
+	// they don't have enough lap checkpoints, tell them how many they missed
+	if (other->client->pers.lap_cps < self->count) {
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints needed to complete this lap.\n", other->client->pers.lap_cps, self->count);
+		}
+		return;
 	}
 
 	// check if they have enough checkpoints to increase laps_player?
-	else if (other->client->pers.lap_cps >= self->count) {
+	float	 current_laptime;
+
+	if (other->client->pers.lap_cps >= self->count) {
 
 		// getting the laptime of the player
 		float my_time;
@@ -299,13 +312,6 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 			}
 		}
 	}
-
-	// they don't have enough lap checkpoints, tell them how many they missed
-	if (other->client->pers.lap_cps < self->count) {
-		if (trigger_timer(self->wait)) {
-			gi.cprintf(other, PRINT_HIGH, "You have %d of the %d lap checkpoints needed to complete this lap.\n", other->client->pers.lap_cps, self->count);
-		}
-	}
 }
 
 void SP_trigger_lapcounter(edict_t *self) {
@@ -314,7 +320,10 @@ void SP_trigger_lapcounter(edict_t *self) {
 		self->wait = .5;
 	}
 
-	InitTrigger(self);
+	self->solid = SOLID_TRIGGER;
+	self->movetype = MOVETYPE_NONE;
+	gi.setmodel(self, self->model);
+	self->svflags = SVF_NOCLIENT;
 	self->touch = lapcounter_touch;
 }
 
@@ -926,11 +935,12 @@ void SP_trigger_monsterjump (edict_t *self)
 	self->movedir[2] = st.height;
 }
 
-//Trigger that works with Pickup_Weapon.
-//Used as a finish (railgun by default)
-//Add a <message> value with a classname of a weapon in the editor to change it to some other weapon.
-//Then it can be used to give players a weapon, like rocket launcher or bfg or whatever.
-//e.g. "message = weapon_rocketlauncher"
+// Trigger that works with Pickup_Weapon.
+// Used as a finish (railgun by default)
+// Add a <message> value with a classname of a weapon in the editor to change it to some other weapon.
+// Then it can be used to give players a weapon, like rocket launcher or bfg or whatever.
+// e.g. "message = weapon_rocketlauncher"
+// options: weapon_railgun, weapon_rocketlauncher, weapon_grenadelauncher, weapon_bfg
 void SP_trigger_finish(edict_t *ent)
 {
 	gitem_t *wep;

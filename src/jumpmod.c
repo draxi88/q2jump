@@ -42,7 +42,7 @@ static char *help_main[] = {
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
-	"velstore - toggles velocity storing for your store markers", //velocity store feature
+	"velstore - toggles velocity storing for your store markers\n", //velocity store feature
 	"playerlist - list the players in game\n",
 	"\nΣτατιστιγσ\n",
 	"maptimes - view best times on a map\n",
@@ -4824,6 +4824,8 @@ void Cmd_Recall(edict_t *ent)
 	vec3_t	spawn_origin, spawn_angles;
 
 	if (ent->client->chase_target)
+		return;
+	if (ent->client->resp.replaying)
 		return;
 
 	ClearPersistants(&ent->client->pers);
@@ -13958,6 +13960,30 @@ void jumpmod_pos_sound(vec3_t pos,edict_t *ent, int sound, int channel, float vo
 	}
 }
 
+//Update entities using checkpoints.
+//Rather have checked whenever a cp is picked up, or when a player recalls, than checking it every frame.
+void Update_CP_Ents() {
+	edict_t *ent;
+	ent = NULL;
+	while ((ent = G_Find(ent, FOFS(classname), "jump_cpbrush")) != NULL)
+	{
+		ent->nextthink = level.time + FRAMETIME;
+	}
+	while ((ent = G_Find(ent, FOFS(classname), "jump_cpwall")) != NULL)
+	{
+		ent->nextthink = level.time + FRAMETIME;
+	}
+	while ((ent = G_Find(ent, FOFS(classname), "jump_cpeffect")) != NULL)
+	{
+		ent->nextthink = level.time + FRAMETIME;
+	}
+	while ((ent = G_Find(ent, FOFS(classname), "jump_cplight")) != NULL)
+	{
+		ent->nextthink = level.time + FRAMETIME;
+	}
+}
+
+//Hud footer.. duh..
 void hud_footer(edict_t *ent) {
 	edict_t *cl_ent;
 	int i;
@@ -14071,6 +14097,7 @@ void hud_footer(edict_t *ent) {
 		gi.WriteString(ent->client->resp.hud[3].string);
 		gi.unicast(cl_ent, true);
 	}
+	Update_CP_Ents();
 }
 
 // Check if a addcmd.ini file exists.
@@ -14177,6 +14204,9 @@ void worldspawn_mset() {
 		}
 		else if (Q_stricmp(temp[i], "damage") == 0) {
 			mset_vars->damage = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "droptofloor") == 0) {
+			mset_vars->droptofloor = atoi(temp[i + 1]);
 		}
 		else if (Q_stricmp(temp[i], "fast_firing") == 0) {
 			mset_vars->fast_firing = atoi(temp[i + 1]);
