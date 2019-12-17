@@ -1,3 +1,23 @@
+#####v1.34ger#####
+-Reenabled strafehud, PRAISE THE TOUCAN
+-new ent, jump_cpbrush
+	-similar to a jump_cpwall, but this is a physical wall that can be assigned a textures
+	-count: how many checkpoints are needed to activate or deactivate the wall
+	-default: deactivates if player checkpoint total is  >= count
+	-if spawnflag 1 is set, it activates when checkpoint total is >= count
+-fix for scoreboard showing the wrong time for a player
+-lapcounter changes
+	-removed angle and speed from the ent
+	-use a one_way_wall if you want to block a direction
+-mapvoting for a map with a number at the start will no longer vote for an id instead
+	-restructured most of the mapvote function to be a little smoother
+-fix for replays not touching items, checkpoints, and other things that made them look funky
+-moved checkpoint related think functions to their own function
+	-connected this function to the hud_footer so updating hud is smoother
+	-no longer updates every frame, only when it needs to
+-added droptofloor to worldspawn mset options
+
+
 #####v1.33ger#####
 -added mapvote skill
     -mapvote skill 1-5, depending on skill of map you want
@@ -45,7 +65,6 @@
 -fix for spam commands at the end of a map
 -fix for a store bug nobody found +quiet
 -removed a lot cp_resize stuff, don't use it
-```
 
 #####v1.32ger#####
 -added trigger_lapcounter:
