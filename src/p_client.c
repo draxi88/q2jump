@@ -2143,7 +2143,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	if (!ent->client->pers.stuffed && ent->client->resp.ctf_team != CTF_NOTEAM) {
 		ent->client->pers.stuffed = true;
 		stuffcmd(ent, "set cl_maxfps $cl_maxfps u\n");
-		stuffcmd(ent, "set cl_drawstrafehelper 0 u\n");
+		//stuffcmd(ent, "set cl_drawstrafehelper 0 u\n");
 	}
 
 	//idle ?
