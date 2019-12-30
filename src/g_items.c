@@ -3126,33 +3126,61 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			}
 		}
 	}
+
+	// check for spawnflag 1, which means we want to take away a checkpoint
+	if (self->spawnflags & 1) {
+		if (player->client->resp.store[0].cpbox_checkpoint[self->count] == 1) {
+			player->client->resp.store[0].cpbox_checkpoint[self->count] = 0;
+			player->client->resp.store[0].checkpoints -= 1;
+			gi.cprintf(player, PRINT_HIGH, "checkpoint %d removed\n", self->count);
+
+			//memcpy+msg for anyone chasing us...
+			for (i = 0; i < maxclients->value; i++) {
+				cl_ent = g_edicts + 1 + i;
+				if (!cl_ent->inuse || !cl_ent->client->chase_target)
+					continue;
+				if (cl_ent->client->chase_target->client->resp.ctf_team == CTF_NOTEAM)
+					continue;
+				if (Q_stricmp(cl_ent->client->chase_target->client->pers.netname, player->client->pers.netname) == 0) {
+					gi.cprintf(cl_ent, PRINT_HIGH, "%s %s", player->client->pers.netname, cpstring);
+					memcpy(cl_ent->client->resp.store[0].cpbox_checkpoint, player->client->resp.store[0].cpbox_checkpoint, sizeof(player->client->resp.store[0].cpbox_checkpoint));
+				}
+			}
+			CPSoundCheck(player);
+			hud_footer(player);
+		}
+	}
+
 	// rest is for regular cpboxes..
-
-	// get the clients time in .xxx format
-	my_time = Sys_Milliseconds() - player->client->resp.client_think_begin;
-	my_time_decimal = (float)my_time / 1000.0f;
-
 	// check if they have it already, increase it if they don't
-	if (player->client->resp.store[0].cpbox_checkpoint[self->count] != 1) {
+	else if (player->client->resp.store[0].cpbox_checkpoint[self->count] != 1) {
 		player->client->resp.store[0].cpbox_checkpoint[self->count] = 1;
 		player->client->resp.store[0].checkpoints += 1;
+
+		// get the clients time in .xxx format
+		my_time = Sys_Milliseconds() - player->client->resp.client_think_begin;
+		my_time_decimal = (float)my_time / 1000.0f;
+
 		// in easy give them the int, in hard give them the float, in replay give them relative
-		if (player->client->resp.ctf_team==CTF_TEAM1){
-			sprintf(cpstring,"reached checkpoint %d/%d in %1.1f seconds. (split: %1.1f)\n",
-			player->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, player->client->resp.item_timer, player->client->resp.item_timer - player->client->pers.cp_split);
+		if (player->client->resp.ctf_team == CTF_TEAM1) {
+			sprintf(cpstring, "reached checkpoint %d/%d in %1.1f seconds. (split: %1.1f)\n",
+				player->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, player->client->resp.item_timer, player->client->resp.item_timer - player->client->pers.cp_split);
 			player->client->pers.cp_split = player->client->resp.item_timer;
 			gi.cprintf(player, PRINT_HIGH, "You %s", cpstring);
-		} else if (player->client->resp.ctf_team==CTF_TEAM2){
+		}
+		else if (player->client->resp.ctf_team == CTF_TEAM2) {
 			sprintf(cpstring, "reached checkpoint %d/%d in %1.3f seconds. (split: %1.3f)\n",
-			player->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal, my_time_decimal - player->client->pers.cp_split);
+				player->client->resp.store[0].checkpoints, mset_vars->checkpoint_total, my_time_decimal, my_time_decimal - player->client->pers.cp_split);
 			player->client->pers.cp_split = my_time_decimal;
-			gi.cprintf(player, PRINT_HIGH, "You %s",cpstring);
-		} else if (player->client->resp.ctf_team==CTF_NOTEAM && player->client->resp.replaying && !player->client->resp.mute_cprep) {
-			gi.cprintf(player, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds. (split: %1.1f)\n", 
-				level_items.stored_item_times[player->client->resp.replaying-1].owner, player->client->resp.store[0].checkpoints, 
+			gi.cprintf(player, PRINT_HIGH, "You %s", cpstring);
+		}
+		else if (player->client->resp.ctf_team == CTF_NOTEAM && player->client->resp.replaying && !player->client->resp.mute_cprep) {
+			gi.cprintf(player, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds. (split: %1.1f)\n",
+				level_items.stored_item_times[player->client->resp.replaying - 1].owner, player->client->resp.store[0].checkpoints,
 				mset_vars->checkpoint_total, (player->client->resp.replay_frame / 10) - 0.1, ((player->client->resp.replay_frame / 10) - 0.1) - player->client->pers.cp_split);
 			player->client->pers.cp_split = (player->client->resp.replay_frame / 10) - 0.1;
 		}
+
 		//memcpy+msg for anyone chasing us...
 		for (i = 0; i < maxclients->value; i++) {
 			cl_ent = g_edicts + 1 + i;
