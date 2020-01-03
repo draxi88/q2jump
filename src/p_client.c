@@ -2054,18 +2054,18 @@ void CheckCpbrush(edict_t *ent, qboolean pre_pmove) {
 			VectorAdd(brush->absmin, mins, checkmins);
 			VectorAdd(brush->absmax, maxs, checkmaxs);
 			if (VectorInside(checkmins, checkmaxs, ent->s.origin)) {
-				if (brush->spawnflags != 1) {
-					if (ent->client->resp.store[0].checkpoints >= brush->count) {
+				if (brush->spawnflags & 1) {
+					if ((!(brush->spawnflags & 2) && ent->client->resp.store[0].checkpoints < brush->count) || (brush->spawnflags & 2 && ent->client->resp.store[0].cpbox_checkpoint[brush->count] == 0)) {
 						brush->solid = SOLID_NOT;
 						stuffcmd(ent, "gl_polyblend 0"); //so players don't see that orangeish blur.
 					}
-				}
-				else if (brush->spawnflags == 1) {
-					if (ent->client->resp.store[0].checkpoints < brush->count) {
-						brush->solid = SOLID_NOT;
-						stuffcmd(ent, "gl_polyblend 0"); //so players don't see that orangeish blur.
+				} 
+				else { //if (brush->spawnflags != 1) 
+						if ((!(brush->spawnflags & 2) && ent->client->resp.store[0].checkpoints >= brush->count) || (brush->spawnflags & 2 && ent->client->resp.store[0].cpbox_checkpoint[brush->count] == 1)) {
+							brush->solid = SOLID_NOT;
+							stuffcmd(ent, "gl_polyblend 0"); //so players don't see that orangeish blur.
+						}
 					}
-				}
 			}
 		}
 	}

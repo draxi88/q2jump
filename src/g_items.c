@@ -3777,7 +3777,8 @@ void SP_jump_cpwall (edict_t *ent) {
 //wall that's connected to checkpoints.
 //count = how many checkpoints is needed to activate/deactivate the wall.
 //default: deactivates if checkpoint>=count.
-//if spawnflag 1 is set, it works the other way around. Activates when checkpoint<=count.
+//if spawnflag 1 is set, it works the other way around. Activates when checkpoint>=count.
+//if spawnflag 2 is set, it ONLY works with a cpbox with the same count. Even though a players checkpoint total is less than the count set.
 void cpbrush_think(edict_t *self) {
 	edict_t *ent;
 	int i;
@@ -3788,8 +3789,8 @@ void cpbrush_think(edict_t *self) {
 			continue;
 		gi.WriteByte(svc_configstring);
 		gi.WriteShort(CS_MODELS + self->s.modelindex);
-		if (self->spawnflags == 1) {
-			if (ent->client->resp.store[0].checkpoints < self->count) {
+		if (self->spawnflags & 1) {
+			if ((!(self->spawnflags & 2) && ent->client->resp.store[0].checkpoints < self->count) || (self->spawnflags & 2 && ent->client->resp.store[0].cpbox_checkpoint[self->count] == 0)) {
 				gi.WriteString("models/jump/emptymodel/tris.md2");
 			}
 			else {
@@ -3797,7 +3798,7 @@ void cpbrush_think(edict_t *self) {
 			}
 		}
 		else {
-			if (ent->client->resp.store[0].checkpoints >= self->count) {
+			if ((!(self->spawnflags & 2) && ent->client->resp.store[0].checkpoints >= self->count) || (self->spawnflags & 2 && ent->client->resp.store[0].cpbox_checkpoint[self->count] == 1)) {
 				gi.WriteString("models/jump/emptymodel/tris.md2");
 			}
 			else {
