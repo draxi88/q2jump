@@ -183,7 +183,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 
 		// normal ammo
 		else
-			Add_Ammo (other, ammo, ammo->quantity);
+			Add_Ammo (other, ammo, 1000);
 
 		if (! (ent->spawnflags & DROPPED_PLAYER_ITEM) && (Q_stricmp(ent->classname, "trigger_finish") != 0)) { //Added stricmp for trigger_finish so it doesn't mess it up.
 			if (deathmatch->value) {
