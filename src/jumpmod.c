@@ -167,12 +167,19 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &mset_vars->fastdoors,
   },
-  { 
+  {
 	0,1,0,
-    "fasttele", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->fasttele,
+	"fasttele",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->fasttele,
+  },
+  {
+	0,4,0,
+	"fog",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->fog,
   },
   { 
 	0,1,1,
@@ -445,6 +452,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET, 
     CMDTYPE_NUMBER,
     &gset_vars->flashlight,
+  },
+  {
+	0,4,0,
+	"gfog",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->fog,
   },
   { 
 	0,1,1,
@@ -14240,4 +14254,75 @@ void worldspawn_mset() {
 		}
 	}
 	return;
+}
+
+//Fugly Spherical Fog
+void fog_think(edict_t *self) {
+	int i;
+	edict_t *cl_ent;
+	if (!mset_vars->fog) {
+		goto NoFogForYou;
+	}
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+		if (!cl_ent->inuse || !cl_ent->client)
+			continue;
+		gi.WriteByte(svc_configstring);
+		gi.WriteShort(CS_MODELS + self->s.modelindex);
+		if (self->owner == cl_ent) {
+			VectorCopy(cl_ent->s.origin, self->s.origin);
+			if (self->count == 2) {
+				gi.WriteString("models/fog/tris5.md2");
+			}
+			else {
+				gi.WriteString(va("models/fog/tris%i.md2", mset_vars->fog));
+			}
+		}
+		else {
+			gi.WriteString("models/jump/emptymodel/tris.md2");
+		}
+		gi.unicast(cl_ent, true);
+	}
+	NoFogForYou:
+	self->nextthink = level.time + FRAMETIME;
+	gi.linkentity(self);
+}
+void Fugly_Fog() {
+	int i;
+	edict_t *cl;
+	edict_t *fog;
+	edict_t *fog2;
+	if (!mset_vars->fog) {
+		return;
+	}
+	gi.dprintf("Fog enabled\n");
+	for (i = 0; i < maxclients->value; i++) {
+		cl = g_edicts + 1 + i;
+		fog = G_Spawn();
+		fog->owner = cl;
+		fog->solid = SOLID_NOT;
+		fog->classname = "func_fog";
+		fog->movetype = MOVETYPE_NOCLIP;
+		fog->s.effects = EF_SPHERETRANS|EF_COLOR_SHELL;
+		fog->s.renderfx = RF_FULLBRIGHT|RF_WEAPONMODEL|RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE;
+		fog->s.modelindex = gi.modelindex(va("fog_%i.md2", i));
+		fog->think = fog_think;
+		fog->nextthink = level.time + FRAMETIME;
+		gi.linkentity(fog);
+	}	
+	for (i = 0; i < maxclients->value; i++) {
+		cl = g_edicts + 1 + i;
+		fog = G_Spawn();
+		fog->owner = cl;
+		fog->count = 2;
+		fog->solid = SOLID_NOT;
+		fog->classname = "func_fog";
+		fog->movetype = MOVETYPE_NOCLIP;
+		fog->s.effects = EF_SPHERETRANS | EF_COLOR_SHELL;
+		fog->s.renderfx = RF_FULLBRIGHT | RF_WEAPONMODEL | RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE;
+		fog->s.modelindex = gi.modelindex(va("fog2_%i.md2", i));
+		fog->think = fog_think;
+		fog->nextthink = level.time + FRAMETIME;
+		gi.linkentity(fog);
+	}
 }

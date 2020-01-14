@@ -421,6 +421,7 @@ typedef struct
 	int fast_firing;
 	int fastdoors;	
 	int fasttele;
+	int fog;
 	int ghost;
 	int ghost_model;
 	int gravity;
@@ -862,3 +863,4 @@ void ClearCheckpoints(edict_t *ent);
 void CheckCmdFile();
 void worldspawn_mset();
 qboolean	Pickup_Weapon(edict_t *ent, edict_t *other); //trigger_finish uses this.
+void Fugly_Fog();

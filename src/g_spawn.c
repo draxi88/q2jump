@@ -906,6 +906,7 @@ debug_log(text);
 	nominated_map = false;
 	GenerateVoteMaps();
 	Update_Next_Maps();
+	Fugly_Fog();
 	/*if (gametype->value==GAME_CTF)
 	{
 		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    team  RED");
