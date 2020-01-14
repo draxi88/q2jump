@@ -1061,6 +1061,7 @@ typedef struct
 
 	hud_struct	hud[4];
 	char		hudstring[2048];
+	int			fog[64];
 
 } client_respawn_t;
 
