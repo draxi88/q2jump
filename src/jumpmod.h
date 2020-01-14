@@ -409,6 +409,7 @@ typedef struct
 {
 	int addedtimeoverride;
 	int allowsrj;
+	int announcements;
 	int bfg;
 	int blaster;
 	int checkpoint_total;

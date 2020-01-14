@@ -84,7 +84,34 @@ void Touch_Multi (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 	else
 		return;
 
-	// give a trigger_multiple a count of 1-9, and it will be an individual welcome trigger
+	// checking for announcements
+	// count values of 100-199
+	if (mset_vars->announcements == 1) {
+
+		// check count
+		if (self->count > 199 || self->count < 100) {
+			if (self->count >= 0 || self->count < 100) {
+
+			}
+			else if (trigger_timer(self->wait)) {
+				gi.cprintf(other, PRINT_HIGH, "Count needs to be from 100-199.\n");
+			}
+		}
+
+		// check if it's already been triggered
+		else if (other->client->resp.announce_count[self->count] > 0) {
+			return;
+		}
+
+		// check the announcement
+		else if (self->count) {
+			other->client->resp.announce_count[self->count] = self->count;
+			gi.bprintf(PRINT_HIGH, "%s reached %s first. Congrats!\n", other->client->pers.netname, self->message);
+			G_FreeEdict(self);
+		}
+	}
+
+	// give a trigger_multiple a count of 0-99, and it will be an individual welcome trigger
 	if (other->client->resp.welcome_count[self->count] > 0)
 		return;
 	if (self->count)
