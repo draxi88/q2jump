@@ -14260,38 +14260,42 @@ void worldspawn_mset() {
 void fog_think(edict_t *self) {
 	int i;
 	edict_t *cl_ent;
-	if (!mset_vars->fog) {
-		goto NoFogForYou;
-	}
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
-		if (!cl_ent->inuse || !cl_ent->client)
+		if (!cl_ent->inuse || !cl_ent->client) {
 			continue;
-		gi.WriteByte(svc_configstring);
-		gi.WriteShort(CS_MODELS + self->s.modelindex);
-		if (self->owner == cl_ent) {
-			VectorCopy(cl_ent->s.origin, self->s.origin);
-			if (self->count == 2) {
-				gi.WriteString("models/fog/tris5.md2");
+		}
+		if (!cl_ent->client->resp.fog[self->count] || self->mass != mset_vars->fog) {
+			if (self->mass != mset_vars->fog) {
+				gi.dprintf("-- mset mass -- %i -- %i --", self->mass, mset_vars->fog);
+			}
+			gi.dprintf("update modelindex:%i\n",i);
+			gi.WriteByte(svc_configstring);
+			gi.WriteShort(CS_MODELS + self->s.modelindex);
+			if (self->owner != cl_ent) {
+				gi.WriteString("models/jump/emptymodel/tris.md2");
 			}
 			else {
-				gi.WriteString(va("models/fog/tris%i.md2", mset_vars->fog));
+				if (self->speed == 2)
+					gi.WriteString("models/fog/tris5.md2");
+				else
+					gi.WriteString(va("models/fog/tris%i.md2", mset_vars->fog));
 			}
+			gi.unicast(cl_ent, true);
+			self->mass = mset_vars->fog;
+			cl_ent->client->resp.fog[self->count] = 1;
 		}
-		else {
-			gi.WriteString("models/jump/emptymodel/tris.md2");
+		if (self->owner == cl_ent) {
+			VectorCopy(cl_ent->s.origin, self->s.origin);
 		}
-		gi.unicast(cl_ent, true);
 	}
-	NoFogForYou:
 	self->nextthink = level.time + FRAMETIME;
 	gi.linkentity(self);
 }
 void Fugly_Fog() {
-	int i;
+	int i,j = 0;
 	edict_t *cl;
 	edict_t *fog;
-	edict_t *fog2;
 	if (!mset_vars->fog) {
 		return;
 	}
@@ -14300,8 +14304,10 @@ void Fugly_Fog() {
 		cl = g_edicts + 1 + i;
 		fog = G_Spawn();
 		fog->owner = cl;
+		fog->count = j;
+		j++;
 		fog->solid = SOLID_NOT;
-		fog->classname = "func_fog";
+		fog->classname = "fugly_fog";
 		fog->movetype = MOVETYPE_NOCLIP;
 		fog->s.effects = EF_SPHERETRANS|EF_COLOR_SHELL;
 		fog->s.renderfx = RF_FULLBRIGHT|RF_WEAPONMODEL|RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE;
@@ -14314,9 +14320,11 @@ void Fugly_Fog() {
 		cl = g_edicts + 1 + i;
 		fog = G_Spawn();
 		fog->owner = cl;
-		fog->count = 2;
+		fog->count = j;
+		j++;
+		fog->speed = 2;
 		fog->solid = SOLID_NOT;
-		fog->classname = "func_fog";
+		fog->classname = "fugly_fog";
 		fog->movetype = MOVETYPE_NOCLIP;
 		fog->s.effects = EF_SPHERETRANS | EF_COLOR_SHELL;
 		fog->s.renderfx = RF_FULLBRIGHT | RF_WEAPONMODEL | RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE;
