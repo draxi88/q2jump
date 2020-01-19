@@ -92,7 +92,7 @@ zbotcmd_t zbotCommands[] =
   },
   {
 	0,1,0,
-	"announcments",
+	"announcements",
 	CMDWHERE_CFGFILE | CMD_MSET,
 	CMDTYPE_NUMBER,
 	&mset_vars->announcements,

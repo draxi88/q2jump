@@ -85,7 +85,8 @@ void Touch_Multi (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 	// checking for announcements and welcomes (is there a count?)
 	// welcome counts: 1-10
 	// announcement counts: 11-20
-	if (mset_vars->announcements == 1 & self->count > 0) {
+	if (self->count > 0) {
+
 		// out of range count
 		if (self->count > 20) {
 			if (trigger_timer(self->wait)) {
@@ -111,12 +112,16 @@ void Touch_Multi (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			if (other->client->resp.announce_count[self->count] > 0) {
 				return;
 			}
-			else if (self->count) {
+			else if (mset_vars->announcements == 1) {
 				other->client->resp.announce_count[self->count] = self->count;
 				gi.bprintf(PRINT_HIGH, "%s reached %s first. Congrats!\n", other->client->pers.netname, self->message);
 				G_FreeEdict(self);
 			}
+			else {
+				return;
+			}
 		}
+
 	}
 
 
