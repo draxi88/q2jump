@@ -112,9 +112,10 @@ void Touch_Multi (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			if (other->client->resp.announce_count[self->count] > 0) {
 				return;
 			}
-			else if (mset_vars->announcements == 1) {
+			// check for announcements mset and only fire to players on team hard
+			else if (mset_vars->announcements == 1 & other->client->resp.ctf_team == CTF_TEAM2) {
 				other->client->resp.announce_count[self->count] = self->count;
-				gi.bprintf(PRINT_HIGH, "%s reached %s first. Congrats!\n", other->client->pers.netname, self->message);
+				gi.bprintf(PRINT_HIGH, "\n%s reached %s first. Congrats!\n\n", other->client->pers.netname, self->message);
 				G_FreeEdict(self);
 			}
 			else {
