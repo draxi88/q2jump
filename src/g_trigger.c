@@ -69,53 +69,56 @@ void Use_Multi (edict_t *ent, edict_t *other, edict_t *activator)
 	multi_trigger (ent);
 }
 
-void Touch_Multi (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
-{
-	if(other->client)
-	{
+void Touch_Multi (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf) {
+	if (other->client) {
 		if (self->spawnflags & 2)
 			return;
 	}
-	else if (other->svflags & SVF_MONSTER)
-	{
+	else if (other->svflags & SVF_MONSTER) {
 		if (!(self->spawnflags & 1))
 			return;
 	}
-	else
+	else {
 		return;
+	}
 
-	// checking for announcements
-	// count values of 100-199
-	if (mset_vars->announcements == 1) {
-
-		// check count
-		if (self->count > 199 || self->count < 100) {
-			if (self->count >= 0 || self->count < 100) {
-
-			}
-			else if (trigger_timer(self->wait)) {
-				gi.cprintf(other, PRINT_HIGH, "Count needs to be from 100-199.\n");
+	// checking for announcements and welcomes (is there a count?)
+	// welcome counts: 1-10
+	// announcement counts: 11-20
+	if (mset_vars->announcements == 1 & self->count > 0) {
+		// out of range count
+		if (self->count > 20) {
+			if (trigger_timer(self->wait)) {
+				gi.cprintf(other, PRINT_HIGH, "Count needs to be from 1-10 or 11-20.\n");
+				return;
 			}
 		}
 
-		// check if it's already been triggered
-		else if (other->client->resp.announce_count[self->count] > 0) {
-			return;
+		// welcome triggers
+		else if (self->count < 11) {
+			// already welcomed, don't replay the msg
+			if (other->client->resp.welcome_count[self->count] > 0) {
+				return;
+			}
+			else {
+				other->client->resp.welcome_count[self->count] = self->count;
+			}
 		}
 
-		// check the announcement
-		else if (self->count) {
-			other->client->resp.announce_count[self->count] = self->count;
-			gi.bprintf(PRINT_HIGH, "%s reached %s first. Congrats!\n", other->client->pers.netname, self->message);
-			G_FreeEdict(self);
+		// announcement triggers
+		else if (self->count < 21) {
+			// already announced, don't replay the msg
+			if (other->client->resp.announce_count[self->count] > 0) {
+				return;
+			}
+			else if (self->count) {
+				other->client->resp.announce_count[self->count] = self->count;
+				gi.bprintf(PRINT_HIGH, "%s reached %s first. Congrats!\n", other->client->pers.netname, self->message);
+				G_FreeEdict(self);
+			}
 		}
 	}
 
-	// give a trigger_multiple a count of 0-99, and it will be an individual welcome trigger
-	if (other->client->resp.welcome_count[self->count] > 0)
-		return;
-	if (self->count)
-		other->client->resp.welcome_count[self->count] = self->count;
 
 	if (!VectorCompare(self->movedir, vec3_origin))
 	{
