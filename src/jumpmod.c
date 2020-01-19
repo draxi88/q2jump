@@ -90,6 +90,13 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &mset_vars->allowsrj,
   },
+  {
+	0,1,0,
+	"announcments",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->announcements,
+  },
   { 
 	0,1,0,
     "bfg", 
@@ -333,6 +340,13 @@ zbotcmd_t zbotCommands[] =
     CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
     CMDTYPE_NUMBER,
     &gset_vars->mset->allowsrj,
+  },
+  {
+	0,1,0,
+	"gannouncements",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->announcements,
   },
   { 
 	0,100,10,
@@ -608,7 +622,7 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->kill_delay,
   },
   {
-	0,28,0,
+	0,100,0,
 	"glap_total",
 	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
 	CMDTYPE_NUMBER,
@@ -6277,6 +6291,7 @@ void SetDefaultValues(void)
 	gset_vars->allow_race_spark = 1;
 #endif
 	gset_vars->mset->allowsrj = 0;
+	gset_vars->mset->announcements = 0;
 	gset_vars->autotime = 10;
 	gset_vars->best_time_glow = 0;
 	gset_vars->mset->bfg = 0;
@@ -14207,7 +14222,10 @@ void worldspawn_mset() {
 		p = strtok(NULL, " ");
 	}
 	for(i=0;i<w;i++){
-		if (Q_stricmp(temp[i], "bfg") == 0) {
+		if (Q_stricmp(temp[i], "announcements") == 0) {
+			mset_vars->announcements = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "bfg") == 0) {
 			mset_vars->bfg = atoi(temp[i + 1]);
 		}
 		else if (Q_stricmp(temp[i], "blaster") == 0) {

@@ -1057,7 +1057,10 @@ typedef struct
 	int			max_speed_time;
 
 	// trigger_welcome
-	int         welcome_count[10];
+	int         welcome_count[11];
+
+	// trigger_announce
+	int         announce_count[21];
 
 	hud_struct	hud[4];
 	char		hudstring[2048];
