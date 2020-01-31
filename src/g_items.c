@@ -3085,7 +3085,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		return;
 
 	//check if cpbox has a target...
-	if(self->target){
+	if (self->target) {
 
 		//check if it should clear all cp's.
 		if(Q_stricmp(self->target,"cp_clear")==0){
@@ -3125,6 +3125,29 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 				}
 			}
 		}
+
+		/*
+		- check for not displaying times
+		- ideally this shouldn't be used while using mset checkpoint_total
+		- no sound will be played
+		*/
+		else if (Q_stricmp(self->target, "nodisplay") == 0) {
+			if (player->client->resp.store[0].cpbox_checkpoint[self->count] != 1) {
+				player->client->resp.store[0].cpbox_checkpoint[self->count] = 1;
+				player->client->resp.store[0].checkpoints += 1;
+
+				//memcpy+msg for anyone chasing us...
+				for (i = 0; i < maxclients->value; i++) {
+					cl_ent = g_edicts + 1 + i;
+					if (!cl_ent->inuse || !cl_ent->client->chase_target)
+						continue;
+					if (cl_ent->client->chase_target->client->resp.ctf_team == CTF_NOTEAM)
+						continue;
+				}
+				hud_footer(player);
+			}
+			return;
+		}
 	}
 
 	// check for spawnflag 1, which means we want to take away a checkpoint
@@ -3146,7 +3169,14 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 					memcpy(cl_ent->client->resp.store[0].cpbox_checkpoint, player->client->resp.store[0].cpbox_checkpoint, sizeof(player->client->resp.store[0].cpbox_checkpoint));
 				}
 			}
-			CPSoundCheck(player);
+			// check for not playing a sound with a checkpoint
+			if (self->target) {
+				if (Q_stricmp(self->target, "nosound") == 0) {
+				}
+			}
+			else {
+				CPSoundCheck(player);
+			}
 			hud_footer(player);
 		}
 	}
@@ -3193,9 +3223,15 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 				memcpy(cl_ent->client->resp.store[0].cpbox_checkpoint, player->client->resp.store[0].cpbox_checkpoint, sizeof(player->client->resp.store[0].cpbox_checkpoint));
 			}
 		}
-		// play a sound for it
-		CPSoundCheck(player);
-		//update hud
+
+		// check for not playing a sound with a checkpoint
+		if (self->target) {
+			if (Q_stricmp(self->target, "nosound") == 0) {
+			}
+		}
+		else {
+			CPSoundCheck(player);
+		}
 		hud_footer(player);
 	}
 }
