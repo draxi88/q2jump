@@ -3085,7 +3085,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		return;
 
 	//check if cpbox has a target...
-	if(self->target){
+	if (self->target) {
 
 		//check if it should clear all cp's.
 		if(Q_stricmp(self->target,"cp_clear")==0){
@@ -3124,6 +3124,28 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 					return;
 				}
 			}
+		}
+
+		/*
+		- check for not displaying times
+		- ideally this shouldn't be used while using mset checkpoint_total
+		*/
+		else if (Q_stricmp(self->target, "nodisplay") == 0) {
+			if (player->client->resp.store[0].cpbox_checkpoint[self->count] != 1) {
+				player->client->resp.store[0].cpbox_checkpoint[self->count] = 1;
+				player->client->resp.store[0].checkpoints += 1;
+
+				//memcpy+msg for anyone chasing us...
+				for (i = 0; i < maxclients->value; i++) {
+					cl_ent = g_edicts + 1 + i;
+					if (!cl_ent->inuse || !cl_ent->client->chase_target)
+						continue;
+					if (cl_ent->client->chase_target->client->resp.ctf_team == CTF_NOTEAM)
+						continue;
+				}
+				hud_footer(player);
+			}
+			return;
 		}
 	}
 
