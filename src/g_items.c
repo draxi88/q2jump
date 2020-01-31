@@ -3129,6 +3129,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		/*
 		- check for not displaying times
 		- ideally this shouldn't be used while using mset checkpoint_total
+		- no sound will be played
 		*/
 		else if (Q_stricmp(self->target, "nodisplay") == 0) {
 			if (player->client->resp.store[0].cpbox_checkpoint[self->count] != 1) {
@@ -3168,7 +3169,14 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 					memcpy(cl_ent->client->resp.store[0].cpbox_checkpoint, player->client->resp.store[0].cpbox_checkpoint, sizeof(player->client->resp.store[0].cpbox_checkpoint));
 				}
 			}
-			CPSoundCheck(player);
+			// check for not playing a sound with a checkpoint
+			if (self->target) {
+				if (Q_stricmp(self->target, "nosound") == 0) {
+				}
+			}
+			else {
+				CPSoundCheck(player);
+			}
 			hud_footer(player);
 		}
 	}
@@ -3215,9 +3223,15 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 				memcpy(cl_ent->client->resp.store[0].cpbox_checkpoint, player->client->resp.store[0].cpbox_checkpoint, sizeof(player->client->resp.store[0].cpbox_checkpoint));
 			}
 		}
-		// play a sound for it
-		CPSoundCheck(player);
-		//update hud
+
+		// check for not playing a sound with a checkpoint
+		if (self->target) {
+			if (Q_stricmp(self->target, "nosound") == 0) {
+			}
+		}
+		else {
+			CPSoundCheck(player);
+		}
 		hud_footer(player);
 	}
 }
