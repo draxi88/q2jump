@@ -3143,6 +3143,9 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 						continue;
 					if (cl_ent->client->chase_target->client->resp.ctf_team == CTF_NOTEAM)
 						continue;
+					if (Q_stricmp(cl_ent->client->chase_target->client->pers.netname, player->client->pers.netname) == 0) {
+						memcpy(cl_ent->client->resp.store[0].cpbox_checkpoint, player->client->resp.store[0].cpbox_checkpoint, sizeof(player->client->resp.store[0].cpbox_checkpoint));
+					}
 				}
 				hud_footer(player);
 			}
