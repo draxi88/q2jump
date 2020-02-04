@@ -1120,6 +1120,10 @@ void SP_worldspawn (edict_t *ent)
 
 	gi.configstring (CS_MAXCLIENTS, va("%i", (int)(maxclients->value) ) );
 
+	gi.configstring(CS_FOG, va("%i %i %i %i %i %i %i %i",
+		mset_vars->fog, mset_vars->fog_r, mset_vars->fog_g, mset_vars->fog_b,
+		mset_vars->fog_a, mset_vars->fog_density, mset_vars->fog_start, mset_vars->fog_end));
+
 
 
 	// help icon for statusbar

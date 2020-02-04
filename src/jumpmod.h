@@ -423,6 +423,13 @@ typedef struct
 	int fastdoors;	
 	int fasttele;
 	int fog;
+	int fog_r;
+	int fog_g;
+	int fog_b;
+	int fog_a;
+	int fog_density;
+	int fog_start;
+	int fog_end;
 	int ghost;
 	int ghost_model;
 	int gravity;

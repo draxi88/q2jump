@@ -182,11 +182,60 @@ zbotcmd_t zbotCommands[] =
 	&mset_vars->fasttele,
   },
   {
-	0,4,0,
+	0,3,0,
 	"fog",
 	CMDWHERE_CFGFILE | CMD_MSET,
 	CMDTYPE_NUMBER,
 	&mset_vars->fog,
+  },
+  {
+	0,255,125,
+	"fog_r",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->fog_r,
+  },
+  {
+	0,255,125,
+	"fog_g",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->fog_g,
+  },
+  {
+	0,255,135,
+	"fog_b",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->fog_b,
+  },
+  {
+	0,255,130,
+	"fog_a",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->fog_a,
+  },
+  {
+	0,100,20,
+	"fog_density",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->fog_density,
+  },
+  {
+	0,10000,1,
+	"fog_start",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->fog_start,
+  },
+  {
+	0,10000,2500,
+	"fog_end",
+	CMDWHERE_CFGFILE | CMD_MSET,
+	CMDTYPE_NUMBER,
+	&mset_vars->fog_end,
   },
   { 
 	0,1,1,
@@ -468,11 +517,60 @@ zbotcmd_t zbotCommands[] =
     &gset_vars->flashlight,
   },
   {
-	0,4,0,
+	0,3,0,
 	"gfog",
 	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
 	CMDTYPE_NUMBER,
 	&gset_vars->mset->fog,
+  },
+  {
+	0,255,125,
+	"gfog_r",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->fog_r,
+  },
+  {
+	0,255,125,
+	"gfog_g",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->fog_g,
+  },
+  {
+	0,255,125,
+	"gfog_b",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->fog_b,
+  },
+  {
+	0,255,135,
+	"gfog_a",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->fog_a,
+  },
+  {
+	0,100,20,
+	"gfog_density",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->fog_density,
+  },
+  {
+	0,10000,1,
+	"gfog_start",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->fog_start,
+  },
+  {
+	0,10000,2500,
+	"gfog_end",
+	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	CMDTYPE_NUMBER,
+	&gset_vars->mset->fog_end,
   },
   { 
 	0,1,1,
@@ -6309,6 +6407,14 @@ void SetDefaultValues(void)
 	gset_vars->mset->fastdoors = 0;
 	gset_vars->mset->fasttele = 0;
 	gset_vars->flashlight = 1;
+	gset_vars->mset->fog = 1;
+	gset_vars->mset->fog_r = 50;
+	gset_vars->mset->fog_g = 50;
+	gset_vars->mset->fog_b = 50;
+	gset_vars->mset->fog_a = 50;
+	gset_vars->mset->fog_density = 2;
+	gset_vars->mset->fog_start = 1;
+	gset_vars->mset->fog_end = 2000;
 	gset_vars->fpskick = 1;
 	gset_vars->mset->lap_total = 0;
 	gset_vars->mset->ghost = 1;
@@ -14269,6 +14375,30 @@ void worldspawn_mset() {
 		}
 		else if (Q_stricmp(temp[i], "weapons") == 0) {
 			mset_vars->weapons = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fog") == 0) {
+			mset_vars->fog = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fog_r") == 0) {
+			mset_vars->fog_r = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fog_g") == 0) {
+			mset_vars->fog_g = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fog_b") == 0) {
+			mset_vars->fog_b = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fog_a") == 0) {
+			mset_vars->fog_a = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fog_density") == 0) {
+			mset_vars->fog_density = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fog_start") == 0) {
+			mset_vars->fog_start = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "fog_end") == 0) {
+			mset_vars->fog_end = atoi(temp[i + 1]);
 		}
 	}
 	return;
