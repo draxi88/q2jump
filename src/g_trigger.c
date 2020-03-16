@@ -195,7 +195,8 @@ void SP_trigger_multiple (edict_t *ent)
 
 /*QUAKED trigger_slower (.5 .5 .5) ?
 Slows a player down
-"speed" max speed
+"speed" max speed a player can go in the area
+"wait" time between triggers, default is 0.5
 */
 void slower_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf) {
 
@@ -214,6 +215,7 @@ void slower_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* su
 			return;
 		}
 	}
+	// you always need a speed, print an error
 	else {
 		if (trigger_timer(self->wait)) {
 			gi.cprintf(other, PRINT_HIGH, "Mapping error, you have to set a max speed.\n", self->speed);
@@ -221,6 +223,7 @@ void slower_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* su
 	}
 }
 
+// min wait is 0.5 seconds, set a wait if you want more
 void SP_trigger_slower(edict_t* self) {
 
 	if (self->wait < .5) {
