@@ -193,6 +193,47 @@ void SP_trigger_multiple (edict_t *ent)
 	gi.linkentity (ent);
 }
 
+/*QUAKED trigger_slower (.5 .5 .5) ?
+Slows a player down
+"speed" max speed
+*/
+void slower_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf) {
+
+	// not a client
+	if (!other->client)
+		return;
+
+	// has the speed field
+	if (self->speed) {
+		if (other->client->resp.cur_speed > self->speed) {
+			VectorCopy(other->s.old_origin, other->s.origin);
+			VectorClear(other->velocity);
+			if (trigger_timer(self->wait)) {
+				gi.cprintf(other, PRINT_HIGH, "You have to walk...\n", self->speed);
+			}
+			return;
+		}
+	}
+	else {
+		if (trigger_timer(self->wait)) {
+			gi.cprintf(other, PRINT_HIGH, "Mapping error, you have to set a max speed.\n", self->speed);
+		}
+	}
+}
+
+void SP_trigger_slower(edict_t* self) {
+
+	if (self->wait < .5) {
+		self->wait = .5;
+	}
+
+	self->solid = SOLID_TRIGGER;
+	self->movetype = MOVETYPE_NONE;
+	gi.setmodel(self, self->model);
+	self->svflags = SVF_NOCLIENT;
+	self->touch = slower_touch;
+}
+
 /*QUAKED trigger_lapcounter (.5 .5 .5) ?
 -resizable ent that acts as a lap counter
 -does not end a run, you still need a trigger_finish or railgun

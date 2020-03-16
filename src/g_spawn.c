@@ -58,6 +58,7 @@ void SP_func_killbox (edict_t *ent);
 void SP_trigger_always (edict_t *ent);
 void SP_trigger_once (edict_t *ent);
 void SP_trigger_multiple (edict_t *ent);
+void SP_trigger_slower(edict_t* ent);
 void SP_trigger_lapcounter(edict_t *ent);
 void SP_trigger_lapcp(edict_t *ent);
 void SP_trigger_quad(edict_t *ent);
@@ -219,6 +220,7 @@ spawn_t	spawns[] = {
 	{"trigger_always", SP_trigger_always},
 	{"trigger_once", SP_trigger_once},
 	{"trigger_multiple", SP_trigger_multiple},
+	{"trigger_slower", SP_trigger_slower},
 	{"trigger_lapcounter", SP_trigger_lapcounter},
 	{"trigger_lapcp", SP_trigger_lapcp},
 	{"trigger_quad", SP_trigger_quad},
