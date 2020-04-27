@@ -510,6 +510,7 @@ typedef struct
 	unsigned int kill_delay;
 	unsigned int target_glow;
 	unsigned int tourney;
+	int sync_servers;
 } gset_vars_t;
 
 typedef struct
@@ -871,3 +872,4 @@ void ClearCheckpoints(edict_t *ent);
 void CheckCmdFile();
 void worldspawn_mset();
 qboolean	Pickup_Weapon(edict_t *ent, edict_t *other); //trigger_finish uses this.
+void syncFiles(void);

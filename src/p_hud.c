@@ -76,12 +76,12 @@ void MoveClientToIntermission (edict_t *ent)
 
 }
 
-void BeginIntermission (edict_t *targ)
+void BeginIntermission(edict_t *targ)
 {
 	int		i, n;
 	edict_t	*ent, *client;
 
-//	debug_log ("CHECKPOINT: Function: BeginIntermission Line: 85 File: p_hud.c");
+	//	debug_log ("CHECKPOINT: Function: BeginIntermission Line: 85 File: p_hud.c");
 
 	if (level.intermissiontime)
 		return;		// allready activated
@@ -89,25 +89,31 @@ void BeginIntermission (edict_t *targ)
 //ZOID
 	if (deathmatch->value && ctf->value)
 		CTFCalcScores();
-//ZOID
+	//ZOID
 
 	game.autosaved = false;
 
 	//pooy
-	
+
 //	Besttimes_all();
 	//increase maplist count
 	maplist.update[level.mapnum]++;
-	write_tourney_file(level.mapname,level.mapnum);
+	write_tourney_file(level.mapname, level.mapnum);
 	WriteMapList();
 	UpdateTimes(level.mapnum);
-//	debug_log ("CHECKPOINT: Function: BeginIntermission Line: 105 File: p_hud.c");
-/*	for (i=0;i<maplist.nummaps;i++)
-		if (strcmp(maplist.mapnames[i],level.mapname)==0)
-		{
-			UpdateTimes(i);
-			break;
-		}*/
+	//	debug_log ("CHECKPOINT: Function: BeginIntermission Line: 105 File: p_hud.c");
+	/*	for (i=0;i<maplist.nummaps;i++)
+			if (strcmp(maplist.mapnames[i],level.mapname)==0)
+			{
+				UpdateTimes(i);
+				break;
+			}*/
+
+			//sync draxi
+	if (gset_vars->sync_servers) {
+		syncFiles();
+	}
+
 	UpdateScores();
 	write_users_file();
     sort_users();
