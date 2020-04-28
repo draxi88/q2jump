@@ -8901,7 +8901,7 @@ void open_users_file()
 		sprintf (name, "%s/%s/users.t", tgame->string,port->string);
 	}
 
-	f = fopen (name, "rb");
+	f = fopen (name, "r");
 	if (!f)
 	{
 		return;
