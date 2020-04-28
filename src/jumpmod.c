@@ -8901,7 +8901,7 @@ void open_users_file()
 		sprintf (name, "%s/%s/users.t", tgame->string,port->string);
 	}
 
-	f = fopen (name, "r");
+	f = fopen (name, "rb");
 	if (!f)
 	{
 		return;
@@ -8984,6 +8984,7 @@ void open_users_file()
     maplist.sort_num_users = maplist.num_users;
 
 	fclose(f);
+	gi.dprintf("%s rocks!\n", maplist.users[301].name);
 }
 
 void write_users_file(void)
