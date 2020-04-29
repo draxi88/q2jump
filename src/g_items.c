@@ -3089,10 +3089,12 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 
 		//check if it should clear all cp's.
 		if(Q_stricmp(self->target,"cp_clear")==0){
-			if (player->client->resp.store[0].checkpoints > 0)
-				gi.cprintf(player,PRINT_HIGH,"%d checkpoint(s) removed from your inventory.\n", player->client->resp.store[0].checkpoints);
-			ClearPersistants(&player->client->pers);
-			ClearCheckpoints(player);
+			if (player->client->resp.store[0].checkpoints > 0) {
+				gi.cprintf(player, PRINT_HIGH, "%d checkpoint(s) removed from your inventory.\n", player->client->resp.store[0].checkpoints);
+				ClearPersistants(&player->client->pers);
+				ClearCheckpoints(player);
+				hud_footer(player);
+			}
 			return;
 		} 
 		//ckeck if it should reset timer++
