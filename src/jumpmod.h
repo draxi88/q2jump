@@ -106,6 +106,11 @@ typedef struct
 	qboolean	empty;
 } addent_type;
 
+typedef struct
+{
+	time_t time;
+} mod_time_s;
+
 typedef struct 
 { 
    char			filename[21];     // filename on server (20-char max length) 
@@ -131,7 +136,7 @@ typedef struct
 
 	char path[512];
 	int version;
-	
+	mod_time_s mod_time[MAX_MAPS];
 } maplist_t; 
 
 typedef struct 

@@ -8621,6 +8621,8 @@ void open_tourney_file(char *filename,qboolean apply)
 	cvar_t	*tgame;
 	char temp[1024];
 	int uid;
+	qboolean maplisted;
+	struct stat filestat;
 
 	tgame = gi.cvar("game", "", 0);
 	port = gi.cvar("port", "", 0);
@@ -8634,6 +8636,17 @@ void open_tourney_file(char *filename,qboolean apply)
 		sprintf (name, "%s/%s/%s.t", tgame->string,port->string,filename);
 	}
 
+	maplisted = false;
+	stat(name, &filestat);
+	for (i2 = 0; i2 < maplist.nummaps; i2++)
+	{
+		if (strcmp(maplist.mapnames[i2], filename) == 0)
+		{	
+			maplisted = true;
+			maplist.mod_time[i2].time = filestat.st_mtime;
+			//gi.dprintf("open map: %s mod time: %s\n", maplist.mapnames[i2], ctime(&maplist.mod_time[i2].time));
+		}
+	}
 	//clear tourney file
 	for (i=0;i<MAX_USERS;i++)
 	{
@@ -8645,6 +8658,7 @@ void open_tourney_file(char *filename,qboolean apply)
 	i=0;
 
 	f = fopen (name, "rb");
+
 	if (!f)
 	{
 		return;
@@ -8682,16 +8696,9 @@ void open_tourney_file(char *filename,qboolean apply)
 		tourney_record[i].uid = uid;
 		fscanf(f, "%i", &tourney_record[i].completions); 
 		//gi.dprintf("NR: %d Uid: %d date: %s time: %f\n", i, uid, tourney_record[i].date, tourney_record[i].time);
-		if (apply && tourney_record[i].completions)
+		if (maplisted && apply && tourney_record[i].completions)
 		{
-			//need to check its existence on the good map list first
-			for (i2=0;i2<maplist.nummaps;i2++)
-			{
-				if (strcmp(maplist.mapnames[i2],filename)==0)
-				{
-					append_uid_file(uid,filename);
-				}
-			}
+			append_uid_file(uid,filename);
 		}
         if(feof(f)){
             break;
@@ -8705,13 +8712,14 @@ void write_tourney_file(char *filename,int mapnum)
 	char	buffer[1024];
 	FILE	*f;
 	char	name[256];
-	int i;
+	int i,i2;
 	char port_d[32];
 	cvar_t	*port;
 	cvar_t	*tgame;
 	struct	tm *current_date;
 	time_t	time_date;
 	int		month,day,year;
+	struct stat filestat;
 
 	if (gset_vars->sync_servers) {
 		update_tourney_records(filename);
@@ -8777,6 +8785,15 @@ void write_tourney_file(char *filename,int mapnum)
 		}
 	}
 	fclose(f);
+	stat(name, &filestat);
+	for (i2 = 0; i2 < maplist.nummaps; i2++)
+	{
+		if (strcmp(maplist.mapnames[i2], filename) == 0)
+		{
+			maplist.mod_time[i2].time = filestat.st_mtime;
+			break;
+		}
+	}
 }
 
 void update_users_file()
@@ -8984,7 +9001,6 @@ void open_users_file()
     maplist.sort_num_users = maplist.num_users;
 
 	fclose(f);
-	gi.dprintf("%s rocks!\n", maplist.users[301].name);
 }
 
 void write_users_file(void)
@@ -14450,6 +14466,7 @@ void syncFiles(void) {
 	cvar_t	*tgame;
 	char	name[256];
 	char	maplist_path[256];
+	struct stat filestat;
 
 	port = gi.cvar("port", "", 0);
 	tgame = gi.cvar("game", "", 0);
@@ -14468,9 +14485,22 @@ void syncFiles(void) {
 	}
 	for (i = 0; i < maplist.nummaps; i++)
 	{
-		open_tourney_file(maplist.mapnames[i], true);
-		write_tourney_file(maplist.mapnames[i], i);
-		read_top10_tourney_log(maplist.mapnames[i]);
+		if (!*tgame->string)
+		{
+			sprintf(name, "jump/%s/%s.t", port->string, maplist.mapnames[i]);
+		}
+		else
+		{
+			sprintf(name, "%s/%s/%s.t", tgame->string, port->string, maplist.mapnames[i]);
+		}
+		stat(name, &filestat);
+
+		if (maplist.mod_time[i].time != filestat.st_mtime) {
+			//gi.dprintf("syncmap: %s - maplist mod time: %s - filestat mod time: %s\n", maplist.mapnames[i], ctime(&maplist.mod_time[i].time),ctime(&filestat.st_mtime));
+			open_tourney_file(maplist.mapnames[i], true);
+			write_tourney_file(maplist.mapnames[i], i);
+			read_top10_tourney_log(maplist.mapnames[i]);
+		}
 	}
 
 	sprintf(maplist_path, "%s/%s/maplist.ini", tgame->string, port->string);
