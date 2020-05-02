@@ -200,22 +200,24 @@ Slows a player down
 */
 void slower_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* surf) {
 
-	// not a client
+	// client check
 	if (!other->client)
 		return;
 
-	// has the speed field
+	// check for speed
 	if (self->speed) {
 		if (other->client->resp.cur_speed > self->speed) {
 			VectorCopy(other->s.old_origin, other->s.origin);
 			VectorClear(other->velocity);
+
+			// default message
 			if (trigger_timer(self->wait)) {
-				gi.cprintf(other, PRINT_HIGH, "You have to walk...\n", self->speed);
+				gi.cprintf(other, PRINT_HIGH, "You have to go slower than %.0f ups\n", self->speed);
 			}
 			return;
 		}
 	}
-	// you always need a speed, print an error
+	// missing a speed, throw an error
 	else {
 		if (trigger_timer(self->wait)) {
 			gi.cprintf(other, PRINT_HIGH, "Mapping error, you have to set a max speed.\n", self->speed);
