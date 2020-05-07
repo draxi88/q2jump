@@ -109,10 +109,6 @@ void BeginIntermission(edict_t *targ)
 				break;
 			}*/
 
-			//sync draxi
-	if (gset_vars->sync_servers) {
-		syncFiles();
-	}
 
 	UpdateScores();
 	write_users_file();

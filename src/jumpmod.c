@@ -908,13 +908,6 @@ zbotcmd_t zbotCommands[] =
     CMDTYPE_NUMBER,
     &gset_vars->mset->slowdoors,
   },
-{ 
-	0,1,0,
-    "gsync_servers", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->sync_servers,
-  },
   { 
 	0,2147483647,2,
     "target_glow", 
@@ -1408,9 +1401,6 @@ int LoadMapList(char *filename)
 
          strncpy(maplist.filename, filename, 20); 
       }
-	  if (gset_vars->sync_servers) {
-		  update_users_file(); //Get updates from users.t file before overwriting it..
-	  }
 	  //UpdateScores();
 	  resync(false);
 //	  maplist.version = 1;
@@ -3947,8 +3937,6 @@ void AddUser(char *name,int i)
 int GetPlayerUid(char *name)
 {
 	int i;
-	if(gset_vars->sync_servers)
-		update_users_file();
 
 	for (i=0;i<MAX_USERS;i++)
 	{
@@ -8719,11 +8707,7 @@ void write_tourney_file(char *filename,int mapnum)
 	struct	tm *current_date;
 	time_t	time_date;
 	int		month,day,year;
-	struct stat filestat;
 
-	if (gset_vars->sync_servers) {
-		update_tourney_records(filename);
-	}
     sort_tourney_records();
 	tgame = gi.cvar("game", "jump", 0);
 	port = gi.cvar("port", "27910", 0);
@@ -8785,15 +8769,6 @@ void write_tourney_file(char *filename,int mapnum)
 		}
 	}
 	fclose(f);
-	stat(name, &filestat);
-	for (i2 = 0; i2 < maplist.nummaps; i2++)
-	{
-		if (strcmp(maplist.mapnames[i2], filename) == 0)
-		{
-			maplist.mod_time[i2].time = filestat.st_mtime;
-			break;
-		}
-	}
 }
 
 void update_users_file()
@@ -9013,9 +8988,6 @@ void write_users_file(void)
 	cvar_t	*port;
 	cvar_t	*tgame;
 
-	if (gset_vars->sync_servers) {
-		update_users_file(); //Get updates from users.t file before overwriting it..
-	}
 	tgame = gi.cvar("game", "jump", 0);
 	port = gi.cvar("port", "27910", 0);
 
@@ -14457,52 +14429,4 @@ void worldspawn_mset() {
 		}
 	}
 	return;
-}
-
-//load all files.
-void syncFiles(void) {
-	int i;
-	cvar_t	*port;
-	cvar_t	*tgame;
-	char	name[256];
-	char	maplist_path[256];
-	struct stat filestat;
-
-	port = gi.cvar("port", "", 0);
-	tgame = gi.cvar("game", "", 0);
-	for (i = 0; i < MAX_USERS; i++)
-	{
-		if (!*tgame->string)
-		{
-			sprintf(name, "jump/%s/%i0.u", port->string, i);
-		}
-		else
-		{
-			sprintf(name, "%s/%s/%i.u", tgame->string, port->string, i);
-		}
-		remove(name);
-		
-	}
-	for (i = 0; i < maplist.nummaps; i++)
-	{
-		if (!*tgame->string)
-		{
-			sprintf(name, "jump/%s/%s.t", port->string, maplist.mapnames[i]);
-		}
-		else
-		{
-			sprintf(name, "%s/%s/%s.t", tgame->string, port->string, maplist.mapnames[i]);
-		}
-		stat(name, &filestat);
-
-		if (maplist.mod_time[i].time != filestat.st_mtime) {
-			//gi.dprintf("syncmap: %s - maplist mod time: %s - filestat mod time: %s\n", maplist.mapnames[i], ctime(&maplist.mod_time[i].time),ctime(&filestat.st_mtime));
-			open_tourney_file(maplist.mapnames[i], true);
-			write_tourney_file(maplist.mapnames[i], i);
-			read_top10_tourney_log(maplist.mapnames[i]);
-		}
-	}
-
-	sprintf(maplist_path, "%s/%s/maplist.ini", tgame->string, port->string);
-	LoadMapList(maplist_path);
 }
