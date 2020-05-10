@@ -845,7 +845,7 @@ void FetchClientEntData (edict_t *ent);
 void EndDMLevel (void);
 
 //pooy
-void EndDMLevel (void);  // not sure why id didn't include this 
+//void EndDMLevel (void);  // not sure why id didn't include this 
 
 
 //
@@ -1027,7 +1027,7 @@ typedef struct
 	qboolean	flashlight;
 	int			uid;
 	int			suid;
-	int trecid;
+	int			maplist_uid;
 	float best_time;
 	// ======================
 	// added by lilred
@@ -1350,5 +1350,7 @@ int ESF_debug;
 //ZOID
 #include "g_ctf.h"
 //ZOID
-#include "jumpmod.h"
 
+//Q2JUMP
+#include "jumpmod.h"
+#include "score.h"

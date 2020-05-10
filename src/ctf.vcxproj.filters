@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="g_ai.c" />
+    <ClCompile Include="g_chase.c" />
+    <ClCompile Include="g_cmds.c" />
+    <ClCompile Include="g_combat.c" />
+    <ClCompile Include="g_ctf.c" />
+    <ClCompile Include="g_func.c" />
+    <ClCompile Include="g_items.c" />
+    <ClCompile Include="g_main.c" />
+    <ClCompile Include="g_misc.c" />
+    <ClCompile Include="g_phys.c" />
+    <ClCompile Include="g_save.c" />
+    <ClCompile Include="g_spawn.c" />
+    <ClCompile Include="g_svcmds.c" />
+    <ClCompile Include="g_target.c" />
+    <ClCompile Include="g_trigger.c" />
+    <ClCompile Include="g_utils.c" />
+    <ClCompile Include="g_weapon.c" />
+    <ClCompile Include="g_wireplay.c" />
+    <ClCompile Include="p_client.c" />
+    <ClCompile Include="p_hud.c" />
+    <ClCompile Include="p_menu.c" />
+    <ClCompile Include="p_trail.c" />
+    <ClCompile Include="p_view.c" />
+    <ClCompile Include="p_weapon.c" />
+    <ClCompile Include="q_shared.c" />
+    <ClCompile Include="zb_util.c" />
+    <ClCompile Include="score.c">
+      <Filter>q2jump</Filter>
+    </ClCompile>
+    <ClCompile Include="jumpmod.c">
+      <Filter>q2jump</Filter>
+    </ClCompile>
+    <ClCompile Include="scoreboard.c">
+      <Filter>q2jump</Filter>
+    </ClCompile>
+    <ClCompile Include="m_berserk.c">
+      <Filter>monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="m_boss3.c">
+      <Filter>monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="m_flipper.c">
+      <Filter>monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="m_gunner.c">
+      <Filter>monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="m_infantry.c">
+      <Filter>monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="m_insane.c">
+      <Filter>monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="m_move.c">
+      <Filter>monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="m_mutant.c">
+      <Filter>monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="m_soldier.c">
+      <Filter>monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="g_monster.c">
+      <Filter>monsters</Filter>
+    </ClCompile>
+    <ClCompile Include="mset-gset.c">
+      <Filter>q2jump</Filter>
+    </ClCompile>
+    <ClCompile Include="jetpack.c" />
+    <ClCompile Include="replay.c">
+      <Filter>q2jump</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="game.h" />
+    <ClInclude Include="g_ctf.h" />
+    <ClInclude Include="g_local.h" />
+    <ClInclude Include="g_wireplay.h" />
+    <ClInclude Include="p_menu.h" />
+    <ClInclude Include="q_shared.h" />
+    <ClInclude Include="score.h">
+      <Filter>q2jump</Filter>
+    </ClInclude>
+    <ClInclude Include="jumpmod.h">
+      <Filter>q2jump</Filter>
+    </ClInclude>
+    <ClInclude Include="m_berserk.h">
+      <Filter>monsters</Filter>
+    </ClInclude>
+    <ClInclude Include="m_boss32.h">
+      <Filter>monsters</Filter>
+    </ClInclude>
+    <ClInclude Include="m_flipper.h">
+      <Filter>monsters</Filter>
+    </ClInclude>
+    <ClInclude Include="m_gunner.h">
+      <Filter>monsters</Filter>
+    </ClInclude>
+    <ClInclude Include="m_infantry.h">
+      <Filter>monsters</Filter>
+    </ClInclude>
+    <ClInclude Include="m_insane.h">
+      <Filter>monsters</Filter>
+    </ClInclude>
+    <ClInclude Include="m_mutant.h">
+      <Filter>monsters</Filter>
+    </ClInclude>
+    <ClInclude Include="m_player.h">
+      <Filter>monsters</Filter>
+    </ClInclude>
+    <ClInclude Include="m_soldier.h">
+      <Filter>monsters</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ctf.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="q2jump">
+      <UniqueIdentifier>{51a984bf-ff77-4bab-8500-0432a24c049a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="monsters">
+      <UniqueIdentifier>{f7b79d7b-68e3-4afb-b333-eeb00582aa76}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -3211,7 +3211,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 		}
 		else if (player->client->resp.ctf_team == CTF_NOTEAM && player->client->resp.replaying && !player->client->resp.mute_cprep) {
 			gi.cprintf(player, PRINT_HIGH, "%s reached checkpoint %d/%d in about %1.1f seconds. (split: %1.1f)\n",
-				level_items.stored_item_times[player->client->resp.replaying - 1].owner, player->client->resp.store[0].checkpoints,
+				maplist.users[maplist.times[level.mapnum][player->client->resp.replaying - 1].uid].name, player->client->resp.store[0].checkpoints,
 				mset_vars->checkpoint_total, (player->client->resp.replay_frame / 10) - 0.1, ((player->client->resp.replay_frame / 10) - 0.1) - player->client->pers.cp_split);
 			player->client->pers.cp_split = (player->client->resp.replay_frame / 10) - 0.1;
 		}
@@ -3306,7 +3306,7 @@ void SP_jump_score_think(edict_t *ent)
 	float cur_time;
 	char time_str[32];
 	int time_skin;
-	cur_time = level_items.stored_item_times[0].time;
+	cur_time = maplist.times[level.mapnum][0].time;
 	ent->nextthink = level.time + 5;
 	if (!cur_time)
 	{

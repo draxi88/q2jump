@@ -823,18 +823,6 @@ qboolean CTFPickup_Flag(edict_t *ent, edict_t *other)
 						other->client->pers.netname, CTFOtherTeamName(ctf_team),level.time-other->client->resp.ctf_flagsince);*/
 
 		apply_time(other,ent);
-/*		other->client->resp.got_time = true;
-
-		other->client->resp.item_timer = add_item_to_queue(other,other->client->resp.item_timer,other->client->resp.item_timer_penalty,other->client->pers.netname,enemy_flag_item->pickup_name);
-		if ((other->client->resp.item_timer<level_items.item_time) || (level_items.item_time==0))
-		{
-			level_items.jumps = other->client->resp.jumps;
-			level_items.item_time = other->client->resp.item_timer;
-			strcpy(level_items.item_owner,other->client->pers.netname);
-			strcpy(level_items.item_name,enemy_flag_item->pickup_name);
-			level_items.fastest_player = other;
-		}	
-*/
 
 				other->client->pers.inventory[ITEM_INDEX(enemy_flag_item)] = 0;
 
@@ -1747,350 +1735,6 @@ void CTFWeapon_Grapple (edict_t *ent)
 	}
 }
 
-void JumpModScoreboardMessage (edict_t *ent, edict_t *killer)
-{
-	char	entry[1024];
-	char	string[1400];
-	int		stringlength;
-	int		i, j, k,n;
-	int		sorted[MAX_CLIENTS];
-	float		sortedscores[MAX_CLIENTS];
-	float	score;
-	int		total;
-	int		picnum;
-	int		x, y;
-	gclient_t	*cl;
-	edict_t		*cl_ent;
-	char	*tag;
-	char status[32];
-	int trecid;
-	int total_easy;
-	int total_specs;
-	char teamstring[5];
-	qboolean idle;
-
-	idle = false;
-
-	// sort the clients by score
-	total = 0;
-	for (i=0 ; i<maxclients->value; i++)
-	{
-		cl_ent = g_edicts + 1 + i;
-		if (!cl_ent->inuse)
-			continue;
-		if (gametype->value==GAME_CTF)
-		{
-			if (cl_ent->client->resp.ctf_team<CTF_TEAM1)
-				continue;
-		}
-		else
-		{
-			if (cl_ent->client->resp.ctf_team!=CTF_TEAM2)
-				continue;
-		}
-		if (cl_ent->client->resp.uid>0)
-			score = cl_ent->client->resp.suid;//cl_ent->client->resp.best_time;
-		else
-			score = -1;
-		if (score<0)
-			score = 99998;
-		score++;
-		for (j=0 ; j<total ; j++)
-		{
-			if (score < sortedscores[j])
-				break;
-		}
-		for (k=total ; k>j ; k--)
-		{
-			sorted[k] = sorted[k-1];
-			sortedscores[k] = sortedscores[k-1];
-		}
-		sorted[j] = i;
-		sortedscores[j] = score;
-		total++;
-	}
-
-	// print level name and exit rules
-	string[0] = 0;
-
-	stringlength = strlen(string);
-
-	// add the clients in sorted order
-	//if (total > 16)
-	//	total = 16;
-
-
-	Com_sprintf (entry, sizeof(entry),
-	"xv -16 yv 0 string2 \"Ping Pos Player          Best Comp Maps     %%  Team\" "); 
-	j = strlen(entry);
-	strcpy (string + stringlength, entry);
-	stringlength += j;
-
-	for (i=0 ; i<total ; i++)
-	{
-		cl = &game.clients[sorted[i]];
-		cl_ent = g_edicts + 1 + sorted[i];	
-
-		picnum = gi.imageindex ("i_fixme");
-		y = 16 + 10 * i;
-
-		trecid = -1;
-		if (cl->resp.uid>0)
-		{
-			trecid = FindTRecID(cl->resp.uid - 1);
-		}
-
-		// send the layout
-		if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000)
-		{
-			strcpy(teamstring, "Idle");
-		}
-		else {
-			strcpy(teamstring, "Hard");
-		}
-		if (cl->resp.best_time)
-		{
-			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv 152 string \"%8.3f %4i %4i  %4.1f  %s\"",
-			-8,y,sorted[i],cl->ping,cl->resp.suid+1,
-			tourney_record[trecid].time, 
-			tourney_record[trecid].completions, 
-
-			maplist.sorted_completions[cl->resp.suid].score,
-			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
-			teamstring
-			); 
-
-		}
-		else
-		{
-			if (cl->resp.uid>0)
-			{
-				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"  ------ ---- %4i  %4.1f  %s\"",
-				-8,y,sorted[i],cl->ping,cl->resp.suid+1,
-				maplist.sorted_completions[cl->resp.suid].score,
-				(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
-				teamstring
-				); 
-
-			}
-			else
-			{
-				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"    ------ ----           %s\"",
-				-8,y,sorted[i],cl->ping,1000,teamstring
-				); 
-
-			}
-		}
-		j = strlen(entry);
-		if (stringlength + j > 1024)
-			break;
-		strcpy (string + stringlength, entry);
-		stringlength += j;
-
-
-	}
-
-	//easy team
-	total_easy = 0;
-	total_specs = 0;
-	if (gametype->value!=GAME_CTF)
-	for (i=0 ; i<maxclients->value ; i++)
-	{
-		cl = &game.clients[i];
-		cl_ent = g_edicts + 1 + i;
-		if (!cl_ent->inuse)
-			continue;
-		if (cl_ent->client->resp.ctf_team==CTF_NOTEAM)
-		{
-			total_specs++;
-			continue;
-		}
-		if (cl_ent->client->resp.ctf_team!=CTF_TEAM1)
-			continue;
-	
-		if (total)
-		{
-			//if hard team has players, increase gap
-			y = 24 + (10 * (total_easy+total));
-		}
-		else
-		{
-			y = 16 + (10 * (total_easy));
-		}
-		trecid = -1;
-		if (cl->resp.uid>0)
-		{
-			trecid = FindTRecID(cl->resp.uid - 1);
-		}
-
-		if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000)
-		{
-			strcpy(teamstring, "Idle");
-		}
-		else {
-			strcpy(teamstring, "Easy");
-		}
-		if (cl->resp.best_time)
-		{
-			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv 152 string \"%8.3f %4i %4i  %4.1f  %s\"",
-			-8,y,i,cl->ping,cl->resp.suid+1,
-			tourney_record[trecid].time, 
-			tourney_record[trecid].completions, 
-
-			maplist.sorted_completions[cl->resp.suid].score,
-			(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
-			teamstring
-			); 
-
-		}
-		else
-		{
-			if (cl->resp.uid>0)
-			{
-				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"  ------ ---- %4i  %4.1f  %s\"",
-				-8,y,i,cl->ping,cl->resp.suid+1,
-				maplist.sorted_completions[cl->resp.suid].score,
-				(float)maplist.sorted_completions[cl->resp.suid].score / (float)maplist.nummaps * 100,
-				teamstring
-				); 
-
-			}
-			else
-			{
-				Com_sprintf (entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv 152 string \"    ------ ----           %s\"",
-				-8,y,i,cl->ping,1000,teamstring
-				); 
-
-			}
-		}
-
-		j = strlen(entry);
-		if (stringlength + j > 1024)
-			break;
-		strcpy (string + stringlength, entry);
-		stringlength += j;
-		total_easy++;
-	}
-
-	//spectators
-
-	if ((total) && (total_easy))
-	{
-		//if we have players on both teams, theres an extra 8 gap
-		y = 48 + (8 *(total+total_easy));
-	}
-	else
-	{
-		y = 40 + (8 *(total+total_easy));
-	}
-
-	if (total_specs) {
-		Com_sprintf (entry, sizeof(entry),
-		"xv -16 yv %d string2 \"Spectators\" ", y);
-		j = strlen(entry);
-		strcpy (string + stringlength, entry);
-		stringlength += j;
-	}
-
-	//any spectators idle, if so, add extra gap for the idle tag...
-	for (i = 0; i < maxclients->value; i++) {
-		cl = &game.clients[i];
-		cl_ent = g_edicts + 1 + i;
-		if (!cl_ent->inuse)
-			continue;
-		if (cl_ent->client->resp.ctf_team != CTF_NOTEAM)
-			continue;
-		if (cl_ent->client->pers.idle_player || cl_ent->client->pers.frames_without_movement > 60000)
-			idle = true;
-	}
-	total_specs = 0;
-	for (i=0 ; i<maxclients->value ; i++)
-	{
-		cl = &game.clients[i];
-		cl_ent = g_edicts + 1 + i;
-		if (!cl_ent->inuse)
-			continue;
-		if (cl_ent->client->resp.ctf_team!=CTF_NOTEAM)
-			continue;
-		if ((total) && (total_easy))
-		{
-			//if we have players on both teams, theres an extra 8 gap
-			y = 56 + (8 *(total+total_easy+total_specs));
-		}
-		else
-		{
-			y = 48 + (8 *(total+total_easy+total_specs));
-		}
-
-		//add idle tag if spectator is idle.
-		if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000) //add idle tag to chaser
-		{
-			Com_sprintf(entry, sizeof(entry),
-				"xv %d yv %d string \" (idle)\"", 56 + (strlen(cl->pers.netname) * 8), y);
-			j = strlen(entry);
-			strcpy(string + stringlength, entry);
-			stringlength += j;
-		}
-		
-		if (cl->resp.replaying)
-		{
-			if (cl->resp.replaying==MAX_HIGHSCORES+1)
-			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv %d string \" (Replay now)\"",
-			-8,y,i,
-			cl->ping,
-			0, idle ? 224 : 168
-			); 
-			else
-			Com_sprintf (entry, sizeof(entry),
-			"ctf %d %d %d %d %d xv %d string \" (Replay %d)\"",
-			-8,y,i,
-			cl->ping,
-			0, idle ? 224 : 168,
-			cl->resp.replaying
-
-			); 
-		}
-		else
-		{
-			Com_sprintf(entry, sizeof(entry),
-				"ctf %d %d %d %d %d xv %d string \"%s%s\"",
-				-8, y, i,
-				cl->ping,
-				0, idle ? 224 : 168,
-				cl->chase_target ? " -> " : "",
-				cl->chase_target ? cl->chase_target->client->pers.netname : ""
-			);
-		}
-
-
-			j = strlen(entry);
-			if (stringlength + j > 1024)
-				break;
-			strcpy (string + stringlength, entry);
-			stringlength += j;
-	
-			total_specs++;
-	}
-
-	y+=64;
-
-	Com_sprintf (entry, sizeof(entry),
-	"xv -16 yv %d string2 \"Next Maps (type nominate <map> or rand)\" yv %d stat_string 3 yv %d stat_string 5 yv %d stat_string 12 ",y,y+16,y+24,y+32
-	);
-	j = strlen(entry);
-	strcpy (string + stringlength, entry);
-	stringlength += j;
-
-	gi.WriteByte (svc_layout);
-	gi.WriteString (string);
-}
 
 
 
@@ -3132,24 +2776,6 @@ void CTFWinElection(int pvote, edict_t* pvoter)
 		break;
 
 	case ELECT_MAP :
-//		WriteTimes(level.mapname);
-/*		for (i=0;i<maplist.nummaps;i++)
-			if (strcmp(maplist.mapnames[i],level.mapname)==0)
-			{
-				UpdateTimes(i);
-				break;
-			}*/
-//		UpdateTimes(level.mapnum);
-//		UpdateScores();
-//		sort_users();
-		//if (1 == pvote)
-			//gi.bprintf(PRINT_HIGH, "Vote passed. %s forced the vote. Level changing to %s.\n", 
-			//	pvoter->client->pers.netname, ctfgame.elevel);
-		//	msg = va("Vote passed, %s forced the vote.", pvoter->client->pers.netname);
-		//else
-			//gi.bprintf(PRINT_HIGH, "%s's vote has passed. Level changing to %s.\n", 
-			//	ctfgame.etarget->client->pers.netname, ctfgame.elevel);
-		//	msg = va("%s's vote has passed
 		gi.bprintf(PRINT_HIGH, "%s Map changing to %s.\n", msg, ctfgame.elevel);
 		strncpy(level.forcemap, ctfgame.elevel, sizeof(level.forcemap) - 1);
 		EndDMLevel();
@@ -4922,7 +4548,7 @@ void CTFWarp(edict_t *ent)
 		}
 
 		if (!overall_completions[index].loaded) { // open their file
-			write_tourney_file(level.mapname,level.mapnum);
+			write_map_file(level.mapname,level.mapnum);
 			open_uid_file(ent->client->resp.uid-1,ent);
 		}
 
@@ -4960,7 +4586,7 @@ void CTFWarp(edict_t *ent)
 		
 		// find the map in our list
 		if (!overall_completions[index].loaded) {
-			write_tourney_file(level.mapname,level.mapnum);   // 084_h3
+			write_map_file(level.mapname,level.mapnum);   // 084_h3
 			open_uid_file(ent->client->resp.uid-1,ent);
 		}
 
@@ -5423,7 +5049,7 @@ void CTFUpdateVoteMenu(edict_t *ent, pmenuhnd_t *p)
 		index = ent-g_edicts-1;
 		if (!overall_completions[index].loaded)
 		{
-			write_tourney_file(level.mapname,level.mapnum);   // 084_h3
+			write_map_file(level.mapname,level.mapnum);   // 084_h3
 			open_uid_file(ent->client->resp.uid-1,ent);
 		}
 			

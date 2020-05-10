@@ -43,26 +43,9 @@
 #define BAN_KICK_BAN 1024		//Same as BAN_CONNECTION but player is told they will be allowed back next map
 
 
+
+
 //Structures
-typedef struct
-{
-	int		uid;
-	char	date[32];
-	float	time;
-	int		completions;
-	qboolean fresh;
-} times_record;
-
-
-typedef struct
-{
-	float israfel;
-	int	score;
-	int	uid;
-	int pos;
-} users_sort_record;
-
-
 typedef struct 
 { 
    char name[128];     
@@ -70,9 +53,11 @@ typedef struct
    int	level;
 } admin_type;
 
+
+//Do we need this?
 typedef struct
 {
-	int	uid;
+	int		uid;
 	float	time;
 	char	owner[128];
 	char	name[128];
@@ -81,19 +66,6 @@ typedef struct
 	int		timeint;
 	qboolean fresh;
 } stored_items;
-
-typedef struct
-{
-	char	name[128];
-	int		points[MAX_HIGHSCORES];
-	int		score;
-	float	israfel;
-	qboolean inuse;	
-	int		completions;
-	int		lastseen;
-	int		maps_with_points;
-	int		maps_with_1st;
-} users_record;
 
 typedef struct
 {
@@ -106,38 +78,6 @@ typedef struct
 	qboolean	empty;
 } addent_type;
 
-typedef struct
-{
-	time_t time;
-} mod_time_s;
-
-typedef struct 
-{ 
-   char			filename[21];     // filename on server (20-char max length) 
-   int			nummaps;          // number of maps in list 
-   char			mapnames[MAX_MAPS][MAX_MAPNAME_LEN];
-   int			gametype[MAX_MAPS];
-   qboolean		demoavail[MAX_MAPS];
-   int			update[MAX_MAPS];
-   times_record times[MAX_MAPS][MAX_HIGHSCORES];
-   int			skill[MAX_MAPS];
-   int num_users;
-   users_record	users[MAX_USERS];
-
-   users_sort_record sorted_users[MAX_USERS];
-   users_sort_record sorted_israfel[MAX_USERS];
-
-   users_sort_record sorted_completions[MAX_USERS];
-
-   int sort_num_users;
-   int sort_num_users_israfel;
-   char rotationflag;     // set to ML_ROTATE_* 
-   int  currentmap;       // index to current map 
-
-	char path[512];
-	int version;
-	mod_time_s mod_time[MAX_MAPS];
-} maplist_t; 
 
 typedef struct 
 { 
@@ -157,18 +97,16 @@ typedef struct
 
 typedef struct
 {
-	float		item_time;
+	float		fastest_time;
 	int			jumps;
 	char		item_name[128];
 	char		item_owner[128];
-	stored_items stored_item_times[MAX_HIGHSCORES*2];
-	int			stored_item_times_count;
+	//stored_items stored_item_times[MAX_HIGHSCORES*2];
+	//int			stored_item_times_count;
 	char		mapname[128];
 	int			mapnum;
 
 	edict_t *ents[50];
-	//addent_type ents[21];
-	//addent_type newent;
 	edict_t *newent;
 	
 	
@@ -209,17 +147,6 @@ void		ShowCurrentMaplist(edict_t *ent,int offset);
 void		ShowCurrentVotelist(edict_t *ent,int offset);
 void		Cmd_Votelist_f (edict_t *ent);
 void		Cmd_Maplist_f (edict_t *ent);
-void		ClearTimes(void);
-void		WriteTimes(char *filename);
-qboolean	ReadTimes(char *filename);
-void		EmptyTimes(int mid);
-void		UpdateTimes(int mid);
-void		ClearScores(void);
-void		UpdateScores(void);
-void		ShowMapTimes(edict_t *ent);
-void		ShowPlayerTimes(edict_t *ent);
-void		ShowPlayerScores(edict_t *ent);
-void sort_users_4( int n );
 void		Cmd_Show_Help(edict_t *ent);
 void		show_ent_list(edict_t *ent,int page);
 qboolean	AddNewEnt(void);
@@ -273,8 +200,8 @@ void		CloseFile(FILE *fp);
 void		sort_queue( int n );
 void		AddUser(char *name,int i);
 int			GetPlayerUid(char *name);
-float		add_item_to_queue(edict_t *ent, float item_time,char *owner,char *name);
-void		sort_users_2( int n );
+float		add_item_to_queue(edict_t *ent, float item_time);//,char *owner,char *name);
+void		sort_users_score( int n );
 void		sort_users(void);
 qboolean	Jet_AvoidGround( edict_t *ent );
 qboolean	Jet_Active( edict_t *ent );
@@ -286,7 +213,7 @@ void		Jet_ApplyJet( edict_t *ent, usercmd_t *ucmd );
 void		Cmd_Replay(edict_t *ent);
 void		Record_Frame(edict_t *ent);
 
-void		Save_Recording(edict_t *ent,int uid,int uid_1st);
+void		Save_Recording(edict_t *ent, int uid);//,int uid_1st);
 
 void		Stop_Recording(edict_t *ent);
 void		Start_Recording(edict_t *ent);
@@ -319,7 +246,7 @@ extern qboolean		jump_show_stored_ent;
 extern level_items_t	level_items;
 extern int			num_admins;
 extern int			num_bans;
-extern maplist_t	maplist; 
+
 extern manual_t		manual; 
 extern rpos			client_record[16];
 
@@ -647,18 +574,7 @@ void removeClientCommands(edict_t *ent);
 
 void AutoPutClientInServer (edict_t *ent);
 
-qboolean tourney_log(edict_t *ent, int uid, float time, char *date );
-void sort_tourney_records();
-void open_tourney_file(char *filename,qboolean apply);
-void write_tourney_file(char *filename,int mapnum);
 
-extern times_record tourney_record[MAX_USERS];
-void read_top10_tourney_log(char *filename);
-void UpdateThisUsersUID(edict_t *ent,char *name);
-
-void update_users_file();
-void open_users_file();
-void write_users_file(void);
 
 extern int map_added_time;
 extern qboolean map_allow_voting;
@@ -697,7 +613,7 @@ void write_uid_file(int uid,edict_t *ent);
 void removemapfrom_uid_file(int uid);
 extern overall_completions_t overall_completions[24];
 extern overall_completions_t temp_overall_completions;
-void sort_users_3( int n );
+void sort_users_completions( int n );
 void UpdateThisUsersSortedUid(edict_t *ent);
 void resync(qboolean overide);
 void append_added_ini(char *mapname);
@@ -756,7 +672,7 @@ html_data_t html_data;
 
 typedef struct
 {
-	int trecid;
+	int maplist_uid;
 	float time;
 } ind_map_t;
 
@@ -865,7 +781,7 @@ extern prev_levels_t prev_levels[10];
 extern int num_time_votes;
 void	FS_CreatePath (char *path);
 void		Cmd_1st(edict_t *ent);
-void Changename(edict_t *ent);
+//void Changename(edict_t *ent);
 void Cmd_Stats(edict_t *ent);
 extern qboolean removed_map;
 
@@ -873,6 +789,6 @@ void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float v
 void jumpmod_pos_sound(vec3_t pos, edict_t *ent, int sound, int channel, float volume, int attenuation);
 void hud_footer(edict_t *ent);
 void ClearCheckpoints(edict_t *ent);
-void CheckCmdFile();
+
 void worldspawn_mset();
 qboolean	Pickup_Weapon(edict_t *ent, edict_t *other); //trigger_finish uses this.	

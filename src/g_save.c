@@ -310,18 +310,15 @@ void InitGame (void)
 
 	sprintf(text,"==== Loading MapList ====");
 	debug_log(text);
-	if (!*jump_maplist->string)
+	if (!*jump_maplist->string) {
 		LoadMapList(maplist_path);//pooy
-
-	else
+	}
+	else {
 		LoadMapList(jump_maplist->string);//pooy
-
-   if (0 == maplist.version)
-		UpdateScores2();
-   maplist.version = 1;
+	}
    UpdateVoteMaps();
 
-   resync(false);
+   //resync(false);
 	generate_random_start_map();
 	sprintf(text,"==== Loading Manual ====");
 	debug_log(text);

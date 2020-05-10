@@ -61,1174 +61,7 @@ static char *help_main[] = {
 
 
 char moddir[256];
-int mset_timelimit;
-mset_vars_t mset_vars[1];
-gset_vars_t gset_vars[1];
-aset_vars_t aset_vars[1];
 cvar_t		*allow_admin_log;
-
-char zbbuffer2[256];
-
-
-zbotcmd_t zbotCommands[] = 
-{
-
-  //----------------------------
-  //         mset's
-  //----------------------------
-  { 
-	0,1,0,
-    "addedtimeoverride", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->addedtimeoverride,
-  },
-  { 
-	0,1,0,
-    "allowsrj", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->allowsrj,
-  },
-  {
-	0,1,0,
-	"announcements",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->announcements,
-  },
-  { 
-	0,1,0,
-    "bfg", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->bfg,
-  },
-  { 
-	0,1,0,
-    "blaster", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->blaster,
-  },
-  { 
-	0,28,0,
-    "checkpoint_total", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->checkpoint_total,
-  },
-  { 
-	0,1,0,
-    "cmsg", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->cmsg,
-  },
-  { 
-	0,1,1,
-    "damage", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->damage,
-  },
-  { 
-	0,1,1,
-    "droptofloor", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->droptofloor,
-  },
-  { 
-	0,0,0,
-    "edited_by", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_STRING,
-    &mset_vars->edited_by,
-  },
-  { 
-	0,1,0,
-    "ezmode", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->ezmode,
-  },
-  { 
-	0,1,1,
-    "falldamage", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->falldamage,
-  },
-  { 
-	0,1,0,
-    "fast_firing", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->fast_firing,
-  },
-  { 
-	0,1,0,
-    "fastdoors", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->fastdoors,
-  },
-  {
-	0,1,0,
-	"fasttele",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->fasttele,
-  },
-  {
-	0,3,0,
-	"fog",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->fog,
-  },
-  {
-	0,255,125,
-	"fog_r",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->fog_r,
-  },
-  {
-	0,255,125,
-	"fog_g",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->fog_g,
-  },
-  {
-	0,255,135,
-	"fog_b",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->fog_b,
-  },
-  {
-	0,255,130,
-	"fog_a",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->fog_a,
-  },
-  {
-	0,100,20,
-	"fog_density",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->fog_density,
-  },
-  {
-	0,10000,1,
-	"fog_start",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->fog_start,
-  },
-  {
-	0,10000,2500,
-	"fog_end",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->fog_end,
-  },
-  { 
-	0,1,1,
-    "ghost",
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->ghost,
-  },
-  { 
-	0,128,0,
-    "ghosty_model", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->ghost_model,
-  },
-  { 
-	-10000,10000,800,
-    "gravity", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->gravity,
-  },
-  { 
-	0,999,400,
-    "health", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->health,
-  },
-  {
-	0,100,0,
-	"lap_total",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->lap_total,
-  },
-  {
-	0,6,0,
-	"quad_damage",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->quad_damage,
-  },
-  { 
-	-100,100,100,
-    "regen",
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->regen,
-  },
-  { 
-	0,1,0,
-    "rocket", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->rocket,
-  },
-  {
-	0,1,0,
-	"rocketjump_fix",
-	CMDWHERE_CFGFILE | CMD_MSET,
-	CMDTYPE_NUMBER,
-	&mset_vars->rocketjump_fix,
-  },
-  { 
-	0,1,0,
-    "singlespawn", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->singlespawn,
-  },
-  { 
-	0,1,0,
-    "slowdoors", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->slowdoors,
-  },
-  { 
-	0,999,20,
-    "timelimit", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->timelimit,
-  },
-  { 
-	0,1,0,
-    "weapons", 
-    CMDWHERE_CFGFILE | CMD_MSET, 
-    CMDTYPE_NUMBER,
-    &mset_vars->weapons,
-  },
-
-  //----------------------------
-  //         gset's
-  //----------------------------
-  { 
-	0,999,10,
-    "addedtimemap", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->addedtimemap,
-  },
-  { 
-	0,1,0,
-    "gaddedtimeoverride", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->addedtimeoverride,
-  },
-  {
-	0,1,1,
-	"addtime_announce",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->addtime_announce,
-  },
-  {
-	0,1,0,
-	"admin_max_addtime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->admin_max_addtime,
-  },
-  { 
-	0,0,0,
-    "admin_model", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_STRING,
-    &gset_vars->admin_model,
-  },
-  {
-	0,1,1,
-	"allow_admin_boot",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->allow_admin_boot,
-  },
-#ifdef RACESPARK
-  {
-	0,1,1,
-	"allow_race_spark",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->allow_race_spark,
-  },
-#endif
-  { 
-	0,1,0,
-    "gallowsrj", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->allowsrj,
-  },
-  {
-	0,1,0,
-	"gannouncements",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->announcements,
-  },
-  { 
-	0,100,10,
-    "autotime",
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->autotime,
-  },
-  { 
-	0,2147483647,0,
-    "gbest_time_glow", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->best_time_glow,
-  },
-  { 
-	0,1,0,
-    "gbfg", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->bfg,
-  },
-  { 
-	0,1,0,
-    "gblaster", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->blaster,
-  },
-  { 
-	0,28,0,
-    "gcheckpoint_total", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->checkpoint_total,
-  },
-  { 
-	0,1,0,
-    "gcmsg", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->cmsg,
-  },
-  {
-	0,1,1,
-	"cvote_announce",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->cvote_announce,
-  },
-  { 
-	0,1,1,
-    "gdamage", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->damage,
-  },
-  { 
-	0,1,1,
-    "debug",
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->debug,
-  },
-  {
-	0,1,1,
-	"gdroptofloor",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->droptofloor,
-  },
-  { 
-	0,0,0,
-    "gedited_by", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_STRING,
-    &gset_vars->mset->edited_by,
-  },
-  { 
-	0,1,0,
-    "gezmode", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->ezmode,
-  },
-  { 
-	0,1,1,
-    "gfalldamage", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->falldamage,
-  },
-  { 
-	0,1,0,
-    "gfast_firing", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->fast_firing,
-  },
-  { 
-	0,1,0,
-    "gfastdoors", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->fastdoors,
-  },
-  { 
-	0,1,0,
-    "gfasttele", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->fasttele,
-  },
-  { 
-	0,2,1,
-    "flashlight", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->flashlight,
-  },
-  {
-	0,3,0,
-	"gfog",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->fog,
-  },
-  {
-	0,255,125,
-	"gfog_r",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->fog_r,
-  },
-  {
-	0,255,125,
-	"gfog_g",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->fog_g,
-  },
-  {
-	0,255,125,
-	"gfog_b",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->fog_b,
-  },
-  {
-	0,255,135,
-	"gfog_a",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->fog_a,
-  },
-  {
-	0,100,20,
-	"gfog_density",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->fog_density,
-  },
-  {
-	0,10000,1,
-	"gfog_start",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->fog_start,
-  },
-  {
-	0,10000,2500,
-	"gfog_end",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->fog_end,
-  },
-  { 
-	0,1,1,
-    "fpskick", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->fpskick,
-  },
-  { 
-	0,1,1,
-    "gghost",
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->ghost,
-  },
-  {
-	0,2147483647,0,
-	"ghost_glow",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->ghost_glow,
-  },
-  { 
-	0,128,0,
-    "gghosty_model", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->ghost_model,
-  },
-  { 
-	0,9999999,0,
-    "glow_admin", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->glow_admin,
-  },
-  { 
-	0,1,1,
-    "glow_multi", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->glow_multi,
-  },
-  { 
-	-10000,10000,800,
-    "ggravity", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->gravity,
-  },
-  { 
-	0,999,400,
-    "ghealth", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->health,
-  },
-  { 
-	0,2000,300,
-    "hideghost", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->hideghost,
-  },
-  {
-	0,1,1,
-	"holdtime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->holdtime,
-  },
-  { 
-	0,1,1,
-    "hook", 
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->hook,
-  },
-  { 
-	1,10000,750,
-    "hookpull", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->hookpull,
-  },
-  { 
-	1,10000,1200,
-    "hookspeed", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->hookspeed,
-  },
-  { 
-	0,50,8,
-    "html_bestscores", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_bestscores,
-  },
-  { 
-	0,1,1,
-    "html_create", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_create,
-  },
-  { 
-	0,20,10,
-    "html_firstplaces", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_firstplaces,
-  },
-  { 
-	1,9,1,
-    "html_profile", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->html_profile,
-  },
-  { 
-	1,999,50,
-    "intermission", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->intermission,
-  },
-  { 
-	0,1,0,
-    "invis", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->invis,
-  },
-  { 
-	0,1,1,
-    "jetpack", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->jetpack,
-  },
-  { 
-	0,500,1,
-    "kill_delay", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->kill_delay,
-  },
-  {
-	0,100,0,
-	"glap_total",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->lap_total,
-  },
-  {
-    0,1,1,
-    "map_end_warn_sounds",
-    CMDWHERE_CFGFILE | CMD_GSET,
-    CMDTYPE_NUMBER,
-    &gset_vars->map_end_warn_sounds,
-  },
-  { 
-	0,1,0,
-    "maplist_times", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->maplist_times,
-  },
-  {
-	0,MAX_MAPMEM,7,
-	"maps_pass",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->maps_pass,
-  },
-  {
-    0,10,3,
-    "max_votes",
-    CMDWHERE_CFGFILE | CMD_GSET,
-    CMDTYPE_NUMBER,
-    &gset_vars->max_votes,
-  },
-  { 
-	0,0,0,
-    "model_store", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_STRING,
-    &gset_vars->model_store,
-  },
-  {
-	0,10800,300,
-	"nomapvotetime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->nomapvotetime,
-  },
-  {
-	0,10800,300,
-	"notimevotetime",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->notimevotetime,
-  },
-  { 
-	0,10000,17,
-    "numberone_length", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->numberone_length,
-  },
-  { 
-	0,0,0,
-    "numberone_wav", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_STRING,
-    &gset_vars->numberone_wav,
-  },
-  { 
-	1,9,1,
-    "numsoundwavs", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->numsoundwavs,
-  },
-  { 
-	1,999,25,
-    "overtimegainedhealth", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->overtimegainedhealth,
-  },
-  { 
-	1,999,150,
-    "overtimehealth", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->overtimehealth,
-  },
-  { 
-	1,60,3,
-    "overtimelimit", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->overtimelimit,
-  },
-  { 
-	1,50,1,
-    "overtimerandom", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->overtimerandom,
-  },
-  { 
-	0,4,2,
-    "overtimetype", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->overtimetype,
-  },
-  { 
-	11,60,20,
-    "overtimewait", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->overtimewait,
-  },
-  { 
-	0,999,1,
-    "playsound", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->playsound,
-  },
-  { 
-	0,1,0,
-    "playtag", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->playtag,
-  },
-  {
-	0,1,1,
-	"pvote_announce",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->pvote_announce,
-  },
-  {
-	0,6,0,
-	"quad_damage",
-	CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	CMDTYPE_NUMBER,
-	&gset_vars->mset->quad_damage,
-  },
-  { 
-	-100,100,100,
-    "gregen",
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->regen,
-  },
-  { 
-	0,1,1,
-    "respawn_sound", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->respawn_sound,
-  },
-  { 
-	0,1,0,
-    "grocket", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->rocket,
-  },
-  { 
-	0,1,0,
-    "store_safe", 
-    CMDWHERE_CFGFILE | CMD_GSET,
-    CMDTYPE_NUMBER,
-    &gset_vars->store_safe,
-  },
-  { 
-	0,1,0,
-    "gsinglespawn", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->singlespawn,
-  },
-  { 
-	0,1,0,
-    "gslowdoors", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->slowdoors,
-  },
-  { 
-	0,2147483647,2,
-    "target_glow", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->target_glow,
-  },
-  {
-	0,1,1,
-	"temp_ban_on_kick",
-	CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-	&gset_vars->temp_ban_on_kick,
-  },
-  { 
-	0,1000,0,
-    "time_adjust", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->time_adjust,
-  },
-  { 
-	0,999,20,
-    "gtimelimit", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->mset->timelimit,
-  },
-  { 
-	0,1,0,
-    "gtourney", 
-    CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP, 
-    CMDTYPE_NUMBER,
-    &gset_vars->tourney,
-  },
-  { 
-	0,1,0,
-    "transparent", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->transparent,
-  },
-  { 
-	0,120,60,
-    "voteextratime", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->voteextratime,
-  },
-  { 
-	0,1000,20,
-    "voteseed", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->voteseed,
-  },
-  { 
-	1,60,20,
-    "votingtime", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->votingtime,
-  },
-  { 
-	0,1,1,
-    "walkthru", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->walkthru,
-  },
-  { 
-	1,99999,500,
-    "weapon_fire_min_delay", 
-    CMDWHERE_CFGFILE | CMD_GSET, 
-    CMDTYPE_NUMBER,
-    &gset_vars->weapon_fire_min_delay,
-  },
-
-  //----------------------------
-  //         aset's
-  //----------------------------
-
-	{
-	1,20,1,
-	"ADMIN_ADDBALL_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_ADDBALL_LEVEL
-	},
-
-	{
-	1,20,3,
-	"ADMIN_ADDENT_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_ADDENT_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_ADDMAP_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_ADDMAP_LEVEL
-	},
-
-	{
-	1,20,2,
-	"ADMIN_ADDTIME_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_ADDTIME_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_ADMINEDIT_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_ADMINEDIT_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_BAN_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_BAN_LEVEL
-	},
-
-	{
-	1,20,2,
-	"ADMIN_BOOT_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_BOOT_LEVEL
-	},
-
-	{
-	1,20,1,
-	"ADMIN_BRING_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_BRING_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_CHANGENAME_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_CHANGENAME_LEVEL
-	},
-
-	{
-	1,20,1,
-	"ADMIN_DUMMYVOTE_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_DUMMYVOTE_LEVEL
-	},
-
-	{
-	1,20,1,
-	"ADMIN_GIVE_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_GIVE_LEVEL
-	},
-
-	{
-	1,20,1,
-	"ADMIN_GIVEALL_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_GIVEALL_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_GSET_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_GSET_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_IP_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_IP_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_MAX_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_MAX_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_MODEL_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_MODEL_LEVEL
-	},
-
-	{
-	1,20,4,
-	"ADMIN_MSET_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_MSET_LEVEL
-	},
-
-	{
-	1,20,2,
-	"ADMIN_NEXTMAPS_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_NEXTMAPS_LEVEL
-	},
-
-	{
-	1,20,2,
-	"ADMIN_NOMAXVOTES_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_NOMAXVOTES_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_RATERESET_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_RATERESET_LEVEL
-	},
-
-	{
-	1,20,4,
-	"ADMIN_REMTIMES_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_REMTIMES_LEVEL
-	},
-
-	{
-	1,20,1,
-	"ADMIN_SILENCE_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_SILENCE_LEVEL
-	},
-
-	{
-	1,20,1,
-	"ADMIN_SLAP_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_SLAP_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_SORTMAPS_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_SORTMAPS_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_STUFF_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_STUFF_LEVEL
-	},
-
-	{
-	1,20,1,
-	"ADMIN_THROWUP_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_THROWUP_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_TOGGLEHUD_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_TOGGLEHUD_LEVEL
-	},
-
-	{
-	1,20,5,
-	"ADMIN_UPDATESCORES_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_UPDATESCORES_LEVEL
-	},
-
-	{
-	1,20,2,
-	"ADMIN_VOTE_LEVEL",
-	CMDWHERE_CFGFILE | CMD_ASET,
-	CMDTYPE_NUMBER,
-	&aset_vars->ADMIN_VOTE_LEVEL
-	}
-
-};
-
-#define ZBOTCOMMANDSSIZE    (sizeof(zbotCommands) / sizeof(zbotCommands[0]))
-char zbbuffer[0x10000];
-
-
-
 
 
 
@@ -1276,8 +109,6 @@ int LoadMapList(char *filename)
    qboolean done_a_convert = false;
 	int duplicate;
 
-	maplist.version = 0;
-
    fp = OpenFile2(filename); 
 
 	tgame = gi.cvar("game", "", 0);
@@ -1291,6 +122,7 @@ int LoadMapList(char *filename)
 
 
 	strcpy(maplist.path,filename);
+	
 	//set the date
 		time_date = time(NULL);                // DOS system call
 		current_date = localtime(&time_date);  // DOS system call
@@ -1308,10 +140,10 @@ int LoadMapList(char *filename)
       do 
       { 
          fscanf(fp, "%s", szLineIn); 
-		 if (Q_stricmp(szLineIn, "[JumpMod067]") == 0)
+		 /*if (Q_stricmp(szLineIn, "[JumpMod2020]") == 0)
 		 {
 			 new_maplist = true;
-		 }
+		 }*/
 
       } while (!feof(fp) && (Q_stricmp(szLineIn, "[maplist]") != 0)); 
 
@@ -1333,20 +165,6 @@ int LoadMapList(char *filename)
 
             if (Q_stricmp(szLineIn, "###") == 0)  // terminator is "###" 
                break; 
-            if (Q_stricmp(szLineIn, "[ctf]") == 0)  // ctf maps
-			{
-				ourgtype = 1;
-				continue;
-			}
-            if (Q_stricmp(szLineIn, "[rocket]") == 0)  // ctf maps
-			{
-				ourgtype = 2;
-				continue;
-			}
-
-            // TODO: check that maps exist before adding to list 
-            //       (might be difficult to search a .pak file for these) 
-
 
 			duplicate = -1;
 			//locate duplicates
@@ -1362,20 +180,6 @@ int LoadMapList(char *filename)
 			if (duplicate==-1)
 				strncpy(maplist.mapnames[i], szLineIn, MAX_MAPNAME_LEN); 
 
-			if (new_maplist)
-			{
-	            fscanf(fp, "%s", date_marker); 
-				if (duplicate==-1)
-					maplist.update[i] = atoi(date_marker);
-				else
-					maplist.update[duplicate] += atoi(date_marker);
-			}
-			else
-			{
-				if (duplicate==-1)
-					maplist.update[i] = 0;
-			}
-
 			if (duplicate!=-1)				
 			{
 				gi.dprintf("DUPLICATE REMOVED: %s\n",szLineIn);
@@ -1383,32 +187,16 @@ int LoadMapList(char *filename)
 			}
 
 			maplist.demoavail[i] = false;
-			maplist.gametype[i] = ourgtype;
-			ClearTimes();
-			read_top10_tourney_log(maplist.mapnames[i]);
-			//WriteTimes(maplist.mapnames[i]);
-			convert = ReadTimes(maplist.mapnames[i]);
-//			convert = false;
-			UpdateTimes(i);
-			if (convert)
-			{
-				done_a_convert = true;
-				WriteTimes(maplist.mapnames[i]);
-			}
-      //      gi.dprintf("...%s\n", maplist.mapnames[i]); 
             i++; 
          } 
-
-         strncpy(maplist.filename, filename, 20); 
+		 maplist.nummaps = i;
+		 gi.dprintf("%i map(s) loaded.\n", i);
+		 gi.dprintf("-------------------------------------\n");
       }
-	  //UpdateScores();
-	  resync(false);
-//	  maplist.version = 1;
-	  sort_users();
-	  ClearTimes();
 
-	  if (done_a_convert)
-		  write_users_file();
+	  resync(true);
+	  sort_users();
+
       CloseFile(fp); 
 
       if (i == 0) 
@@ -1418,9 +206,6 @@ int LoadMapList(char *filename)
          return 0;  // abnormal exit -- no maps in file 
       } 
   
-      gi.dprintf ("%i map(s) loaded.\n", i); 
-      gi.dprintf ("-------------------------------------\n"); 
-      maplist.nummaps = i; 
 	  WriteMapList();
       return 1; // normal exit 
    } 
@@ -1537,12 +322,9 @@ void ShowCurrentMaplist(edict_t *ent,int offset)
 	
    gi.cprintf (ent, PRINT_HIGH, "--------------------------------------------------------\n"); 
 
-   if (ent==NULL)     // only show filename to server 
-      gi.dprintf ("FILENAME: %s\n", maplist.filename); 
-
    for (i=(20*offset); (i<maplist.nummaps) && (i<(20*offset)+20); i++) 
    { 	   
-	   if (maplist.times[i][0].uid>=0)
+	   if (maplist.times[i][0].time>0)
 	   {
 		  Com_sprintf(name,sizeof(name),maplist.users[maplist.times[i][0].uid].name);
 		  Highlight_Name(name);
@@ -1640,31 +422,11 @@ void Cmd_Votelist_f (edict_t *ent)
    }  // end switch 
 } 
 
-void ClearTimes(void)
+
+static const int points[] =
 {
-	int i;
-	for (i=0;i<(MAX_HIGHSCORES*2);i++)
-	{
-		level_items.stored_item_times[i].uid = -1;
-		level_items.stored_item_times[i].time = 0;
-		level_items.stored_item_times[i].name[0] = 0;
-		level_items.stored_item_times[i].owner[0] = 0;
-		level_items.stored_item_times[i].timestamp = 0;
-		level_items.stored_item_times[i].timeint = 0;
-		level_items.stored_item_times[i].date[0] = 0;
-		level_items.stored_item_times[i].fresh = false;
-	}
-	level_items.item_name[0] = 0;
-	level_items.fastest_player=NULL;
-	level_items.item_owner[0] = 0;
-	level_items.stored_item_times_count = 0;
-	level_items.item_time = 0;
-	level_items.jumps = 0;
-}
-	static const int points[] =
-	{
-		25,20,16,13,11,10,9,8,7,6,5,4,3,2,1
-	};
+	25,20,16,13,11,10,9,8,7,6,5,4,3,2,1
+};
 
 void EmptyTimes(int mid)
 {
@@ -1679,7 +441,7 @@ void EmptyTimes(int mid)
 		}
 	}
 }
-
+/*
 void UpdateTimes(int mid)
 {
 	int uid,i;
@@ -1687,10 +449,10 @@ void UpdateTimes(int mid)
 	{
 		for (i=0;i<level_items.stored_item_times_count;i++)
 		{
-			uid = GetPlayerUid(level_items.stored_item_times[i].owner);
-			maplist.times[mid][i].time = level_items.stored_item_times[i].time;
+			uid = GetPlayerUid(maplist.times[level.mapnum][i].uid);
+			maplist.times[mid][i].time = maplist.times[level.mapnum][i].time;
 			maplist.times[mid][i].uid = uid;
-			strcpy(maplist.times[mid][i].date,level_items.stored_item_times[i].date);
+			strcpy(maplist.times[mid][i].date,maplist.times[level.mapnum][i].date);
 		}
 		if (level_items.stored_item_times_count<MAX_HIGHSCORES)
 		{
@@ -1714,6 +476,7 @@ void UpdateTimes(int mid)
 		}
 	}
 }
+*/
 
 void ClearScores(void)
 {
@@ -1730,11 +493,12 @@ void ClearScores(void)
    maplist.sort_num_users = maplist.num_users;
 }
 
+
 void UpdateScores(void)
 {
 	int i,mid;
 	ClearScores();
-//	open_users_file();
+
 	for (mid=0;mid<maplist.nummaps;mid++)
 	{
 		for (i=0;i<MAX_USERS;i++)
@@ -1760,27 +524,19 @@ void UpdateScores(void)
 	{
 		if (maplist.users[i].name[0])
 		{
-			//if (0 == maplist.version)
-			//	open_uid_file(i, NULL);
 			if (maplist.users[i].maps_with_1st>10 || maplist.users[i].maps_with_points>50 || maplist.users[i].completions>100)
 				maplist.users[i].israfel = ((float)maplist.users[i].score / (float)maplist.users[i].completions) *4;
 			else
 				maplist.users[i].israfel = 0;
 		}
 	}
-//	if (!maplist.version)
-//	{
-//		maplist.version = 1;
-//		write_users_file();
-//	}
 }
 
-void UpdateScores2()
+void UpdateScores2_Israfel()
 {
-	int i,mid, tmp = maplist.version;
+	int i, mid;
 	ClearScores();
 	open_users_file();
-	maplist.version = 0;
 	for (mid=0;mid<maplist.nummaps;mid++)
 	{
 		for (i=0;i<MAX_HIGHSCORES;i++)
@@ -1798,20 +554,12 @@ void UpdateScores2()
 	{
 		if (maplist.users[i].name[0])
 		{
-			if (0 == maplist.version)
-				open_uid_file(i, NULL);
 			if (maplist.users[i].maps_with_1st>10 || maplist.users[i].maps_with_points>50 || maplist.users[i].completions>100)
 				maplist.users[i].israfel = ((float)maplist.users[i].score / (float)maplist.users[i].completions)*4;
 			else
 				maplist.users[i].israfel = 0;
 		}
 	}
-	maplist.version = tmp;
-//	if (!maplist.version)
-//	{
-//		maplist.version = 1;
-//		write_users_file();
-//	}
 }
 
 typedef struct
@@ -1938,7 +686,7 @@ def:
 	}
 	if (ent->client->resp.uid && !overall_completions[index].loaded)
 	{
-		write_tourney_file(level.mapname,level.mapnum);   // 084_h3
+		write_map_file(level.mapname,level.mapnum);   // 084_h3
 		//open their file
 		open_uid_file(ent->client->resp.uid-1,ent);
 	}
@@ -2482,42 +1230,6 @@ void remove_ent(edict_t *ent)
 		gi.cprintf(ent,PRINT_HIGH,"Entity removed.\n");
 	}
 }
-
-void remove_times(int mapnum)
-{
-/*	FILE	*f;
-	char	name[256];
-	cvar_t	*tgame;
-	cvar_t	*port;
-
-	port = gi.cvar("port", "", 0);
-	tgame = gi.cvar("game", "", 0);
-
-	sprintf (name, "%s/%s/%s.ini", tgame->string,port->string,maplist.mapnames[mapnum]);
-	//delete file
-	remove(name);
-
-	if (mapnum==level.mapnum)
-	{
-		ReadTimes(level.mapname);
-		EmptyTimes(mapnum);
-		UpdateScores();
-		sort_users();
-		sprintf (name, "%s/jumpdemo/%s.dj1", tgame->string,maplist.mapnames[mapnum]);
-		remove(name);	
-		return;
-	} else {
-		EmptyTimes(mapnum);
-		UpdateScores();
-		sort_users();
-
-		sprintf (name, "%s/jumpdemo/%s.dj1", tgame->string,maplist.mapnames[mapnum]);
-		remove(name);	
-
-		return;
-	}*/
-}
-
 
 void Cmd_Chaseme(edict_t *ent)
 {
@@ -3738,60 +2450,6 @@ void close_admin_file(void)
 	fclose(admin_file);
 }
 
-void BestTimesScoreboardMessage (edict_t *ent, edict_t *killer)
-{
-	char	string[1400];
-	int i;
-	int completions = 0;
-	int total_count = 0;
-	char chr[2];	
-	char	colorstring[16];
-	*string = 0;
-	chr[0] = 13;
-	chr[1] = 0;
-	//get total completions
-    completions = 0;
-	for (i=0;i<4096;i++)
-	{
-        if (!tourney_record[i].completions)
-			continue;
-		total_count += tourney_record[i].completions;
-        completions++;
-	}
-	sprintf(string+strlen(string), "xv 0 yv 0 string2 \"No   Player                    Date \" ");
-	for (i=0;i<MAX_HIGHSCORES;i++)
-	{
-		/*if(i % 2 == 0){
-			sprintf(colorstring,"string");
-		} else {
-			sprintf(colorstring,"string2");
-		}*/
-		sprintf(colorstring,"string");
-		//015 sort floating point thing
-		if (level_items.stored_item_times[i].name[0])
-		{
-				if (level_items.stored_item_times[i].fresh)
-				{
-					
-					sprintf(string+strlen(string), "yv %d %s \"%2d%s *%-16s%8.3f  %s\" ", i*10+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
-						level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time
-						,level_items.stored_item_times[i].date
-						);
-				} else {
-					sprintf(string+strlen(string), "yv %d %s \"%2d%s  %-16s%8.3f  %s\" ", i*10+16,colorstring,i+1,(level_items.recorded_time_frames[i] == 0 ? " " : chr),
-						level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time
-						,level_items.stored_item_times[i].date
-						);
-				}
-		} else {
-			sprintf(string+strlen(string), "yv %d string \"%2d \" ", i*10+16,i+1);
-		}
-	}
-	sprintf(string+strlen(string), "yv %d string \"    %d players completed map %d times\" ", i*10+24,completions,total_count);
-//	gi.bprintf(PRINT_HIGH,"%d\n",strlen(string));
-	gi.WriteByte (svc_layout);
-	gi.WriteString (string);
-}
 // FUNCTIONS //////////////////////////////////////////////// 
 
 // 
@@ -3841,7 +2499,7 @@ void CloseFile(FILE *fp)
    else    // no file is opened 
       gi.dprintf ("ERROR -- CloseFile() exception.\n"); 
 }
-
+/*
 void sort_queue( int n )
 {
 	char t_owner[128];
@@ -3859,68 +2517,68 @@ void sort_queue( int n )
 
 	for (i=0;i<MAX_HIGHSCORES*2;i++)
 	{
-		if (!level_items.stored_item_times[i].time)
+		if (!maplist.times[level.mapnum][i].time)
 			continue;
-		if (!level_items.stored_item_times[i].timestamp)
+		if (!maplist.times[level.mapnum][i].timestamp)
 		{
 			//originally 1.0999999+0.001 * 10 = 11, now 1.0599999+0.001*100?
-			level_items.stored_item_times[i].timeint = ((level_items.stored_item_times[i].time+0.0001)*1000);
-			//gi.dprintf("%d %d %s %d\n",i,level_items.stored_item_times[i].uid,level_items.stored_item_times[i].name,level_items.stored_item_times[i].timeint);
-			len = strlen(level_items.stored_item_times[i].date);
+			maplist.times[level.mapnum][i].timeint = ((maplist.times[level.mapnum][i].time+0.0001)*1000);
+			//gi.dprintf("%d %d %s %d\n",i,maplist.times[level.mapnum][i].uid,maplist.times[level.mapnum][i].name,maplist.times[level.mapnum][i].timeint);
+			len = strlen(maplist.times[level.mapnum][i].date);
 			memset(temp_stamp,0,sizeof(temp_stamp));
 			temp_stamp[0] = '1';
 			if (len==8)
 			{
-				temp_stamp[1] = level_items.stored_item_times[i].date[6];
-				temp_stamp[2] = level_items.stored_item_times[i].date[7];
-				temp_stamp[3] = level_items.stored_item_times[i].date[3];
-				temp_stamp[4] = level_items.stored_item_times[i].date[4];
-				temp_stamp[5] = level_items.stored_item_times[i].date[0];
-				temp_stamp[6] = level_items.stored_item_times[i].date[1];
+				temp_stamp[1] = maplist.times[level.mapnum][i].date[6];
+				temp_stamp[2] = maplist.times[level.mapnum][i].date[7];
+				temp_stamp[3] = maplist.times[level.mapnum][i].date[3];
+				temp_stamp[4] = maplist.times[level.mapnum][i].date[4];
+				temp_stamp[5] = maplist.times[level.mapnum][i].date[0];
+				temp_stamp[6] = maplist.times[level.mapnum][i].date[1];
 			}
-			level_items.stored_item_times[i].timestamp = atoi(temp_stamp);
+			maplist.times[level.mapnum][i].timestamp = atoi(temp_stamp);
 		}
 
 	}
   for ( i = 0; i < n-1; ++i )
     for ( j = 1; j < n-i; ++j )
-      if ( (level_items.stored_item_times[j-1].timeint > level_items.stored_item_times[j].timeint) || 
+      if ( (maplist.times[level.mapnum][j-1].timeint > maplist.times[level.mapnum][j].timeint) || 
 		  (
-		  (level_items.stored_item_times[j-1].timeint == level_items.stored_item_times[j].timeint) &&
-		  (level_items.stored_item_times[j-1].timestamp > level_items.stored_item_times[j].timestamp)
+		  (maplist.times[level.mapnum][j-1].timeint == maplist.times[level.mapnum][j].timeint) &&
+		  (maplist.times[level.mapnum][j-1].timestamp > maplist.times[level.mapnum][j].timestamp)
 		  )
 		  )
 	  {
         // Note the use here of swap()
-		strcpy(t_owner,level_items.stored_item_times[j-1].owner);
-		strcpy(t_name,level_items.stored_item_times[j-1].name);
-		t_time = level_items.stored_item_times[j-1].time;
-		t_uid = level_items.stored_item_times[j-1].uid;
-		strcpy(t_date,level_items.stored_item_times[j-1].date);
-		t_fresh = level_items.stored_item_times[j-1].fresh;
-		timestamp = level_items.stored_item_times[j-1].timestamp;
-		timeint = level_items.stored_item_times[j-1].timeint;
+		strcpy(t_owner,maplist.times[level.mapnum][j-1].owner);
+		strcpy(t_name,maplist.times[level.mapnum][j-1].name);
+		t_time = maplist.times[level.mapnum][j-1].time;
+		t_uid = maplist.times[level.mapnum][j-1].uid;
+		strcpy(t_date,maplist.times[level.mapnum][j-1].date);
+		t_fresh = maplist.times[level.mapnum][j-1].fresh;
+		timestamp = maplist.times[level.mapnum][j-1].timestamp;
+		timeint = maplist.times[level.mapnum][j-1].timeint;
 
 
-        level_items.stored_item_times[j-1].uid = level_items.stored_item_times[j].uid;
-        level_items.stored_item_times[j-1].time = level_items.stored_item_times[j].time;
-		strcpy(level_items.stored_item_times[j-1].owner,level_items.stored_item_times[j].owner);
-		strcpy(level_items.stored_item_times[j-1].name,level_items.stored_item_times[j].name);
-		strcpy(level_items.stored_item_times[j-1].date,level_items.stored_item_times[j].date);
-		level_items.stored_item_times[j-1].fresh = level_items.stored_item_times[j].fresh;
-		level_items.stored_item_times[j-1].timestamp = level_items.stored_item_times[j].timestamp;
-		level_items.stored_item_times[j-1].timeint = level_items.stored_item_times[j].timeint;
+        maplist.times[level.mapnum][j-1].uid = maplist.times[level.mapnum][j].uid;
+        maplist.times[level.mapnum][j-1].time = maplist.times[level.mapnum][j].time;
+		strcpy(maplist.times[level.mapnum][j-1].owner,maplist.times[level.mapnum][j].owner);
+		strcpy(maplist.times[level.mapnum][j-1].name,maplist.times[level.mapnum][j].name);
+		strcpy(maplist.times[level.mapnum][j-1].date,maplist.times[level.mapnum][j].date);
+		maplist.times[level.mapnum][j-1].fresh = maplist.times[level.mapnum][j].fresh;
+		maplist.times[level.mapnum][j-1].timestamp = maplist.times[level.mapnum][j].timestamp;
+		maplist.times[level.mapnum][j-1].timeint = maplist.times[level.mapnum][j].timeint;
 
-        level_items.stored_item_times[j].uid = t_uid;
-        level_items.stored_item_times[j].time = t_time;
-		strcpy(level_items.stored_item_times[j].owner,t_owner);
-		strcpy(level_items.stored_item_times[j].name,t_name);
-		strcpy(level_items.stored_item_times[j].date,t_date);
-		level_items.stored_item_times[j].fresh = t_fresh;
-		level_items.stored_item_times[j].timestamp = timestamp;
-		level_items.stored_item_times[j].timeint = timeint;
+        maplist.times[level.mapnum][j].uid = t_uid;
+        maplist.times[level.mapnum][j].time = t_time;
+		strcpy(maplist.times[level.mapnum][j].owner,t_owner);
+		strcpy(maplist.times[level.mapnum][j].name,t_name);
+		strcpy(maplist.times[level.mapnum][j].date,t_date);
+		maplist.times[level.mapnum][j].fresh = t_fresh;
+		maplist.times[level.mapnum][j].timestamp = timestamp;
+		maplist.times[level.mapnum][j].timeint = timeint;
 	  }
-}
+}*/
 
 void AddUser(char *name,int i)
 {
@@ -3993,13 +2651,13 @@ void sort_users(void)
 			maplist.sorted_completions[i].score = maplist.users[i].completions;
 			maplist.sorted_completions[i].uid = i;
 		}
-		sort_users_2(maplist.sort_num_users);
-		sort_users_3(maplist.sort_num_users);
-		sort_users_4(maplist.sort_num_users);
+		sort_users_score(maplist.sort_num_users);
+		sort_users_completions(maplist.sort_num_users);
+		sort_users_israfel(maplist.sort_num_users);
 	}	
 }
 
-void sort_users_2( int n )
+void sort_users_score( int n )
 {
 	int t_score;
 	int t_uid;
@@ -4023,7 +2681,7 @@ void sort_users_2( int n )
 	  }
 }
 
-void sort_users_4( int n )
+void sort_users_israfel( int n )
 {
 	int t_score;
 	int t_uid;
@@ -4055,7 +2713,7 @@ void sort_users_4( int n )
 	maplist.sort_num_users_israfel = i;
 }
 
-void sort_users_3( int n )
+void sort_users_completions( int n )
 {
 	int t_score;
 	int t_uid;
@@ -4079,304 +2737,6 @@ void sort_users_3( int n )
 	  }
 }
 
-/*we get silly velocity-effects when we are on ground and try to
-  accelerate, so lift us a little bit if possible*/
-qboolean Jet_AvoidGround( edict_t *ent )
-{
-  vec3_t		new_origin;
-  trace_t	trace;
-  qboolean	success;
-
-  /*Check if there is enough room above us before we change origin[2]*/
-  new_origin[0] = ent->s.origin[0];
-  new_origin[1] = ent->s.origin[1];
-  new_origin[2] = ent->s.origin[2] + 0.5;
-  trace = gi.trace( ent->s.origin, ent->mins, ent->maxs, new_origin, ent, MASK_MONSTERSOLID );
-
-  if ( success=(trace.plane.normal[2]==0) )	/*no ceiling?*/
-    ent->s.origin[2] += 0.5;			/*then make sure off ground*/
-
-  return success;
-}
-
-
-/*This function returns true if the jet is activated
-  (surprise, surprise)*/
-qboolean Jet_Active( edict_t *ent )
-{
-  return ( ent->client->Jet_framenum >= level.framenum );
-}
-
-
-/*If a player dies with activated jetpack this function will be called
-  and produces a little explosion*/
-void Jet_BecomeExplosion( edict_t *ent, int damage )
-{
-  int	n;
-
-  gi.WriteByte( svc_temp_entity );
-  gi.WriteByte( TE_EXPLOSION1 );   /*TE_EXPLOSION2 is possible too*/
-  gi.WritePosition( ent->s.origin );
-  gi.multicast( ent->s.origin, MULTICAST_PVS );
-  gi.sound( ent, CHAN_BODY, gi.soundindex("misc/udeath.wav"), 1, ATTN_NORM, 0 );
-
-  /*throw some gib*/
-  for ( n=0; n<4; n++ )
-    ThrowGib( ent, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC );
-  //ThrowClientHead( ent, damage );
-//  ent->takedamage = DAMAGE_NO;
-
-}
-
-
-/*The lifting effect is done through changing the origin, it
-  gives the best results. Of course its a little dangerous because
-  if we dont take care, we can move into solid*/
-void Jet_ApplyLifting( edict_t *ent )
-{
-  float		delta;
-  vec3_t	new_origin;
-  trace_t	trace;
-  int 		time = 24;     /*must be >0, time/10 = time in sec for a
-                                 complete cycle (up/down)*/
-  float		amplitude = 2.0;
-
-  /*calculate the z-distance to lift in this step*/
-  delta = sin( (float)((level.framenum%time)*(360/time))/180*M_PI ) * amplitude;
-  delta = (float)((int)(delta*8))/8; /*round to multiples of 0.125*/
-
-  VectorCopy( ent->s.origin, new_origin );
-  new_origin[2] += delta;
-
-  if( VectorLength(ent->velocity) == 0 )
-  {
-     /*i dont know the reason yet, but there is some floating so we
-       have to compensate that here (only if there is no velocity left)*/
-     new_origin[0] -= 0.125;
-     new_origin[1] -= 0.125;
-     new_origin[2] -= 0.125;
-  }
-
-  /*before we change origin, its important to check that we dont go
-    into solid*/
-  trace = gi.trace( ent->s.origin, ent->mins, ent->maxs, new_origin, ent, MASK_MONSTERSOLID );
-  if ( trace.plane.normal[2] == 0 )
-    VectorCopy( new_origin, ent->s.origin );
-}
-
-
-/*This function applys some sparks to your jetpack, this part is
-  exactly copied from Muce's and SumFuka's JetPack-tutorial and does a
-  very nice effect.*/
-void Jet_ApplySparks ( edict_t *ent )
-{
-  vec3_t  forward, right;
-  vec3_t  pack_pos, jet_vector;
-
-  AngleVectors(ent->client->v_angle, forward, right, NULL);
-  VectorScale (forward, -7, pack_pos);
-  VectorAdd (pack_pos, ent->s.origin, pack_pos);
-  pack_pos[2] += (ent->viewheight);
-  VectorScale (forward, -50, jet_vector);
-
-  gi.WriteByte (svc_temp_entity);
-  gi.WriteByte (TE_SPARKS);
-  gi.WritePosition (pack_pos);
-  gi.WriteDir (jet_vector);
-  gi.multicast (pack_pos, MULTICAST_PVS);
-}
-
-
-/*if the angle of the velocity vector is different to the viewing
-  angle (flying curves or stepping left/right) we get a dotproduct
-  which is here used for rolling*/
-void Jet_ApplyRolling( edict_t *ent, vec3_t right )
-{
-  float roll,
-        value = 0.05,
-        sign = -1;    /*set this to +1 if you want to roll contrariwise*/
-
-  roll = DotProduct( ent->velocity, right ) * value * sign;
-  ent->client->kick_angles[ROLL] = roll;
-}
-
-
-/*Now for the main movement code. The steering is a lot like in water, that
-  means your viewing direction is your moving direction. You have three
-  direction Boosters: the big Main Booster and the smaller up-down and
-  left-right Boosters.
-  There are only 2 adds to the code of the first tutorial: the Jet_next_think
-  and the rolling.
-  The other modifications results in the use of the built-in quake functions,
-  there is no change in moving behavior (reinventing the wheel is a lot of
-  "fun" and a BIG waste of time ;-))*/
-void Jet_ApplyJet( edict_t *ent, usercmd_t *ucmd )
-{
-  float	direction;
-  vec3_t acc;
-  vec3_t forward, right;
-  int    i;
-
-  /*clear gravity so we dont have to compensate it with the Boosters*/
-  ent->client->ps.pmove.gravity = 0;
-
-  /*calculate the direction vectors dependent on viewing direction
-    (length of the vectors forward/right is always 1, the coordinates of
-    the vectors are values of how much youre looking in a specific direction
-    [if youre looking up to the top, the x/y values are nearly 0 the
-    z value is nearly 1])*/
-  AngleVectors( ent->client->v_angle, forward, right, NULL );
-
-  /*Run jet only 10 times a second so movement dont depends on fps
-    because ClientThink is called as often as possible
-    (fps<10 still is a problem ?)*/
-  if ( ent->client->Jet_next_think <= level.framenum )
-  {
-    ent->client->Jet_next_think = level.framenum + 1;
-
-    /*clear acceleration-vector*/
-    VectorClear( acc );
-
-    /*if we are moving forward or backward add MainBooster acceleration
-      (60)*/
-    if ( ucmd->forwardmove )
-    {
-      /*are we accelerating backward or forward?*/
-      direction = (ucmd->forwardmove<0) ? -1.0 : 1.0;
-
-      /*add the acceleration for each direction*/
-      acc[0] += direction * forward[0] * 60;
-      acc[1] += direction * forward[1] * 60;
-      acc[2] += direction * forward[2] * 60;
-    }
-
-    /*if we sidestep add Left-Right-Booster acceleration (40)*/
-    if ( ucmd->sidemove )
-    {
-      /*are we accelerating left or right*/
-      direction = (ucmd->sidemove<0) ? -1.0 : 1.0;
-
-      /*add only to x and y acceleration*/
-      acc[0] += right[0] * direction * 40;
-      acc[1] += right[1] * direction * 40;
-    }
-
-    /*if we crouch or jump add Up-Down-Booster acceleration (30)*/
-    if ( ucmd->upmove )
-      acc[2] += ucmd->upmove > 0 ? 30 : -30;
-
-    /*now apply some friction dependent on velocity (higher velocity results
-      in higher friction), without acceleration this will reduce the velocity
-      to 0 in a few steps*/
-    ent->velocity[0] += -(ent->velocity[0]/6.0);
-    ent->velocity[1] += -(ent->velocity[1]/6.0);
-    ent->velocity[2] += -(ent->velocity[2]/7.0);
-
-    /*then accelerate with the calculated values. If the new acceleration for
-      a direction is smaller than an earlier, the friction will reduce the speed
-      in that direction to the new value in a few steps, so if youre flying
-      curves or around corners youre floating a little bit in the old direction*/
-    VectorAdd( ent->velocity, acc, ent->velocity );
-
-    /*round velocitys (is this necessary?)*/
-    ent->velocity[0] = (float)((int)(ent->velocity[0]*8))/8;
-    ent->velocity[1] = (float)((int)(ent->velocity[1]*8))/8;
-    ent->velocity[2] = (float)((int)(ent->velocity[2]*8))/8;
-
-    /*Bound velocitys so that friction and acceleration dont need to be
-      synced on maxvelocitys*/
-    for ( i=0 ; i<2 ; i++) /*allow z-velocity to be greater*/
-    {
-      if (ent->velocity[i] > 300)
-        ent->velocity[i] = 300;
-      else if (ent->velocity[i] < -300)
-        ent->velocity[i] = -300;
-    }
-
-    /*add some gentle up and down when idle (not accelerating)*/
-    if( VectorLength(acc) == 0 )
-      Jet_ApplyLifting( ent );
-
-  }//if ( ent->client->Jet_next_think...
-
-  /*add rolling when we fly curves or boost left/right*/
-  Jet_ApplyRolling( ent, right );
-
-  /*last but not least add some smoke*/
-  //Jet_ApplySparks( ent );
-
-}
-
-/*end of jet.c*/
-
-void apply_time(edict_t *other, edict_t *ent)
-{
-	char		item_name[128];
-
-	Stop_Recording(other);
-	if (((other->client->resp.item_timer_allow) || (other->client->resp.ctf_team==CTF_TEAM2)) || (gametype->value==GAME_CTF && other->client->resp.ctf_team==CTF_TEAM1))
-	{
-	if (!other->client->resp.finished)
-	{
-		//stop recording, setup for new one
-		if (other->client->resp.auto_record_on)
-		{
-			autorecord_newtime(other);
-			if (other->client->resp.auto_recording)
-				autorecord_stop(other);			
-		}
-
-
-		other->client->resp.finished = true;
-		other->client->resp.score++;
-		other->client->resp.got_time = true;
-		
-
-		other->client->resp.item_timer = add_item_to_queue(other,other->client->resp.item_timer,other->client->pers.netname,ent->item->pickup_name);
-
-		ClearPersistants(&other->client->pers);
-		ClearCheckpoints(other);
-		hud_footer(other);
-		
-		if (((other->client->resp.item_timer+0.0001)<level_items.item_time) || (level_items.item_time==0))
-		{
-			level_items.jumps = other->client->resp.jumps;
-			level_items.item_time = other->client->resp.item_timer;
-			strcpy(level_items.item_owner,other->client->pers.netname);
-			strcpy(level_items.item_name,ent->item->pickup_name);
-			level_items.fastest_player = other;
-			Save_Current_Recording(other);
-			
-			//give them admin
-			if (((other->client->resp.item_timer+0.0001)<maplist.times[level.mapnum][0].time) || (!maplist.times[level.mapnum][0].time))
-			{
-				if (!Neuro_RedKey_Overide && map_added_time<5)
-				{
-					gi.bprintf(PRINT_CHAT,"%s has set a 1st place, adding 5 minutes extra time.\n",other->client->pers.netname);
-					map_added_time += 5;
-					Update_Added_Time();
-				}
-				else
-				{
-					gi.bprintf(PRINT_CHAT,"%s has set a 1st place.\n",other->client->pers.netname);
-				}
-			}
-
-		}	
-	}
-		if	(!other->client->resp.playtag)
-		{
-			if (!Neuro_RedKey_Overide)
-			if ((gset_vars->jetpack))
-			{
-				strcpy(item_name,"jetpack");
-				give_item(other,item_name);
-			}
-		}
-	}
-}
-
-
 void Start_Recording(edict_t *ent)
 {
 	int index;
@@ -4398,558 +2758,6 @@ void Start_Recording(edict_t *ent)
 		client_record[index].current_frame = 0;
 	}
 }
-
-void Stop_Recording(edict_t *ent)
-{
-	int index;
-	index = ent-g_edicts-1;
-	client_record[index].allow_record = false;
-}
-
-void		Save_Recording(edict_t *ent,int uid,int uid_1st)
-{
-	FILE	*f;
-	char	name[256];
-	int index;
-	cvar_t	*tgame;
-
-	index = ent-g_edicts-1;
-	if (!client_record[index].current_frame)
-		return;
-	client_record[index].allow_record = false;
-
-	tgame = gi.cvar("game", "jump", 0);
-	
-#ifdef ANIM_REPLAY
-	sprintf (name, "%s/jumpdemo/%s.dj2", tgame->string,level.mapname);
-#else
-	sprintf (name, "%s/jumpdemo/%s.dj1", tgame->string,level.mapname);
-#endif
-
-	//player exists in position 2
-	//they dont have a demo saved
-	//howver, if someone in 1st sets a 1st, we shouldnt save
-
-	//this dont work, fix at some point
-	/*
-	if (level_items.stored_item_times[1].uid>=0 && (uid!=uid_1st))
-	{
-		sprintf (new_name, "%s/jumpdemo/%s_%d.dj3", tgame->string,level.mapname,level_items.stored_item_times[1].uid);
-		f = fopen(name,"rb");
-		if (f)
-		{
-			fclose(f);
-		}
-		else
-		{
-			rename(name,new_name);
-		}
-
-	}
-*/
-
-
-	f = fopen (name, "wb");
-
-	if (!f)
-		return;
-
-	fwrite(client_record[index].data,sizeof(record_data),client_record[index].current_frame,f);
-	//now put it in local data
-	level_items.recorded_time_frames[0] = client_record[index].current_frame;
-	memcpy(level_items.recorded_time_data[0],client_record[index].data,sizeof(client_record[index].data));
-
-	fclose(f);
-}
-
-void Save_Individual_Recording(edict_t *ent)
-{
-	FILE	*f;
-	char	name[256];
-	int index;
-	cvar_t	*tgame;
-
-	index = ent-g_edicts-1;
-	if (!client_record[index].current_frame)
-		return;
-	client_record[index].allow_record = false;
-
-	tgame = gi.cvar("game", "jump", 0);
-	
-	sprintf (name, "%s/jumpdemo/%s_%d.dj3", tgame->string,level.mapname,ent->client->resp.uid-1);
-	f = fopen (name, "wb");
-	if (!f)
-		return;
-
-	fwrite(client_record[index].data,sizeof(record_data),client_record[index].current_frame,f);
-	fclose(f);
-}
-
-void Save_Current_Recording(edict_t *ent)
-{
-	int index;
-	index = ent-g_edicts-1;
-	level_items.recorded_time_frames[MAX_HIGHSCORES] = client_record[index].current_frame;
-	memcpy(level_items.recorded_time_data[MAX_HIGHSCORES],client_record[index].data,sizeof(client_record[index].data));
-}
-
-void Record_Frame(edict_t *ent)
-{
-	int index;
-	int store;
-	index = ent-g_edicts-1;
-
-	if (!ent->client->resp.paused)
-	if ((client_record[index].allow_record) && (ent->client->resp.ctf_team==CTF_TEAM2 || (gametype->value==GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1)))
-	{
-		if (client_record[index].current_frame<MAX_RECORD_FRAMES)
-		{			
-			VectorCopy(ent->s.origin,client_record[index].data[client_record[index].current_frame].origin);
-			VectorCopy(ent->client->v_angle,client_record[index].data[client_record[index].current_frame].angle);
-#ifdef ANIM_REPLAY
-
-			store = ent->s.frame | ((ent->client->pers.fps & 255)<<RECORD_FPS_SHIFT);
-			if (ent->client->resp.key_back)
-				store |= RECORD_KEY_BACK;
-			else if (ent->client->resp.key_forward)
-				store |= RECORD_KEY_FORWARD;
-			if (ent->client->resp.key_up)
-				store |= RECORD_KEY_UP;
-			else if (ent->client->resp.key_down)
-				store |= RECORD_KEY_DOWN;
-			if (ent->client->resp.key_left)
-				store |= RECORD_KEY_LEFT;
-			else if (ent->client->resp.key_right)
-				store |= RECORD_KEY_RIGHT;
-			if (ent->client->buttons & BUTTON_ATTACK)
-				store |= RECORD_KEY_ATTACK;
-
-
-			client_record[index].data[client_record[index].current_frame].frame = store;
-#endif
-			client_record[index].current_frame++;
-		}
-	}
-}
-
-void Cmd_Replay(edict_t *ent)
-{
-	int i;
-	qboolean done_num = false;
-	int num;
-	char txt[1024];
-	char	temp[128];
-
-	//if (ent->client->resp.replay_speed==0)
-		ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
-
-	if (ent->client->chase_target)
-	{
-		// ===================================================
-		// added by lilred
-		ent->client->chase_target = NULL;
-		ent->client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
-		// ===================================================
-	}
-
-	strncpy(temp,gi.argv(1),sizeof(temp)-1);
-	if (strcmp(temp,"now")==0)
-	{
-		if (level_items.recorded_time_frames[MAX_HIGHSCORES])
-		{
-			ent->client->resp.replaying = MAX_HIGHSCORES+1;
-			ent->client->resp.replay_frame = 0;		
-			gi.cprintf(ent,PRINT_HIGH,"Replaying %s who finished in %1.3f seconds.\n",level_items.item_owner,level_items.item_time);
-		} else {
-			gi.cprintf(ent,PRINT_HIGH,"No time set this map.\n");
-		}
-	}
-	else
-	if (strcmp(temp,"list")==0)
-	{
-	Com_sprintf(txt,sizeof(txt),"No. Player               Time");
-	gi.cprintf (ent, PRINT_HIGH,"\n%s\n",HighAscii(txt));		
-		for (i=0;i<MAX_HIGHSCORES;i++)
-		{
-			if (level_items.recorded_time_frames[i])
-			{
-				gi.cprintf(ent,PRINT_HIGH,"%2d. %-16s %8.3f\n",i+1,level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time);
-			}
-		}
-		return;
-	}
-
-	else
-	{
-		num = atoi(temp);
-		num--;
-		done_num = false;
-		//2 to 15
-		if (num>=1 && num<15)
-		{
-			//time set?
-			if (level_items.stored_item_times[num].time>0)
-			{
-				//if uid doestn match that stored load demo again
-				if (level_items.recorded_time_uid[num]!=level_items.stored_item_times[num].uid)
-				{
-//					gi.bprintf(PRINT_HIGH,"loading recording %d %d\n",level_items.recorded_time_uid[num],level_items.stored_item_times[num].uid);
-					Load_Individual_Recording(num,level_items.stored_item_times[num].uid);
-				}
-				if (level_items.recorded_time_frames[num])
-				{
-					//demo exists?
-					done_num = true;	
-					ent->client->resp.replaying = num+1;
-					ent->client->resp.replay_frame = 0;		
-					gi.cprintf(ent,PRINT_HIGH,"Replaying %s who finished in %1.3f seconds.\n",level_items.stored_item_times[num].owner,level_items.stored_item_times[num].time);
-				}
-			}
-			if (!done_num)
-			{
-				gi.cprintf(ent,PRINT_HIGH,"No Demo exists for that position.\n");
-				return;
-			}
-		}
-		if (!done_num)
-		{
-			if (level_items.recorded_time_frames[0])
-			{
-				ent->client->resp.replaying = 1;
-				ent->client->resp.replay_frame = 0;		
-				gi.cprintf(ent,PRINT_HIGH,"Replaying %s who finished in %1.3f seconds.\n",level_items.stored_item_times[0].owner,level_items.stored_item_times[0].time);
-				gi.cprintf(ent,PRINT_HIGH,"Hit forward and back keys to change demo speed, jump to toggle repeating.\n");
-				gi.cprintf(ent,PRINT_HIGH,"Type replay list to see all replays available.\n");
-			} else {
-				gi.cprintf(ent,PRINT_HIGH,"No Demo available.\n");
-				return;
-			}
-		}
-		//gi.cprintf(ent,PRINT_HIGH,"You can type 'replay now' to see a demo of fastest run this map.\n");
-	}
-	CTFReplayer(ent);
-	ClearPersistants(&ent->client->pers);
-	if (ent->client->resp.store->checkpoints > 0) {
-		ClearCheckpoints(ent);
-	}
-	hud_footer(ent);
-}
-
-void Load_Recording(void)
-{
-	//load recording using level.mapname
-	FILE	*f;
-	char	name[256];
-	cvar_t	*tgame;
-	int i;
-	long lSize;
-	qboolean loaded = false;
-
-	tgame = gi.cvar("game", "", 0);
-
-	//multireplay code, look for dj3 first via uid of player at 0
-	if (level_items.stored_item_times[0].uid>=0)
-	{
-		sprintf (name, "%s/jumpdemo/%s_%d.dj3", tgame->string,level.mapname,level_items.stored_item_times[0].uid);
-		f = fopen (name, "rb");
-		loaded = true;
-	}
-	if (!loaded || !f)
-	{
-		#ifdef ANIM_REPLAY
-			sprintf (name, "%s/jumpdemo/%s.dj2", tgame->string,level.mapname);
-		#else
-			sprintf (name, "%s/jumpdemo/%s.dj1", tgame->string,level.mapname);
-		#endif
-		f = fopen (name, "rb");
-	}
-
-	for (i=0;i<MAX_HIGHSCORES+1;i++)
-	{
-		level_items.recorded_time_frames[i] = 0;
-		level_items.recorded_time_uid[i] = -1;
-	}
-
-	if (!f)
-	{
-		level_items.recorded_time_frames[0] = 0;
-		return;
-	}
-
-	fseek (f , 0 , SEEK_END);
-	lSize = ftell (f);
-	rewind (f);
-
-	fread(level_items.recorded_time_data[0],1,lSize,f);
-	//now put it in local data
-	level_items.recorded_time_frames[0] = lSize / sizeof(record_data);
-
-	fclose(f);
-
-}
-
-void Load_Individual_Recording(int num,int uid)
-{
-	//load recording using level.mapname
-	FILE	*f;
-	char	name[256];
-	cvar_t	*tgame;
-	long lSize;
-
-	if (num<1 || num>=MAX_HIGHSCORES)
-		return;
-	if (uid<0)
-		return;
-	level_items.recorded_time_frames[num] = 0;
-	level_items.recorded_time_uid[num] = -1;
-	tgame = gi.cvar("game", "", 0);
-	sprintf (name, "%s/jumpdemo/%s_%d.dj3", tgame->string,level.mapname,uid);
-	//gi.dprintf("%s\n",name);
-	f = fopen (name, "rb");
-
-
-	if (!f)
-	{
-		return;
-	}
-
-	fseek (f , 0 , SEEK_END);
-	lSize = ftell (f);
-	rewind (f);
-	level_items.recorded_time_uid[num] = uid;
-
-	fread(level_items.recorded_time_data[num],1,lSize,f);
-	//now put it in local data
-	level_items.recorded_time_frames[num] = lSize / sizeof(record_data);
-
-	fclose(f);
-
-}
-
-void Replay_Recording(edict_t *ent)
-{
-	int i;
-	int temp;
-	double frame_fraction;
-	double frame_integer;
-	double frame_fraction2;
-	double frame_integer2;
-	vec3_t prev_frame;
-	vec3_t prev_angle;
-	vec3_t next_frame;
-	vec3_t next_angle;
-	vec3_t diff_frame;
-	vec3_t diff_angle;
-	vec3_t rep_speed1;
-	vec3_t rep_speed2;
-	int rep_speed;
-
-	temp = ent->client->resp.replaying - 1;
-	if (temp>=0)
-	if (ent->client->resp.replay_frame<level_items.recorded_time_frames[temp])
-	{
-		ent->client->ps.pmove.pm_type = PM_FREEZE;
-		ent->viewheight = 0;
-		ent->client->ps.pmove.pm_flags |= PMF_NO_PREDICTION;
-
-		//need to get fraction and whole value of replay_frame
-
-		frame_fraction2 = modf(replay_speed_modifier[ent->client->resp.replay_speed],&frame_integer2);
-		frame_fraction = modf(ent->client->resp.replay_frame,&frame_integer);
-		if (frame_fraction2)
-		{
-			//if we have a fraction, process new origin/angles
-			VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer].origin,prev_frame);
-			VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer].angle,prev_angle);
-			if (frame_integer>0)
-			{
-				VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer+1].origin,next_frame);
-				VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer+1].angle,next_angle);
-			}
-			else
-			{
-				VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer-1].origin,next_frame);
-				VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer-1].angle,next_angle);
-			}
-			ent->client->resp.replay_data = level_items.recorded_time_data[temp][(int)frame_integer].frame;
-
-			VectorSubtract(next_frame,prev_frame,diff_frame);
-			VectorSubtract(next_angle,prev_angle,diff_angle);
-			for (i=0;i<3;i++)
-			{
-				diff_frame[i] = diff_frame[i] * frame_fraction;
-				if (diff_angle[i] > 180)
-				{
-//					gi.cprintf(ent,PRINT_HIGH,">180\n");
-					diff_angle[i] = -360.0f + diff_angle[i];
-				}
-				if (diff_angle[i] < -180)
-				{
-//					gi.cprintf(ent,PRINT_HIGH,"<180\n");
-					diff_angle[i] = 360.0f + diff_angle[i];
-				}
-				diff_angle[i] = diff_angle[i] * frame_fraction;
-				prev_frame[i] += diff_frame[i];
-				prev_angle[i] += diff_angle[i];
-			}
-			
-			VectorCopy(prev_frame,ent->s.origin);
-			VectorCopy(prev_angle,ent->client->v_angle);
-			VectorCopy(prev_angle,ent->client->ps.viewangles);
-			for (i=0 ; i<3 ; i++)
-				ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(prev_angle[i] - ent->client->resp.cmd_angles[i]);
-		}
-		else
-		{
-			if (ent->client->resp.replay_speed!=REPLAY_SPEED_ZERO)
-			if (frame_fraction)
-				ent->client->resp.replay_frame = frame_integer;
-			
-			ent->client->resp.replay_data = level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].frame;
-
-			VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].origin,ent->s.origin);
-			VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].angle,ent->client->v_angle);
-			VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].angle,ent->client->ps.viewangles);
-
-			for (i=0 ; i<3 ; i++)
-				ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].angle[i] - ent->client->resp.cmd_angles[i]);
-		}
-		if (ent->client->resp.replay_speed!=REPLAY_SPEED_ZERO)
-			ent->client->resp.replay_frame += replay_speed_modifier[ent->client->resp.replay_speed];
-		if (ent->client->resp.replay_frame<=0)
-		{
-			if (ent->client->resp.rep_repeat)
-			{
-				ent->client->resp.replay_frame = level_items.recorded_time_frames[temp]-1;
-			}
-			else
-			{
-				ent->client->resp.replaying = 0;
-				ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
-			}
-		}
-		//replay speedometer a la Killa
-		if (ent->client->resp.replaying) {
-			VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame - 10].origin, rep_speed1);
-			rep_speed1[2] = 0;
-			VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].origin, rep_speed2);
-			rep_speed2[2] = 0;
-			VectorSubtract(rep_speed1, rep_speed2, rep_speed1);
-			rep_speed = (int)fabs(VectorLength(rep_speed1));
-			//Don't update rep_speed if it's not 10 ups faster/slower than current rep_speed.
-			if (rep_speed > ent->client->resp.rep_speed + 10 || rep_speed < ent->client->resp.rep_speed - 10)
-				ent->client->resp.rep_speed = rep_speed;
-		}
-	} else {
-			// =========================
-			// added by lilred
-			if (ent->client->resp.rep_repeat)
-			{
-				ent->client->resp.replay_frame = 0;
-				return;
-			}
-			// =========================
-		ent->client->resp.replaying = 0;
-		ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
-	}
-}
-
-/*void Replay_Recording(edict_t *ent)
-{
-	int i;
-	int temp;
-	double frame_fraction;
-	double frame_integer;
-	double frame_fraction2;
-	double frame_integer2;
-	vec3_t prev_frame;
-	vec3_t prev_angle;
-	vec3_t next_frame;
-	vec3_t next_angle;
-	vec3_t diff_frame;
-	vec3_t diff_angle;
-	temp = ent->client->resp.replaying;
-	if (temp)
-		if (ent->client->resp.replay_frame<level_items.recorded_time_frames[temp-1])
-	{
-		ent->client->ps.pmove.pm_type = PM_FREEZE;
-		ent->viewheight = 0;
-		ent->client->ps.pmove.pm_flags |= PMF_NO_PREDICTION;
-
-		//need to get fraction and whole value of replay_frame
-
-		frame_fraction2 = modf(replay_speed_modifier[ent->client->resp.replay_speed],&frame_integer2);
-		frame_fraction = modf(ent->client->resp.replay_frame,&frame_integer);
-		if (frame_fraction2)
-		{
-			//if we have a fraction, process new origin/angles
-			VectorCopy(level_items.recorded_time_data[temp-1][(int)frame_integer].origin,prev_frame);
-			VectorCopy(level_items.recorded_time_data[temp-1][(int)frame_integer].angle,prev_angle);
-			if (frame_integer>0)
-			{
-				VectorCopy(level_items.recorded_time_data[temp-1][(int)frame_integer+1].origin,next_frame);
-				VectorCopy(level_items.recorded_time_data[temp-1][(int)frame_integer+1].angle,next_angle);
-			}
-			else
-			{
-				VectorCopy(level_items.recorded_time_data[temp-1][(int)frame_integer-1].origin,next_frame);
-				VectorCopy(level_items.recorded_time_data[temp-1][(int)frame_integer-1].angle,next_angle);
-			}
-			VectorSubtract(next_frame,prev_frame,diff_frame);
-			VectorSubtract(next_angle,prev_angle,diff_angle);
-			for (i=0;i<3;i++)
-			{
-				diff_frame[i] = diff_frame[i] * frame_fraction;
-				diff_angle[i] = diff_angle[i] * frame_fraction;
-				prev_frame[i] += diff_frame[i];
-				prev_angle[i] += diff_angle[i];
-			}
-			
-			VectorCopy(prev_frame,ent->s.origin);
-			VectorCopy(prev_angle,ent->client->v_angle);
-			VectorCopy(prev_angle,ent->client->ps.viewangles);
-			for (i=0 ; i<3 ; i++)
-				ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(prev_angle[i] - ent->client->resp.cmd_angles[i]);
-		}
-		else
-		{
-			if (ent->client->resp.replay_speed!=REPLAY_SPEED_ZERO)
-			if (frame_fraction)
-				ent->client->resp.replay_frame = frame_integer;
-			VectorCopy(level_items.recorded_time_data[temp-1][(int)ent->client->resp.replay_frame].origin,ent->s.origin);
-			VectorCopy(level_items.recorded_time_data[temp-1][(int)ent->client->resp.replay_frame].angle,ent->client->v_angle);
-			VectorCopy(level_items.recorded_time_data[temp-1][(int)ent->client->resp.replay_frame].angle,ent->client->ps.viewangles);
-
-			for (i=0 ; i<3 ; i++)
-				ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(level_items.recorded_time_data[temp-1][(int)ent->client->resp.replay_frame].angle[i] - ent->client->resp.cmd_angles[i]);
-		}
-		if (ent->client->resp.replay_speed!=REPLAY_SPEED_ZERO)
-			ent->client->resp.replay_frame += replay_speed_modifier[ent->client->resp.replay_speed];
-		if (ent->client->resp.replay_frame<=0)
-		{
-			if (ent->client->resp.rep_repeat)
-			{
-				ent->client->resp.replay_frame = level_items.recorded_time_frames[temp-1]-1;
-			}
-			else
-			{
-				ent->client->resp.replaying = 0;
-				ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
-			}
-		}
-	} else {
-			// =========================
-			// added by lilred
-			if (ent->client->resp.rep_repeat)
-			{
-				ent->client->resp.replay_frame = 0;
-				return;
-			}
-			// =========================
-		ent->client->resp.replaying = 0;
-		ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
-	}
-}*/
 
 void Cmd_Recall(edict_t *ent)
 {
@@ -5286,65 +3094,6 @@ void delete_all_demos(void)
 #endif
 		remove(name);	
 	}
-}
-
-void remtimes(edict_t *ent)
-{
-	int i;
-	char	name[256];
-	cvar_t	*tgame;
-	edict_t	*e2;
-
-	if (ent->client->resp.admin<aset_vars->ADMIN_REMTIMES_LEVEL)
-		return;
-
-	tgame = gi.cvar("game", "", 0);
-
-
-	//set all tourney times to some high value
-	//remove top 10 times
-	for (i=0;i<MAX_USERS;i++)
-	{
-		if (tourney_record[i].uid>=0)
-		{
-			sprintf (name, "%s/jumpdemo/%s_%d.dj3", tgame->string,level.mapname,tourney_record[i].uid);
-			remove(name);
-		}
-		tourney_record[i].uid = -1;
-		tourney_record[i].fresh = false;
-		tourney_record[i].time = 0;
-		tourney_record[i].completions = 0;
-	}
-	for (i = 1; i <= maxclients->value; i++) 
-	{
-		e2 = g_edicts + i;
-		if (!e2->inuse)
-			continue;
-		UpdateThisUsersUID(e2,e2->client->pers.netname);
-		
-	}
-	
-	ClearTimes();
-	for (i=0;i<MAX_HIGHSCORES+1;i++)
-	{
-		level_items.recorded_time_frames[i] = 0;
-		level_items.recorded_time_uid[i] = -1;
-	}
-
-	EmptyTimes(level.mapnum);
-	UpdateScores();
-	sort_users();
-#ifdef ANIM_REPLAY
-	sprintf (name, "%s/jumpdemo/%s.dj2", tgame->string,level.mapname);
-#else
-	sprintf (name, "%s/jumpdemo/%s.dj1", tgame->string,level.mapname);
-#endif
-	remove(name);	
-
-	write_tourney_file(level.mapname,level.mapnum);
-
-
-	gi.cprintf(ent,PRINT_HIGH,"Times removed.\n");
 }
 
 void List_Box_Types(edict_t *ent)
@@ -5818,728 +3567,7 @@ void	generate_random_start_map(void)
 	}
 }
 
-void List_mset_commands(edict_t *ent,int offset)
-{
-   int i; 
-	int printed;
-	int listed;
 
-   offset--;
-	
-   gi.cprintf (ent, PRINT_HIGH, "-------------------------------------------------\n"); 
-
-   printed = 0;
-   i = 0;
-   listed = 0;
-   while (i<ZBOTCOMMANDSSIZE)
-   {
-	    if (printed>=20)
-		   break;
-
-
-		if (zbotCommands[i].cmdwhere & CMD_MSET)
-		{
-			if (listed<offset*20)
-			{
-				//skip thru until we get to right page
-
-			}
-			else
-			{
-				//print it
-				gi.cprintf(ent,PRINT_HIGH,"  %-32s",zbotCommands[i].cmdname);
-				switch(zbotCommands[i].cmdtype)
-				{
-					case CMDTYPE_LOGICAL:
-						gi.cprintf(ent,PRINT_HIGH,"  %d\n",*((qboolean *)zbotCommands[i].datapoint));
-						break;
-					case CMDTYPE_NUMBER:
-						gi.cprintf(ent,PRINT_HIGH,"  %d\n",*((int *)zbotCommands[i].datapoint) );				
-						break;
-					case CMDTYPE_STRING:
-						gi.cprintf(ent,PRINT_HIGH,"  %s\n",zbotCommands[i].datapoint);
-						
-						break;
-				}
-				printed++;
-			}
-			listed++;
-		}
-		i++;
-   }
-
-   gi.cprintf (ent, PRINT_HIGH, "Page %d/%1.0f (%i commands).\n",(offset+1),ceil(num_mset_commands/20.0),num_mset_commands); 
-
-   gi.cprintf (ent, PRINT_HIGH, "-------------------------------------------------\n"); 
-}
-
-void List_gset_commands(edict_t *ent,int offset)
-{
-   int i,i2; 
-	int printed;
-	int listed;
-	char temp[64];
-   offset--;
-	
-   gi.cprintf (ent, PRINT_HIGH, "-------------------------------------------------\n"); 
-
-   printed = 0;
-   i = 0;
-   listed = 0;
-   while (i<ZBOTCOMMANDSSIZE)
-   {
-	    if (printed>=20)
-		   break;
-
-
-		if (zbotCommands[i].cmdwhere & CMD_GSET)
-		{
-			if (listed<offset*20)
-			{
-				//skip thru until we get to right page
-
-			}
-			else
-			{
-				if (zbotCommands[i].cmdwhere & CMD_GSETMAP)
-				{
-					for (i2=1;i2<strlen(zbotCommands[i].cmdname);i2++)
-					{
-						temp[i2-1] = zbotCommands[i].cmdname[i2];
-					}
-					temp[strlen(zbotCommands[i].cmdname)-1] = 0;
-					//print it
-					gi.cprintf(ent,PRINT_HIGH,"  %-32s",temp);
-				}
-				else
-				{
-					//print it
-					gi.cprintf(ent,PRINT_HIGH,"  %-32s",zbotCommands[i].cmdname);
-				}
-				switch(zbotCommands[i].cmdtype)
-				{
-					case CMDTYPE_LOGICAL:
-						gi.cprintf(ent,PRINT_HIGH,"  %d\n",*((qboolean *)zbotCommands[i].datapoint));
-						break;
-					case CMDTYPE_NUMBER:
-						gi.cprintf(ent,PRINT_HIGH,"  %d\n",*((int *)zbotCommands[i].datapoint) );				
-						break;
-					case CMDTYPE_STRING:
-						gi.cprintf(ent,PRINT_HIGH,"  %s\n",zbotCommands[i].datapoint);
-						
-						break;
-				}
-
-				printed++;
-			}
-			listed++;
-		}
-		i++;
-   }
-
-   gi.cprintf (ent, PRINT_HIGH, "Page %d/%1.0f (%i commands).\n",(offset+1),ceil(num_gset_commands/20.0),num_gset_commands); 
-
-   gi.cprintf (ent, PRINT_HIGH, "-------------------------------------------------\n"); 
-}
-
-void List_aset_commands(edict_t *ent,int offset)
-{
-   int i; 
-	int printed;
-	int listed;
-   offset--;
-	
-   gi.cprintf (ent, PRINT_HIGH, "-------------------------------------------------\n"); 
-
-   printed = 0;
-   i = 0;
-   listed = 0;
-   while (i<ZBOTCOMMANDSSIZE)
-   {
-	    if (printed>=20)
-		   break;
-
-
-		if (zbotCommands[i].cmdwhere & CMD_ASET)
-		{
-			if (listed<offset*20)
-			{
-				//skip thru until we get to right page
-
-			}
-			else
-			{
-				gi.cprintf(ent,PRINT_HIGH,"  %-32s",zbotCommands[i].cmdname);
-				switch(zbotCommands[i].cmdtype)
-				{
-					case CMDTYPE_LOGICAL:
-						gi.cprintf(ent,PRINT_HIGH,"  %d\n",*((qboolean *)zbotCommands[i].datapoint));
-						break;
-					case CMDTYPE_NUMBER:
-						gi.cprintf(ent,PRINT_HIGH,"  %d\n",*((int *)zbotCommands[i].datapoint) );				
-						break;
-					case CMDTYPE_STRING:
-						gi.cprintf(ent,PRINT_HIGH,"  %s\n",zbotCommands[i].datapoint);
-						
-						break;
-				}
-				printed++;
-			}
-			listed++;
-		}
-		i++;
-   }
-
-   gi.cprintf (ent, PRINT_HIGH, "Page %d/%1.0f (%i commands).\n",(offset+1),ceil(num_aset_commands/20.0),num_aset_commands); 
-
-   gi.cprintf (ent, PRINT_HIGH, "-------------------------------------------------\n"); 
-}
-
-void MSET(edict_t *ent)
-{
-	int i;
-	qboolean valid_command = false;
-	char temp[256];
-	cvar_t	*game_dir;
-	game_dir = gi.cvar("game", "", 0);
-
-	if (ent->client->resp.admin<aset_vars->ADMIN_MSET_LEVEL)
-		return;
-
-	if (gi.argc() < 2) {
-		List_mset_commands(ent,1);
-		return;
-	}
-
-	i = atoi(gi.argv(1));
-	if (i)
-	{
-		List_mset_commands(ent,i);
-		return;
-	}
-
-
-	if (!strstr(gi.argv(1),"edited_by"))
-		strcpy(mset_vars->edited_by,ent->client->resp.admin_name);
-	if (strcmp(gi.argv(1),"clear")==0)
-	{
-		CopyGlobalToLocal();
-		sprintf(temp,"%s/ent/%s.cfg",game_dir->string,level.mapname);
-		remove(temp);
-		gi.cprintf(ent,PRINT_HIGH,"MSET cleared\n");
-		return;
-	}
-
-
-    for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
-    {
-		if (zbotCommands[i].cmdwhere & CMD_MSET)
-		{
-			if (startContains (zbotCommands[i].cmdname, gi.argv(1)))
-			{
-
-				//valid command, modify settings
-				processCommand(i,2,ent);
-				valid_command = true;
-				sprintf(temp,"%s/ent/%s.cfg",game_dir->string,level.mapname);
-				writeMapCfgFile(temp);
-
-				break;
-			}
-		}
-	}
-
-	if (!valid_command)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Invalid command\n");
-	}
-
-	hud_footer(ent);
-}
-
-void GSET(edict_t *ent)
-{
-	int i;
-	qboolean valid_command = false;
-	char temp[256];
-	cvar_t	*game_dir;
-	game_dir = gi.cvar("game", "", 0);
-
-	if (ent->client->resp.admin<aset_vars->ADMIN_GSET_LEVEL)
-		return;
-
-	if (gi.argc() < 2) {
-		List_gset_commands(ent,1);
-		return;
-	}
-
-	i = atoi(gi.argv(1));
-	if (i)
-	{
-		List_gset_commands(ent,i);
-		return;
-	}
-
-
-    for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
-    {
-		if (zbotCommands[i].cmdwhere & CMD_GSET)
-		{
-			if (zbotCommands[i].cmdwhere & CMD_GSETMAP)
-				sprintf(temp,"g%s",gi.argv(1));
-			else
-				sprintf(temp,gi.argv(1));
-
-			if (startContains (zbotCommands[i].cmdname, temp))
-			{
-				//valid command, modify settings
-				processCommand(i,2,ent);
-				valid_command = true;
-				sprintf(temp,"%s/jump_mod.cfg",game_dir->string);
-				writeMainCfgFile(temp);
-				break;
-			}
-		}
-	}
-	if (!valid_command)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Invalid command\n");
-	}
-
-
-}
-
-void ASET(edict_t *ent)
-{
-	int i;
-	qboolean valid_command = false;
-	char temp[256];
-	cvar_t	*game_dir;
-	game_dir = gi.cvar("game", "", 0);
-
-	if (ent->client->resp.admin<aset_vars->ADMIN_MAX_LEVEL)
-		return;
-
-	if (gi.argc() < 2) {
-		List_aset_commands(ent,1);
-		return;
-	}
-
-	i = atoi(gi.argv(1));
-	if (i)
-	{
-		List_aset_commands(ent,i);
-		return;
-	}
-
-
-    for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
-    {
-		if (zbotCommands[i].cmdwhere & CMD_ASET)
-		{
-			sprintf(temp,gi.argv(1));
-
-			if (startContains (zbotCommands[i].cmdname, temp))
-			{
-				//valid command, modify settings
-				processCommand(i,2,ent);
-				valid_command = true;
-				sprintf(temp,"%s/jump_mod.cfg",game_dir->string);
-				writeMainCfgFile(temp);
-				break;
-			}
-		}
-	}
-	if (!valid_command)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Invalid command\n");
-	}
-
-
-}
-
-
-qboolean writeMapCfgFile(char *cfgfilename)
-{
-	char	temp[256];
-	int i,i2;
-	FILE *cfg_file;
-	int comparison;
-	qboolean added_line = false;
-
-	cfg_file = fopen (cfgfilename, "wb");
-
-
-    for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
-    {
-		if (zbotCommands[i].cmdwhere & CMD_MSET)
-		{
-			sprintf(temp,"g%s",zbotCommands[i].cmdname);
-		    for(i2 = 0; i2 < ZBOTCOMMANDSSIZE; i2++)
-			{
-				if (zbotCommands[i2].cmdwhere & CMD_GSET)
-				if (startContains (zbotCommands[i2].cmdname, temp))
-				{
-
-					switch(zbotCommands[i].cmdtype)
-					{
-					case CMDTYPE_LOGICAL:
-						comparison = *((qboolean *)zbotCommands[i].datapoint)!=*((qboolean *)zbotCommands[i2].datapoint);
-						break;
-				    case CMDTYPE_NUMBER:
-						comparison = *((int *)zbotCommands[i].datapoint)!=*((int *)zbotCommands[i2].datapoint);
-						break;
-					case CMDTYPE_STRING:
-						comparison = (strcmp(zbotCommands[i].datapoint,zbotCommands[i2].datapoint)!=0);
-						break;
-					}
-					
-					if (comparison)
-					{
-
-						switch(zbotCommands[i].cmdtype)
-						{
-						case CMDTYPE_LOGICAL:
-							fprintf(cfg_file,"%s \"%s\"\n",zbotCommands[i].cmdname,*((qboolean *)zbotCommands[i].datapoint) ? "Yes" : "No");
-						break;
-
-					    case CMDTYPE_NUMBER:
-							fprintf(cfg_file,"%s \"%d\"\n",zbotCommands[i].cmdname,*((int *)zbotCommands[i].datapoint));
-						break;
-
-						case CMDTYPE_STRING:
-							fprintf(cfg_file,"%s \"%s\"\n",zbotCommands[i].cmdname,(char *)zbotCommands[i].datapoint);
-						break;
-						}
-
-						added_line = true;
-					}
-					break;
-				}
-			}
-		}
-	}
-	fclose(cfg_file);
-	if (!added_line)
-	{
-		remove(cfgfilename);
-		return false;
-	}
-	return true;
-}
-
-qboolean writeMainCfgFile(char *cfgfilename)
-{
-	int i;
-	FILE *cfg_file;
-	qboolean added_line = false;
-
-	cfg_file = fopen (cfgfilename, "wb");
-
-
-    for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
-    {
-		if ((zbotCommands[i].cmdwhere & CMD_GSET) || (zbotCommands[i].cmdwhere & CMD_ASET))
-		{
-			switch(zbotCommands[i].cmdtype)
-			{
-			case CMDTYPE_LOGICAL:
-				fprintf(cfg_file,"%s \"%s\"\n",zbotCommands[i].cmdname,*((qboolean *)zbotCommands[i].datapoint) ? "Yes" : "No");
-				break;
-		    case CMDTYPE_NUMBER:
-				fprintf(cfg_file,"%s \"%d\"\n",zbotCommands[i].cmdname,*((int *)zbotCommands[i].datapoint));
-				break;
-			case CMDTYPE_STRING:
-				fprintf(cfg_file,"%s \"%s\"\n",zbotCommands[i].cmdname,(char *)zbotCommands[i].datapoint);
-				break;
-			}
-			added_line = true;
-		}
-	}
-	fclose(cfg_file);
-	if (!added_line)
-	{
-		remove(cfgfilename);
-		return false;
-	}
-	return true;
-}
-
-qboolean readCfgFile(char *cfgfilename)
-{
-  FILE *cfgfile;
-  char buff1[256];
-  char buff2[256];
-
-  cfgfile = fopen(cfgfilename, "rt");
-  if(!cfgfile) return false;
-
-  while(fgets(zbbuffer, 256, cfgfile) != NULL)
-  {
-    char *cp = zbbuffer;
-
-    SKIPBLANK(cp);
-
-    if(!(cp[0] == ';' || cp[0] == '\n' || isBlank (cp)))
-    {
-      if(breakLine(cp, buff1, buff2, sizeof(buff2) - 1))
-      {
-        int i;
-
-        for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
-        {
-          if((zbotCommands[i].cmdwhere & CMDWHERE_CFGFILE) &&  startContains (zbotCommands[i].cmdname, buff1))
-          {
-            if(zbotCommands[i].initfunc)
-            {
-              (*zbotCommands[i].initfunc)(buff2);
-            }
-            else switch(zbotCommands[i].cmdtype)
-            {
-              case CMDTYPE_LOGICAL:
-                *((qboolean *)zbotCommands[i].datapoint) = getLogicalValue(buff2);
-                break;
-
-              case CMDTYPE_NUMBER:
-                *((int *)zbotCommands[i].datapoint) = atoi(buff2);
-                break;
-
-              case CMDTYPE_STRING:
-                strcpy(zbotCommands[i].datapoint, buff2);
-                break;
-            }
-
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  fclose(cfgfile);
-
-  return true;
-}
-
-void processCommand(int cmdidx, int startarg, edict_t *ent)
-{
-  if (gi.argc() > startarg)
-  {
-    switch(zbotCommands[cmdidx].cmdtype)
-    {
-      case CMDTYPE_LOGICAL:
-        *((qboolean *)zbotCommands[cmdidx].datapoint) = getLogicalValue(gi.argv(startarg));
-        break;
-
-      case CMDTYPE_NUMBER:
-		//bounds clamping
-		if (
-			(atoi(gi.argv(startarg))<zbotCommands[cmdidx].min)
-			||
-			(atoi(gi.argv(startarg))>zbotCommands[cmdidx].max)
-			)
-		{
-			//clamp
-			*((int *)zbotCommands[cmdidx].datapoint) = zbotCommands[cmdidx].default_val;
-		}
-		else
-			*((int *)zbotCommands[cmdidx].datapoint) = atoi(gi.argv(startarg));
-        break;
-
-      case CMDTYPE_STRING:
-        processstring(zbotCommands[cmdidx].datapoint, gi.argv(startarg), 255, 0);
-        break;
-    }
-  }
-
-  switch(zbotCommands[cmdidx].cmdtype)
-  {
-    case CMDTYPE_LOGICAL:
-      gi.cprintf (ent, PRINT_HIGH, "%s = %s\n", zbotCommands[cmdidx].cmdname, *((qboolean *)zbotCommands[cmdidx].datapoint) ? "Yes" : "No");
-      break;
-
-    case CMDTYPE_NUMBER:
-      gi.cprintf (ent, PRINT_HIGH, "%s = %d\n", zbotCommands[cmdidx].cmdname, *((int *)zbotCommands[cmdidx].datapoint));
-      break;
-
-    case CMDTYPE_STRING:
-      gi.cprintf (ent, PRINT_HIGH, "%s = %s\n", zbotCommands[cmdidx].cmdname, (char *)zbotCommands[cmdidx].datapoint);
-      break;
-  }
-}
-
-void CopyGlobalToLocal(void)
-{
-
-	memcpy(mset_vars,gset_vars->mset,sizeof(mset_vars));
-}
-
-void CopyLocalToGlobal(void)
-{
-	memcpy(gset_vars->mset,mset_vars,sizeof(mset_vars));
-}
-
-int num_gset_commands = 0;
-int num_aset_commands = 0;
-int num_mset_commands = 0;
-void SetDefaultValues(void)
-{	
-	int i;
-
-	// msets/gsets
-	gset_vars->addedtimemap = 15;
-	gset_vars->mset->addedtimeoverride = 0;
-	gset_vars->addtime_announce = 1;
-	gset_vars->admin_max_addtime = 0;
-	strcpy(gset_vars->admin_model,"guard");
-	gset_vars->allow_admin_boot = 1;
-#ifdef RACESPARK
-	gset_vars->allow_race_spark = 1;
-#endif
-	gset_vars->mset->allowsrj = 0;
-	gset_vars->mset->announcements = 0;
-	gset_vars->autotime = 10;
-	gset_vars->best_time_glow = 0;
-	gset_vars->mset->bfg = 0;
-	gset_vars->mset->blaster = 0;
-	gset_vars->mset->checkpoint_total = 0;
-	gset_vars->mset->cmsg = 0;
-	gset_vars->cvote_announce = 1;
-	gset_vars->mset->damage = 1;
-	gset_vars->debug =0;
-	gset_vars->mset->droptofloor = 1;
-	strcpy(gset_vars->mset->edited_by,"NA");
-	gset_vars->mset->ezmode = 0;
-	gset_vars->mset->falldamage = 1;
-	gset_vars->mset->fast_firing = 0;
-	gset_vars->mset->fastdoors = 0;
-	gset_vars->mset->fasttele = 0;
-	gset_vars->flashlight = 1;
-	gset_vars->mset->fog = 1;
-	gset_vars->mset->fog_r = 50;
-	gset_vars->mset->fog_g = 50;
-	gset_vars->mset->fog_b = 50;
-	gset_vars->mset->fog_a = 50;
-	gset_vars->mset->fog_density = 2;
-	gset_vars->mset->fog_start = 1;
-	gset_vars->mset->fog_end = 2000;
-	gset_vars->fpskick = 1;
-	gset_vars->mset->lap_total = 0;
-	gset_vars->mset->ghost = 1;
-	gset_vars->ghost_glow = 0;
-	gset_vars->mset->ghost_model = 0;
-	gset_vars->glow_admin = 0;
-	gset_vars->glow_multi = 1;
-	gset_vars->mset->gravity = 800;
-	gset_vars->mset->health = 400;
-	gset_vars->hideghost = 300;
-	gset_vars->holdtime = 1;
-	gset_vars->hook = 1;
-	gset_vars->hookpull = 750;
-	gset_vars->hookspeed = 1200;
-	gset_vars->html_bestscores = 8;
-	gset_vars->html_create = 0;
-	gset_vars->html_firstplaces = 10;
-	gset_vars->html_profile = 1;
-	gset_vars->intermission = 50;
-	gset_vars->invis = 0;
-	gset_vars->jetpack = 1;
-	gset_vars->kill_delay = 1;
-	gset_vars->map_end_warn_sounds = 1;
-	gset_vars->maplist_times = 0;
-	gset_vars->maps_pass = 5;
-	gset_vars->max_votes = 3;
-	strcpy(gset_vars->model_store,"models/monsters/commandr/head/tris.md2");
-	gset_vars->nomapvotetime = 300;
-	gset_vars->notimevotetime = 300;
-	gset_vars->numberone_length = 17;
-	strcpy(gset_vars->numberone_wav,"numberone.wav");
-	gset_vars->numsoundwavs = 1;
-	gset_vars->overtimegainedhealth = 25;
-	gset_vars->overtimehealth = 150;
-	gset_vars->overtimelimit = 3;
-	gset_vars->overtimerandom = 1;
-	gset_vars->overtimetype = 1;
-	gset_vars->overtimewait = 20;
-	gset_vars->playsound = 10;
-	gset_vars->playtag = 0;
-	gset_vars->pvote_announce = 1;
-	gset_vars->mset->regen = 100;
-	gset_vars->mset->quad_damage = 0;
-	gset_vars->respawn_sound = 1;
-	gset_vars->mset->rocket = 0;
-	gset_vars->store_safe = 0;
-	gset_vars->mset->singlespawn = 0;
-	gset_vars->mset->slowdoors = 0;
-	gset_vars->target_glow = 2;
-	gset_vars->temp_ban_on_kick = 0;
-	gset_vars->time_adjust = 0;
-	gset_vars->mset->timelimit = 20;
-	gset_vars->tourney = 0;
-	gset_vars->transparent = 0;
-	gset_vars->voteextratime = 60;
-	gset_vars->voteseed = 20;
-	gset_vars->votingtime = 20;
-	gset_vars->walkthru = 1;
-	gset_vars->weapon_fire_min_delay = 500;
-
-	// asets
-	aset_vars->ADMIN_ADDBALL_LEVEL=1;
-	aset_vars->ADMIN_ADDENT_LEVEL=3;
-	aset_vars->ADMIN_ADDMAP_LEVEL=5;
-	aset_vars->ADMIN_ADDTIME_LEVEL=2;
-	aset_vars->ADMIN_ADMINEDIT_LEVEL=5;
-	aset_vars->ADMIN_BAN_LEVEL=5;
-	aset_vars->ADMIN_BOOT_LEVEL=2;
-	aset_vars->ADMIN_BRING_LEVEL=1;
-	aset_vars->ADMIN_CHANGENAME_LEVEL=5;
-	aset_vars->ADMIN_DUMMYVOTE_LEVEL=1;
-	aset_vars->ADMIN_GIVE_LEVEL=1;
-	aset_vars->ADMIN_GIVEALL_LEVEL=1;
-	aset_vars->ADMIN_GSET_LEVEL=5;
-	aset_vars->ADMIN_IP_LEVEL=5;
-	aset_vars->ADMIN_MAX_LEVEL=5;
-	aset_vars->ADMIN_MODEL_LEVEL=5;
-	aset_vars->ADMIN_MSET_LEVEL=4;
-	aset_vars->ADMIN_NEXTMAPS_LEVEL=2;
-	aset_vars->ADMIN_NOMAXVOTES_LEVEL=2;
-	aset_vars->ADMIN_RATERESET_LEVEL=5;
-	aset_vars->ADMIN_REMTIMES_LEVEL=4;
-	aset_vars->ADMIN_SILENCE_LEVEL=1;
-	aset_vars->ADMIN_SLAP_LEVEL=1;
-	aset_vars->ADMIN_SORTMAPS_LEVEL=5;
-	aset_vars->ADMIN_STUFF_LEVEL=5;
-	aset_vars->ADMIN_THROWUP_LEVEL=1;
-	aset_vars->ADMIN_TOGGLEHUD_LEVEL=5;
-	aset_vars->ADMIN_UPDATESCORES_LEVEL=5;
-	aset_vars->ADMIN_VOTE_LEVEL=2;
-
-	num_gset_commands = 0;
-    for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
-    {
-		if (zbotCommands[i].cmdwhere & CMD_GSET)
-		{
-			num_gset_commands++;
-		}
-	}
-	num_mset_commands = 0;
-    for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
-    {
-		if (zbotCommands[i].cmdwhere & CMD_MSET)
-		{
-			num_mset_commands++;
-		}
-	}
-
-	num_aset_commands = 0;
-    for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
-    {
-		if (zbotCommands[i].cmdwhere & CMD_ASET)
-		{
-			num_aset_commands++;
-		}
-	}
-}
 
 
 
@@ -7359,7 +4387,7 @@ void remtime(edict_t *ent)
 	char	name[256];
 	cvar_t	*tgame;
 	qboolean failed = false;
-	int trecid = -1;
+	int maplist_uid = -1;
 	int remuid;
 	edict_t *e2;
 
@@ -7383,33 +4411,36 @@ void remtime(edict_t *ent)
 
 // 084_h3	if (remnum!=10)
 //	{
-		if (remnum<=level_items.stored_item_times_count)
+		if (remnum<=MAX_HIGHSCORES)//level_items.stored_item_times_count)
 		{
-			remuid = level_items.stored_item_times[remnum-1].uid;
+			remuid = maplist.times[level.mapnum][remnum-1].uid;
 
 			if (remuid==-1)
 				return;
             maplist.users[remuid].completions--; //does this work?
-			for (i=remnum-1;i<level_items.stored_item_times_count-1;i++)
+			for (i=remnum-1;i<MAX_USERS-1; i++)//level_items.stored_item_times_count-1;i++)
 			{
-				level_items.stored_item_times[i].uid = level_items.stored_item_times[i+1].uid;
-				level_items.stored_item_times[i].time = level_items.stored_item_times[i+1].time;
-				strcpy(level_items.stored_item_times[i].owner,level_items.stored_item_times[i+1].owner);
-				level_items.stored_item_times[i].timestamp = level_items.stored_item_times[i+1].timestamp;
-				level_items.stored_item_times[i].timeint = level_items.stored_item_times[i+1].timeint;
-				strcpy(level_items.stored_item_times[i].name,level_items.stored_item_times[i+1].name);
-				strcpy(level_items.stored_item_times[i].date,level_items.stored_item_times[i+1].date);
-				level_items.stored_item_times[i].fresh = level_items.stored_item_times[i+1].fresh;
+				maplist.times[level.mapnum][i].uid = maplist.times[level.mapnum][i+1].uid;
+				maplist.times[level.mapnum][i].time = maplist.times[level.mapnum][i+1].time;
+				//strcpy(maplist.users[maplist.times[level.mapnum][i].uid].name,maplist.times[level.mapnum][i+1].owner);
+				//maplist.times[level.mapnum][i].timestamp = maplist.times[level.mapnum][i+1].timestamp;
+				//maplist.times[level.mapnum][i].timeint = maplist.times[level.mapnum][i+1].timeint;
+				//strcpy(maplist.times[level.mapnum][i].name,maplist.times[level.mapnum][i+1].name);
+				strcpy(maplist.times[level.mapnum][i].date,maplist.times[level.mapnum][i+1].date);
+				maplist.times[level.mapnum][i].fresh = maplist.times[level.mapnum][i+1].fresh;
+				if (maplist.times[level.mapnum][i].time = maplist.times[level.mapnum][i + 1].time == 0) {
+					break;
+				}
 			}
-			level_items.stored_item_times[level_items.stored_item_times_count-1].uid = 0;
-			level_items.stored_item_times[level_items.stored_item_times_count-1].time = 0;
-			level_items.stored_item_times[level_items.stored_item_times_count-1].name[0] = 0;
-			level_items.stored_item_times[level_items.stored_item_times_count-1].owner[0] = 0;
-			level_items.stored_item_times[level_items.stored_item_times_count-1].timestamp = 0;
-			level_items.stored_item_times[level_items.stored_item_times_count-1].timeint = 0;
-			level_items.stored_item_times[level_items.stored_item_times_count-1].date[0] = 0;
-			level_items.stored_item_times[level_items.stored_item_times_count-1].fresh = false;
-			level_items.stored_item_times_count--;
+			maplist.times[level.mapnum][i].uid = 0;
+			maplist.times[level.mapnum][i].time = 0;
+			//maplist.times[level.mapnum][level_items.stored_item_times_count-1].name[0] = 0;
+			//maplist.times[level.mapnum][level_items.stored_item_times_count-1].owner[0] = 0;
+			//maplist.times[level.mapnum][level_items.stored_item_times_count-1].timestamp = 0;
+			//maplist.times[level.mapnum][level_items.stored_item_times_count-1].timeint = 0;
+			maplist.times[level.mapnum][i].date[0] = 0;
+			maplist.times[level.mapnum][i].fresh = false;
+			//level_items.stored_item_times_count--;
 		}
 		else
 		{
@@ -7420,7 +4451,7 @@ void remtime(edict_t *ent)
 //	{
 //		if (level_items.stored_item_times_count==10)
 //		{
-//			remuid = level_items.stored_item_times[9].uid;
+//			remuid = maplist.times[level.mapnum][9].uid;
 //			level_items.stored_item_times_count = 9;
 //		}
 //		else
@@ -7431,14 +4462,14 @@ void remtime(edict_t *ent)
 		
 		if (remuid==-1)
 			return;
-		trecid = FindTRecID(remuid);
+		maplist_uid = FindMaplistUID(remuid);
 
-		if (trecid>=0) //clear time. 
+		if (maplist_uid>=0) //clear time. 
 		{
-			tourney_record[trecid].fresh = false;
-			//tourney_record[trecid].time = 0;
-            //tourney_record[trecid].uid = -1;
-			tourney_record[trecid].completions = -1;
+			maplist.times[level.mapnum][maplist_uid].fresh = false;
+			//maplist.times[level.mapnum][maplist_uid].time = 0;
+            //maplist.times[level.mapnum][maplist_uid].uid = -1;
+			maplist.times[level.mapnum][maplist_uid].completions = -1;
 		}
 
 		//		Update_Highscores(MAX_HIGHSCORES-1);
@@ -7470,14 +4501,13 @@ void remtime(edict_t *ent)
 
 		}
 		
-		write_tourney_file(level.mapname,level.mapnum);
+		write_map_file(level.mapname,level.mapnum);
 		Load_Recording();
 		for (i=1;i<MAX_HIGHSCORES;i++)
 		{
-			Load_Individual_Recording(i,level_items.stored_item_times[i].uid);
+			Load_Individual_Recording(i,maplist.times[level.mapnum][i].uid);
 		}
 		gi.cprintf(ent,PRINT_HIGH,"Time %d removed.\n",remnum);
-        read_top10_tourney_log(level.mapname);//fix top 15..
         removemapfrom_uid_file(remuid);
 	}
 	else
@@ -8297,1294 +5327,6 @@ int CheckOverTimeLastManRules(void)
 }
 
 
-times_record tourney_record[MAX_USERS];
-
-int FindTRecID(int uid)
-{
-	int i;
-	int ret_this = -1;
-	if (uid==-1)
-		return -1;
-
-	for (i=0;i<MAX_USERS;i++)
-	{
-		if (tourney_record[i].uid==uid)
-		{
-			//found a current record, update
-			ret_this = i;
-			break;
-		}
-	}
-	return ret_this;
-}
-
-qboolean tourney_log(edict_t *ent,int uid, float time,char *date )
-{
-	int i;
-	int trecid;
-	float oldtime;
-    edict_t *cl_ent;
-
-	//find user in tourney record
-	trecid = FindTRecID(uid);
-
-	//record old time
-	oldtime = 0;
-	if (tourney_record[trecid].time > 0) {
-		oldtime = tourney_record[trecid].time;
-	}
-
-	// split checking for final gun grab
-	int my_time;
-	float my_time_float;
-	float my_split;
-
-	my_time = Sys_Milliseconds() - ent->client->resp.client_think_begin;
-	my_time_float = (float)my_time / 1000.0f;
-	my_split = my_time_float - ent->client->pers.cp_split;
-
-	// this player already has a time, we can just update their old one
-	if (trecid>=0) {
-		if (time<tourney_record[trecid].time) {
-			tourney_record[trecid].time = time;
-			strcpy(tourney_record[trecid].date,date);
-			ent->client->resp.trecid =trecid;
-			ent->client->resp.best_time = time;
-		}
-
-		if (!tourney_record[trecid].completions) {
-			maplist.users[uid].completions++;
-			append_uid_file(uid,level.mapname);
-		}
-
-		tourney_record[trecid].completions++;
-		tourney_record[trecid].fresh = true;
-
-		// if we want to re-add # of comps
-		//tourney_record[trecid].completions
-		//maplist.times[level.mapnum][0].time
-		//tourney_record[0].time
-		//level_items.stored_item_times[0].time
-
-		//setting a first
-		if (time < level_items.stored_item_times[0].time) {
-			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
-			gi.bprintf(PRINT_CHAT, "%1.3f ", time - oldtime);
-			gi.bprintf(PRINT_HIGH, "| 1st ");
-			gi.bprintf(PRINT_CHAT, "%1.3f", time - level_items.stored_item_times[0].time);
-			if (ent->client->pers.cp_split > 0)
-				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
-			gi.bprintf(PRINT_HIGH, ")\n");
-			return false;
-		}
-		
-		// beat pb, show to server
-		if (time < oldtime) {
-			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
-			gi.bprintf(PRINT_CHAT, "%1.3f ", time - oldtime);
-			gi.bprintf(PRINT_HIGH, "| 1st +%1.3f", time - level_items.stored_item_times[0].time);
-			if (ent->client->pers.cp_split > 0)
-				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
-			gi.bprintf(PRINT_HIGH, ")\n");
-			return false;
-		}
-
-		// didn't beat pb/1st, only show to players that wants it, or players who are chasing you! :D //no splits atm though :thinking: :linux: :thing:
-        for (i = 0; i < maxclients->value; i++) {
-		    cl_ent = g_edicts + 1 + i;
-		    if (!cl_ent->inuse)
-			    continue;
-
-			if (cl_ent->client->resp.showtimes || cl_ent->client->chase_target && Q_stricmp(cl_ent->client->chase_target->client->pers.netname,ent->client->pers.netname)==0)
-			    gi.cprintf(cl_ent, PRINT_HIGH, "%s finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
-					ent->client->pers.netname,time,time-oldtime,time-level_items.stored_item_times[0].time);
-	    }
-
-		// even with showtimes off, you should still see your own time
-		if (time >= oldtime && !ent->client->resp.showtimes) {
-			if (ent->client->pers.cp_split > 0)
-				gi.cprintf(ent,PRINT_HIGH,"You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f | split: %1.3f)\n",
-					time,time-oldtime,time-level_items.stored_item_times[0].time, my_split);
-			else
-				gi.cprintf(ent, PRINT_HIGH, "You finished in %1.3f seconds (PB +%1.3f | 1st +%1.3f)\n",
-					time, time - oldtime, time - level_items.stored_item_times[0].time);
-			return false;
-		}
-
-		// something is very wrong...
-		return false;
-	}
-
-	// these players don't have a time on the map yet
-	else {
-		if (time>0)
-		for (i=0;i<MAX_USERS;i++)
-		{
-			if (tourney_record[i].completions<=0) {
-				//found a spare record, use it
-				if(tourney_record[i].completions==-1){
-					tourney_record[i].completions = 0;
-				}
-				tourney_record[i].uid = uid;
-				tourney_record[i].time = time;
-				strcpy(tourney_record[i].date,date);
-				if (!tourney_record[i].completions)
-				{
-					maplist.users[uid].completions++;
-					append_uid_file(uid,level.mapname);
-				}
-				tourney_record[i].completions++;
-				tourney_record[i].fresh = true;
-				ent->client->resp.trecid = i;
-				ent->client->resp.best_time = time;
-
-				// new map, so don't show comparison
-				if (level_items.stored_item_times[0].time == 0) {
-					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (", ent->client->pers.netname, time);
-					if (ent->client->pers.cp_split > 0)
-						gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
-					gi.bprintf(PRINT_HIGH, "1st completion on the map)\n");
-					return false;
-				}
-
-				// 1st comp AND 1st place
-				if (time < level_items.stored_item_times[0].time) {
-					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (1st ", ent->client->pers.netname, time);
-					gi.bprintf(PRINT_CHAT, "%1.3f ", time - level_items.stored_item_times[0].time);
-					gi.bprintf(PRINT_HIGH, "| ");
-					if (ent->client->pers.cp_split > 0)
-						gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
-					gi.bprintf(PRINT_HIGH, "1st completion)\n");
-					return false;
-				}
-
-				// always display someone's first completion
-				gi.bprintf(PRINT_HIGH,"%s finished in %1.3f seconds (1st +%1.3f | ",
-					ent->client->pers.netname,time,time-level_items.stored_item_times[0].time);
-				if (ent->client->pers.cp_split > 0)
-					gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
-				gi.bprintf(PRINT_HIGH, "1st completion)\n");
-
-				if (gset_vars->playsound)
-				if (time>gset_vars->playsound)
-					return true;
-				return false;
-			}
-		}
-	}
-	return false;
-}
-
-void sort_tourney_records(){
-    int i,j,swap;
-    times_record   temp;
-    swap = 0;
-
-    for(i=1; i<MAX_USERS; i++){
-        if(strlen(tourney_record[i].date)<2){
-            break;
-        }
-        swap = 0; 
-        for(j=0; j<(MAX_USERS-i); j++){
-            if(strlen(tourney_record[j].date)<2 || strlen(tourney_record[j+1].date)<2) {
-                break;
-            }
-            if(tourney_record[j].time==tourney_record[j+1].time){
-                continue;	
-            }
-            if(tourney_record[j].time > tourney_record[j+1].time){
-                //gi.dprintf("Swap: %d  <->  %d\n",tourney_record[j].uid,tourney_record[j+1].uid);
-                temp = tourney_record[j];
-                tourney_record[j] = tourney_record[j+1];
-                tourney_record[j+1] = temp;
-                //gi.dprintf("Swapped: %d  <->  %d\n",tourney_record[j].uid,tourney_record[j+1].uid);
-                swap = 1;
-            }
-        }
-        if(!swap){
-            break;
-        }
-    }
-}
-
-void update_tourney_records(char *filename){
-	FILE	*f;
-	int i,i2;
-	char	name[128];
-	cvar_t	*port;
-	cvar_t	*tgame;
-	char temp[1024];
-    times_record tempuser;
-    qboolean founduser;
-
-	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
-
-	if (!*tgame->string)    
-	{
-		sprintf	(name, "jump/%s/%s.t", port->string,filename);
-	}
-	else
-	{
-		sprintf (name, "%s/%s/%s.t", tgame->string,port->string,filename);
-	}
-
-	f = fopen (name, "rb");
-	if (!f)
-	{
-		return;
-	}	
-
-    fscanf(f,"%s",&temp);
-    if(strstr(temp,"Jump067")){
-        //gi.dprintf("Old file, better luck next time.!\n");
-        fclose(f);
-	    return;
-    } else {
-        //gi.dprintf("Read new alltimes tourneyfile!\n");
-        rewind(f);
-    }
-
-	for(i2=0;i2<MAX_USERS;i2++){
-        tempuser.uid  = -1; // so it'll go away if it's not set to anything else.
-		fscanf(f, "%s", tempuser.date);
-		fscanf(f, "%f", &tempuser.time);
-		fscanf(f, "%i", &tempuser.uid);
-		fscanf(f, "%i", &tempuser.completions);
-        if(tempuser.uid==-1){
-            break;
-        }
-        founduser = false;
-        for(i=0;i<MAX_USERS;i++){
-            if(tempuser.uid == tourney_record[i].uid){
-                founduser = true; //not a new user..
-                if(tourney_record[i].completions==-1){ //if remtime
-					gi.dprintf("remove time: %f\n", tourney_record[i].time);
-                    tourney_record[i].fresh = false;
-			        tourney_record[i].time = 0;
-                    tourney_record[i].uid = -1;
-			        tourney_record[i].completions = 0;
-                    break;
-                }
-                if(tourney_record[i].time>tempuser.time){ //check if user has a better time..
-                    tourney_record[i].time = tempuser.time;
-					sprintf(tourney_record[i].date,"%s",tempuser.date);
-                }
-				if (tempuser.completions > tourney_record[i].completions) {
-					tourney_record[i].completions = tempuser.completions;
-				}
-                break;
-            }
-        }
-        if(!founduser){ //new user!
-            for(i=0;i<MAX_USERS;i++){
-                if(!tourney_record[i].completions){
-                    tourney_record[i] = tempuser;
-					gi.dprintf("remove time: %f\n", tourney_record[i].time);
-                    break;
-                }
-            }
-        }
-        if (feof(f)){
-            break;
-        }
-	}
-    for(i=0;i<MAX_USERS;i++){ //check if there are any removed times left, and reset them.
-        if(tourney_record[i].completions==-1){
-            tourney_record[i].fresh = false;
-	        tourney_record[i].time = 0;
-            tourney_record[i].uid = -1;
-	        tourney_record[i].completions = 0;
-        }
-    }
-	fclose(f);
-}
-
-void open_tourney_file(char *filename,qboolean apply)
-{
-	FILE	*f;
-	int i,i2;
-	char	name[128];
-	cvar_t	*port;
-	cvar_t	*tgame;
-	char temp[1024];
-	int uid;
-	qboolean maplisted;
-	struct stat filestat;
-
-	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
-
-	if (!*tgame->string)
-	{
-		sprintf	(name, "jump/%s/%s.t", port->string,filename);
-	}
-	else
-	{
-		sprintf (name, "%s/%s/%s.t", tgame->string,port->string,filename);
-	}
-
-	maplisted = false;
-	stat(name, &filestat);
-	for (i2 = 0; i2 < maplist.nummaps; i2++)
-	{
-		if (strcmp(maplist.mapnames[i2], filename) == 0)
-		{	
-			maplisted = true;
-			maplist.mod_time[i2].time = filestat.st_mtime;
-			//gi.dprintf("open map: %s mod time: %s\n", maplist.mapnames[i2], ctime(&maplist.mod_time[i2].time));
-		}
-	}
-	//clear tourney file
-	for (i=0;i<MAX_USERS;i++)
-	{
-		tourney_record[i].fresh = false;
-		tourney_record[i].uid = -1;
-		tourney_record[i].time = 0;
-		tourney_record[i].completions = 0;
-	}
-	i=0;
-
-	f = fopen (name, "rb");
-
-	if (!f)
-	{
-		return;
-	}
-	fseek(f, 0, SEEK_END);
-	if (ftell(f) == 0) { //if file is empty.
-		return;
-	}
-	else {
-		rewind(f);
-	}
-    fscanf(f,"%s",&temp);
-	//gi.dprintf("%s\n", &temp);
-    if(Q_stricmp(temp,"Jump067")==0){
-	    while (!feof(f))
-	    {
-		    fscanf(f,"%s",&temp);
-		    if (strcmp(temp,"JUMPMOD067ALLTIMES")==0)
-		    {
-			    break;
-		    }
-	    }
-    } else {
-        //Read new alltimes tourneyfile!
-        rewind(f);
-    }
-
-    
-    for(i=0;i<MAX_USERS;i++){
-		fscanf(f, "%s", &tourney_record[i].date);
-		if (strlen(tourney_record[i].date) < 2 )
-			break; //ugly hack to stop it from loading 1 more uid, even though it has reached the end of the file..
-		fscanf(f, "%f", &tourney_record[i].time);
-		fscanf(f, "%i", &uid);
-		tourney_record[i].uid = uid;
-		fscanf(f, "%i", &tourney_record[i].completions); 
-		//gi.dprintf("NR: %d Uid: %d date: %s time: %f\n", i, uid, tourney_record[i].date, tourney_record[i].time);
-		if (maplisted && apply && tourney_record[i].completions)
-		{
-			append_uid_file(uid,filename);
-		}
-        if(feof(f)){
-            break;
-        }
-	}
-	fclose(f);
-}
-
-void write_tourney_file(char *filename,int mapnum)
-{
-	char	buffer[1024];
-	FILE	*f;
-	char	name[256];
-	int i,i2;
-	char port_d[32];
-	cvar_t	*port;
-	cvar_t	*tgame;
-	struct	tm *current_date;
-	time_t	time_date;
-	int		month,day,year;
-
-    sort_tourney_records();
-	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
-	strcpy(port_d,port->string);
-	if (!port_d[0])
-		strcpy(port_d,"27910");
-	if (!*tgame->string)
-	{
-		sprintf	(name, "jump/%s/%s.t", port_d,filename);
-	}
-	else
-	{
-		sprintf (name, "%s/%s/%s.t", tgame->string,port_d,filename);
-	}
-
-	f = fopen (name, "wb");
-
-	if (!f)
-		return;
-
-	//set the date
-		time_date = time(NULL);                // DOS system call
-		current_date = localtime(&time_date);  // DOS system call
-
-    /* fuck this useless shit.. Atleast I hope it's useless? :D
-	//right, we need to save the top 10 scores first
-	fprintf (f, "Jump067\n");
-
-	//print date/time
-//	sprintf (date_marker, "%i%i%i",current_date->tm_hour,current_date->tm_min,current_date->tm_sec);
-//	maplist.update[mapnum] = atoi(date_marker);
-
-	fprintf (f, "%i\n",maplist.update[mapnum]);
-	//print map name
-	fprintf (f, "%s\n",filename);
-	//print top10marker
-	fprintf (f, "JUMPMOD067TOP10TIMES\n");
-    
-
-	for (i=0;i<level_items.stored_item_times_count;i++)
-	{
-		if (i>MAX_HIGHSCORES)
-			break;
-		Com_sprintf(buffer,sizeof(buffer), " %s %f %i",level_items.stored_item_times[i].date,level_items.stored_item_times[i].time,level_items.stored_item_times[i].uid);
-		fprintf (f, "%s", buffer);
-	}
-
-	//print other marker
-	fprintf (f, "\nJUMPMOD067ALLTIMES\n");
-	*/
-	for (i=0;i<MAX_USERS;i++)
-	{
-		if (tourney_record[i].completions != -1) {
-			if (tourney_record[i].uid > -1 && tourney_record[i].time > 0) {
-				Com_sprintf(buffer, sizeof(buffer), "%s %f %i %i", tourney_record[i].date, tourney_record[i].time, tourney_record[i].uid, tourney_record[i].completions);
-				fprintf(f, "%s\n", buffer);
-				//gi.dprintf("ID=%d\n",i);
-			}
-		}
-	}
-	fclose(f);
-}
-
-void update_users_file()
-{
-	int throwaway;
-	FILE	*f;
-	char	name[128];
-	cvar_t	*port;
-	cvar_t	*tgame;
-	int uid;
-	int score;
-	int completions;
-	int tmp = maplist.version;
-    qboolean newusers;
-
-	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
-
-	if (!*tgame->string)
-	{
-		sprintf	(name, "jump/%s/users.t", port->string);
-	}
-	else
-	{
-		sprintf (name, "%s/%s/users.t", tgame->string,port->string);
-	}
-
-	f = fopen (name, "rb");
-	if (!f)
-	{
-		return;
-	}	
-	maplist.num_users = 0;
-
-    newusers = false;
-    fscanf(f, "%s", &name);
-    if (Q_stricmp(va("%c%c%c", name[7], name[8], name[9]), "084") == 0)
-    {
-	    maplist.version = 1;
-    }
-    else if (Q_stricmp(va("%c%c%c", name[7], name[8], name[9]), "067") == 0)
-    {
-	    maplist.version = 0;
-    }
-    else
-    { 
-        rewind(f);
-        newusers = true;
-    }
-    if(!newusers){
-	    while (!feof(f))
-	    {
-		    fscanf(f, "%i", &uid);
-		    if (1 == maplist.version)
-		    {
-    //			gi.dprintf("If JumpMod067 is stated above this shouldn't be here.\n");
-			    fscanf(f, "%i", &completions);
-		    }
-		    fscanf(f, "%i", &throwaway);
-		    fscanf(f, "%i", &throwaway);
-		    fscanf(f, "%i", &throwaway);
-		    fscanf(f, "%i", &throwaway);
-		    fscanf(f, "%i", &throwaway);
-		    fscanf(f, "%i", &throwaway);
-            fscanf(f, "%i", &score);
-		    fscanf(f, "%s", &name);
-		    if ((uid>=MAX_USERS) || (uid<0))
-			    continue;
-		    strcpy(maplist.users[uid].name,name);
-            
-		    maplist.num_users++;
-	    }
-    } else { //new users.t version
-        while (!feof(f))
-	    {
-            fscanf(f, "%i", &uid);
-			fscanf(f, "%i", &completions);
-            fscanf(f, "%i", &score);
-		    fscanf(f, "%s", &name);
-            if ((uid>=MAX_USERS) || (uid<0))
-			    continue;
-			if (Q_stricmp(maplist.users[uid].name, name) != 0) { //new player frome elsewhere
-				strcpy(maplist.users[uid].name, name);
-				maplist.users[uid].score = score;
-				maplist.users[uid].completions = completions;
-			}
-			//gi.bprintf(PRINT_HIGH, "%s updated at %i\n", name, uid);
-            maplist.num_users++;
-        }
-    }
-	if (1 == tmp)
-		maplist.version = 1;
-    maplist.sort_num_users = maplist.num_users;
-
-	fclose(f);
-}
-void open_users_file()
-{
-	int throwaway;
-	FILE	*f;
-	int i,j;
-	char	name[128];
-	cvar_t	*port;
-	cvar_t	*tgame;
-	int uid;
-	int score;
-	int completions;
-	//char tmp[3];
-	int tmp = maplist.version;
-    qboolean newusers; //new users.t file ?
-
-	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
-
-	gi.dprintf("Opening users file!\n");
-	if (!*tgame->string)
-	{
-		sprintf	(name, "jump/%s/users.t", port->string);
-	}
-	else
-	{
-		sprintf (name, "%s/%s/users.t", tgame->string,port->string);
-	}
-
-	f = fopen (name, "rb");
-	if (!f)
-	{
-		return;
-	}	
-	maplist.num_users = 0;
-
-    newusers = false;
-    fscanf(f, "%s", &name);
-    if (Q_stricmp(va("%c%c%c", name[7], name[8], name[9]), "084") == 0)
-    {
-	    maplist.version = 1;
-    }
-    else if (Q_stricmp(va("%c%c%c", name[7], name[8], name[9]), "067") == 0)
-    {
-	    maplist.version = 0;
-    }
-    else
-    { 
-        maplist.version = 1;
-        rewind(f);
-        newusers = true;
-    }
-    //clear users file
-    for (i=0;i<MAX_USERS;i++)
-    {
-	    maplist.users[i].name[0] = 0;
-	    maplist.users[i].score = 0;
-	    maplist.users[i].lastseen = 0;
-	    for (j=0;j<10;j++)
-		    maplist.users[i].points[j] = 0;
-    }
-
-    i = 0;
-    if(!newusers){
-		//gi.dprintf("Old users file....\n");
-	    while (!feof(f))
-	    {
-		    fscanf(f, "%i", &uid);
-		    if (1 == maplist.version)
-		    {
-    //			gi.dprintf("If JumpMod067 is stated above this shouldn't be here.\n");
-			    fscanf(f, "%i", &completions);
-		    }
-		    fscanf(f, "%i", &throwaway);
-		    fscanf(f, "%i", &throwaway);
-		    fscanf(f, "%i", &throwaway);
-		    fscanf(f, "%i", &throwaway);
-		    fscanf(f, "%i", &throwaway);
-		    fscanf(f, "%i", &throwaway);
-            fscanf(f, "%i", &score);
-		    fscanf(f, "%s", &name);
-		    if ((uid>=MAX_USERS) || (uid<0))
-			    continue;
-
-		    strcpy(maplist.users[uid].name,name);
-		    if (1 == maplist.version)
-		    {
-    //			gi.dprintf("If JumpMod067 is stated above this shouldn't be here.\n");
-			    maplist.users[uid].completions = completions;
-		    }
-		    maplist.num_users++;
-	    }
-    } else { //new users.t version..
-		//gi.dprintf("New!! users file!\n");
-        while (!feof(f))
-	    {
-            fscanf(f, "%i", &uid);
-			fscanf(f, "%i", &completions);
-            fscanf(f, "%i", &score);
-		    fscanf(f, "%s", &name);
-            if ((uid>=MAX_USERS) || (uid<0))
-			    continue;
-            strcpy(maplist.users[uid].name,name);
-		    maplist.users[uid].completions = completions;
-            maplist.num_users++;
-        }
-    }
-	if (1 == tmp)
-		maplist.version = 1;
-    maplist.sort_num_users = maplist.num_users;
-
-	fclose(f);
-}
-
-void write_users_file(void)
-{
-	char	buffer[1024];
-	FILE	*f;
-	char	name[256];
-	int i;
-	char port_d[32];
-	cvar_t	*port;
-	cvar_t	*tgame;
-
-	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
-
-	strcpy(port_d,port->string);
-	if (!port_d[0])
-		strcpy(port_d,"27910");
-	if (!*tgame->string)
-	{
-		sprintf	(name, "jump/%s/users.t", port_d);
-	}
-	else
-	{
-		sprintf (name, "%s/%s/users.t", tgame->string,port_d);
-	}
-
-	f = fopen (name, "wb");
-	if (!f)
-		return;
-	for (i=0;i<MAX_USERS;i++)
-	{
-        if(maplist.users[i].name[0]){
-            Com_sprintf(buffer,sizeof(buffer), " %i %i %i %s",i,maplist.users[i].completions,maplist.users[i].score,maplist.users[i].name);
-		    fprintf (f, "%s", buffer);
-        }
-	}
-	fclose(f);
-}
-
-void old_write_users_file(void)
-{
-	char	buffer[1024];
-	FILE	*f;
-	char	name[256];
-	int i;
-	char port_d[32];
-	cvar_t	*port;
-	cvar_t	*tgame;
-
-	tgame = gi.cvar("game", "jump", 0);
-	port = gi.cvar("port", "27910", 0);
-    
-	strcpy(port_d,port->string);
-	if (!port_d[0])
-		strcpy(port_d,"27910");
-	if (!*tgame->string)
-	{
-		sprintf	(name, "jump/%s/users.t", port_d);
-	}
-	else
-	{
-		sprintf (name, "%s/%s/users.t", tgame->string,port_d);
-	}
-
-	f = fopen (name, "wb");
-	if (!f)
-		return;
-//	maplist.version = 1;
-	if (1 == maplist.version)
-		fprintf(f,"JumpMod084");
-	else
-		fprintf(f, "JumpMod067");
-	for (i=0;i<MAX_USERS;i++)
-	{
-
-		if (maplist.users[i].name[0])
-		{
-			if (1 == maplist.version)
-				Com_sprintf(buffer,sizeof(buffer), " %i %i %i %i %i %i %i %i %i %s",i,maplist.users[i].completions,
-					0,
-					maplist.users[i].points[0],
-					maplist.users[i].points[1],
-					maplist.users[i].points[2],
-					maplist.users[i].points[3],
-					maplist.users[i].points[4],
-					maplist.users[i].score,
-					maplist.users[i].name);
-			else
-				Com_sprintf(buffer,sizeof(buffer), " %i %i %i %i %i %i %i %i %s",i,maplist.users[i].completions,
-					maplist.users[i].points[0],
-					maplist.users[i].points[1],
-					maplist.users[i].points[2],
-					maplist.users[i].points[3],
-					maplist.users[i].points[4],
-					maplist.users[i].score,
-					maplist.users[i].name);
-			fprintf (f, "%s", buffer);
-		}
-	}
-	fclose(f);
-}
-
-
-
-
-float add_item_to_queue(edict_t *ent, float item_time,char *owner,char *name)
-{
-	int m_current;
-	int m_time;
-	float item_time_new;
-	int i;
-	struct	tm *current_date;
-	time_t	time_date;
-	int		month,day,year;
-	int i2;
-	int placement;
-	char temp_owner[128],temp_name[128];
-	qboolean fresh;
-	char temp_date[128];
-	qboolean played_wav = false;
-	float diff;
-	qboolean save_demo = true;
-	char temp_stamp[32];
-	int uid;
-	int uid_1st = -1;
-
-	//dont add if name = zero length
-	if (strcmp(owner,"")==0)
-		return item_time;
-
-	//item_time = 3.7f;
-	strcpy(temp_owner,owner);
-	strcpy(temp_name,name);
-
-	for (i2=0;i2<strlen(temp_owner);i2++)
-	{
-		if (temp_owner[i2]==' ')
-			temp_owner[i2]='_';
-	}	
-
-	for (i2=0;i2<strlen(temp_name);i2++)
-	{
-		if (temp_name[i2]==' ')
-			temp_name[i2]='_';
-	}	
-
-	
-	//set the date
-		time_date = time(NULL);                // DOS system call
-		current_date = localtime(&time_date);  // DOS system call
-		month = current_date->tm_mon + 1;
-		day = current_date->tm_mday;
-		year = current_date->tm_year;
-
-	sprintf(temp_stamp,"1%02d%02d%02d",year-100,month,day);
-
-	uid = GetPlayerUid(temp_owner);
-	if (uid==-1)
-		//no slots or somin fucked
-		return item_time;
-
-	
-	ent->client->resp.uid = uid+1;
-	UpdateThisUsersSortedUid(ent);
-	//log off everyones time
-	sprintf(temp_date, "%02d/%02d/%02d",day, month,year-100);
-
-	if (ent->client->resp.client_think_begin)
-	{
-		
-		m_current = Sys_Milliseconds();
-		m_time = m_current - ent->client->resp.client_think_begin;
-		item_time_new = (float)m_time / 1000.0f;
-		//0.5 limit difference, just to be sure nothing breaks
-		if (fabs(item_time - item_time_new)<0.5)
-			item_time = item_time_new;
-		//add 0.1 otherwise due to replay starting early
-		else
-			item_time += 0.1f;
-		if (gset_vars->time_adjust)
-			item_time += ((double)gset_vars->time_adjust*0.001);
-	}
-	else
-	{
-		//due to paused start we now need to add 0.1
-		item_time += 0.1f;
-	}
-
-	played_wav = tourney_log(ent,uid,item_time,temp_date);
-
-	placement = level_items.stored_item_times_count;
-	if (level_items.stored_item_times_count)
-	{
-		uid_1st = level_items.stored_item_times[0].uid;
-		for (i=0;i<level_items.stored_item_times_count;i++)
-		{
-			if (level_items.stored_item_times[i].uid==uid)
-			{
-				//0.001 is used due to gay floating points. this hack should prevent same times being added with a new date
-				if ((item_time+0.0001)<level_items.stored_item_times[i].time)
-				{
-					placement = i;
-				}
-				else
-				{
-					//only save demo if less than or EQUAL to us
-					if (item_time>level_items.stored_item_times[i].time)
-						save_demo = false;
-					placement = -1;
-				}
-				break;
-			}
-		}
-	}
-
-	fresh = false;
-
-	if (placement>=0)
-	{
-		level_items.stored_item_times[placement].uid = uid;
-		level_items.stored_item_times[placement].timestamp = 0;
-		level_items.stored_item_times[placement].timeint = 0;
-		level_items.stored_item_times[placement].time = item_time;
-		strcpy(level_items.stored_item_times[placement].owner,temp_owner);
-		strcpy(level_items.stored_item_times[placement].name,temp_name);
-		level_items.stored_item_times[placement].fresh = true;
-		fresh = true;
-
-
-		sprintf(level_items.stored_item_times[placement].date, "%02d/%02d/%02d",day, month,year-100);
-
-		if (placement==level_items.stored_item_times_count)
-		{
-			//if we have a new time being added here check to see if its better than our stored time
-			if (item_time>ent->client->resp.best_time)
-				save_demo = false;
-			level_items.stored_item_times_count++;
-		}
-		sort_queue(level_items.stored_item_times_count);
-	}
-	if (save_demo)
-	{
-		//only save if its now on the board
-		for (i=0;i<level_items.stored_item_times_count;i++)
-			if (level_items.stored_item_times[i].uid==uid)
-			{
-				Save_Individual_Recording(ent);
-				break;
-			}
-		//load the recordings from where this went in to end of stored item list
-		for (i2=i;i2<MAX_HIGHSCORES;i2++)
-		{
-			Load_Individual_Recording(i2,level_items.stored_item_times[i2].uid);
-		}
-	}
-
-	if (level_items.stored_item_times_count>MAX_HIGHSCORES)
-		level_items.stored_item_times_count=MAX_HIGHSCORES;
-
-
-	if (fresh)
-	{
-		//need to sort the demo recording code completely
-		if (strcmp(temp_owner,level_items.stored_item_times[0].owner)==0)
-		if (strcmp(temp_name,level_items.stored_item_times[0].name)==0)
-			if (level_items.stored_item_times[0].time==item_time)
-		{
-			Save_Recording(ent,uid,uid_1st);
-			if (gset_vars->playsound && song_timer(gset_vars->numberone_length)) // change the # to length of your 1st place song
-			{
-				gi.positioned_sound (world->s.origin, world, CHAN_AUTO | CHAN_RELIABLE, gi.soundindex(gset_vars->numberone_wav), 1, ATTN_NONE, 0);
-				played_wav = false;
-			}
-		}
-		
-
-			//disabling writing of times each set
-/*		if (level_items.stored_item_times_count==10)
-		{
-			if (item_time<=level_items.stored_item_times[9].time)
-				WriteTimes(level.mapname);
-		}
-		else			
-			WriteTimes(level.mapname);*/
-			
-	}
-	if (played_wav)
-	{
-		if (gset_vars->numsoundwavs>1)
-		{
-			gi.positioned_sound (world->s.origin, world, CHAN_AUTO | CHAN_RELIABLE, gi.soundindex(va("jump%d.wav",rand() % gset_vars->numsoundwavs)), 1, ATTN_NONE, 0);
-		}
-		else
-		gi.positioned_sound (world->s.origin, world, CHAN_AUTO | CHAN_RELIABLE, gi.soundindex("jump.wav"), 1, ATTN_NONE, 0);
-	}	
-	return item_time;
-}
-
-void read_top10_tourney_log(char *filename)
-{
-	FILE	*f;
-	int i;
-	char	name[128];
-	char	temp[1024];
-	cvar_t	*port;
-	cvar_t	*tgame;
-	int uid;
-    int completions;
-
-	//clear old times first
-	strcpy(level_items.mapname,filename);
-	ClearTimes();
-
-	i=0;
-	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
-
-	if (!*tgame->string)
-	{
-		sprintf	(name, "jump/%s/%s.t", port->string,filename);
-	}
-	else
-	{
-		sprintf (name, "%s/%s/%s.t", tgame->string,port->string,filename);
-	}
-
-	f = fopen (name, "rb");
-	if (!f)
-	{
-		level_items.stored_item_times_count = 0;
-		return;
-	}
-    
-    fscanf(f,"%s",&temp);
-    if(!strstr(temp,"Jump067")){
-        rewind(f);
-        //gi.dprintf("Read new top 15 tourneyfile!\n");
-        for(i = 0; i < MAX_HIGHSCORES; i++){
-            fscanf(f, "%s", &temp);
-            fscanf(f, "%f", &level_items.stored_item_times[i].time);
-            fscanf(f, "%i", &uid);
-            fscanf(f, "%i", &completions);
-            if(feof(f) || strlen(temp)<2){
-                break;
-            }
-            level_items.stored_item_times[i].uid = uid;
-            
-            
-		    strcpy(level_items.stored_item_times[i].name,maplist.users[uid].name);
-		    strcpy(level_items.stored_item_times[i].owner,maplist.users[uid].name);
-            strcpy(level_items.stored_item_times[i].date,temp);
-            if (i>=MAX_HIGHSCORES)
-			    break;
-        }
-        level_items.stored_item_times_count = i;
-    } else {
-	    while(!feof(f))
-	    {
-		    fscanf(f,"%s",&temp);
-		    if (strcmp(temp,"JUMPMOD067TOP10TIMES")==0)
-			    break;
-	    }
-
-	    while (!feof(f))
-	    {
-		    fscanf(f, "%s", &temp);
-		    if (strcmp(temp,"JUMPMOD067ALLTIMES")==0)
-			    break;
-		    strcpy(level_items.stored_item_times[i].date,temp);
-		    fscanf(f, "%f", &level_items.stored_item_times[i].time);
-		    fscanf(f, "%i", &uid);
-		    level_items.stored_item_times[i].uid = uid;
-
-		    strcpy(level_items.stored_item_times[i].name,maplist.users[uid].name);
-		    strcpy(level_items.stored_item_times[i].owner,maplist.users[uid].name);
-		    i++;
-		    if (i>=MAX_HIGHSCORES)
-			    break;
-	    }
-        level_items.stored_item_times_count = i;
-    }
-	
-	fclose(f);
-	sort_tourney_records(); //sort times..
-	if (level_items.stored_item_times_count>MAX_HIGHSCORES)
-		level_items.stored_item_times_count=MAX_HIGHSCORES;
-}
-
-
-qboolean ReadTimes(char *filename)
-{
-	FILE	*f;
-	int i;
-	char	name[128];
-	char	temp[128];
-	char	path[128];
-	cvar_t	*port;
-	cvar_t	*tgame;
-	qboolean apply_date;
-	fpos_t position;
-	int uid;
-
-	//clear old times first
-	strcpy(level_items.mapname,filename);
-
-	i=0;
-	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
-
-	if (!*tgame->string)
-	{
-		sprintf(path,"jump/%s",port->string);
-		sprintf	(name, "jump/%s/%s.ini", port->string,filename);
-	}
-	else
-	{
-		sprintf(path,"%s/%s",tgame->string,port->string);
-		sprintf (name, "%s/%s/%s.ini", tgame->string,port->string,filename);
-	}
-
-	f = fopen (name, "rb");
-	if (!f)
-	{
-		return false;
-	}	
-	if (feof(f))
-	{
-        fclose(f);
-		return false;
-	}
-
-	ClearTimes();
-	//015
-	fgetpos (f, &position);
-	fscanf(f,"%s",&temp);
-	apply_date = true;
-	if (strstr(temp,"Jump015"))
-	{
-		apply_date = false;
-	} 
-	else if (strstr(temp,"Jump020"))
-	{
-		apply_date = false;
-		//read map name, discard
-		fscanf(f,"%s",&temp);
-	} 
-	else 
-	{
-		//move to start of file, how?
-		fsetpos (f, &position);
-	}
-	 
-	while (!feof(f))
-	{
-		fscanf(f, "%f", &level_items.stored_item_times[i].time);
-		fscanf(f, "%s", &level_items.stored_item_times[i].name);
-
-		fscanf(f, "%s", &level_items.stored_item_times[i].owner);
-		
-		//015
-		if (!apply_date)
-			fscanf(f, "%s", &level_items.stored_item_times[i].date);
-		else
-		{
-			sprintf(level_items.stored_item_times[i].date,"05/03/02");
-		}		
-
-		if (!level_items.stored_item_times[i].time)
-			break;
-		uid = GetPlayerUid(level_items.stored_item_times[i].owner);
-		level_items.stored_item_times[i].uid = uid;
-		i++;		
-	}
-	
-	
-	fclose(f);
-	level_items.stored_item_times_count = i;
-	if (level_items.stored_item_times_count>MAX_HIGHSCORES)
-		level_items.stored_item_times_count=MAX_HIGHSCORES;
-	remove(name);
-	if (i)
-		return true;
-	else
-		return false;
-}
-
-//redundant functions
-
-
-void WriteTimes(char *filename)
-{
-	char	buffer[1024];
-	FILE	*f;
-	char	name[256];
-	int i;
-	qboolean done;
-	char port_d[32];
-	cvar_t	*port;
-	cvar_t	*tgame;
-	struct	tm *current_date;
-	time_t	time_date;
-	int		month,day,year;
-
-	tgame = gi.cvar("game", "jump", 0);
-    port = gi.cvar("port", "27910", 0);
-
-	strcpy(port_d,port->string);
-	if (!port_d[0])
-		strcpy(port_d,"27910");
-	if (!*tgame->string)
-	{
-		sprintf	(name, "jump/%s/%s.t", port_d,filename);
-	}
-	else
-	{
-		sprintf (name, "%s/%s/%s.t", tgame->string,port_d,filename);
-	}
-
-	f = fopen (name, "wb");
-
-	done=false;
-	if (!f)
-		return;
-
-	//set the date
-		time_date = time(NULL);                // DOS system call
-		current_date = localtime(&time_date);  // DOS system call
-		month = current_date->tm_mon + 1;
-		day = current_date->tm_mday;
-		year = current_date->tm_year;
-
-
-
-	//right, we need to save the top 10 scores first
-	fprintf (f, "Jump067\n");
-
-	//print date/time
-	fprintf (f, "%i%i%i%i%i%i\n",current_date->tm_mon,current_date->tm_mday,current_date->tm_year,current_date->tm_hour,current_date->tm_min,current_date->tm_sec);
-	//print map name
-	fprintf (f, "%s\n",filename);
-	//print top10marker
-	fprintf (f, "JUMPMOD067TOP10TIMES\n");
-
-	for (i=0;i<level_items.stored_item_times_count;i++)
-	{
-		if (i>MAX_HIGHSCORES)
-			break;
-		Com_sprintf(buffer,sizeof(buffer), " %s %f %i",level_items.stored_item_times[i].date,level_items.stored_item_times[i].time,level_items.stored_item_times[i].uid);
-		fprintf (f, "%s", buffer);
-	}
-
-	//print other marker
-	fprintf (f, "\nJUMPMOD067ALLTIMES\n");
-		
-	for (i=0;i<level_items.stored_item_times_count;i++)
-	{
-		if (i>MAX_HIGHSCORES)
-			break;
-		Com_sprintf(buffer,sizeof(buffer), " %s %f %i 1",level_items.stored_item_times[i].date,level_items.stored_item_times[i].time,level_items.stored_item_times[i].uid);
-		fprintf (f, "%s", buffer);
-	}
-
-	fclose(f);
-}
-
-void UpdateThisUsersSortedUid(edict_t *ent)
-{
-	int i;
-	int uid;
-	uid = ent->client->resp.uid-1;
-	for (i=0;i<maplist.sort_num_users;i++)
-	{
-		if (maplist.sorted_completions[i].uid==uid)
-		{
-			ent->client->resp.suid = i;
-			break;
-		}
-	}
-}
-
-void UpdateThisUsersUID(edict_t *ent,char *name)
-{
-	int uid;
-	int trecid;
-	uid = GetPlayerUid_NoAdd(name);
-	if (uid>=0)
-	{
-		ent->client->resp.uid = uid+1;
-		UpdateThisUsersSortedUid(ent);
-		trecid = FindTRecID(uid);
-		ent->client->resp.trecid = trecid; //trecidbug - need to sort first?
-		if (trecid>=0)
-		{
-			ent->client->resp.best_time = tourney_record[trecid].time;
-		}
-		else
-		{
-			ent->client->resp.best_time = 0;
-		}
-	}
-	else
-	{
-		ent->client->resp.uid = 0;
-		ent->client->resp.suid = -1;
-		ent->client->resp.trecid = -1;
-		ent->client->resp.best_time = 0;
-	}
-}
 
 
 void Add_Time(edict_t *ent) 
@@ -9667,22 +5409,13 @@ void WriteMapList(void)
 
 	if (!f)
 		return;
-	if (gset_vars->maplist_times)
-		fprintf(f,"[JumpMod067]\n");
 	fprintf(f,"[maplist]\n");
 	for (i=0;i<MAX_MAPS;i++)
 	{
 		if (0 == strcmp(maplist.mapnames[i], ""))
 			continue;
-		if (gset_vars->maplist_times)
-		{
-			fprintf (f, "%s", maplist.mapnames[i]);
-		 	fprintf (f, " %i\n", maplist.update[i]);
-		}
-		else
-		{
-			fprintf (f, "%s\n", maplist.mapnames[i]);
-		}
+
+		fprintf (f, "%s\n", maplist.mapnames[i]);
 	}
 	fprintf (f, "###\n");
 	fclose(f);
@@ -9736,7 +5469,6 @@ void AddMap(edict_t *ent)
 	maplist.update[maplist.nummaps] = 0;//atoi(date_marker);
 
 	strcpy(maplist.mapnames[maplist.nummaps],mapname);
-	maplist.gametype[maplist.nummaps] = 0;
 
 	maplist.nummaps++;
 	gi.bprintf(PRINT_HIGH,"%s has added %s to the map rotation.\n", ent->client->pers.netname, mapname);
@@ -9800,7 +5532,7 @@ void RemoveMap (edict_t* ent)
 		remtimes(ent);
 	strcpy(maplist.mapnames[num], "");
 	sprintf (maplist_path, "%s/%s/maplist.ini", tgame->string,port->string);
-	//write_tourney_file(level.mapname,level.mapnum);
+	//write_map_file(level.mapname,level.mapnum);
 	WriteMapList();
 //	LoadMapList(maplist_path);
 	UpdateVoteMaps();
@@ -9848,7 +5580,7 @@ void Cmd_UpdateScores(edict_t* ent)
 		return;
 
 	gi.bprintf(PRINT_HIGH, "Updating scores, please wait...\n");
-	UpdateScores2();
+	UpdateScores2_Israfel();
 	write_users_file();
 	gi.bprintf(PRINT_HIGH, "Done.\n");
 }
@@ -10480,10 +6212,9 @@ void addmaps(void)
 		if (!got_match)
 		{
 			maplist.demoavail[maplist.nummaps] = false;
-			maplist.gametype[maplist.nummaps] = 0;
 			maplist.update[maplist.nummaps] = 0;
 			strncpy(maplist.mapnames[maplist.nummaps], temp, MAX_MAPNAME_LEN); 
-			UpdateTimes(maplist.nummaps);
+			//UpdateTimes(maplist.nummaps);
 			maplist.nummaps++;
 			//new map added
 			append_added_ini(temp);
@@ -10528,10 +6259,9 @@ void addsinglemap()
 	if (!got_match)
 	{
 		maplist.demoavail[maplist.nummaps] = false;
-		maplist.gametype[maplist.nummaps] = 0;
 		maplist.update[maplist.nummaps] = 0;
 		strncpy(maplist.mapnames[maplist.nummaps], mapname, MAX_MAPNAME_LEN); 
-		UpdateTimes(maplist.nummaps);
+		//UpdateTimes(maplist.nummaps);
 		maplist.nummaps++;
 		//new map added
 		append_added_ini(mapname);
@@ -10973,7 +6703,7 @@ void sort_maps(edict_t *ent)
 			strcpy(maplist.mapnames[j],t_name);
 		}
 		WriteMapList();
-		write_tourney_file(level.mapname,level.mapnum);
+		write_map_file(level.mapname,level.mapnum);
 		gi.cprintf(ent,PRINT_HIGH,"Maplist has been sorted\n");
 		gi.AddCommandString("set sv_allow_map 1\n");
 		gi.AddCommandString("map forkjumping\n");
@@ -10992,7 +6722,6 @@ void open_uid_file(int uid,edict_t *ent)
 	cvar_t	*port;
 	cvar_t	*tgame;
 	char	name[256];
-//	char	tmpmaps[MAX_MAPS][MAX_MAPNAME_LEN];
 
 	if (ent)
 	index = ent-g_edicts-1;
@@ -11010,10 +6739,6 @@ void open_uid_file(int uid,edict_t *ent)
 	{
 		sprintf (name, "%s/%s/%i.u", tgame->string,port->string,uid);
 	}
-	if (0 == maplist.version)
-	{
-		maplist.users[uid].completions = 0;
-	}
 	overall_completions[index].loaded = true;
 	for (i=0;i<MAX_MAPS;i++)
 		overall_completions[index].maps[i] = 0;
@@ -11023,7 +6748,6 @@ void open_uid_file(int uid,edict_t *ent)
 	{
 		return;
 	}
-//	gi.dprintf ("open_uid_file called, UID: %i maplist.version: %i.\n", uid, maplist.version);
 	while (!feof(f))
 	{
 
@@ -11034,12 +6758,6 @@ void open_uid_file(int uid,edict_t *ent)
 			{
 				//gi.dprintf("%s completed for UID %i\n", buffer, uid);
 				overall_completions[index].maps[i] = 1;
-				if (0 == maplist.version)
-				{
-					maplist.users[uid].completions++;
-					//gi.dprintf ("%s is completed for player %i.\n", buffer, uid);
-					open_tourney_file(buffer, false);
-				}
 			}		
 		}
 		//gi.dprintf("checking mapname %s for user UID: %i\n", buffer, uid);
@@ -11051,7 +6769,7 @@ void open_uid_file(int uid,edict_t *ent)
 	//{
 		
 	//}
-	open_tourney_file(level.mapname, false);
+	//open_map_file(level.mapname, false);
 }
 
 qboolean open_uid_file_compare(edict_t *ent)
@@ -11124,44 +6842,6 @@ qboolean open_uid_file_compare(edict_t *ent)
 	return true;
 }
 
-void write_uid_file(int uid,edict_t *ent)
-{
-	int index;
-	FILE	*f;
-	int i;
-	cvar_t	*port;
-	cvar_t	*tgame;
-	char	name[256];
-
-	index = ent-g_edicts-1;
-
-	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
-
-	if (!*tgame->string)
-	{
-		sprintf	(name, "jump/%s/%i.u", port->string,uid);
-	}
-	else
-	{
-		sprintf (name, "%s/%s/%i.u", tgame->string,port->string,uid);
-	}
-
-	f = fopen (name, "wb");
-
-	if (!f)
-		return;
-
-	for (i=0;i<MAX_MAPS;i++)
-	{
-		if (overall_completions[index].maps[i])
-		{
-			fprintf (f, " %s", maplist.mapnames[i]);
-		}
-	}
-	fclose(f);
-}
-
 
 void append_uid_file(int uid,char *filename)//,edict_t *ent)
 {
@@ -11232,7 +6912,7 @@ void list_mapsleft(edict_t *ent)
 
 	if (!overall_completions[index].loaded)
 	{
-		write_tourney_file(level.mapname,level.mapnum);   // 084_h3
+		write_map_file(level.mapname,level.mapnum);   // 084_h3
 		//open their file
 		open_uid_file(ent->client->resp.uid-1,ent);
 	}
@@ -11303,7 +6983,7 @@ void list_mapsdone(edict_t *ent)
 	}
 	if (!overall_completions[index].loaded)
 	{
-		write_tourney_file(level.mapname,level.mapnum);   // 084_h3
+		write_map_file(level.mapname,level.mapnum);   // 084_h3
 		//open their file
 		open_uid_file(ent->client->resp.uid-1,ent);
 	}
@@ -11361,10 +7041,6 @@ void resync(qboolean overide)
 	cvar_t	*port;
 	cvar_t	*tgame;
 	char	name[256];
-	qboolean restart = false;
-
-	if (overide)
-		restart = true;
 
 	tgame = gi.cvar("game", "", 0);
 	port = gi.cvar("port", "", 0);
@@ -11401,7 +7077,6 @@ void resync(qboolean overide)
 
 	if (overide)
 	{
-		gi.dprintf("in overide\n");
 		//means we can do the sync
 		//open users.t (already opne)
 		//set completion score for each user to 0
@@ -11419,17 +7094,17 @@ void resync(qboolean overide)
 			remove(name);
 		}
 		//for (i=0;i<maplist.num_users;i++)
-
 		for (i=0;i<maplist.nummaps;i++)
 		{
 			//remember we also need to create the *.u files
-			open_tourney_file(maplist.mapnames[i],true);
+			//gi.dprintf("map loaded: %s\n", maplist.mapnames[i]);
+			open_map_file(maplist.mapnames[i],true);
 			//html
 			CreateHTML (NULL,HTML_INDIVIDUAL_MAP,i);
 		}
 		//save users.t file
 		//write_users_file();
-		UpdateTimes(level.mapnum);
+		//UpdateTimes(level.mapnum);
 		UpdateScores();
 	    sort_users();
 		for (i=0;i<MAX_USERS;i++)
@@ -11442,12 +7117,6 @@ void resync(qboolean overide)
 		CreateHTML (NULL,HTML_BESTSCORES,0);
 		CreateHTML (NULL,HTML_FIRST,0);
 		CreateHTML (NULL,HTML_PLAYERS_PERCENTAGE,0);	
-	}
-	//reset_maps_completed(NULL);
-	if (restart)
-	{
-		gi.AddCommandString("set sv_allow_map 1\n");
-		gi.AddCommandString("map forkjumping\n");
 	}
 }
 
@@ -11585,14 +7254,14 @@ void sort_ind_map_recs( int n )
       if (individual_map[j-1].time >= individual_map[j].time
 		   )
 	  {
-		trec = individual_map[j-1].trecid;
+		trec = individual_map[j-1].maplist_uid;
 		time = individual_map[j-1].time;
 
 
-        individual_map[j-1].trecid = individual_map[j].trecid;
+        individual_map[j-1].maplist_uid = individual_map[j].maplist_uid;
         individual_map[j-1].time = individual_map[j].time;
 
-        individual_map[j].trecid = trec;
+        individual_map[j].maplist_uid = trec;
         individual_map[j].time = time;
 	  }
 }
@@ -11859,11 +7528,11 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 		num_map_recs = 0;
 		for (i=0;i<MAX_USERS;i++)
 		{
-			if (tourney_record[i].time)
+			if (maplist.times[level.mapnum][i].time)
 			{
 				//add to our list
-				individual_map[num_map_recs].trecid = i;
-				individual_map[num_map_recs].time = tourney_record[i].time;
+				individual_map[num_map_recs].maplist_uid = i;
+				individual_map[num_map_recs].time = maplist.times[level.mapnum][i].time;
 
 				num_map_recs++;
 			}
@@ -11891,12 +7560,12 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 			strcpy(html_data.buffer,html_data.tplate);
 		
 			HTML_Replace(html_data.buffer,HTML_TEMPLATE_POSITION,va("%i",i+1));
-			HTML_Replace(html_data.buffer,HTML_TEMPLATE_NAME,maplist.users[tourney_record[individual_map[i].trecid].uid].name);
-			HTML_Replace(html_data.buffer,HTML_TEMPLATE_DATE,tourney_record[individual_map[i].trecid].date);
-			HTML_Replace(html_data.buffer,HTML_TEMPLATE_UID,va("%i",tourney_record[individual_map[i].trecid].uid));
-			HTML_Replace(html_data.buffer,HTML_TEMPLATE_UID_HTML,va("%i.html",tourney_record[individual_map[i].trecid].uid));
-			HTML_Replace(html_data.buffer,HTML_TEMPLATE_TIME,va("%8.3f",tourney_record[individual_map[i].trecid].time));
-			HTML_Replace(html_data.buffer,HTML_TEMPLATE_COMPLETION,va("%i",tourney_record[individual_map[i].trecid].completions));
+			HTML_Replace(html_data.buffer,HTML_TEMPLATE_NAME,maplist.users[maplist.times[level.mapnum][individual_map[i].maplist_uid].uid].name);
+			HTML_Replace(html_data.buffer,HTML_TEMPLATE_DATE,maplist.times[level.mapnum][individual_map[i].maplist_uid].date);
+			HTML_Replace(html_data.buffer,HTML_TEMPLATE_UID,va("%i",maplist.times[level.mapnum][individual_map[i].maplist_uid].uid));
+			HTML_Replace(html_data.buffer,HTML_TEMPLATE_UID_HTML,va("%i.html",maplist.times[level.mapnum][individual_map[i].maplist_uid].uid));
+			HTML_Replace(html_data.buffer,HTML_TEMPLATE_TIME,va("%8.3f",maplist.times[level.mapnum][individual_map[i].maplist_uid].time));
+			HTML_Replace(html_data.buffer,HTML_TEMPLATE_COMPLETION,va("%i",maplist.times[level.mapnum][individual_map[i].maplist_uid].completions));
 
 			HTML_WriteBuffer();
 		}
@@ -12045,7 +7714,7 @@ void Cmd_Race (edict_t *ent)
 		gi.cprintf(ent,PRINT_CHAT,"\nNo. Player             Time\n");
 		for (i=0;i<MAX_HIGHSCORES;i++) {
 			if (level_items.recorded_time_frames[i])
-				gi.cprintf(ent,PRINT_HIGH,"%2d. %-16s %8.3f\n",i+1,level_items.stored_item_times[i].owner,level_items.stored_item_times[i].time);
+				gi.cprintf(ent,PRINT_HIGH,"%2d. %-16s %8.3f\n",i+1,maplist.users[maplist.times[level.mapnum][i].uid].name,maplist.times[level.mapnum][i].time);
 		}
 		return;
 	}
@@ -12055,9 +7724,9 @@ void Cmd_Race (edict_t *ent)
 	ent->client->resp.rep_race_number = race_this;
 	hud_footer(ent);
 	if (race_this==MAX_HIGHSCORES) // replay now, from above
-		gi.cprintf(ent,PRINT_CHAT,"Now racing replay 1: %s\n", level_items.stored_item_times[0].owner);
+		gi.cprintf(ent,PRINT_CHAT,"Now racing replay 1: %s\n", maplist.users[maplist.times[level.mapnum][0].uid].name);
 	else
-		gi.cprintf(ent,PRINT_CHAT,"Now racing replay %d: %s\n", (int)(race_this+1), level_items.stored_item_times[race_this].owner);
+		gi.cprintf(ent,PRINT_CHAT,"Now racing replay %d: %s\n", (int)(race_this+1), maplist.users[maplist.times[level.mapnum][race_this].uid].name);
 
 	// player gave no further arguments, tell them what they could do next time
 	if (gi.argc() == 1)
@@ -12525,7 +8194,7 @@ void reset_maps_completed(edict_t *ent)
 	prev_uid = (ent->client->resp.uid-1);
 
 	//write off current times
-	write_tourney_file(level.mapname,level.mapnum);   // 084_h3
+	write_map_file(level.mapname,level.mapnum);   // 084_h3
 
 	//loop thru users
 	for (user=0;user<maplist.num_users;user++)
@@ -12570,6 +8239,7 @@ void Update_Added_Time(void)
 }
 
 //When map loads go thru all times and update the highscore list
+/*
 void Update_Highscores(int start)
 {
 	struct	tm *current_date;
@@ -12590,36 +8260,36 @@ void Update_Highscores(int start)
 
 	for (trec=0;trec<MAX_USERS;trec++)
 	{
-		if (!tourney_record[trec].completions)
+		if (!maplist.times[level.mapnum][trec].completions)
 			break;
 		cando = true;
 		//loop thru the top 10
 		for (li=0;li<MAX_HIGHSCORES*2;li++)
 		{
 			//dont add to the board if in there already
-			if (level_items.stored_item_times[li].uid==tourney_record[trec].uid)
+			if (maplist.times[level.mapnum][li].uid==maplist.times[level.mapnum][trec].uid)
 			{
 				cando = false;
 				break;
 			}
 		}
 		//condition to make sure we dont add a broken old time in
-		if (tourney_record[trec].time<level_items.stored_item_times[start-1].time)
+		if (maplist.times[level.mapnum][trec].time<maplist.times[level.mapnum][start-1].time)
 			cando = false;
 
 		if (!cando)
 			continue;
-		//gi.dprintf("%s %f\n",maplist.users[tourney_record[trec].uid].name,tourney_record[trec].time);
+		//gi.dprintf("%s %f\n",maplist.users[maplist.times[level.mapnum][trec].uid].name,maplist.times[level.mapnum][trec].time);
 		//add it to the stored_items
 		placement = level_items.stored_item_times_count;
-		level_items.stored_item_times[placement].uid = tourney_record[trec].uid;
-		level_items.stored_item_times[placement].time = tourney_record[trec].time;
-		strcpy(level_items.stored_item_times[placement].owner,maplist.users[tourney_record[trec].uid].name);
-		strcpy(level_items.stored_item_times[placement].name,maplist.users[tourney_record[trec].uid].name);
-		level_items.stored_item_times[placement].fresh = true;
+		maplist.times[level.mapnum][placement].uid = maplist.times[level.mapnum][trec].uid;
+		maplist.times[level.mapnum][placement].time = maplist.times[level.mapnum][trec].time;
+		strcpy(maplist.times[level.mapnum][placement].owner,maplist.users[maplist.times[level.mapnum][trec].uid].name);
+		strcpy(maplist.times[level.mapnum][placement].name,maplist.users[maplist.times[level.mapnum][trec].uid].name);
+		maplist.times[level.mapnum][placement].fresh = true;
 
-		level_items.stored_item_times[placement].timestamp = 0;
-		sprintf(level_items.stored_item_times[placement].date, "%02d/%02d/%02d",day, month,year-100);
+		maplist.times[level.mapnum][placement].timestamp = 0;
+		sprintf(maplist.times[level.mapnum][placement].date, "%02d/%02d/%02d",day, month,year-100);
 				level_items.stored_item_times_count++;
 		sort_queue(level_items.stored_item_times_count);
 		if (level_items.stored_item_times_count>MAX_HIGHSCORES)
@@ -12628,6 +8298,7 @@ void Update_Highscores(int start)
 //	UpdateScores();
 
 }
+*/
 
 void UpdateVoteMenu(void)
 {
@@ -13475,67 +9146,6 @@ void Apply_Nominated_Map(char *mapname)
 	//set map1 to this map
 }
 
-void Change_Ghost_Model(edict_t *ent)
-{
-	int i;
-	char temp[512];
-	qboolean done = true;
-	cvar_t	*game_dir;
-	game_dir = gi.cvar("game", "", 0);
-
-	if (ent->client->resp.admin<aset_vars->ADMIN_MSET_LEVEL)
-		return;
-
-	if (gi.argc() < 2) {
-		//list all available? need to load them somehow first		
-		if (ghost_model_list_count)
-		{
-			memset(temp,0,sizeof(temp));
-			for (i=0;i<ghost_model_list_count;i++)
-			{
-				done= false;
-				if (strlen(temp))
-					Com_sprintf(temp,sizeof(temp),"%-12s %2d.%-12s",temp,i+1,ghost_model_list[i].name);
-				else
-					Com_sprintf(temp,sizeof(temp),"%2d.%-12s",i+1,ghost_model_list[i].name);
-				if (strlen(temp)>70)
-				{
-					gi.cprintf(ent,PRINT_HIGH,"%s\n",temp);
-					memset(temp,0,sizeof(temp));
-					done = true;
-				}
-			}
-			if (!done)
-				gi.cprintf(ent,PRINT_HIGH,"%s\n",temp);
-			Com_sprintf(temp,sizeof(temp),"ghost <number> to set the ghost for the current map.");
-			gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(temp));
-			gi.cprintf(ent,PRINT_HIGH,"gset ghosty_model <number> to apply for all maps\n");
-		}
-		else
-		{
-			gi.cprintf(ent,PRINT_HIGH,"There are no ghost models available\n");
-		}
-		return;
-	}
-
-    for(i = 0; i < ZBOTCOMMANDSSIZE; i++)
-    {
-		if (zbotCommands[i].cmdwhere & CMD_MSET)
-		{
-			if (startContains (zbotCommands[i].cmdname, "ghosty_model"))
-			{
-
-				//valid command, modify settings
-				processCommand(i,1,ent);
-				sprintf(temp,"%s/ent/%s.cfg",game_dir->string,level.mapname);
-				writeMapCfgFile(temp);
-
-				break;
-			}
-		}
-	}
-}
-
 int number_of_jumpers_off = 0;
 void Jumpers_Update_Skins(edict_t *ent)
 {
@@ -13710,7 +9320,7 @@ void Cmd_1st(edict_t *ent)
    gi.cprintf (ent, PRINT_HIGH, "---------------------------------------------------\n\n"); 
 }
 
-
+/*
 void Changename(edict_t *ent)
 {
 	char origname[255];
@@ -13752,40 +9362,18 @@ void Changename(edict_t *ent)
 
 	for (i=0;i<MAX_HIGHSCORES*2;i++)
 	{
-		if (level_items.stored_item_times[i].uid==origid)
+		if (maplist.times[level.mapnum][i].uid==origid)
 		{
-			strcpy(level_items.stored_item_times[i].name,newname);
-			strcpy(level_items.stored_item_times[i].owner,newname);
+			strcpy(maplist.times[level.mapnum][i].name,newname);
+			strcpy(maplist.users[maplist.times[level.mapnum][i].uid].name,newname);
 		}
 	}
-	//reload everyones id to be sure
-/*	for (i=0 ; i<maxclients->value ; i++)
-	{
-		temp_ent = g_edicts + 1 + i;
-		if (!temp_ent->inuse || !temp_ent->client)
-			continue;
-		if (temp_ent->client->resp.uid>0)
-		{
-			if (!temp_ent->client->pers.netname[0])
-			{
-				temp_ent->client->resp.uid = 0;
-				temp_ent->client->resp.suid = -1;
-				temp_ent->client->resp.trecid = -1;
-				temp_ent->client->resp.best_time = 0;
-			}
-			else
-			{
-				UpdateThisUsersUID(temp_ent,temp_ent->client->pers.netname);
-				overall_completions[temp_ent-g_edicts-1].loaded = false;
-			}
-		}
-	}*/
 	gi.bprintf(PRINT_CHAT,"%s has had their name changed to %s by an admin.\nRestarting map to save changes.\n",origname,newname);
 	strncpy(level.forcemap, level.mapname, sizeof(level.forcemap) - 1);
 	EndDMLevel();
 
 }
-
+*/
 void Cmd_Stats(edict_t *ent)
 {
 	char name[255];
@@ -14260,69 +9848,6 @@ void hud_footer(edict_t *ent) {
 		gi.unicast(cl_ent, true);
 	}
 	Update_CP_Ents();
-}
-
-// Check if a addcmd.ini file exists.
-// Text in file should be "cmd text ||" .. ex "say hello, this is console ||"..
-// File could have multiple lines, || = lineshift..
-// Should probably disable some cmds (ie. gamemap).. But I guess that could be done in the python file.
-void CheckCmdFile() {
-	FILE	*f;
-	char	filename[128];
-	char	name[128];
-	char	temp[128];
-	char	cmd[128];
-	cvar_t	*port;
-	cvar_t	*tgame;
-	int		i;
-	int		status;
-
-	tgame = gi.cvar("game", "", 0);
-	port = gi.cvar("port", "", 0);
-	sprintf(filename, "addcmd");
-
-	if (!*tgame->string) {
-		sprintf(name, "jump/%s/%s.ini", port->string, filename);
-	}
-	else {
-		sprintf(name, "%s/%s/%s.ini", tgame->string, port->string, filename);
-	}
-
-	f = fopen(name, "r");
-	if (!f) {
-		return; //no file
-	}
-
-	fseek(f, 0, SEEK_END);
-	if (ftell(f) == 0) { //if file is empty.
-		fclose(f);
-		return;
-	}
-	else {
-		rewind(f);
-	}
-	i = 0;
-	if (f)  // opened successfully? 
-	{
-		sprintf(cmd, "");
-		while ((!feof(f)) && (i < MAX_CMDS)) {
-			fscanf(f, "%s", temp);
-			if (Q_stricmp(temp, "||") == 0) {  // terminator for each line is "||" 
-				i++;
-				if (strlen(cmd) > 1) {
-					strcat(cmd, "\n");
-					gi.AddCommandString(cmd);
-					sprintf(cmd, "");
-				}
-			} else {
-				strcat(temp, " ");
-				strncat(cmd, temp, 128);
-			}
-		}
-	}
-	freopen(name, "w", f);
-	fprintf(f, ""); //remove everything from the file.
-	fclose(f);
 }
 
 //msets to put in worldspawn... 

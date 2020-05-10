@@ -1328,8 +1328,9 @@ void ClientCommand (edict_t *ent)
 			ToggleHud(ent);
 		else if (Q_stricmp (cmd, "nextmaps") ==0)
 			Overide_Vote_Maps(ent);
-		else if (Q_stricmp (cmd, "changename") ==0)
-			Changename(ent);
+		else if (Q_stricmp(cmd, "changename") == 0) {
+			//Changename(ent);
+		}
 		else if (Q_stricmp (cmd, "addadmin") ==0)
 			add_admin(ent);
 		else if (Q_stricmp (cmd, "remadmin") ==0)

@@ -824,8 +824,6 @@ void ExitLevel (void)
 	gi.AddCommandString (command);
 	ClientEndServerFrames ();
 
-//	ReadTimes(level.changemap);
-
 	level.changemap = NULL;
 
 	// clear some things before going to next level
@@ -880,11 +878,6 @@ void G_RunFrame (void)
 		time_str[strlen(time_str)-1] = 0;	// hann: remove "\n"
 		Com_Printf("[ SERVERTIME (port %s) : %s ]\n",port->string, time_str);  // hann: print it.
 	}  // hann
-
-	//check for cmds
-	if (server_time % CMD_TIME == 0) {
-		CheckCmdFile();
-	}
 
 	temp2 = (int)(
 			((mset_vars->timelimit*60)+
@@ -978,7 +971,7 @@ void G_RunFrame (void)
 	}
 		
 		level_items.jumps = 0;
-		level_items.item_time = 0;
+		level_items.fastest_time = 0;
 		level_items.item_owner[0] = 0;
 		level_items.item_name[0] = 0;
 		level_items.fastest_player=NULL;

@@ -95,12 +95,11 @@ void BeginIntermission(edict_t *targ)
 
 	//pooy
 
-//	Besttimes_all();
 	//increase maplist count
 	maplist.update[level.mapnum]++;
-	write_tourney_file(level.mapname, level.mapnum);
+	write_map_file(level.mapname, level.mapnum);
 	WriteMapList();
-	UpdateTimes(level.mapnum);
+	//UpdateTimes(level.mapnum);
 	//	debug_log ("CHECKPOINT: Function: BeginIntermission Line: 105 File: p_hud.c");
 	/*	for (i=0;i<maplist.nummaps;i++)
 			if (strcmp(maplist.mapnames[i],level.mapname)==0)
@@ -128,17 +127,17 @@ void BeginIntermission(edict_t *targ)
 		CreateHTML (NULL,HTML_INDIVIDUAL_MAP,level.mapnum);
 		for (i=0;i<MAX_USERS;i++)
 		{
-			if (tourney_record[i].fresh)
-				CreateHTML (NULL,HTML_INDIVIDUALS,tourney_record[i].uid);
+			if (maplist.times[level.mapnum][i].fresh)
+				CreateHTML (NULL,HTML_INDIVIDUALS,maplist.times[level.mapnum][i].uid);
 		}
 
 	}
 
 //	debug_log ("CHECKPOINT: Function: BeginIntermission Line: 133 File: p_hud.c");
 
-	if (level_items.item_time)
+	if (level_items.fastest_time) //score2020 need to change this...
 	{
-		gi.bprintf(PRINT_HIGH,"Fastest Time this map : %s in %1.3f seconds using %d jumps.\n",level_items.item_owner,level_items.item_time,level_items.jumps);
+		gi.bprintf(PRINT_HIGH,"Fastest Time this map : %s in %1.3f seconds using %d jumps.\n",level_items.item_owner,level_items.fastest_time,level_items.jumps);
 	}
 	// respawn any dead clients
 

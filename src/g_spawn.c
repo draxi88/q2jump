@@ -879,8 +879,7 @@ debug_log(text);
 sprintf(text,"==== SpawnEntities (Loading Recording) ====");
 debug_log(text);
 	
-	read_top10_tourney_log(level.mapname);
-	UpdateTimes(level.mapnum);
+	//UpdateTimes(level.mapnum);
 /*	for (i=0;i<maplist.nummaps;i++)
 		if (strcmp(maplist.mapnames[i],level.mapname)==0)
 		{
@@ -890,17 +889,17 @@ debug_log(text);
 */	UpdateScores();
     sort_users();
 
-	open_tourney_file(level.mapname,false);
+	//open_map_file(level.mapname,false);
 	//Update_Highscores(10);
 	Load_Recording();
 
 	SetSpinnyThing();
 	for (i=1;i<MAX_HIGHSCORES;i++)
-		Load_Individual_Recording(i,level_items.stored_item_times[i].uid);
+		Load_Individual_Recording(i,maplist.times[level.mapnum][i].uid);
 
 	//backup to dj3 demo
-	if (level_items.recorded_time_frames[0] && level_items.stored_item_times[0].time>0)
-		Copy_Recording(level_items.stored_item_times[0].uid);
+	if (level_items.recorded_time_frames[0] && maplist.times[level.mapnum][0].time>0)
+		Copy_Recording(maplist.times[level.mapnum][0].uid);
 
 	UpdateVoteMaps();
 	Update_Skill();	
