@@ -1,5 +1,10 @@
 #include "g_local.h"
 
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 int FindMaplistUID(int uid)
 {
 	int i;

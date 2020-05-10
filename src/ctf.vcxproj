@@ -196,6 +196,7 @@
     <ClInclude Include="g_local.h" />
     <ClInclude Include="g_wireplay.h" />
     <ClInclude Include="jumpmod.h" />
+    <ClInclude Include="mset-gset.h" />
     <ClInclude Include="m_berserk.h" />
     <ClInclude Include="m_boss32.h" />
     <ClInclude Include="m_flipper.h" />

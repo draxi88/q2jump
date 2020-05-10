@@ -63,8 +63,6 @@ static char *help_main[] = {
 char moddir[256];
 cvar_t		*allow_admin_log;
 
-
-
 //vars
 cvar_t		*time_remaining;
 cvar_t			*jumpmod_version;

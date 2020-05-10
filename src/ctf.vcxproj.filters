@@ -114,6 +114,9 @@
     <ClInclude Include="m_soldier.h">
       <Filter>monsters</Filter>
     </ClInclude>
+    <ClInclude Include="mset-gset.h">
+      <Filter>q2jump</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ctf.def" />
