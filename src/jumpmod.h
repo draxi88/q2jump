@@ -229,7 +229,7 @@ void		mvote(edict_t *ent);
 void		delete_all_demos(void);
 void		delete_all_times(void);
 void		remall(edict_t *ent);
-void		remtimes(edict_t *ent);
+
 void		Apply_Nominated_Map(char *mapname);
 int			get_admin_id(char *givenpass,char *givenname);
 qboolean	trigger_timer(int timeBetweenMessages);

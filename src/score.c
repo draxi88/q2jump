@@ -347,6 +347,7 @@ void open_map_file(char *filename, qboolean apply)
 	}
 	fseek(f, 0, SEEK_END);
 	if (ftell(f) == 0) { //if file is empty.
+		fclose(f);
 		return;
 	}
 	else {
@@ -515,7 +516,7 @@ void open_users_file()
 		fscanf(f, "%s", &name);
 		if ((uid >= MAX_USERS) || (uid < 0))
 			continue;
-		strcpy(maplist.users[uid].name, name);
+		sprintf(maplist.users[uid].name,"%s", name);
 		//gi.dprintf("Load users: uid=%i name=%s\n", uid, maplist.users[uid].name);
 		maplist.users[uid].completions = completions;
 		maplist.num_users++;
@@ -556,8 +557,8 @@ void write_users_file(void)
 	for (i = 0; i < MAX_USERS; i++)
 	{
 		if (maplist.users[i].name[0]) {
-			Com_sprintf(buffer, sizeof(buffer), " %i %i %i %s", i, maplist.users[i].completions, maplist.users[i].score, maplist.users[i].name);
-			fprintf(f, "%s", buffer);
+			Com_sprintf(buffer, sizeof(buffer), "%i %i %i %s", i, maplist.users[i].completions, maplist.users[i].score, maplist.users[i].name);
+			fprintf(f, "%s\n", buffer);
 		}
 	}
 	fclose(f);
@@ -815,66 +816,6 @@ void UpdateThisUsersUID(edict_t *ent, char *name)
 	}
 }
 
-
-void remtimes(edict_t *ent)
-{
-	int i;
-	char	name[256];
-	cvar_t	*tgame;
-	edict_t	*e2;
-
-	if (ent->client->resp.admin < aset_vars->ADMIN_REMTIMES_LEVEL)
-		return;
-
-	tgame = gi.cvar("game", "", 0);
-
-
-	//set all tourney times to some high value
-	//remove top 10 times
-	for (i = 0; i < MAX_USERS; i++)
-	{
-		if (maplist.times[level.mapnum][i].uid >= 0)
-		{
-			sprintf(name, "%s/jumpdemo/%s_%d.dj3", tgame->string, level.mapname, maplist.times[level.mapnum][i].uid);
-			remove(name);
-		}
-		maplist.times[level.mapnum][i].uid = -1;
-		maplist.times[level.mapnum][i].fresh = false;
-		maplist.times[level.mapnum][i].time = 0;
-		maplist.times[level.mapnum][i].completions = 0;
-	}
-	for (i = 1; i <= maxclients->value; i++)
-	{
-		e2 = g_edicts + i;
-		if (!e2->inuse)
-			continue;
-		UpdateThisUsersUID(e2, e2->client->pers.netname);
-
-	}
-
-	for (i = 0; i < MAX_HIGHSCORES + 1; i++)
-	{
-		level_items.recorded_time_frames[i] = 0;
-		level_items.recorded_time_uid[i] = -1;
-	}
-
-	EmptyTimes(level.mapnum);
-	UpdateScores();
-	sort_users();
-#ifdef ANIM_REPLAY
-	sprintf(name, "%s/jumpdemo/%s.dj2", tgame->string, level.mapname);
-#else
-	sprintf(name, "%s/jumpdemo/%s.dj1", tgame->string, level.mapname);
-#endif
-	remove(name);
-
-	write_map_file(level.mapname, level.mapnum);
-
-
-	gi.cprintf(ent, PRINT_HIGH, "Times removed.\n");
-}
-
-
 void apply_time(edict_t *other, edict_t *ent)
 {
 	char		item_name[128];
@@ -941,4 +882,279 @@ void apply_time(edict_t *other, edict_t *ent)
 				}
 		}
 	}
+}
+
+void remtime(edict_t *ent)
+{
+	int remnum, i;
+	char	name[256];
+	cvar_t	*tgame;
+	qboolean failed = false;
+	int maplist_uid = -1;
+	int remuid;
+	edict_t *e2;
+
+	tgame = gi.cvar("game", "", 0);
+
+	if (ent->client->resp.admin < aset_vars->ADMIN_REMTIMES_LEVEL)
+		return;
+
+	if (gi.argc() != 2)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Please supply the time value to remove.\n");
+		return;
+	}
+	remnum = atoi(gi.argv(1));
+	if ((remnum < 1) || (remnum > MAX_HIGHSCORES))
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Please supply the time value to remove.\n");
+		return;
+	}
+
+	//remove the time.
+	if (remnum <= MAX_HIGHSCORES)
+	{
+		remuid = maplist.times[level.mapnum][remnum - 1].uid;
+
+		if (remuid == -1)
+			return;
+		maplist.users[remuid].completions--; //does this work?
+		for (i = remnum - 1; i < MAX_USERS - 1; i++)
+		{
+			maplist.times[level.mapnum][i].uid = maplist.times[level.mapnum][i + 1].uid;
+			maplist.times[level.mapnum][i].time = maplist.times[level.mapnum][i + 1].time;
+			strcpy(maplist.times[level.mapnum][i].date, maplist.times[level.mapnum][i + 1].date);
+			maplist.times[level.mapnum][i].fresh = maplist.times[level.mapnum][i + 1].fresh;
+			if (maplist.times[level.mapnum][i].time = maplist.times[level.mapnum][i + 1].time == 0) {
+				break;
+			}
+		}
+		maplist.times[level.mapnum][i].uid = 0;
+		maplist.times[level.mapnum][i].time = 0;
+		maplist.times[level.mapnum][i].completions = 0;
+		maplist.times[level.mapnum][i].date[0] = 0;
+		maplist.times[level.mapnum][i].fresh = false;
+	}
+	else
+	{
+		failed = true;
+	}
+	if (!failed)
+	{
+
+		if (remuid == -1)
+			return;
+		maplist_uid = FindMaplistUID(remuid);
+		gi.dprintf("Remtime maplist_uid:%i\n", maplist_uid);
+		gi.dprintf("time:%f\n", maplist.times[level.mapnum][maplist_uid].time);
+		if (maplist_uid >= 0) //clear time. 
+		{
+			maplist.times[level.mapnum][maplist_uid].fresh = false;
+			maplist.times[level.mapnum][maplist_uid].time = 0;
+			maplist.times[level.mapnum][maplist_uid].uid = -1;
+			maplist.times[level.mapnum][maplist_uid].completions = -1;
+		}
+
+		UpdateScores();
+		sort_users();
+		for (i = 1; i <= maxclients->value; i++)
+		{
+			e2 = g_edicts + i;
+			if (!e2->inuse)
+				continue;
+			UpdateThisUsersUID(e2, e2->client->pers.netname);
+		}
+
+		if (remnum == 1)
+		{
+			for (i = 0; i < MAX_HIGHSCORES + 1; i++)
+			{
+				level_items.recorded_time_frames[i] = 0;
+				level_items.recorded_time_uid[i] = -1;
+			}
+#ifdef ANIM_REPLAY
+			sprintf(name, "%s/jumpdemo/%s.dj2", tgame->string, level.mapname);
+#else
+			sprintf(name, "%s/jumpdemo/%s.dj1", tgame->string, level.mapname);
+#endif
+			remove(name);
+			sprintf(name, "%s/jumpdemo/%s_%d.dj3", tgame->string, level.mapname, remuid);
+			remove(name);
+
+		}
+
+		write_map_file(level.mapname, level.mapnum);
+		Load_Recording();
+		for (i = 1; i < MAX_HIGHSCORES; i++)
+		{
+			Load_Individual_Recording(i, maplist.times[level.mapnum][i].uid);
+		}
+		gi.cprintf(ent, PRINT_HIGH, "Time %d removed.\n", remnum);
+		removemapfrom_uid_file(remuid);
+	}
+	else
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Invalid map time.\n", remnum);
+	}
+
+}
+
+void remtimes(edict_t *ent)
+{
+	int i;
+	char	name[256];
+	cvar_t	*tgame;
+	edict_t	*e2;
+
+	if (ent->client->resp.admin < aset_vars->ADMIN_REMTIMES_LEVEL)
+		return;
+
+	tgame = gi.cvar("game", "", 0);
+
+	for (i = 0; i < MAX_USERS; i++)
+	{
+		if (maplist.times[level.mapnum][i].uid >= 0)
+		{
+			sprintf(name, "%s/jumpdemo/%s_%d.dj3", tgame->string, level.mapname, maplist.times[level.mapnum][i].uid);
+			remove(name);
+		}
+		maplist.times[level.mapnum][i].uid = -1;
+		maplist.times[level.mapnum][i].fresh = false;
+		maplist.times[level.mapnum][i].time = 0;
+		maplist.times[level.mapnum][i].completions = 0;
+	}
+	for (i = 1; i <= maxclients->value; i++)
+	{
+		e2 = g_edicts + i;
+		if (!e2->inuse)
+			continue;
+		UpdateThisUsersUID(e2, e2->client->pers.netname);
+	}
+
+	for (i = 0; i < MAX_HIGHSCORES + 1; i++)
+	{
+		level_items.recorded_time_frames[i] = 0;
+		level_items.recorded_time_uid[i] = -1;
+	}
+
+	EmptyTimes(level.mapnum);
+	UpdateScores();
+	sort_users();
+#ifdef ANIM_REPLAY
+	sprintf(name, "%s/jumpdemo/%s.dj2", tgame->string, level.mapname);
+#else
+	sprintf(name, "%s/jumpdemo/%s.dj1", tgame->string, level.mapname);
+#endif
+	remove(name);
+
+	write_map_file(level.mapname, level.mapnum);
+
+
+	gi.cprintf(ent, PRINT_HIGH, "Times removed.\n");
+}
+
+static const int points[] =
+{
+	25,20,16,13,11,10,9,8,7,6,5,4,3,2,1
+};
+
+void EmptyTimes(int mid)
+{
+	int i;
+	{
+		for (i = 0; i < MAX_USERS; i++)
+		{
+			maplist.times[mid][i].time = 0;
+			maplist.times[mid][i].uid = -1;
+			maplist.times[mid][i].date[0] = 0;
+			maplist.times[mid][i].completions = 0;
+		}
+	}
+}
+
+void ClearScores(void)
+{
+	int i, j;
+	for (i = 0; i < MAX_USERS; i++)
+	{
+		for (j = 0; j < MAX_HIGHSCORES; j++)
+			maplist.users[i].points[j] = 0;
+		maplist.users[i].score = 0;
+		maplist.users[i].maps_with_points = 0;
+		maplist.users[i].maps_with_1st = 0;
+		maplist.users[i].completions = 0;
+	}
+	maplist.sort_num_users = maplist.num_users;
+}
+
+void UpdateScores(void)
+{
+	int i, mid;
+	char name[MAX_USERS][56];
+	ClearScores();
+	for (i = 0; i < MAX_USERS; i++) { //Fugly hack to prevent names from being changed.. No idea why this happens...
+		sprintf(name[i], maplist.users[i].name);
+	}
+	for (mid = 0; mid < maplist.nummaps; mid++)
+	{
+		for (i = 0; i < MAX_USERS; i++)
+		{	
+			if (maplist.times[mid][i].time == 0)
+				break;
+			if (maplist.times[mid][i].completions == -1) {
+				continue;
+			}
+			if (maplist.times[mid][i].uid >= 0)
+			{
+				maplist.users[maplist.times[mid][i].uid].score += points[i];
+				maplist.users[maplist.times[mid][i].uid].points[i]++;
+				maplist.users[maplist.times[mid][i].uid].maps_with_points++;
+				maplist.users[maplist.times[mid][i].uid].completions++;
+				if (i == 0)
+					maplist.users[maplist.times[mid][i].uid].maps_with_1st++;
+			}
+		}
+	}
+	for (i = 0; i < MAX_USERS; i++)
+	{
+		if (maplist.users[i].name[0])
+		{
+			sprintf(maplist.users[i].name, name[i]); //fugly hack
+			if (maplist.users[i].maps_with_1st > 10 || maplist.users[i].maps_with_points > 50 || maplist.users[i].completions > 100)
+				maplist.users[i].israfel = ((float)maplist.users[i].score / (float)maplist.users[i].completions) * 4;
+			else
+				maplist.users[i].israfel = 0;
+		}
+	}
+}
+
+void UpdateScores2_Israfel()
+{
+	int i, mid;
+	ClearScores();
+	open_users_file();
+	for (mid = 0; mid < maplist.nummaps; mid++)
+	{
+		for (i = 0; i < MAX_HIGHSCORES; i++)
+		{
+			if (maplist.times[mid][i].time == 0)
+				break;
+			if (maplist.times[mid][i].uid >= 0)
+			{
+				maplist.users[maplist.times[mid][i].uid].score += points[i];
+				maplist.users[maplist.times[mid][i].uid].points[i]++;
+			}
+		}
+	}
+	for (i = 0; i < MAX_USERS; i++)
+	{
+		if (maplist.users[i].name[0])
+		{
+			if (maplist.users[i].maps_with_1st > 10 || maplist.users[i].maps_with_points > 50 || maplist.users[i].completions > 100)
+				maplist.users[i].israfel = ((float)maplist.users[i].score / (float)maplist.users[i].completions) * 4;
+			else
+				maplist.users[i].israfel = 0;
+		}
+	}
+	sort_users();
 }

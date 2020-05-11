@@ -69,8 +69,10 @@
     <ClCompile Include="mset-gset.c">
       <Filter>q2jump</Filter>
     </ClCompile>
-    <ClCompile Include="jetpack.c" />
     <ClCompile Include="replay.c">
+      <Filter>q2jump</Filter>
+    </ClCompile>
+    <ClCompile Include="jetpack.c">
       <Filter>q2jump</Filter>
     </ClCompile>
   </ItemGroup>

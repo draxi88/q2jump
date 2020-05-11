@@ -339,7 +339,6 @@ void InitGame (void)
 
 	server_time = 0;
 	LoadBans();
-
 	Lastseen_Load();
 	Load_Model_List();
 	Create_Invis_Skin();

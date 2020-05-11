@@ -57,12 +57,15 @@ typedef struct
 extern maplist_t	maplist;
 
 //void		UpdateTimes(int mid);
+void		EmptyTimes(int mid);
 void		ClearScores(void);
 void		UpdateScores(void);
 void		ShowMapTimes(edict_t *ent);
 void		ShowPlayerTimes(edict_t *ent);
 void		ShowPlayerScores(edict_t *ent);
 void		sort_users_israfel(int n);
+void		remtime(edict_t *ent);
+void		remtimes(edict_t *ent);
 
 qboolean maplist_log(edict_t *ent, int uid, float time, char *date);
 void sort_maplist_times();
@@ -70,7 +73,6 @@ void open_map_file(char *filename, qboolean apply);
 void write_map_file(char *filename, int mapnum);
 //extern times_record maplist.times[level.mapnum][MAX_USERS];
 void UpdateThisUsersUID(edict_t *ent, char *name);
-void update_users_file();
 void open_users_file();
 void write_users_file(void);
 

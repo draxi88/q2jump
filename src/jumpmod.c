@@ -116,8 +116,7 @@ int LoadMapList(char *filename)
    maplist.num_users = 0;
    maplist.sort_num_users = 0;
    //read in users file
-   open_users_file(1);
-
+   open_users_file();
 
 	strcpy(maplist.path,filename);
 	
@@ -127,10 +126,6 @@ int LoadMapList(char *filename)
 		month = current_date->tm_mon + 1;
 		day = current_date->tm_mday;
 		year = current_date->tm_year;
-
-
-
-
 
    if (fp)  // opened successfully? 
    { 
@@ -191,12 +186,9 @@ int LoadMapList(char *filename)
 		 gi.dprintf("%i map(s) loaded.\n", i);
 		 gi.dprintf("-------------------------------------\n");
       }
-
 	  resync(true);
 	  sort_users();
-
       CloseFile(fp); 
-
       if (i == 0) 
       { 
          gi.dprintf ("No maps listed in [maplist] section of %s\n", filename); 
@@ -418,146 +410,6 @@ void Cmd_Votelist_f (edict_t *ent)
    default: 
       break;
    }  // end switch 
-} 
-
-
-static const int points[] =
-{
-	25,20,16,13,11,10,9,8,7,6,5,4,3,2,1
-};
-
-void EmptyTimes(int mid)
-{
-	int i;
-	{
-		for (i=0;i<MAX_HIGHSCORES;i++)
-		{
-			maplist.times[mid][i].time = 0;
-			maplist.times[mid][i].uid = -1;
-			maplist.times[mid][i].date[0] = 0;
-			maplist.times[mid][i].completions = 0;
-		}
-	}
-}
-/*
-void UpdateTimes(int mid)
-{
-	int uid,i;
-	if (level_items.stored_item_times_count)
-	{
-		for (i=0;i<level_items.stored_item_times_count;i++)
-		{
-			uid = GetPlayerUid(maplist.times[level.mapnum][i].uid);
-			maplist.times[mid][i].time = maplist.times[level.mapnum][i].time;
-			maplist.times[mid][i].uid = uid;
-			strcpy(maplist.times[mid][i].date,maplist.times[level.mapnum][i].date);
-		}
-		if (level_items.stored_item_times_count<MAX_HIGHSCORES)
-		{
-			for (i=level_items.stored_item_times_count;i<MAX_HIGHSCORES;i++)
-			{
-				maplist.times[mid][i].time = 0;
-				maplist.times[mid][i].completions = 0;
-				maplist.times[mid][i].uid = -1;
-				maplist.times[mid][i].date[0] = 0;
-			}
-		}
-	} 
-	else 
-	{
-		for (i=0;i<MAX_HIGHSCORES;i++)
-		{
-			maplist.times[mid][i].time = 0;
-			maplist.times[mid][i].completions = 0;
-			maplist.times[mid][i].uid = -1;
-			maplist.times[mid][i].date[0] = 0;
-		}
-	}
-}
-*/
-
-void ClearScores(void)
-{
-	int i,j;
-	for (i=0;i<MAX_USERS;i++)
-	{
-		for (j=0;j<MAX_HIGHSCORES;j++)
-		maplist.users[i].points[j] = 0;
-		maplist.users[i].score = 0;
-		maplist.users[i].maps_with_points = 0;
-		maplist.users[i].maps_with_1st = 0;
-		maplist.users[i].completions = 0;
-	}
-   maplist.sort_num_users = maplist.num_users;
-}
-
-
-void UpdateScores(void)
-{
-	int i,mid;
-	ClearScores();
-
-	for (mid=0;mid<maplist.nummaps;mid++)
-	{
-		for (i=0;i<MAX_USERS;i++)
-		{
-			if (maplist.times[mid][i].time==0)
-				break;
-			if (maplist.times[mid][i].completions == -1) {
-				continue;
-			}
-			if (maplist.times[mid][i].uid>=0)
-			{
-				maplist.users[maplist.times[mid][i].uid].score+=points[i];
-				maplist.users[maplist.times[mid][i].uid].points[i]++;
-				maplist.users[maplist.times[mid][i].uid].maps_with_points++;
-				maplist.users[maplist.times[mid][i].uid].completions++;
-				if (i==0)
-					maplist.users[maplist.times[mid][i].uid].maps_with_1st++;
-				//gi.dprintf("mid:%i uid:%i score:%i completions:%i\n", mid,maplist.times[mid][i].uid, maplist.users[maplist.times[mid][i].uid].score, maplist.users[maplist.times[mid][i].uid].completions);
-			}
-		}
-	}
-	for (i=0;i<MAX_USERS;i++)
-	{
-		if (maplist.users[i].name[0])
-		{
-			if (maplist.users[i].maps_with_1st>10 || maplist.users[i].maps_with_points>50 || maplist.users[i].completions>100)
-				maplist.users[i].israfel = ((float)maplist.users[i].score / (float)maplist.users[i].completions) *4;
-			else
-				maplist.users[i].israfel = 0;
-		}
-	}
-}
-
-void UpdateScores2_Israfel()
-{
-	int i, mid;
-	ClearScores();
-	open_users_file();
-	for (mid=0;mid<maplist.nummaps;mid++)
-	{
-		for (i=0;i<MAX_HIGHSCORES;i++)
-		{
-			if (maplist.times[mid][i].time==0)
-				break;
-			if (maplist.times[mid][i].uid>=0)
-			{
-			maplist.users[maplist.times[mid][i].uid].score+=points[i];
-			maplist.users[maplist.times[mid][i].uid].points[i]++;
-			}
-		}
-	}
-	for (i=0;i<MAX_USERS;i++)
-	{
-		if (maplist.users[i].name[0])
-		{
-			if (maplist.users[i].maps_with_1st>10 || maplist.users[i].maps_with_points>50 || maplist.users[i].completions>100)
-				maplist.users[i].israfel = ((float)maplist.users[i].score / (float)maplist.users[i].completions)*4;
-			else
-				maplist.users[i].israfel = 0;
-		}
-	}
 }
 
 typedef struct
@@ -4379,143 +4231,6 @@ void removemapfrom_uid_file(int uid){
 	fclose(f);
 }
 
-void remtime(edict_t *ent)
-{
-	int remnum,i;
-	char	name[256];
-	cvar_t	*tgame;
-	qboolean failed = false;
-	int maplist_uid = -1;
-	int remuid;
-	edict_t *e2;
-
-	tgame = gi.cvar("game", "", 0);
-
-	if (ent->client->resp.admin<aset_vars->ADMIN_REMTIMES_LEVEL)
-		return;
-
-	if (gi.argc() != 2)
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Please supply the time value to remove.\n");
-		return;
-	}
-	remnum = atoi(gi.argv(1));
-	if ((remnum<1) || (remnum>MAX_HIGHSCORES))
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Please supply the time value to remove.\n");
-		return;
-	}
-//Com_Printf("remnum %d\nlevel_items.stored_item_times_count %d\n",remnum,level_items.stored_item_times_count);
-
-// 084_h3	if (remnum!=10)
-//	{
-		if (remnum<=MAX_HIGHSCORES)//level_items.stored_item_times_count)
-		{
-			remuid = maplist.times[level.mapnum][remnum-1].uid;
-
-			if (remuid==-1)
-				return;
-            maplist.users[remuid].completions--; //does this work?
-			for (i=remnum-1;i<MAX_USERS-1; i++)//level_items.stored_item_times_count-1;i++)
-			{
-				maplist.times[level.mapnum][i].uid = maplist.times[level.mapnum][i+1].uid;
-				maplist.times[level.mapnum][i].time = maplist.times[level.mapnum][i+1].time;
-				//strcpy(maplist.users[maplist.times[level.mapnum][i].uid].name,maplist.times[level.mapnum][i+1].owner);
-				//maplist.times[level.mapnum][i].timestamp = maplist.times[level.mapnum][i+1].timestamp;
-				//maplist.times[level.mapnum][i].timeint = maplist.times[level.mapnum][i+1].timeint;
-				//strcpy(maplist.times[level.mapnum][i].name,maplist.times[level.mapnum][i+1].name);
-				strcpy(maplist.times[level.mapnum][i].date,maplist.times[level.mapnum][i+1].date);
-				maplist.times[level.mapnum][i].fresh = maplist.times[level.mapnum][i+1].fresh;
-				if (maplist.times[level.mapnum][i].time = maplist.times[level.mapnum][i + 1].time == 0) {
-					break;
-				}
-			}
-			maplist.times[level.mapnum][i].uid = 0;
-			maplist.times[level.mapnum][i].time = 0;
-			//maplist.times[level.mapnum][level_items.stored_item_times_count-1].name[0] = 0;
-			//maplist.times[level.mapnum][level_items.stored_item_times_count-1].owner[0] = 0;
-			//maplist.times[level.mapnum][level_items.stored_item_times_count-1].timestamp = 0;
-			//maplist.times[level.mapnum][level_items.stored_item_times_count-1].timeint = 0;
-			maplist.times[level.mapnum][i].date[0] = 0;
-			maplist.times[level.mapnum][i].fresh = false;
-			//level_items.stored_item_times_count--;
-		}
-		else
-		{
-			failed = true;
-		}
-//	}
-//	else
-//	{
-//		if (level_items.stored_item_times_count==10)
-//		{
-//			remuid = maplist.times[level.mapnum][9].uid;
-//			level_items.stored_item_times_count = 9;
-//		}
-//		else
-//			failed = true;
-//	}
-	if (!failed)
-	{
-		
-		if (remuid==-1)
-			return;
-		maplist_uid = FindMaplistUID(remuid);
-
-		if (maplist_uid>=0) //clear time. 
-		{
-			maplist.times[level.mapnum][maplist_uid].fresh = false;
-			//maplist.times[level.mapnum][maplist_uid].time = 0;
-            //maplist.times[level.mapnum][maplist_uid].uid = -1;
-			maplist.times[level.mapnum][maplist_uid].completions = -1;
-		}
-
-		//		Update_Highscores(MAX_HIGHSCORES-1);
-		UpdateScores();
-		sort_users();
-		for (i = 1; i <= maxclients->value; i++) 
-		{
-			e2 = g_edicts + i;
-			if (!e2->inuse)
-				continue;
-			UpdateThisUsersUID(e2,e2->client->pers.netname);			
-		}
-
-		if (remnum==1)
-		{
-			for (i=0;i<MAX_HIGHSCORES+1;i++)
-			{
-				level_items.recorded_time_frames[i] = 0;
-				level_items.recorded_time_uid[i] = -1;
-			}
-#ifdef ANIM_REPLAY
-			sprintf (name, "%s/jumpdemo/%s.dj2", tgame->string,level.mapname);
-#else
-			sprintf (name, "%s/jumpdemo/%s.dj1", tgame->string,level.mapname);
-#endif
-			remove(name);	
-			sprintf (name, "%s/jumpdemo/%s_%d.dj3", tgame->string,level.mapname,remuid);
-			remove(name);	
-
-		}
-		
-		write_map_file(level.mapname,level.mapnum);
-		Load_Recording();
-		for (i=1;i<MAX_HIGHSCORES;i++)
-		{
-			Load_Individual_Recording(i,maplist.times[level.mapnum][i].uid);
-		}
-		gi.cprintf(ent,PRINT_HIGH,"Time %d removed.\n",remnum);
-        removemapfrom_uid_file(remuid);
-	}
-	else
-	{
-		gi.cprintf(ent,PRINT_HIGH,"Invalid map time.\n",remnum);
-	}
-
-}
-
-
 void cmsg(edict_t *ent)
 {
 	ent->client->resp.cmsg = !ent->client->resp.cmsg;
@@ -5477,6 +5192,10 @@ void AddMap(edict_t *ent)
 // ===================================================
 // added by lilred
 
+static const int points[] =
+{
+	25,20,16,13,11,10,9,8,7,6,5,4,3,2,1
+};
 void RemoveMap (edict_t* ent)
 {
 	int num;
