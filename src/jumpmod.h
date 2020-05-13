@@ -419,17 +419,10 @@ typedef struct {
     char mapname[256];
 } maplist_uid_file;
 
-void append_uid_file(int uid,char *filename);
-void clear_uid_info(int num);
-void list_mapsleft(edict_t *ent);
-void open_uid_file(int uid,edict_t *ent);
-void write_uid_file(int uid,edict_t *ent);
-void removemapfrom_uid_file(int uid);
 extern overall_completions_t overall_completions[24];
 extern overall_completions_t temp_overall_completions;
 void sort_users_completions( int n );
 void UpdateThisUsersSortedUid(edict_t *ent);
-void resync(qboolean overide);
 void append_added_ini(char *mapname);
 qboolean ValidateMap (char *mapname);
 

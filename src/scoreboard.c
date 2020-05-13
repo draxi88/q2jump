@@ -144,7 +144,7 @@ void JumpModScoreboardMessage(edict_t *ent, edict_t *killer)
 		maplist_uid = -1;
 		if (cl->resp.uid > 0)
 		{
-			maplist_uid = FindMaplistUID(cl->resp.uid - 1);
+			maplist_uid = FindMaplistUID(level.mapnum, cl->resp.uid - 1);
 		}
 
 		// send the layout
@@ -230,7 +230,7 @@ void JumpModScoreboardMessage(edict_t *ent, edict_t *killer)
 			maplist_uid = -1;
 			if (cl->resp.uid > 0)
 			{
-				maplist_uid = FindMaplistUID(cl->resp.uid - 1);
+				maplist_uid = FindMaplistUID(level.mapnum, cl->resp.uid - 1);
 			}
 
 			if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000)

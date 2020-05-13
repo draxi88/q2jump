@@ -66,6 +66,7 @@ void		ShowPlayerScores(edict_t *ent);
 void		sort_users_israfel(int n);
 void		remtime(edict_t *ent);
 void		remtimes(edict_t *ent);
+int			FindMaplistUID(int mid, int uid);
 
 qboolean maplist_log(edict_t *ent, int uid, float time, char *date);
 void sort_maplist_times();
@@ -75,4 +76,13 @@ void write_map_file(char *filename, int mapnum);
 void UpdateThisUsersUID(edict_t *ent, char *name);
 void open_users_file();
 void write_users_file(void);
+void list_mapsleft(edict_t *ent);
+void list_mapsdone(edict_t *ent);
+void append_uid_file(int uid, char *filename);
+void clear_uid_info(int num);
+void open_uid_file(int uid, edict_t *ent);
+void write_uid_file(int uid, edict_t *ent);
+void resync(qboolean overide);
+void removemapfrom_uid_file(int uid);
+void resync(qboolean overide);
 
