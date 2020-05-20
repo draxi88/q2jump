@@ -1,7 +1,7 @@
 #pragma once
 
 //defines
-#define MAX_USERS 4096
+#define MAX_USERS 2048 //reduced to save memory
 #define MAX_HIGHSCORES 15
 #define CTF_VERSION_S		"1.34ger"
 #define		HOOK_READY	0
@@ -410,18 +410,6 @@ extern qboolean Neuro_RedKey_Overide;
 void UpdateVoteMaps(void);
 void sort_maps(edict_t *ent);
 
-typedef struct {
-	qboolean loaded;
-	int maps[MAX_MAPS];
-} overall_completions_t;
-
-typedef struct {
-    char mapname[256];
-} maplist_uid_file;
-
-extern overall_completions_t overall_completions[24];
-extern overall_completions_t temp_overall_completions;
-void sort_users_completions( int n );
 void UpdateThisUsersSortedUid(edict_t *ent);
 void append_added_ini(char *mapname);
 qboolean ValidateMap (char *mapname);

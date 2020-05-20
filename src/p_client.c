@@ -1672,9 +1672,9 @@ void ClientBegin (edict_t *ent)
 
 	ent->client = game.clients + (ent - g_edicts - 1);
 
-	overall_completions[ent-g_edicts-1].loaded = false;
+	/*overall_completions[ent-g_edicts-1].loaded = false;
 	compare_users[ent-g_edicts-1].user1.loaded = false;
-	compare_users[ent-g_edicts-1].user2.loaded = false;
+	compare_users[ent-g_edicts-1].user2.loaded = false;*/
 //	removeClientCommands(ent);
 
 	if (deathmatch->value)
@@ -1758,7 +1758,7 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	s = Info_ValueForKey (userinfo, "name");
 	if (strcmp(s,ent->client->pers.netname)) { //name changed
 		UpdateThisUsersUID(ent,s);
-		overall_completions[ent-g_edicts-1].loaded = false;
+		//overall_completions[ent-g_edicts-1].loaded = false;
 		ent->client->pers.banlevel = GetBanLevel(ent,userinfo);
 		ApplyBans(ent,s);
 	}
@@ -1927,9 +1927,9 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	ent->client->resp.current_vote = 0;
 	vote_data.votes[0]++;
 	removeClientCommands(ent);
-	overall_completions[ent-g_edicts-1].loaded = false;
-	compare_users[ent-g_edicts-1].user1.loaded = false;
-	compare_users[ent-g_edicts-1].user2.loaded = false;
+	//overall_completions[ent-g_edicts-1].loaded = false;
+	//compare_users[ent-g_edicts-1].user1.loaded = false;
+	//compare_users[ent-g_edicts-1].user2.loaded = false;
 	ent->client->resp.cur_time = 0;
 	ent->client->resp.last_fire_frame = 0;
 	return true;

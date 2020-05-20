@@ -55,7 +55,6 @@ qboolean maplist_log(edict_t *ent, int uid, float time, char *date)
 			strcpy(maplist.times[level.mapnum][maplist_uid].date, date);
 			ent->client->resp.maplist_uid = maplist_uid;
 			ent->client->resp.best_time = time;
-			maplist.times[level.mapnum][maplist_uid].fresh = true;
 		}
 
 		if (!maplist.times[level.mapnum][maplist_uid].completions) {
@@ -136,7 +135,6 @@ qboolean maplist_log(edict_t *ent, int uid, float time, char *date)
 						append_uid_file(uid, level.mapname);
 					}
 					maplist.times[level.mapnum][i].completions++;
-					maplist.times[level.mapnum][i].fresh = true;
 					ent->client->resp.maplist_uid = i;
 					ent->client->resp.best_time = time;
 
@@ -305,8 +303,8 @@ void open_map_file(char *filename, qboolean apply)
 	cvar_t	*tgame;
 	char temp[1024];
 	int uid;
+	int comp;
 	int maplisted;
-	struct stat filestat;
 
 	tgame = gi.cvar("game", "", 0);
 	port = gi.cvar("port", "", 0);
@@ -321,7 +319,6 @@ void open_map_file(char *filename, qboolean apply)
 	}
 
 	maplisted = -1;
-	stat(name, &filestat);
 	for (i2 = 0; i2 < maplist.nummaps; i2++)
 	{
 		if (strcmp(maplist.mapnames[i2], filename) == 0)
@@ -333,7 +330,6 @@ void open_map_file(char *filename, qboolean apply)
 	//clear maplist.times for this map.
 	for (i = 0; i < MAX_USERS; i++)
 	{
-		maplist.times[maplisted][i].fresh = false;
 		maplist.times[maplisted][i].uid = -1;
 		maplist.times[maplisted][i].time = 0;
 		maplist.times[maplisted][i].completions = 0;
@@ -362,11 +358,14 @@ void open_map_file(char *filename, qboolean apply)
 		fscanf(f, "%f", &maplist.times[maplisted][i].time);
 		fscanf(f, "%i", &uid);
 		maplist.times[maplisted][i].uid = uid;
-		fscanf(f, "%i", &maplist.times[maplisted][i].completions);
+		fscanf(f, "%i", &comp);
+		maplist.times[maplisted][i].completions = comp;
 		//gi.dprintf("NR: %d Uid: %d date: %s time: %f\n", i, uid, maplist.times[maplisted][i].date, maplist.times[maplisted][i].time);
-		if ((maplisted != -1) && apply && maplist.times[level.mapnum][i].completions)
+		if ((maplisted != -1) && apply)// && maplist.times[level.mapnum][i].completions)
 		{
-			append_uid_file(uid, filename);
+			//append_uid_file(uid, filename);
+			if (!maplist.users[uid].maps_done[maplisted])
+				maplist.users[uid].maps_done[maplisted] = 1;
 		}
 		if (feof(f)) {
 			break;
@@ -564,7 +563,7 @@ void write_users_file(void)
 	}
 	fclose(f);
 }
-
+/*
 void write_uid_file(int uid, edict_t *ent)
 {
 	int index;
@@ -602,7 +601,7 @@ void write_uid_file(int uid, edict_t *ent)
 	}
 	fclose(f);
 }
-
+*/
 float add_item_to_queue(edict_t *ent, float item_time)//, char *owner, char *name)
 {
 	int m_current;
@@ -620,7 +619,6 @@ float add_item_to_queue(edict_t *ent, float item_time)//, char *owner, char *nam
 	qboolean played_wav = false;
 	float diff;
 	qboolean save_demo = true;
-	char temp_stamp[32];
 	int uid;
 	int maplist_uid;
 	int uid_1st = -1;
@@ -652,8 +650,8 @@ float add_item_to_queue(edict_t *ent, float item_time)//, char *owner, char *nam
 	month = current_date->tm_mon + 1;
 	day = current_date->tm_mday;
 	year = current_date->tm_year;
-
-	sprintf(temp_stamp, "1%02d%02d%02d", year - 100, month, day);
+	sprintf(temp_date, "%02d/%02d/%02d", day, month, year - 100);
+	strcpy(maplist.today, temp_date);
 
 	uid = GetPlayerUid(temp_owner);
 	if (uid == -1)
@@ -664,7 +662,6 @@ float add_item_to_queue(edict_t *ent, float item_time)//, char *owner, char *nam
 	//ent->client->resp.uid = uid + 1;
 	UpdateThisUsersSortedUid(ent);
 	//log off everyones time
-	sprintf(temp_date, "%02d/%02d/%02d", day, month, year - 100);
 	if (ent->client->resp.client_think_begin)
 	{
 
@@ -721,7 +718,6 @@ float add_item_to_queue(edict_t *ent, float item_time)//, char *owner, char *nam
 		maplist.times[level.mapnum][placement].time = item_time;
 		//strcpy(maplist.times[level.mapnum][placement].owner, temp_owner);
 		//strcpy(maplist.times[level.mapnum][placement].name, temp_name);
-		maplist.times[level.mapnum][placement].fresh = true;
 		fresh = true;
 		sprintf(maplist.times[level.mapnum][placement].date, "%02d/%02d/%02d", day, month, year - 100);
 
@@ -925,13 +921,11 @@ void remtime(edict_t *ent)
 				maplist.times[level.mapnum][i].time = 0;
 				maplist.times[level.mapnum][i].completions = 0;
 				maplist.times[level.mapnum][i].date[0] = 0;
-				maplist.times[level.mapnum][i].fresh = false;
 				break;
 			}
 			maplist.times[level.mapnum][i].uid = maplist.times[level.mapnum][i + 1].uid;
 			maplist.times[level.mapnum][i].time = maplist.times[level.mapnum][i + 1].time;
 			strcpy(maplist.times[level.mapnum][i].date, maplist.times[level.mapnum][i + 1].date);
-			maplist.times[level.mapnum][i].fresh = maplist.times[level.mapnum][i + 1].fresh;
 		}
 	}
 	else
@@ -946,7 +940,6 @@ void remtime(edict_t *ent)
 		maplist_uid = FindMaplistUID(level.mapnum, remuid);
 		if (maplist_uid >= 0) //clear time. 
 		{
-			maplist.times[level.mapnum][maplist_uid].fresh = false;
 			maplist.times[level.mapnum][maplist_uid].time = 0;
 			maplist.times[level.mapnum][maplist_uid].uid = -1;
 			maplist.times[level.mapnum][maplist_uid].completions = -1;
@@ -985,7 +978,8 @@ void remtime(edict_t *ent)
 			Load_Individual_Recording(i, maplist.times[level.mapnum][i].uid);
 		}
 		gi.cprintf(ent, PRINT_HIGH, "Time %d removed.\n", remnum);
-		removemapfrom_uid_file(remuid);
+		//removemapfrom_uid_file(remuid);
+		maplist.users[remuid].maps_done[level.mapnum] = 0;
 	}
 	else
 	{
@@ -1013,7 +1007,6 @@ void remtimes(edict_t *ent)
 			remove(name);
 		}
 		maplist.times[level.mapnum][i].uid = -1;
-		maplist.times[level.mapnum][i].fresh = false;
 		maplist.times[level.mapnum][i].time = 0;
 		maplist.times[level.mapnum][i].completions = 0;
 	}
@@ -1163,7 +1156,7 @@ void list_mapsleft(edict_t *ent)
 	char txt[255];
 	char name[64];
 	int uid;
-	int mapsleft[MAX_MAPS];
+
 	offset = atoi(gi.argv(1));
 	if (offset <= 0 || offset > 200)
 		offset = 1;
@@ -1181,12 +1174,8 @@ void list_mapsleft(edict_t *ent)
 	i2 = 0;
 	for (i = 0; i < maplist.nummaps; i++)
 	{
-		if (FindMaplistUID(i, uid) != -1) {
+		if (maplist.users[uid].maps_done[i]) {
 			i2++;
-			mapsleft[i] = 0;
-		}
-		else {
-			mapsleft[i] = 1;
 		}
 	}
 	Com_sprintf(txt, sizeof(txt), "Completed: %i Remaining %i", i2, maplist.nummaps - i2);
@@ -1197,7 +1186,7 @@ void list_mapsleft(edict_t *ent)
 	{
 		while (i2 < maplist.nummaps)
 		{
-			if (mapsleft[i2])//(!overall_completions[index].maps[i2])
+			if (!maplist.users[uid].maps_done[i2])//(!overall_completions[index].maps[i2])
 			{
 				//this map hasnt been done
 				if (i >= (offset - 1) * 20)
@@ -1235,7 +1224,6 @@ void list_mapsdone(edict_t *ent)
 	char txt[255];
 	char name[64];
 	int uid;
-	int mapsdone[MAX_MAPS];
 
 	offset = atoi(gi.argv(1));
 	if (offset <= 0 || offset > 200)
@@ -1253,12 +1241,8 @@ void list_mapsdone(edict_t *ent)
 	i2 = 0;
 	for (i = 0; i < maplist.nummaps; i++)
 	{
-		if (FindMaplistUID(i, uid) != -1) {
+		if (maplist.users[uid].maps_done[i]) {
 			i2++;
-			mapsdone[i] = 1;
-		}
-		else {
-			mapsdone[i] = 0;
 		}
 	}
 	Com_sprintf(txt, sizeof(txt), "Completed: %i Remaining %i", i2, maplist.nummaps - i2);
@@ -1269,7 +1253,7 @@ void list_mapsdone(edict_t *ent)
 	{
 		while (i2 < maplist.nummaps)
 		{
-			if (mapsdone[i2])
+			if (maplist.users[uid].maps_done[i2])
 			{
 				//this map has been done
 				if (i >= (offset - 1) * 20)
@@ -1332,7 +1316,7 @@ void append_uid_file(int uid, char *filename)//,edict_t *ent)
 	fclose(f);
 	//overall_completions[index].maps[level.mapnum] = 1;
 }
-
+/*
 void clear_uid_info(int num)
 {
 	int i;
@@ -1348,7 +1332,7 @@ void clear_uid_info(int num)
 		overall_completions[num].loaded = false;
 	}
 }
-
+*/
 void resync(qboolean overide)
 {
 	FILE	*f;
@@ -1435,7 +1419,7 @@ void resync(qboolean overide)
 	}
 }
 
-void removemapfrom_uid_file(int uid) {
+/*void removemapfrom_uid_file(int uid) {
 
 	FILE	*f;
 	int     i;
@@ -1443,7 +1427,6 @@ void removemapfrom_uid_file(int uid) {
 	cvar_t	*port;
 	cvar_t	*tgame;
 	char	name[256];
-	maplist_uid_file maplistinuid[MAX_MAPS];
 	char	mapname[256];
 
 	tgame = gi.cvar("game", "", 0);
@@ -1466,32 +1449,17 @@ void removemapfrom_uid_file(int uid) {
 		sprintf(name, "%s/%s/%i.u", tgame->string, port->string, uid);
 	}
 
-	f = fopen(name, "rb");
-	if (!f)
-	{
-		return;
-	}
-	i = 0;
-	while (!feof(f))
-	{
-		fscanf(f, "%s", maplistinuid[i].mapname);
-		i++;
-	}
-	fclose(f);
-
 	f = fopen(name, "wb");
 	if (!f)
 		return;
 
 	for (i = 0; i < MAX_MAPS; i++)
 	{
-		if (Q_stricmp(maplistinuid[i].mapname, mapname) == 0) {
+		if (!maplist.users[uid].maps_done[i]) {
 			continue;
 		}
-		fprintf(f, " %s", maplistinuid[i].mapname);
-		if (strlen(maplistinuid[i].mapname) < 2) {
-			break;
-		}
+		fprintf(f, " %s", maplist.mapnames[i]);
 	}
 	fclose(f);
 }
+*/

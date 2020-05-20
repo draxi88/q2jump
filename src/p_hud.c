@@ -129,7 +129,7 @@ void BeginIntermission(edict_t *targ)
 		CreateHTML (NULL,HTML_INDIVIDUAL_MAP,level.mapnum);
 		for (i=0;i<MAX_USERS;i++)
 		{
-			if (maplist.times[level.mapnum][i].fresh)
+			if (Q_stricmp(maplist.times[level.mapnum][i].date,maplist.today)==0)
 				CreateHTML (NULL,HTML_INDIVIDUALS,maplist.times[level.mapnum][i].uid);
 		}
 

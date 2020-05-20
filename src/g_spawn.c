@@ -636,7 +636,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	map_allow_voting = true;
 	level_items.locked = false;
 
-	clear_uid_info(-1);
+	//clear_uid_info(-1);
 
 sprintf(text,"==== SpawnEntities (Entry) ====");
 debug_log(text);

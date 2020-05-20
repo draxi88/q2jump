@@ -534,12 +534,12 @@ def:
 	{
 		UpdateThisUsersUID(ent,ent->client->pers.netname);
 	}
-	if (ent->client->resp.uid && !overall_completions[index].loaded)
+	/*if (ent->client->resp.uid && !overall_completions[index].loaded)
 	{
 		write_map_file(level.mapname,level.mapnum);   // 084_h3
 		//open their file
 		open_uid_file(ent->client->resp.uid-1,ent);
-	}
+	}*/
 	if (maplist.times[mapnum][0].time!=0)
 	{
 		gi.cprintf (ent, PRINT_HIGH, "-----------------------------------------\n"); 
@@ -561,7 +561,7 @@ def:
               gi.cprintf (ent, PRINT_HIGH, "%-3d %-18s   %s  %8.3f %9.3f\n",i+1,name,maplist.times[mapnum][i].date,time,maplist.times[mapnum][i].time);
 			}
 		} 
-		if (overall_completions[index].maps[mapnum]==1)
+		if (maplist.users[ent->client->resp.uid-1].maps_done[mapnum]==1)
 			gi.cprintf(ent,PRINT_HIGH,"You have completed this map\n");
 		else
 			gi.cprintf(ent,PRINT_HIGH,"You have NOT completed this map\n");
@@ -2349,86 +2349,6 @@ void CloseFile(FILE *fp)
    else    // no file is opened 
       gi.dprintf ("ERROR -- CloseFile() exception.\n"); 
 }
-/*
-void sort_queue( int n )
-{
-	char t_owner[128];
-	char t_name[128];
-	float t_time;
-	char t_date[32];
-	int t_uid;
-	qboolean t_fresh;
-	int i;
-	int timestamp;
-	int timeint;
-	int j;
-	char temp_stamp[16];
-	int len;
-
-	for (i=0;i<MAX_HIGHSCORES*2;i++)
-	{
-		if (!maplist.times[level.mapnum][i].time)
-			continue;
-		if (!maplist.times[level.mapnum][i].timestamp)
-		{
-			//originally 1.0999999+0.001 * 10 = 11, now 1.0599999+0.001*100?
-			maplist.times[level.mapnum][i].timeint = ((maplist.times[level.mapnum][i].time+0.0001)*1000);
-			//gi.dprintf("%d %d %s %d\n",i,maplist.times[level.mapnum][i].uid,maplist.times[level.mapnum][i].name,maplist.times[level.mapnum][i].timeint);
-			len = strlen(maplist.times[level.mapnum][i].date);
-			memset(temp_stamp,0,sizeof(temp_stamp));
-			temp_stamp[0] = '1';
-			if (len==8)
-			{
-				temp_stamp[1] = maplist.times[level.mapnum][i].date[6];
-				temp_stamp[2] = maplist.times[level.mapnum][i].date[7];
-				temp_stamp[3] = maplist.times[level.mapnum][i].date[3];
-				temp_stamp[4] = maplist.times[level.mapnum][i].date[4];
-				temp_stamp[5] = maplist.times[level.mapnum][i].date[0];
-				temp_stamp[6] = maplist.times[level.mapnum][i].date[1];
-			}
-			maplist.times[level.mapnum][i].timestamp = atoi(temp_stamp);
-		}
-
-	}
-  for ( i = 0; i < n-1; ++i )
-    for ( j = 1; j < n-i; ++j )
-      if ( (maplist.times[level.mapnum][j-1].timeint > maplist.times[level.mapnum][j].timeint) || 
-		  (
-		  (maplist.times[level.mapnum][j-1].timeint == maplist.times[level.mapnum][j].timeint) &&
-		  (maplist.times[level.mapnum][j-1].timestamp > maplist.times[level.mapnum][j].timestamp)
-		  )
-		  )
-	  {
-        // Note the use here of swap()
-		strcpy(t_owner,maplist.times[level.mapnum][j-1].owner);
-		strcpy(t_name,maplist.times[level.mapnum][j-1].name);
-		t_time = maplist.times[level.mapnum][j-1].time;
-		t_uid = maplist.times[level.mapnum][j-1].uid;
-		strcpy(t_date,maplist.times[level.mapnum][j-1].date);
-		t_fresh = maplist.times[level.mapnum][j-1].fresh;
-		timestamp = maplist.times[level.mapnum][j-1].timestamp;
-		timeint = maplist.times[level.mapnum][j-1].timeint;
-
-
-        maplist.times[level.mapnum][j-1].uid = maplist.times[level.mapnum][j].uid;
-        maplist.times[level.mapnum][j-1].time = maplist.times[level.mapnum][j].time;
-		strcpy(maplist.times[level.mapnum][j-1].owner,maplist.times[level.mapnum][j].owner);
-		strcpy(maplist.times[level.mapnum][j-1].name,maplist.times[level.mapnum][j].name);
-		strcpy(maplist.times[level.mapnum][j-1].date,maplist.times[level.mapnum][j].date);
-		maplist.times[level.mapnum][j-1].fresh = maplist.times[level.mapnum][j].fresh;
-		maplist.times[level.mapnum][j-1].timestamp = maplist.times[level.mapnum][j].timestamp;
-		maplist.times[level.mapnum][j-1].timeint = maplist.times[level.mapnum][j].timeint;
-
-        maplist.times[level.mapnum][j].uid = t_uid;
-        maplist.times[level.mapnum][j].time = t_time;
-		strcpy(maplist.times[level.mapnum][j].owner,t_owner);
-		strcpy(maplist.times[level.mapnum][j].name,t_name);
-		strcpy(maplist.times[level.mapnum][j].date,t_date);
-		maplist.times[level.mapnum][j].fresh = t_fresh;
-		maplist.times[level.mapnum][j].timestamp = timestamp;
-		maplist.times[level.mapnum][j].timeint = timeint;
-	  }
-}*/
 
 void AddUser(char *name,int i)
 {
@@ -5177,7 +5097,8 @@ void RemoveMap (edict_t* ent)
 			maplist.users[maplist.times[num][i].uid].completions--;
 			if(points[i]>0)
 				maplist.users[maplist.times[num][i].uid].score -= points[i];
-			removemapfrom_uid_file(maplist.times[num][i].uid);
+			//removemapfrom_uid_file(maplist.times[num][i].uid);
+			maplist.users[maplist.times[num][i].uid].maps_done[num] = 0;
 		}
 	}
 	port = gi.cvar("port", "", 0);
@@ -6366,9 +6287,7 @@ void sort_maps(edict_t *ent)
 		gi.AddCommandString("map forkjumping\n");
 		
 }
-
-overall_completions_t overall_completions[24];
-overall_completions_t temp_overall_completions;
+/*
 
 void open_uid_file(int uid,edict_t *ent)
 {
@@ -6428,6 +6347,7 @@ void open_uid_file(int uid,edict_t *ent)
 	//}
 	//open_map_file(level.mapname, false);
 }
+*/
 
 qboolean open_uid_file_compare(edict_t *ent)
 {
@@ -6882,11 +6802,11 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 			return;
 
 		//load uid file
-		open_uid_file(usenum,NULL);
+		//open_uid_file(usenum,NULL);
 		i2 = 1;
 		for (i=0;i<MAX_MAPS;i++)
 		{
-			if (overall_completions[0].maps[i])
+			if (maplist.users[usenum].maps_done[i])
 			{
 				strcpy(html_data.buffer,html_data.tplate);
 		
@@ -7561,6 +7481,7 @@ void ApplyBans(edict_t *ent,char *s)
 	}
 }
 
+/*
 void reset_maps_completed(edict_t *ent)
 {
 	int index,i;
@@ -7596,6 +7517,7 @@ void reset_maps_completed(edict_t *ent)
 		open_uid_file(prev_uid,ent);
 
 }
+*/
 
 void Update_Added_Time(void)
 {
@@ -7616,68 +7538,6 @@ void Update_Added_Time(void)
 	gi.configstring (CONFIG_JUMP_ADDED_TIME,      str_added_time);
 
 }
-
-//When map loads go thru all times and update the highscore list
-/*
-void Update_Highscores(int start)
-{
-	struct	tm *current_date;
-	time_t	time_date;
-	int		month,day,year;
-	int trec;
-	int li;
-	int placement;
-	qboolean cando;
-	if (level_items.stored_item_times_count!=start)
-		return;
-	//set the date
-		time_date = time(NULL);                // DOS system call
-		current_date = localtime(&time_date);  // DOS system call
-		month = current_date->tm_mon + 1;
-		day = current_date->tm_mday;
-		year = current_date->tm_year;
-
-	for (trec=0;trec<MAX_USERS;trec++)
-	{
-		if (!maplist.times[level.mapnum][trec].completions)
-			break;
-		cando = true;
-		//loop thru the top 10
-		for (li=0;li<MAX_HIGHSCORES*2;li++)
-		{
-			//dont add to the board if in there already
-			if (maplist.times[level.mapnum][li].uid==maplist.times[level.mapnum][trec].uid)
-			{
-				cando = false;
-				break;
-			}
-		}
-		//condition to make sure we dont add a broken old time in
-		if (maplist.times[level.mapnum][trec].time<maplist.times[level.mapnum][start-1].time)
-			cando = false;
-
-		if (!cando)
-			continue;
-		//gi.dprintf("%s %f\n",maplist.users[maplist.times[level.mapnum][trec].uid].name,maplist.times[level.mapnum][trec].time);
-		//add it to the stored_items
-		placement = level_items.stored_item_times_count;
-		maplist.times[level.mapnum][placement].uid = maplist.times[level.mapnum][trec].uid;
-		maplist.times[level.mapnum][placement].time = maplist.times[level.mapnum][trec].time;
-		strcpy(maplist.times[level.mapnum][placement].owner,maplist.users[maplist.times[level.mapnum][trec].uid].name);
-		strcpy(maplist.times[level.mapnum][placement].name,maplist.users[maplist.times[level.mapnum][trec].uid].name);
-		maplist.times[level.mapnum][placement].fresh = true;
-
-		maplist.times[level.mapnum][placement].timestamp = 0;
-		sprintf(maplist.times[level.mapnum][placement].date, "%02d/%02d/%02d",day, month,year-100);
-				level_items.stored_item_times_count++;
-		sort_queue(level_items.stored_item_times_count);
-		if (level_items.stored_item_times_count>MAX_HIGHSCORES)
-			level_items.stored_item_times_count = MAX_HIGHSCORES;
-	}
-//	UpdateScores();
-
-}
-*/
 
 void UpdateVoteMenu(void)
 {
@@ -8372,7 +8232,7 @@ void Compare_Users(edict_t *ent)
 			gi.cprintf(ent,PRINT_HIGH,"Cannot find player %s\n",name2);
 			return;
 		}
-		if (uid1!=compare_users[index].user1.uid || uid2!=compare_users[index].user2.uid)
+		/*if (uid1!=compare_users[index].user1.uid || uid2!=compare_users[index].user2.uid)
 		{
 			if (compare_users[index].last_load+10>Get_Timestamp())
 			{
@@ -8392,7 +8252,7 @@ void Compare_Users(edict_t *ent)
 		compare_users[index].user1.loaded = true;
 		compare_users[index].user2.loaded = true;
 		Compare_Users_Info1(ent);
-		return;
+		return;*/
 	}
 	//profiles loaded and we have a yes no request
 	if (gi.argc() == 4)
@@ -8404,8 +8264,8 @@ void Compare_Users(edict_t *ent)
 
 	i2 = 0;
 	i = 0;
-	strcpy(name1,maplist.users[compare_users[index].user1.uid].name);
-	strcpy(name2,maplist.users[compare_users[index].user2.uid].name);
+	strcpy(name1,maplist.users[uid1].name);
+	strcpy(name2,maplist.users[uid2].name);
 	gi.cprintf(ent,PRINT_HIGH,"-------------------------------------------------------------\n");
 	Com_sprintf(txt,sizeof(txt),"Comparing                      %12s %12s",name1,name2);
 	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(txt));
@@ -8416,13 +8276,13 @@ void Compare_Users(edict_t *ent)
 			//test case, both havnt done
 			display1 = false;
 			display2 = false;
-			if (type1 && compare_users[index].user1.maps[i2])
+			if (type1 && maplist.users[uid1].maps_done[i2])
 				display1 = true;
-			if (type2 && compare_users[index].user2.maps[i2])
+			if (type2 && maplist.users[uid2].maps_done[i2])
 				display2 = true;
-			if (!type1 && !compare_users[index].user1.maps[i2])
+			if (!type1 && !maplist.users[uid1].maps_done[i2])
 				display1 = true;
-			if (!type2 && !compare_users[index].user2.maps[i2])
+			if (!type2 && !maplist.users[uid2].maps_done[i2])
 				display2 = true;
 			if (display1 && display2)
 			{
@@ -8455,8 +8315,7 @@ void Compare_Users(edict_t *ent)
 
 }
 
-void Update_Next_Maps(void)
-{
+void Update_Next_Maps(void) {
 	char txt[255];
 	char mapname[32];
 	char longmapname[64];

@@ -4377,7 +4377,7 @@ void CTFWarp(edict_t *ent)
 	int i,i2,map;
 	int	notimes[MAX_MAPS];
 	int temp_num;
-	int index;
+	int uid;
 	int skill[MAX_MAPS];
 	
 	if (!map_allow_voting)
@@ -4386,8 +4386,12 @@ void CTFWarp(edict_t *ent)
 	if (ent->client->resp.silence)
 		return;
 
-	index = ent-g_edicts-1;
 
+	if (!ent->client->resp.uid)
+	{
+		UpdateThisUsersUID(ent, ent->client->pers.netname);
+		uid = ent->client->resp.uid - 1;
+	}
 	// check for nomapvotetime gset
 	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL) && curclients > 2) {
 		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvotetime);
@@ -4547,14 +4551,14 @@ void CTFWarp(edict_t *ent)
 			return;
 		}
 
-		if (!overall_completions[index].loaded) { // open their file
+		/*if (!overall_completions[index].loaded) { // open their file
 			write_map_file(level.mapname,level.mapnum);
 			open_uid_file(ent->client->resp.uid-1,ent);
-		}
+		}*/
 
 		map = maplist.nummaps - 1;
 		for (i=maplist.nummaps-1; i>=1; i--) { // find the todo maps
-			if (overall_completions[index].maps[i]!=1) {
+			if (maplist.users[uid].maps_done[i]!=1) {
 				notimes[map] = i;
 				break;
 			}
@@ -4585,14 +4589,14 @@ void CTFWarp(edict_t *ent)
 		}
 		
 		// find the map in our list
-		if (!overall_completions[index].loaded) {
+		/*if (!overall_completions[index].loaded) {
 			write_map_file(level.mapname,level.mapnum);   // 084_h3
 			open_uid_file(ent->client->resp.uid-1,ent);
-		}
+		}*/
 
 		i2 = 0;
 		for (i=0;i<maplist.nummaps;i++) {
-			if (overall_completions[index].maps[i]!=1) {
+			if (maplist.users[uid].maps_done[i]!=1) {
 				notimes[i2] = i;
 				i2++;
 			}
@@ -5047,17 +5051,17 @@ void CTFUpdateVoteMenu(edict_t *ent, pmenuhnd_t *p)
 	if (ent->client->resp.uid>0)
 	{
 		index = ent-g_edicts-1;
-		if (!overall_completions[index].loaded)
+		/*if (!overall_completions[index].loaded)
 		{
 			write_map_file(level.mapname,level.mapnum);   // 084_h3
 			open_uid_file(ent->client->resp.uid-1,ent);
-		}
+		}*/
 			
-		if (overall_completions[index].maps[map1]==1)
+		if (maplist.users[ent->client->resp.uid - 1].maps_done[map1]==1)
 			map1_done[0] = 'Y';
-		if (overall_completions[index].maps[map2]==1)
+		if (maplist.users[ent->client->resp.uid - 1].maps_done[map2]==1)
 			map2_done[0] = 'Y';
-		if (overall_completions[index].maps[map3]==1)
+		if (maplist.users[ent->client->resp.uid - 1].maps_done[map3]==1)
 			map3_done[0] = 'Y';
 	}
 

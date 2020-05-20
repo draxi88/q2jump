@@ -3,12 +3,11 @@
 //Structures
 typedef struct
 {
-	int		uid;
-	char	date[32];
+	short uid;
+	short completions;
+	char	date[9];
 	float	time;
-	int		completions;
-	qboolean fresh;
-} times_record;
+}times_record;
 
 typedef struct
 {
@@ -21,6 +20,7 @@ typedef struct
 	int		lastseen;
 	int		maps_with_points;
 	int		maps_with_1st;
+	short	maps_done[MAX_MAPS];
 } users_record;
 
 typedef struct
@@ -42,6 +42,7 @@ typedef struct
 	times_record times[MAX_MAPS][MAX_USERS];
 	int			skill[MAX_MAPS];
 	int			num_users;
+	char		today[9];
 
 	users_record		users[MAX_USERS];
 	users_sort_record	sorted_users[MAX_USERS];
@@ -52,7 +53,6 @@ typedef struct
 	int			sort_num_users_israfel;
 	char		rotationflag;     // set to ML_ROTATE_* 
 } maplist_t;
-
 
 extern maplist_t	maplist;
 
@@ -69,6 +69,7 @@ void		remtimes(edict_t *ent);
 int			FindMaplistUID(int mid, int uid);
 
 qboolean maplist_log(edict_t *ent, int uid, float time, char *date);
+void sort_users_completions(int n);
 void sort_maplist_times();
 void open_map_file(char *filename, qboolean apply);
 void write_map_file(char *filename, int mapnum);
@@ -79,10 +80,10 @@ void write_users_file(void);
 void list_mapsleft(edict_t *ent);
 void list_mapsdone(edict_t *ent);
 void append_uid_file(int uid, char *filename);
-void clear_uid_info(int num);
+/*void clear_uid_info(int num);
 void open_uid_file(int uid, edict_t *ent);
-void write_uid_file(int uid, edict_t *ent);
+void write_uid_file(int uid, edict_t *ent);*/
 void resync(qboolean overide);
-void removemapfrom_uid_file(int uid);
+//void removemapfrom_uid_file(int uid);
 void resync(qboolean overide);
 
