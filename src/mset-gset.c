@@ -266,6 +266,13 @@ zbotcmd_t zbotCommands[] =
 	  CMDTYPE_NUMBER,
 	  &mset_vars->weapons,
 	},
+	{
+	  0,1000,0,
+	  "weapon_respawn_time",
+	  CMDWHERE_CFGFILE | CMD_MSET,
+	  CMDTYPE_NUMBER,
+	  &mset_vars->weapon_respawn_time,
+	},
 
 	//----------------------------
 	//         gset's
@@ -922,6 +929,13 @@ zbotcmd_t zbotCommands[] =
 	  CMDWHERE_CFGFILE | CMD_GSET,
 	  CMDTYPE_NUMBER,
 	  &gset_vars->weapon_fire_min_delay,
+	},
+	{
+	  0,1000,0,
+	  "gweapon_respawn_time",
+	  CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	  CMDTYPE_NUMBER,
+	  &gset_vars->mset->weapon_respawn_time,
 	},
 
 	//----------------------------
@@ -1892,6 +1906,7 @@ void SetDefaultValues(void)
 	gset_vars->votingtime = 20;
 	gset_vars->walkthru = 1;
 	gset_vars->weapon_fire_min_delay = 500;
+	gset_vars->mset->weapon_respawn_time = 0;
 
 	// asets
 	aset_vars->ADMIN_ADDBALL_LEVEL = 1;

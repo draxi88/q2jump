@@ -77,6 +77,7 @@ typedef struct
 	int slowdoors;
 	int timelimit;
 	int weapons;
+	int weapon_respawn_time;
 } mset_vars_t;
 
 // gsets that aren't msets
