@@ -799,7 +799,7 @@ zbotcmd_t zbotCommands[] =
 	},
 	{
 	  0,6,0,
-	  "quad_damage",
+	  "gquad_damage",
 	  CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
 	  CMDTYPE_NUMBER,
 	  &gset_vars->mset->quad_damage,
