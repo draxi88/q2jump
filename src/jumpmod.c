@@ -9145,27 +9145,6 @@ void worldspawn_mset() {
 		else if (Q_stricmp(temp[i], "fasttele") == 0) {
 			mset_vars->fasttele = atoi(temp[i + 1]);
 		}
-		else if (Q_stricmp(temp[i], "gravity") == 0) {
-			mset_vars->gravity = atoi(temp[i + 1]);
-		}
-		else if (Q_stricmp(temp[i], "health") == 0) {
-			mset_vars->health = atoi(temp[i + 1]);
-		}
-		else if (Q_stricmp(temp[i], "lap_total") == 0) {
-			mset_vars->lap_total = atoi(temp[i + 1]);
-		}
-		else if (Q_stricmp(temp[i], "regen") == 0) {
-			mset_vars->regen = atoi(temp[i + 1]);
-		}
-		else if (Q_stricmp(temp[i], "rocket") == 0) {
-			mset_vars->rocket = atoi(temp[i + 1]);
-		}
-		else if (Q_stricmp(temp[i], "quad_damage") == 0) {
-			mset_vars->quad_damage = atoi(temp[i + 1]);
-		}
-		else if (Q_stricmp(temp[i], "weapons") == 0) {
-			mset_vars->weapons = atoi(temp[i + 1]);
-		}
 		else if (Q_stricmp(temp[i], "fog") == 0) {
 			mset_vars->fog = atoi(temp[i + 1]);
 		}
@@ -9189,6 +9168,30 @@ void worldspawn_mset() {
 		}
 		else if (Q_stricmp(temp[i], "fog_end") == 0) {
 			mset_vars->fog_end = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "gravity") == 0) {
+			mset_vars->gravity = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "health") == 0) {
+			mset_vars->health = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "lap_total") == 0) {
+			mset_vars->lap_total = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "regen") == 0) {
+			mset_vars->regen = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "rocket") == 0) {
+			mset_vars->rocket = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "quad_damage") == 0) {
+			mset_vars->quad_damage = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "weapons") == 0) {
+			mset_vars->weapons = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "weapon_respawn_time") == 0) {
+			mset_vars->weapon_respawn_time = atoi(temp[i + 1]);
 		}
 	}
 	return;
