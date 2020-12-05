@@ -7,7 +7,7 @@
 #define		HOOK_READY	0
 #define		HOOK_OUT	1
 #define		HOOK_ON		2
-#define MAX_MAPS           3072    // 084_h2
+#define MAX_MAPS           3584    // 084_h2
 #define MAX_MAPNAME_LEN    32 
 #define MAX_MANUAL           32 
 #define MAX_MANUAL_LEN    128 
