@@ -9175,6 +9175,9 @@ void worldspawn_mset() {
 		else if (Q_stricmp(temp[i], "health") == 0) {
 			mset_vars->health = atoi(temp[i + 1]);
 		}
+		else if (Q_stricmp(temp[i], "hyperblaster") == 0) {
+			mset_vars->hyperblaster = atoi(temp[i + 1]);
+		}
 		else if (Q_stricmp(temp[i], "lap_total") == 0) {
 			mset_vars->lap_total = atoi(temp[i + 1]);
 		}

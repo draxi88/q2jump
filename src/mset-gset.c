@@ -204,6 +204,13 @@ zbotcmd_t zbotCommands[] =
 	  &mset_vars->health,
 	},
 	{
+	  0,1,0,
+	  "hyperblaster",
+	  CMDWHERE_CFGFILE | CMD_MSET,
+	  CMDTYPE_NUMBER,
+	  &mset_vars->hyperblaster,
+	},
+	{
 	  0,100,0,
 	  "lap_total",
 	  CMDWHERE_CFGFILE | CMD_MSET,
@@ -635,6 +642,13 @@ zbotcmd_t zbotCommands[] =
 	  CMDWHERE_CFGFILE | CMD_GSET,
 	  CMDTYPE_NUMBER,
 	  &gset_vars->html_profile,
+	},
+	{
+	  0,1,0,
+	  "ghyperblaster",
+	  CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
+	  CMDTYPE_NUMBER,
+	  &gset_vars->mset->hyperblaster,
 	},
 	{
 	  1,999,50,
@@ -1861,6 +1875,7 @@ void SetDefaultValues(void)
 	gset_vars->hook = 1;
 	gset_vars->hookpull = 750;
 	gset_vars->hookspeed = 1200;
+	gset_vars->mset->hyperblaster = 0;
 	gset_vars->html_bestscores = 8;
 	gset_vars->html_create = 0;
 	gset_vars->html_firstplaces = 10;

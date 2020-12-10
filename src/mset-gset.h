@@ -68,6 +68,7 @@ typedef struct
 	int ghost_model;
 	int gravity;
 	int health;
+	int hyperblaster;
 	int lap_total;
 	int quad_damage;
 	int regen;
