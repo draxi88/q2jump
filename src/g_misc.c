@@ -643,6 +643,34 @@ void light_think(edict_t *self) {
 	}
 	//self->nextthink = level.time + FRAMETIME;
 }
+
+/*
+spawnflags(Flags) =
+[
+	1:"Start Off" : 0
+]
+light(integer) : "Brightness" : 300
+style(Choices) : "Style" : 0 =
+[
+	0:"Normal"
+	1 : "Flicker #1"
+	6 : "Flicker #2"
+	2 : "Slow Strong Pulse"
+	3 : "Candle #1"
+	7 : "Candle #2"
+	8 : "Candle #3"
+	4 : "Fast Strobe"
+	5 : "Gentle Pulse #1"
+	9 : "Slow Strobe"
+	10 : "Fluorescent Flicker"
+	11 : "Slow pulse, no black"
+	100 : "100-163, turn lights on after getting a checkpoint"
+	200 : "200-255, turn lights off after getting a checkpoint"
+]
+_cone(integer) : "Size of light (spotlight)" : 10
+_color(string) : "Color of the light. Format: 0.0 0.0 0.0. Divide an RGB value by 255 to get the decimals." : "0 0 0"
+targetname(string) : "Target the ent to turn it on or off"
+*/
 void SP_light(edict_t *self)
 {
 	// no targeted lights in deathmatch, because they cause global messages
@@ -1880,6 +1908,26 @@ void SP_func_clock (edict_t *self)
 
 //=================================================================================
 
+/*
+spawnflags(Flags) =
+[
+	1 : "Maintain velocity while using the teleport" : 0
+	2 : "Combine with spawnflag 1 to ignore the exit angle of the teleport exit" : 0
+	128 : "Doesn't work in easy" : 0
+	256 : "Doesn't work in hard" : 0
+]
+
+speed(integer) : "If set, you need a certain speed to use the teleporter"
+
+target(string) : "Where to teleport to?"
+
+count(integer) : "enables checking for checkpoints if set above 0, if equal to checkpoint_total, the teleporter works"
+
+style(integer) : "go with cpbox counts of 0-63
+				  style 1000-1063: CAN't use
+				  style 2000-2063: CAN use
+				  if set to 1337, 'count' can also be greater than checkpoint_total"
+*/
 void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
 	edict_t		*dest;
@@ -1890,9 +1938,7 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	if (!other->client)
 		return;
 
-	//team teleporter check:
-	//add spawnflags 128 and tele will ignore team easy
-	//spawnflags 256 make teleporter ignore team hard
+	// team teleporter check:
 	if ((self->spawnflags & 128) && other->client->resp.ctf_team == CTF_TEAM1) {
 		return;
 	}
@@ -1910,7 +1956,6 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	CTFPlayerResetGrapple(other);
 
 	// speed teleport, need specific speed to use a teleporter
-	// set speed to the value you want the player to need to use it
 	if (other->client->resp.cur_speed < self->speed && self->speed >= 0) {
 		if (trigger_timer(2)) {
 			gi.dprintf("Your speed is %i, you need %.0f to use the teleporter.\n", other->client->resp.cur_speed, self->speed);
@@ -1919,10 +1964,6 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 	}
 
 	// check for total checkpoints a player has
-	// count is set on the teleporter
-	// compare count to player's checkpoint total
-	// if equal, teleporter works
-	// if style is set to 1337, equal to or greater than
     if (self->count > 0) {
         if (self->style == 1337) {
             if (other->client->resp.store[0].checkpoints < self->count)
@@ -1934,16 +1975,9 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
     }
 
 	// checking for specific checkpoints and velocity
-		// style 1000-1063:
-			// -go with cpbox counts of 0-63
-			// -if you have the specific checkpoint, you CANT use the teleporter
-		// style 2000-2063:
-			// -go with cpbox counts of 0-63
-			// -if you have the specific checkpoint, you CAN use the teleporter
 	if (self->style > 0) {
 		for (i=0; i < sizeof(other->client->resp.store[0].cpbox_checkpoint)/sizeof(int); i++) {
 
-			// style 1000-1063:
 			if (self->style == i+1000) {
 				if (other->client->resp.store[0].cpbox_checkpoint[i] == 1) {
 					if (trigger_timer(5))
@@ -1952,7 +1986,6 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 				}
 			}
 
-			// style 2000-2063:
 			if (self->style == i+2000) {
 				if (other->client->resp.store[0].cpbox_checkpoint[i] != 1) {
 					if (trigger_timer(5))
@@ -1987,12 +2020,10 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 		VectorClear (other->velocity);
 
 	// hold them in place briefly
-	if (!mset_vars->fasttele)
-    {
+	if (!mset_vars->fasttele) {
         other->client->ps.pmove.pm_time = 160>>3;        // hold time
         other->client->ps.pmove.pm_flags |= PMF_TIME_TELEPORT;
     }
-
 
 	// set angles
 	if (!(self->spawnflags & 3)) {

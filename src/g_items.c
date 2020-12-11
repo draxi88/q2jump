@@ -3001,7 +3001,21 @@ void SetItemNames (void)
 	power_shield_index = ITEM_INDEX(FindItem("Power Shield"));
 }
 
-
+/*
+skinnum(choices) : "Specifies the skin of the box, 0-9, 3 for invisible box." : 3 =
+[
+	0 : "top/bottom: light gray || sides: medium gray"
+	1 : "top/bottom: purple || sides: dark gray"
+	2 : "top/bottom: brown || sides: medium gray"
+	3 : "top/bottom: invisible || sides: invisible"
+	4 : "top/bottom: white || sides: red"
+	5 : "top/bottom: white || sides: green"
+	6 : "top/bottom: white || sides: blue"
+	7 : "top/bottom: white || sides: black"
+	8 : "top/bottom: black || sides: white"
+	9 : "top/bottom: white || sides: yellow"
+]
+*/
 void SP_jumpbox_small (edict_t *ent)
 {
 	ent->classname = "jumpbox_small";
@@ -3041,6 +3055,37 @@ void SP_jumpbox_large (edict_t *ent)
 	level.jumpboxes[2]++;
 }
 
+/*
+spawnflags(Flags) =
+[
+	1 : "Take away a checkpoint instead of adding" : 0
+]
+	
+count(integer) : "Checkpoint count of the box. 0-63" : 0
+	
+skinnum(choices) : "Specifies the skin of the box, 0-9, 3 for invisible box." : 3 =
+[
+	0 : "top/bottom: light gray || sides: medium gray"
+	1 : "top/bottom: purple || sides: dark gray"
+	2 : "top/bottom: brown || sides: medium gray"
+	3 : "top/bottom: invisible || sides: invisible"
+	4 : "top/bottom: white || sides: red"
+	5 : "top/bottom: white || sides: green"
+	6 : "top/bottom: white || sides: blue"
+	7 : "top/bottom: white || sides: black"
+	8 : "top/bottom: black || sides: white"
+	9 : "top/bottom: white || sides: yellow"
+]
+	
+target(choices) : "Specifies the skin of the box, 0-9, 3 for invisible box." : 0 =
+[
+	"cp_clear" : "Clear your checkpoints"
+	"start_line" : "Act as a start_line entity"
+	"ordered" : "The checkpoints must be taken in order"
+	"nodisplay" : "The message and sound will not display"
+	"nosound" : "No sound will play when picked up"
+]
+*/
 void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf){
     int			my_time;
     float		my_time_decimal;
@@ -3051,6 +3096,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 	char		cpstring[256];
 
 	player = NULL;
+
 	// make sure it's a player or players projectile touching it
 	if (self->health && self->health > 0) {
 		if (other->client)
@@ -3097,7 +3143,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			}
 			return;
 		} 
-		//ckeck if it should reset timer++
+		//check if it should reset timer++
 		else if (Q_stricmp(self->target,"start_line")==0) {
 			memset(player->client->pers.inventory, 0, sizeof(player->client->pers.inventory)); // reset their inventory
 
@@ -3176,8 +3222,7 @@ void cpbox_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 			}
 			// check for not playing a sound with a checkpoint
 			if (self->target) {
-				if (Q_stricmp(self->target, "nosound") == 0) {
-				}
+				if (Q_stricmp(self->target, "nosound") == 0) {}
 			}
 			else {
 				CPSoundCheck(player);
@@ -3483,11 +3528,6 @@ void SP_jump_score (edict_t *ent)
 
 	gi.linkentity (next_ent);
 }
-
-
-
-
-
 
 void SP_jump_time_think(edict_t *ent)
 {
