@@ -222,6 +222,22 @@ typedef struct
 } gitem_armor_t;
 
 
+typedef enum
+{
+	// Player is not idle.
+	PLAYERIDLE_STATE_NONE = 0,
+
+	// Player has been set to idle due to inactivity.
+	PLAYERIDLE_STATE_AUTO,
+
+	// Player set themselves into idle state.
+	PLAYERIDLE_STATE_SELF
+} playeridlestate_t;
+
+#define PLAYERIDLE_AUTO_TIME_MSEC		60000 // 60 seconds
+
+
+
 // gitem_t->flags
 #define	IT_WEAPON		1		// use makes active weapon
 #define	IT_AMMO			2
@@ -914,7 +930,7 @@ typedef struct
 
 	char		userip[32];
 	unsigned long banlevel;
-	qboolean idle_player; //idle player, no vote for you!
+	playeridlestate_t idle_player_state; // idle player, no vote for you!
 	unsigned long frames_without_movement;
 
 	qboolean	store_velocity;		//velocity store feature (toggle)

@@ -148,7 +148,7 @@ void JumpModScoreboardMessage(edict_t *ent, edict_t *killer)
 		}
 
 		// send the layout
-		if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000)
+		if (cl->pers.idle_player_state != PLAYERIDLE_STATE_NONE)
 		{
 			strcpy(teamstring, "Idle");
 		}
@@ -233,7 +233,7 @@ void JumpModScoreboardMessage(edict_t *ent, edict_t *killer)
 				maplist_uid = FindMaplistUID(level.mapnum, cl->resp.uid - 1);
 			}
 
-			if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000)
+			if (cl->pers.idle_player_state != PLAYERIDLE_STATE_NONE)
 			{
 				strcpy(teamstring, "Idle");
 			}
@@ -313,7 +313,7 @@ void JumpModScoreboardMessage(edict_t *ent, edict_t *killer)
 			continue;
 		if (cl_ent->client->resp.ctf_team != CTF_NOTEAM)
 			continue;
-		if (cl_ent->client->pers.idle_player || cl_ent->client->pers.frames_without_movement > 60000)
+		if (cl_ent->client->pers.idle_player_state != PLAYERIDLE_STATE_NONE)
 			idle = true;
 	}
 	total_specs = 0;
@@ -336,7 +336,7 @@ void JumpModScoreboardMessage(edict_t *ent, edict_t *killer)
 		}
 
 		//add idle tag if spectator is idle.
-		if (cl->pers.idle_player || cl->pers.frames_without_movement > 60000) //add idle tag to chaser
+		if (cl->pers.idle_player_state != PLAYERIDLE_STATE_NONE) //add idle tag to chaser
 		{
 			Com_sprintf(entry, sizeof(entry),
 				"xv %d yv %d string \" (idle)\"", 56 + (strlen(cl->pers.netname) * 8), y);

@@ -6944,13 +6944,13 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 }
 
 void Cmd_Idle(edict_t *ent) {
-	if (!ent->client->pers.idle_player) {
+	if (ent->client->pers.idle_player_state != PLAYERIDLE_STATE_SELF) {
 		gi.cprintf(ent, PRINT_HIGH, "You are now marked as idle!\n");
-		ent->client->pers.idle_player = true;
+		ent->client->pers.idle_player_state = PLAYERIDLE_STATE_SELF;
 	}
 	else {
 		gi.cprintf(ent, PRINT_HIGH, "You are no longer idle! Welcome back.\n");
-		ent->client->pers.idle_player = false;
+		ent->client->pers.idle_player_state = PLAYERIDLE_STATE_NONE;
 	}
 
 }

@@ -2519,7 +2519,7 @@ qboolean CTFBeginElection(edict_t *ent, elect_t type, char *msg,qboolean require
 		}
 	}
 
-	if (ent!=NULL && ent->client->pers.idle_player) {
+	if (ent!=NULL && ent->client->pers.idle_player_state != PLAYERIDLE_STATE_NONE) {
 		gi.cprintf(ent, PRINT_HIGH, "You are idle, and can't start a vote.\n");
 		return false;
 	}
@@ -5220,7 +5220,7 @@ int Get_Voting_Clients(void)
 		e->client->resp.voted = false;
 		if (e->inuse)
 		{
-			if (e->client->pers.frames_without_movement>60000 || e->client->pers.idle_player)
+			if (e->client->pers.idle_player_state != PLAYERIDLE_STATE_NONE)
 			{
 				//they need removing from vote
 				e->client->resp.voted = true;
