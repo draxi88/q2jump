@@ -676,7 +676,7 @@ void InitClientPersistant(gclient_t *client)
 	char		userip[16];
 	unsigned long banlevel;
 	int			idletime;
-	qboolean	idle;
+	playeridlestate_t idle;
 	qboolean	velstore;
 	vec3_t		vel1;
 	vec3_t		vel2;
@@ -685,7 +685,7 @@ void InitClientPersistant(gclient_t *client)
 
 	//idle trough mapchange?
 	idletime = client->pers.frames_without_movement;
-	idle = client->pers.idle_player;
+	idle = client->pers.idle_player_state;
 
 	//velocity store feature - carry through the stored velocities and toggle state
 	velstore = client->pers.store_velocity;
@@ -736,7 +736,7 @@ void InitClientPersistant(gclient_t *client)
 	client->pers.connected = true;
 	//idle trough mapchange?
 	client->pers.frames_without_movement = idletime;
-	client->pers.idle_player = idle;
+	client->pers.idle_player_state = idle;
 
 	//velocity store feature - restore the values
 	client->pers.store_velocity = velstore;
@@ -1962,9 +1962,7 @@ void ClientDisconnect (edict_t *ent)
 	ent->client->resp.got_time = false;
 	ent->client->resp.silence = false;
 	ent->client->resp.silence_until = 0;
-	if (ent->client->pers.idle_player) {
-		ent->client->pers.idle_player = false; //not idle when disconnecting.
-	}
+	ent->client->pers.idle_player_state = PLAYERIDLE_STATE_NONE;
 	// send effect
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -2146,25 +2144,51 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		//stuffcmd(ent, "set cl_drawstrafehelper 0 u\n");
 	}
 
-	//idle ?
-	if (ent->client->pers.idle_player && ucmd->buttons != 0 && ent->client->resp.ctf_team != CTF_NOTEAM ) {
-		if (!(Q_stricmp(gi.argv(0), "score") == 0)) {
+
+	// Update frames without movement.
+	if (ucmd->buttons==0) {
+		ent->client->pers.frames_without_movement += ucmd->msec;
+	} else {
+		ent->client->pers.frames_without_movement = 0;
+	}
+
+	//
+	// Update idle state
+	//
+
+	// Set to idle state if player has been idle for a while.
+	if (ent->client->pers.idle_player_state == PLAYERIDLE_STATE_NONE && ent->client->pers.frames_without_movement>PLAYERIDLE_AUTO_TIME_MSEC) {
+		ent->client->pers.idle_player_state = PLAYERIDLE_STATE_AUTO;
+
+		gi.cprintf(ent, PRINT_HIGH, "You are now marked as idle!\n");
+	}
+
+	// Check if player is no longer idle.
+	if (ent->client->pers.idle_player_state != PLAYERIDLE_STATE_NONE) {
+		// The idle remove logic is different for auto-idle vs. manual idle and spectating vs. playing.
+		// This is a bit complex.
+
+		qboolean autoidle = ent->client->pers.idle_player_state == PLAYERIDLE_STATE_AUTO;
+		qboolean player_moved = ent->client->pers.frames_without_movement == 0;
+		qboolean pressed_score = Q_stricmp(gi.argv(0), "score") == 0;
+		qboolean remove_idle = false;
+
+		// In a team playing or spectating and auto-idling.
+		if (ent->client->resp.ctf_team != CTF_NOTEAM || autoidle) {
+			remove_idle = player_moved || pressed_score;
+		}
+
+		if (remove_idle) {
+			ent->client->pers.idle_player_state = PLAYERIDLE_STATE_NONE;
+
+			// Reset counter so we don't come here again next frame.
+			ent->client->pers.frames_without_movement = 0;
+
 			gi.cprintf(ent, PRINT_HIGH, "You are no longer idle! Welcome back.\n");
-			ent->client->pers.idle_player = false;
 		}
 	}
-	/*else if (ent->client->pers.frames_without_movement > 60000 && !ent->client->pers.idle_player) {
-		//Player is now marked as idle.
-		ent->client->pers.idle_player = true;
-	}*/
-//auto kick code goes here
-  if (enable_autokick->value) {
-        if (ucmd->buttons==0) {
-                ent->client->pers.frames_without_movement += ucmd->msec;
-		} else {
-                ent->client->pers.frames_without_movement = 0;
-        };
-  };
+
+
 
   //!fps stuff
   ent->client->resp.msec_history[level.framenum % 5] = ucmd->msec;
