@@ -3215,8 +3215,8 @@ pmenu_t votemenu[] = {
 	{ NULL,			PMENU_ALIGN_LEFT, NULL },
 	{ "",					PMENU_ALIGN_LEFT, CTFVoteChoice3 },
 	{ NULL,					PMENU_ALIGN_LEFT, NULL },
-	{ "*ççççç = Hard map",		PMENU_ALIGN_CENTER, NULL },
-	{ "*    ç = Easy map",		PMENU_ALIGN_CENTER, NULL },
+	{ "*\x8d\x8d\x8d\x8d\x8d = Hard map",		PMENU_ALIGN_CENTER, NULL },
+	{ "*    \x8d = Easy map",		PMENU_ALIGN_CENTER, NULL },
 	{ "Highlight choice and ENTER",	PMENU_ALIGN_CENTER, NULL },
 	{ "Time:   ",	PMENU_ALIGN_RIGHT, NULL },
 };
@@ -4991,7 +4991,7 @@ void CTFCreateVoteMenu(void)
 		memset(vote_data.data[i].skill,0,sizeof(vote_data.data[i].skill));
 
 		for (i2=0;i2<maplist.skill[curmap];i2++)
-			vote_data.data[i].skill[i2] = 'ç';
+			vote_data.data[i].skill[i2] = '\x8d';
 	}
 
 	vote_data.data[0].time = maplist.times[map1][0].time;
