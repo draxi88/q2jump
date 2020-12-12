@@ -988,7 +988,8 @@
 	
 	count(integer) : "Count 1-10 for welcome triggers. These welcome players to the map a single time. Count 11-20 for announcement triggers. These announce the first person to reach a specific point on a map while on team hard. Mset `announcements` must be set to 1. Set the `message` field to the name of the location."
 	
-	message(string) : "The message the plays. If using this as an announcement, the message value is the location name."
+	message(string) : "The message shown in console
+	. If using this as an announcement, the message value is the location name."
 	
 	delay(integer) : "Time after activating to fire"
 ]
@@ -1125,7 +1126,7 @@
 ]
 
 ///// CP Walls /////
-@PointClass color(0 255 0) size(-16 -16 -16, 16 16 16) = jump_cpbrush : "A brush that activates/deactivates depending on the number of checkpoints the player has. Default is to remove the brush when the checkpoint threshold is met."
+@SolidClass color(0 255 0) size(-16 -16 -16, 16 16 16) = jump_cpbrush : "A brush that activates/deactivates depending on the number of checkpoints the player has. Default is to remove the brush when the checkpoint threshold is met."
 [
 	spawnflags(Flags) =
 	[
@@ -1136,7 +1137,7 @@
 	count(integer) : "How many checkpoints are needed to activate/deactivate the wall. Required to be between 0-63"
 ]
 
-@PointClass color(0 255 0) size(-16 -16 -16, 16 16 16) = jump_cpwall : "A transparent wall that activates/deactivates depending on the number of checkpoints a player has. It has a particle effect that can be changed with spawnflags. You gernally want to use jump_cpbrush instead."
+@SolidClass color(0 255 0) size(-16 -16 -16, 16 16 16) = jump_cpwall : "A transparent wall that activates/deactivates depending on the number of checkpoints a player has. It has a particle effect that can be changed with spawnflags. You gernally want to use jump_cpbrush instead."
 [
 	spawnflags(Flags) =
 	[
