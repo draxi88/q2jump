@@ -23,14 +23,14 @@ char map_skill2[10][10];
 
 static char *help_main[] = {
 	"\n--------------------------------------------------\n",
-	"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+	"Öïôéîç Ãïííáîäó\n",
 	"maplist - view all maps on the server\n",
 	"mapvote - vote a specific map, type mapvote for more details\n",
 	"timevote - vote more time to play\n",
 	"rand - randomize the votemaps\n",
 	"boot - vote to kick a player\n",
 	"silence - vote to silence a player\n",
-	"\nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+	"\nÇåîåòáì Ãïííáîäó\n",
 	"hook - bind a key to +hook in order to use\n",
 	"cmsg - enable/disable messages triggered in the map\n",
 	"replay - replay # to view replays 1-15\n",
@@ -44,7 +44,7 @@ static char *help_main[] = {
 	"reset - removes your store location\n",
 	"velstore - toggles velocity storing for your store markers\n", //velocity store feature
 	"playerlist - list the players in game\n",
-	"\nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+	"\nÓôáôéóôéãó\n",
 	"maptimes - view best times on a map\n",
 	"playertimes - view overall points in the server\n",
 	"playerscores - view best points per map players\n",
@@ -544,7 +544,7 @@ def:
 	{
 		gi.cprintf (ent, PRINT_HIGH, "-----------------------------------------\n"); 
 		gi.cprintf (ent, PRINT_HIGH, "Best Times for %s\n",maplist.mapnames[mapnum]); 
-		gi.cprintf (ent, PRINT_HIGH, "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½                 ï¿½ï¿½ï¿½ï¿½                    ï¿½ï¿½ï¿½ï¿½\n"); 
+		gi.cprintf (ent, PRINT_HIGH, "Îï® Îáíå                 Äáôå                    Ôéíå\n"); 
 
 		for (i=0;i<MAX_HIGHSCORES;i++)
 		{
@@ -588,7 +588,7 @@ void ShowPlayerTimes(edict_t *ent)
    gi.cprintf (ent, PRINT_HIGH, "\n-----------------------------------------\n\n"); 
    gi.cprintf (ent, PRINT_HIGH, "Point Values: 1-15: 25,20,16,13,11,10,9,8,7,6,5,4,3,2,1 \n"); 
    gi.cprintf (ent, PRINT_HIGH, "\n-----------------------------------------\n\n"); 
-   gi.cprintf (ent, PRINT_HIGH, "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½             ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½\n"); 
+   gi.cprintf (ent, PRINT_HIGH, "Îï® Îáíå             ±óô ²îä ³òä ´ôè µôè ¶ôè ·ôè ¸ôè ¹ôè ±°ôè ±±ôè ±²ôè ±³ôè ±´ôè ±µôè Óãïòå\n"); 
    for (i=(20*offset); (i<maplist.sort_num_users) && (i<(20*offset)+20); i++) 
    { 
 	  temp = maplist.sorted_users[i].uid;
@@ -669,7 +669,7 @@ void ShowPlayerMaps(edict_t *ent)
 	   offset = 0;
 	
    gi.cprintf (ent, PRINT_HIGH, "-----------------------------------------\n"); 
-	gi.cprintf (ent, PRINT_HIGH, "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½               Maps     %%\n"); 
+	gi.cprintf (ent, PRINT_HIGH, "Îï® Îáíå               Maps     %%\n"); 
    for (i=(20*offset); (i<maplist.sort_num_users) && (i<(20*offset)+20); i++) 
    { 
 	  temp = maplist.sorted_completions[i].uid;
@@ -2471,6 +2471,44 @@ void Start_Recording(edict_t *ent)
 
 /*
 ===========
+Client_SwitchToWeaponImmediately
+
+Switches the player's weapon immediately. No transitions.
+Returns true on success, false otherwise.
+============
+*/
+qboolean Client_SwitchToWeaponImmediately(edict_t *ent, int item_index)
+{
+	// First and last index is always null.
+	assert(item_index > 0 && item_index < MAX_ITEMS-1);
+	assert(ent && ent->client);
+
+	gclient_t		*client = ent->client;
+	gitem_t			*item = &(itemlist[item_index]);
+
+	// Doesn't exist.
+	if (item == NULL)
+		return false;
+
+	// Don't have this weapon in inventory!
+	if (client->pers.inventory[item_index] == 0)
+		return false;
+
+	// Not a weapon.
+	if (!(item->flags & IT_WEAPON))
+		return false;
+
+
+	client->pers.weapon = item;
+
+	// Still has the old gun model.
+	client->ps.gunindex = gi.modelindex(client->pers.weapon->view_model);
+
+	return true;
+}
+
+/*
+===========
 Store_CreateShowEnt
 
 Creates the little entity that shows where you stored.
@@ -2550,6 +2588,12 @@ qboolean Store_StoreLocation(edict_t *ent)
 	//velocity store feature 
 	//we always store velocity so it can be ready when toggled on
 	VectorCopy(ent->velocity, store->stored_velocity);
+
+	// Save inventory
+	assert(sizeof(client->pers.inventory) == sizeof(store->store_inventory));
+	memcpy(store->store_inventory, client->pers.inventory, sizeof(store->store_inventory));
+	// Save current weapon
+	store->store_active_weapon_index = ITEM_INDEX(client->pers.weapon);
 
 	if (jump_show_stored_ent) {
 		Store_CreateShowEnt(ent);
@@ -2643,6 +2687,17 @@ qboolean Store_Recall(edict_t *ent, int store_index)
 	ent->s.angles[ROLL] = 0;
 	VectorCopy (ent->s.angles, client->ps.viewangles);
 	VectorCopy (ent->s.angles, client->v_angle);
+
+	// Copy inventory
+	assert(sizeof(client->pers.inventory) == sizeof(store->store_inventory));
+	memcpy(client->pers.inventory, store->store_inventory, sizeof(store->store_inventory));
+
+	// Set current weapon.
+	if (store->store_active_weapon_index > 0) {
+		Client_SwitchToWeaponImmediately(ent, store->store_active_weapon_index);
+	}
+	
+	
 	hud_footer(ent);
 
 	if ( ent->client->resp.ctf_team==CTF_TEAM2 || mset_vars->ezmode == 1) { // if hard and ezmode give a readout
@@ -8710,11 +8765,11 @@ void Cmd_Stats(edict_t *ent)
 		gi.cprintf (ent, PRINT_HIGH, "\n-------------------------------------------");
 		Com_sprintf(txt,sizeof(txt),"Statistics for %s:",maplist.users[uid].name);
 		gi.cprintf(ent,PRINT_HIGH,"\n%s\n",HighAscii(txt));
-		gi.cprintf(ent,PRINT_HIGH,"ï¿½st %3d  ï¿½th %3d ï¿½ï¿½th %3d\n",maplist.users[uid].points[0],maplist.users[uid].points[5],maplist.users[uid].points[10]);
-		gi.cprintf(ent,PRINT_HIGH,"ï¿½nd %3d  ï¿½th %3d ï¿½ï¿½th %3d\n",maplist.users[uid].points[1],maplist.users[uid].points[6],maplist.users[uid].points[11]);
-		gi.cprintf(ent,PRINT_HIGH,"ï¿½rd %3d  ï¿½th %3d ï¿½ï¿½th %3d\n",maplist.users[uid].points[2],maplist.users[uid].points[7],maplist.users[uid].points[12]);
-		gi.cprintf(ent,PRINT_HIGH,"ï¿½th %3d  ï¿½th %3d ï¿½ï¿½th %3d\n",maplist.users[uid].points[3],maplist.users[uid].points[8],maplist.users[uid].points[13]);
-		gi.cprintf(ent,PRINT_HIGH,"ï¿½th %3d ï¿½ï¿½th %3d ï¿½ï¿½th %3d\n",maplist.users[uid].points[4],maplist.users[uid].points[9],maplist.users[uid].points[14]);
+		gi.cprintf(ent,PRINT_HIGH,"±st %3d  ¶th %3d ±±th %3d\n",maplist.users[uid].points[0],maplist.users[uid].points[5],maplist.users[uid].points[10]);
+		gi.cprintf(ent,PRINT_HIGH,"²nd %3d  ·th %3d ±²th %3d\n",maplist.users[uid].points[1],maplist.users[uid].points[6],maplist.users[uid].points[11]);
+		gi.cprintf(ent,PRINT_HIGH,"³rd %3d  ¸th %3d ±³th %3d\n",maplist.users[uid].points[2],maplist.users[uid].points[7],maplist.users[uid].points[12]);
+		gi.cprintf(ent,PRINT_HIGH,"´th %3d  ¹th %3d ±´th %3d\n",maplist.users[uid].points[3],maplist.users[uid].points[8],maplist.users[uid].points[13]);
+		gi.cprintf(ent,PRINT_HIGH,"µth %3d ±°th %3d ±µth %3d\n",maplist.users[uid].points[4],maplist.users[uid].points[9],maplist.users[uid].points[14]);
 		gi.cprintf(ent,PRINT_HIGH,"Total Maps Completed %4d\n",maplist.users[uid].completions);
 		gi.cprintf(ent,PRINT_HIGH,"Remaining            %4d\n",(maplist.nummaps-maplist.users[uid].completions));
 		gi.cprintf(ent,PRINT_HIGH,"\nType !stats %s 1 to see 1st places.\nType !stats %s 2 to see 2nd places.\nand so on...\n",name,name);
@@ -9083,11 +9138,11 @@ void hud_footer(edict_t *ent) {
 	
 	//team (Team is always string1.)
 	if (ent->client->resp.ctf_team == CTF_TEAM1)
-		sprintf(ent->client->resp.hud[0].string, "  Team: ï¿½ï¿½ï¿½ï¿½");
+		sprintf(ent->client->resp.hud[0].string, "  Team: Åáóù");
 	else if (ent->client->resp.ctf_team == CTF_TEAM2)
-		sprintf(ent->client->resp.hud[0].string, "  Team: ï¿½ï¿½ï¿½ï¿½");
+		sprintf(ent->client->resp.hud[0].string, "  Team: Èáòä");
 	else
-		sprintf(ent->client->resp.hud[0].string, "  Team: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+		sprintf(ent->client->resp.hud[0].string, "  Team: Ïâóåòöåò");
 
 	//rest of the strings
 	strnr = 1;

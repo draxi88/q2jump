@@ -244,6 +244,8 @@ void        Cmd_Show_Maptimes_Wireplay(edict_t* ent);
 qboolean	Store_Recall(edict_t *ent, int store_index);
 qboolean	Store_StoreLocation(edict_t *ent);
 
+qboolean	Client_SwitchToWeaponImmediately(edict_t *ent, int item_index);
+
 extern cvar_t		*gametype;
 extern admin_type	admin_pass[MAX_ADMINS];
 extern cvar_t		*allow_admin_log;

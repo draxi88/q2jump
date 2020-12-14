@@ -967,6 +967,8 @@ typedef struct { //everything that needs to be saved for each store.
 	vec3_t		stored_velocity;
 	float		stored_item_timer;
 	qboolean	stored_finished;
+	int			store_inventory[MAX_ITEMS];
+	int			store_active_weapon_index;
 }store_struct;
 
 #define MAX_STORES 7 // = 6 different stores... since the 1st one (0) is the standard one..
