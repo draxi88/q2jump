@@ -2486,6 +2486,7 @@ qboolean Client_SwitchToWeaponImmediately(edict_t *ent, int item_index)
 
 	gclient_t		*client = ent->client;
 	gitem_t			*item = &(itemlist[item_index]);
+	gitem_t			*ammo_item;
 
 	// Doesn't exist.
 	if (item == NULL)
@@ -2501,7 +2502,11 @@ qboolean Client_SwitchToWeaponImmediately(edict_t *ent, int item_index)
 
 
 	client->pers.weapon = item;
-	client->ammo_index = item_index;
+	if (item->ammo && (ammo_item = FindItem(item->ammo)) != NULL) {
+		client->ammo_index = ITEM_INDEX(ammo_item);
+	} else {
+		client->ammo_index = 0;
+	}
 
 	// Now, we probably should change the state to ready since we don't know what the prev weapon was doing.
 	// But this will allow players to spam fire, so fuck it.
