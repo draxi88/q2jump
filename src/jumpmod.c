@@ -2501,9 +2501,17 @@ qboolean Client_SwitchToWeaponImmediately(edict_t *ent, int item_index)
 
 
 	client->pers.weapon = item;
+	client->ammo_index = item_index;
+
+	// Now, we probably should change the state to ready since we don't know what the prev weapon was doing.
+	// But this will allow players to spam fire, so fuck it.
+	//client->weaponstate = WEAPON_READY;
 
 	// Still has the old gun model.
 	client->ps.gunindex = gi.modelindex(client->pers.weapon->view_model);
+
+	client->machinegun_shots = 0;
+	client->grenade_time = 0;
 
 	return true;
 }
