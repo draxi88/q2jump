@@ -792,7 +792,7 @@ void Cmd_Kill_f (edict_t *ent)
 	}
 	if ((ent->client->resp.ctf_team==CTF_TEAM1) && (ent->client->resp.can_store))
 	{
-		Cmd_Recall(ent);
+		Store_Recall(ent, STORE_LAST_STORE_POS);
 		return;
 	}
 	//this message only plays if you kill yourself on easy, without a store
