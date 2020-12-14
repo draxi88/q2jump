@@ -23,14 +23,14 @@ char map_skill2[10][10];
 
 static char *help_main[] = {
 	"\n--------------------------------------------------\n",
-	"÷ÔÙÈÓÁ √ÔÌÌ·Ó‰Û\n",
+	"\xd6\xef\xf4\xe9\xee\xe7 \xc3\xef\xed\xed\xe1\xee\xe4\xf3\n", // Voting Commands
 	"maplist - view all maps on the server\n",
 	"mapvote - vote a specific map, type mapvote for more details\n",
 	"timevote - vote more time to play\n",
 	"rand - randomize the votemaps\n",
 	"boot - vote to kick a player\n",
 	"silence - vote to silence a player\n",
-	"\n«ÂÓÂÚ·Ï √ÔÌÌ·Ó‰Û\n",
+	"\n\xc7\xe5\xee\xe5\xf2\xe1\xec \xc3\xef\xed\xed\xe1\xee\xe4\xf3\n", // General Commands
 	"hook - bind a key to +hook in order to use\n",
 	"cmsg - enable/disable messages triggered in the map\n",
 	"replay - replay # to view replays 1-15\n",
@@ -44,7 +44,7 @@ static char *help_main[] = {
 	"reset - removes your store location\n",
 	"velstore - toggles velocity storing for your store markers\n", //velocity store feature
 	"playerlist - list the players in game\n",
-	"\n”Ù·ÙÈÛÙÈ„Û\n",
+	"\n\xd3\xf4\xe1\xf4\xe9\xf3\xf4\xe9\xe3\xf3\n", // Statistics
 	"maptimes - view best times on a map\n",
 	"playertimes - view overall points in the server\n",
 	"playerscores - view best points per map players\n",
@@ -544,7 +544,7 @@ def:
 	{
 		gi.cprintf (ent, PRINT_HIGH, "-----------------------------------------\n"); 
 		gi.cprintf (ent, PRINT_HIGH, "Best Times for %s\n",maplist.mapnames[mapnum]); 
-		gi.cprintf (ent, PRINT_HIGH, "ŒÔÆ Œ·ÌÂ                 ƒ·ÙÂ                    ‘ÈÌÂ\n"); 
+		gi.cprintf (ent, PRINT_HIGH, "\xce\xef\xae \xce\xe1\xed\xe5                 \xc4\xe1\xf4\xe5                    \xd4\xe9\xed\xe5\n"); // No. Name Date Time
 
 		for (i=0;i<MAX_HIGHSCORES;i++)
 		{
@@ -588,7 +588,8 @@ void ShowPlayerTimes(edict_t *ent)
    gi.cprintf (ent, PRINT_HIGH, "\n-----------------------------------------\n\n"); 
    gi.cprintf (ent, PRINT_HIGH, "Point Values: 1-15: 25,20,16,13,11,10,9,8,7,6,5,4,3,2,1 \n"); 
    gi.cprintf (ent, PRINT_HIGH, "\n-----------------------------------------\n\n"); 
-   gi.cprintf (ent, PRINT_HIGH, "ŒÔÆ Œ·ÌÂ             ±ÛÙ ≤Ó‰ ≥Ú‰ ¥ÙË µÙË ∂ÙË ∑ÙË ∏ÙË πÙË ±∞ÙË ±±ÙË ±≤ÙË ±≥ÙË ±¥ÙË ±µÙË ”„ÔÚÂ\n"); 
+   // No. Name 1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th 11th 12th 13th 14th 15th Score
+   gi.cprintf (ent, PRINT_HIGH, "\xce\xef\xae \xce\xe1\xed\xe5             \xb1\xf3\xf4 \xb2\xee\xe4 \xb3\xf2\xe4 \xb4\xf4\xe8 \xb5\xf4\xe8 \xb6\xf4\xe8 \xb7\xf4\xe8 \xb8\xf4\xe8 \xb9\xf4\xe8 \xb1\xb0\xf4\xe8 \xb1\xb1\xf4\xe8 \xb1\xb2\xf4\xe8 \xb1\xb3\xf4\xe8 \xb1\xb4\xf4\xe8 \xb1\xb5\xf4\xe8 \xd3\xe3\xef\xf2\xe5\n"); 
    for (i=(20*offset); (i<maplist.sort_num_users) && (i<(20*offset)+20); i++) 
    { 
 	  temp = maplist.sorted_users[i].uid;
@@ -669,7 +670,7 @@ void ShowPlayerMaps(edict_t *ent)
 	   offset = 0;
 	
    gi.cprintf (ent, PRINT_HIGH, "-----------------------------------------\n"); 
-	gi.cprintf (ent, PRINT_HIGH, "ŒÔÆ Œ·ÌÂ               Maps     %%\n"); 
+	gi.cprintf (ent, PRINT_HIGH, "\xce\xef\xae \xce\xe1\xed\xe5               Maps     %%\n"); // No. Name
    for (i=(20*offset); (i<maplist.sort_num_users) && (i<(20*offset)+20); i++) 
    { 
 	  temp = maplist.sorted_completions[i].uid;
@@ -8765,11 +8766,11 @@ void Cmd_Stats(edict_t *ent)
 		gi.cprintf (ent, PRINT_HIGH, "\n-------------------------------------------");
 		Com_sprintf(txt,sizeof(txt),"Statistics for %s:",maplist.users[uid].name);
 		gi.cprintf(ent,PRINT_HIGH,"\n%s\n",HighAscii(txt));
-		gi.cprintf(ent,PRINT_HIGH,"±st %3d  ∂th %3d ±±th %3d\n",maplist.users[uid].points[0],maplist.users[uid].points[5],maplist.users[uid].points[10]);
-		gi.cprintf(ent,PRINT_HIGH,"≤nd %3d  ∑th %3d ±≤th %3d\n",maplist.users[uid].points[1],maplist.users[uid].points[6],maplist.users[uid].points[11]);
-		gi.cprintf(ent,PRINT_HIGH,"≥rd %3d  ∏th %3d ±≥th %3d\n",maplist.users[uid].points[2],maplist.users[uid].points[7],maplist.users[uid].points[12]);
-		gi.cprintf(ent,PRINT_HIGH,"¥th %3d  πth %3d ±¥th %3d\n",maplist.users[uid].points[3],maplist.users[uid].points[8],maplist.users[uid].points[13]);
-		gi.cprintf(ent,PRINT_HIGH,"µth %3d ±∞th %3d ±µth %3d\n",maplist.users[uid].points[4],maplist.users[uid].points[9],maplist.users[uid].points[14]);
+		gi.cprintf(ent,PRINT_HIGH,"\xb1st %3d  \xb6th %3d \xb1\xb1th %3d\n",maplist.users[uid].points[0],maplist.users[uid].points[5],maplist.users[uid].points[10]);
+		gi.cprintf(ent,PRINT_HIGH,"\xb2nd %3d  \xb7th %3d \xb1\xb2th %3d\n",maplist.users[uid].points[1],maplist.users[uid].points[6],maplist.users[uid].points[11]);
+		gi.cprintf(ent,PRINT_HIGH,"\xb3rd %3d  \xb8th %3d \xb1\xb3th %3d\n",maplist.users[uid].points[2],maplist.users[uid].points[7],maplist.users[uid].points[12]);
+		gi.cprintf(ent,PRINT_HIGH,"\xb4th %3d  \xb9th %3d \xb1\xb4th %3d\n",maplist.users[uid].points[3],maplist.users[uid].points[8],maplist.users[uid].points[13]);
+		gi.cprintf(ent,PRINT_HIGH,"\xb5th %3d \xb1\xb0th %3d \xb1\xb5th %3d\n",maplist.users[uid].points[4],maplist.users[uid].points[9],maplist.users[uid].points[14]);
 		gi.cprintf(ent,PRINT_HIGH,"Total Maps Completed %4d\n",maplist.users[uid].completions);
 		gi.cprintf(ent,PRINT_HIGH,"Remaining            %4d\n",(maplist.nummaps-maplist.users[uid].completions));
 		gi.cprintf(ent,PRINT_HIGH,"\nType !stats %s 1 to see 1st places.\nType !stats %s 2 to see 2nd places.\nand so on...\n",name,name);
@@ -9138,11 +9139,11 @@ void hud_footer(edict_t *ent) {
 	
 	//team (Team is always string1.)
 	if (ent->client->resp.ctf_team == CTF_TEAM1)
-		sprintf(ent->client->resp.hud[0].string, "  Team: ≈·Û˘");
+		sprintf(ent->client->resp.hud[0].string, "  Team: \xc5\xe1\xf3\xf9"); // Easy
 	else if (ent->client->resp.ctf_team == CTF_TEAM2)
-		sprintf(ent->client->resp.hud[0].string, "  Team: »·Ú‰");
+		sprintf(ent->client->resp.hud[0].string, "  Team: \xc8\xe1\xf2\xe4"); // Hard
 	else
-		sprintf(ent->client->resp.hud[0].string, "  Team: œ‚ÛÂÚˆÂÚ");
+		sprintf(ent->client->resp.hud[0].string, "  Team: \xcf\xe2\xf3\xe5\xf2\xf6\xe5\xf2"); // Observer
 
 	//rest of the strings
 	strnr = 1;
