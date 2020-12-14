@@ -1392,67 +1392,7 @@ void Cmd_Commands_f (edict_t *ent)
 }
 
 void Cmd_Store_f (edict_t *ent) {
-	int i;
-	// set default to false
-	qboolean can_store = false;
-
-	// check for ctf
-	if (gametype->value==GAME_CTF)
-		return;
-
-	// are we on a team?
-	if ((ent->client->resp.ctf_team==CTF_TEAM1) || (ent->client->resp.ctf_team==CTF_TEAM2)) {
-
-		// can we store in the air?
-		if (gset_vars->store_safe) {
-			if (ent->client->ps.pmove.pm_flags & PMF_ON_GROUND)
-				can_store = true;
-		} else
-			can_store = true;
-
-		// can we store?
-		if (can_store) {
-			for (i = MAX_STORES-1; i >= 1; i--) {
-				ent->client->resp.store[i] = ent->client->resp.store[i-1]; //move old stores +1
-			}
-			ent->client->resp.store[1].stored_item_timer = ent->client->resp.item_timer;
-			ent->client->resp.store[1].stored_finished = ent->client->resp.finished;
-			VectorCopy(ent->s.origin,ent->client->resp.store[1].store_pos);
-			VectorCopy(ent->s.angles,ent->client->resp.store[1].store_angles);
-			ent->client->resp.store[1].store_angles[2] = 0;
-			ent->client->resp.store[1].stored = true;
-			ent->client->resp.can_store = true;
-			//velocity store feature 
-			//we always store velocity so it can be ready when toggled on
-			VectorCopy(ent->velocity, ent->client->resp.store[1].stored_velocity);
-			
-
-			if (jump_show_stored_ent) {
-				if (ent->client->resp.stored_ent)	
-					G_FreeEdict(ent->client->resp.stored_ent);
-
-				ent->client->resp.stored_ent = G_Spawn();
-				VectorCopy (ent->client->resp.store[1].store_pos, ent->client->resp.stored_ent->s.origin);
-				VectorCopy (ent->client->resp.store[1].store_pos, ent->client->resp.stored_ent->s.old_origin);
-				ent->client->resp.stored_ent->s.old_origin[2] -=10;
-				ent->client->resp.stored_ent->s.origin[2] -=10;
-				ent->client->resp.stored_ent->svflags = SVF_PROJECTILE;
-				VectorCopy(ent->client->resp.store[1].store_angles, ent->client->resp.stored_ent->s.angles);
-				ent->client->resp.stored_ent->movetype = MOVETYPE_NONE;
-				ent->client->resp.stored_ent->clipmask = MASK_PLAYERSOLID;
-				ent->client->resp.stored_ent->solid = SOLID_NOT;
-				ent->client->resp.stored_ent->s.renderfx = RF_TRANSLUCENT;
-				VectorClear (ent->client->resp.stored_ent->mins);
-				VectorClear (ent->client->resp.stored_ent->maxs);
-				ent->client->resp.stored_ent->s.modelindex = gi.modelindex (gset_vars->model_store);
-				ent->client->resp.stored_ent->dmg = 0;
-				ent->client->resp.stored_ent->classname = "stored_ent";
-				gi.linkentity (ent->client->resp.stored_ent);
-
-			} else
-				gi.cprintf(ent,PRINT_HIGH,"Can only store on ground\n");
-		}
-	}
+	Store_StoreLocation(ent);
 }
 
 void Cmd_Time_f (edict_t *ent)
@@ -2529,95 +2469,279 @@ void Start_Recording(edict_t *ent)
 	}
 }
 
-void Cmd_Recall(edict_t *ent)
+/*
+===========
+Client_SwitchToWeaponImmediately
+
+Switches the player's weapon immediately. No transitions.
+Returns true on success, false otherwise.
+============
+*/
+qboolean Client_SwitchToWeaponImmediately(edict_t *ent, int item_index)
 {
-	gclient_t	*client;
-	int i;
-	vec3_t	spawn_origin, spawn_angles;
+	// First and last index is always null.
+	assert(item_index > 0 && item_index < MAX_ITEMS-1);
+	assert(ent && ent->client);
 
-	if (ent->client->chase_target)
-		return;
-	if (ent->client->resp.replaying)
-		return;
+	gclient_t		*client = ent->client;
+	gitem_t			*item = &(itemlist[item_index]);
 
-	ClearPersistants(&ent->client->pers);
+	// Doesn't exist.
+	if (item == NULL)
+		return false;
+
+	// Don't have this weapon in inventory!
+	if (client->pers.inventory[item_index] == 0)
+		return false;
+
+	// Not a weapon.
+	if (!(item->flags & IT_WEAPON))
+		return false;
+
+
+	client->pers.weapon = item;
+
+	// Still has the old gun model.
+	client->ps.gunindex = gi.modelindex(client->pers.weapon->view_model);
+
+	return true;
+}
+
+/*
+===========
+Store_CreateShowEnt
+
+Creates the little entity that shows where you stored.
+============
+*/
+void Store_CreateShowEnt(edict_t *ent)
+{
+	assert(ent && ent->client);
+
+	edict_t *store_ent;
+
+
+	// Remove the old one.
+	if (ent->client->resp.stored_ent != NULL)
+		G_FreeEdict(ent->client->resp.stored_ent);
+
+	store_ent = G_Spawn();
+	VectorCopy(ent->client->resp.store[1].store_pos, store_ent->s.origin);
+	VectorCopy(ent->client->resp.store[1].store_pos, store_ent->s.old_origin);
+	store_ent->s.old_origin[2] -=10;
+	store_ent->s.origin[2] -=10;
+	store_ent->svflags = SVF_PROJECTILE;
+	VectorCopy(ent->client->resp.store[1].store_angles, store_ent->s.angles);
+	store_ent->movetype = MOVETYPE_NONE;
+	store_ent->clipmask = MASK_PLAYERSOLID;
+	store_ent->solid = SOLID_NOT;
+	store_ent->s.renderfx = RF_TRANSLUCENT;
+	VectorClear(store_ent->mins);
+	VectorClear(store_ent->maxs);
+	store_ent->s.modelindex = gi.modelindex (gset_vars->model_store);
+	store_ent->dmg = 0;
+	store_ent->classname = "stored_ent";
+	gi.linkentity (store_ent);
+
+	ent->client->resp.stored_ent = store_ent;
+}
+
+/*
+===========
+Store_StoreLocation
+
+When player wants to save a location.
+Returns true on success, false otherwise.
+============
+*/
+qboolean Store_StoreLocation(edict_t *ent)
+{
+	assert(ent && ent->client);
+
+	int				i;
+	gclient_t		*client = ent->client;
+	store_struct	*store = &(client->resp.store[STORE_LAST_STORE_POS]);
+
+	if (gametype->value!=GAME_JUMP)
+		return false;
+
+	// Spectating
+	if (ent->client->resp.ctf_team == CTF_NOTEAM)
+		return false;
+
+	// Can we store in the air?
+	if (gset_vars->store_safe && !(ent->client->ps.pmove.pm_flags & PMF_ON_GROUND)) {
+		gi.cprintf(ent, PRINT_HIGH, "Can only store on ground\n");
+		return false;
+	}
+
+	for (i = MAX_STORES-1; i >= 1; i--) {
+		ent->client->resp.store[i] = ent->client->resp.store[i-1]; //move old stores +1
+	}
+	store->stored_item_timer = ent->client->resp.item_timer;
+	store->stored_finished = ent->client->resp.finished;
+	VectorCopy(ent->s.origin, store->store_pos);
+	VectorCopy(ent->s.angles, store->store_angles);
+	store->store_angles[2] = 0;
+	store->stored = true;
+	ent->client->resp.can_store = true;
+	//velocity store feature 
+	//we always store velocity so it can be ready when toggled on
+	VectorCopy(ent->velocity, store->stored_velocity);
+
+	// Save inventory
+	assert(sizeof(client->pers.inventory) == sizeof(store->store_inventory));
+	memcpy(store->store_inventory, client->pers.inventory, sizeof(store->store_inventory));
+	// Save current weapon
+	store->store_active_weapon_index = ITEM_INDEX(client->pers.weapon);
+
+	if (jump_show_stored_ent) {
+		Store_CreateShowEnt(ent);
+	}
+
+	return true;
+}
+
+/*
+===========
+Store_Recall
+
+When player wants to recall to a previous location.
+Returns true on success, false otherwise.
+============
+*/
+qboolean Store_Recall(edict_t *ent, int store_index)
+{
+	assert(store_index >= 1 && store_index < MAX_STORES);
+	assert(ent && ent->client);
+
+	gclient_t		*client = ent->client;
+	store_struct	*store = &(client->resp.store[store_index]);
+	vec3_t			spawn_origin, spawn_angles;
+	int				i;
+
+	// Nothing stored here.
+	if (!(store->stored))
+		return false;
+
+	// Spectating.
+	if (ent->client->resp.ctf_team == CTF_NOTEAM)
+		return false;
+
+	if (client->chase_target)
+		return false;
+
+	if (client->resp.replaying)
+		return false;
+
+	if (gametype->value!=GAME_JUMP)
+		return false;
+
+	if (!client->resp.can_store)
+		return false;
+
+	// Must be on team easy unless ezmode is on.
+	if (mset_vars->ezmode != 1 && ent->client->resp.ctf_team != CTF_TEAM1)
+		return false;
+
+	ClearPersistants(&client->pers);
 	ClearCheckpoints(ent);
 
-	if (gametype->value==GAME_CTF)
-		return;
-
-	// if we can store
-	if (ent->client->resp.can_store) {
-
-		// if team easy
-		if ( ent->client->resp.ctf_team==CTF_TEAM1 || mset_vars->ezmode == 1) {
-			if (ent->deadflag)
-				respawn(ent);
-			ent->client->resp.item_timer = ent->client->resp.store[0].stored_item_timer;	
-			ent->client->resp.finished = ent->client->resp.store[0].stored_finished;
-			ent->client->resp.recalls--;
-			ent->client->pers.total_recall++;
-
-			client = ent->client;
+	// Respawn
+	if (ent->deadflag)
+		respawn(ent);
 
 
-			if (gi.argc()==2) { //recall + number
-				i = atoi(gi.argv(1));
-				if (i<1 || i>MAX_STORES-1) {
-					gi.cprintf(ent,PRINT_HIGH,"Invalid number.\n");
-					return;
-				}
-				if (!(ent->client->resp.store[i].stored)) { //don't use it if it isn't set..
-					gi.cprintf(ent, PRINT_HIGH, "No recall for number:%i\n",i);
-					return;
-				}
-					VectorCopy(ent->client->resp.store[i].stored_velocity, ent->velocity); //velocity store feature
-					VectorCopy(ent->client->resp.store[i].store_pos,spawn_origin);
-					VectorCopy(ent->client->resp.store[i].store_angles,spawn_angles);
-					ent->client->resp.store[0] = ent->client->resp.store[i];
-					
-			} else { //recall without any number..
-				VectorCopy(ent->client->resp.store[1].stored_velocity, ent->velocity); //velocity store feature
-				VectorCopy(ent->client->resp.store[1].store_pos,spawn_origin);
-				VectorCopy(ent->client->resp.store[1].store_angles,spawn_angles);
-				ent->client->resp.store[0] = ent->client->resp.store[1];
-			}
+	client->resp.item_timer = client->resp.store[0].stored_item_timer;	
+	client->resp.finished = client->resp.store[0].stored_finished;
+	client->resp.recalls--;
+	client->pers.total_recall++;
+
+	
+	VectorCopy(store->store_pos,spawn_origin);
+	VectorCopy(store->store_angles,spawn_angles);
+	client->resp.store[0] = *store;
 		
-			//velocity store feature - kill player's velocity if the toggle isn't on
-			if (!(ent->client->pers.store_velocity)) {
-				VectorClear(ent->velocity);
-			}
+	//velocity store feature - kill player's velocity if the toggle isn't on
+	if (client->pers.store_velocity) {
+		VectorCopy(store->stored_velocity, ent->velocity); //velocity store feature	
+	} else {
+		VectorClear(ent->velocity);
+	}
 
-			client->ps.pmove.origin[0] = spawn_origin[0]*8;
-			client->ps.pmove.origin[1] = spawn_origin[1]*8;
-			client->ps.pmove.origin[2] = spawn_origin[2]*8;
-			//ZOID
-			client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
-			//ZOID
-			VectorCopy (spawn_origin, ent->s.origin);
-			ent->s.origin[2] += 1;	// make sure off ground
-			VectorCopy (ent->s.origin, ent->s.old_origin);
+	for (i = 0; i < 3; i++)
+		client->ps.pmove.origin[i] = spawn_origin[i]*8;
+	//ZOID
+	client->ps.pmove.pm_flags &= ~PMF_NO_PREDICTION;
+	//ZOID
+	VectorCopy (spawn_origin, ent->s.origin);
+	ent->s.origin[2] += 1;	// make sure off ground
+	VectorCopy (ent->s.origin, ent->s.old_origin);
 
-			// set the delta angle
-			for (i=0 ; i<2 ; i++)
-				client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - client->resp.cmd_angles[i]);
+	// set the delta angle
+	for (i = 0; i < 2; i++)
+		client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - client->resp.cmd_angles[i]);
 
-			ent->s.angles[PITCH] = 0;
-			ent->s.angles[YAW] = spawn_angles[YAW];
-			ent->s.angles[ROLL] = 0;
-			VectorCopy (ent->s.angles, client->ps.viewangles);
-			VectorCopy (ent->s.angles, client->v_angle);
-			hud_footer(ent);
+	ent->s.angles[PITCH] = 0;
+	ent->s.angles[YAW] = spawn_angles[YAW];
+	ent->s.angles[ROLL] = 0;
+	VectorCopy (ent->s.angles, client->ps.viewangles);
+	VectorCopy (ent->s.angles, client->v_angle);
 
-			if ( ent->client->resp.ctf_team==CTF_TEAM2 || mset_vars->ezmode == 1) { // if hard and ezmode give a readout
-				if (ent->client->resp.ezmsg)
-					gi.cprintf(ent,PRINT_HIGH,"You have recalled %i time(s).\n", ent->client->pers.total_recall);
-			}
-		} else // must be team hard
-			Cmd_Kill_f(ent);
+	// Copy inventory
+	assert(sizeof(client->pers.inventory) == sizeof(store->store_inventory));
+	memcpy(client->pers.inventory, store->store_inventory, sizeof(store->store_inventory));
 
-	} else // must be we cant store
+	// Set current weapon.
+	if (store->store_active_weapon_index > 0) {
+		Client_SwitchToWeaponImmediately(ent, store->store_active_weapon_index);
+	}
+	
+	
+	hud_footer(ent);
+
+	if ( ent->client->resp.ctf_team==CTF_TEAM2 || mset_vars->ezmode == 1) { // if hard and ezmode give a readout
+		if (ent->client->resp.ezmsg)
+			gi.cprintf(ent, PRINT_HIGH, "You have recalled %i time(s).\n", ent->client->pers.total_recall);
+	}
+
+	return true;
+}
+
+void Cmd_Recall(edict_t *ent)
+{
+	// Can't store or not on recallable team.
+	// Just kill.
+	if (!ent->client->resp.can_store || (ent->client->resp.ctf_team != CTF_TEAM1 && mset_vars->ezmode != 1)) {
 		Cmd_Kill_f(ent);
+		return;
+	}
+
+	int store_index = 1;
+
+	// They want a specific store?
+	if (gi.argc() >= 2) { //recall + number
+		store_index = atoi(gi.argv(1));
+
+		if (store_index < 1 || store_index >= MAX_STORES) {
+			gi.cprintf(ent, PRINT_HIGH, "Invalid store number. Must be between (1-%i)\n", MAX_STORES-1);
+			return;
+		}
+
+		if (!(ent->client->resp.store[store_index].stored)) { //don't use it if it isn't set..
+			gi.cprintf(ent, PRINT_HIGH, "No recall for number: %i\n", store_index);
+			return;
+		}
+	} else {
+		// No argument given.
+		// We MUST have something stored here.
+		if (!(ent->client->resp.store[store_index].stored)) {
+			Cmd_Kill_f(ent);
+			return;
+		}
+	}
+
+	Store_Recall(ent, store_index);
 }
 
 void List_Admin_Commands(edict_t *ent)
