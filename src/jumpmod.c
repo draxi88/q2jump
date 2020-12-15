@@ -1799,69 +1799,32 @@ void hook_fire (edict_t *ent) {
 	int		numEnt;
 	int		i;
 
+	// ctf check
 	if (gametype->value==GAME_CTF)
 		return;
+
+	// hook check
 	if (!gset_vars->hook)
 		return;
 
-	if	(ent->client->resp.playtag)
-		return;
-	if (!level.status)
-	{
-		if (
-			(ent->client->resp.ctf_team==CTF_TEAM1)
-			||
-			(ent->client->resp.finished)
-			
-			)
-		{
-		} 
-		else
-			return;
-
-	}
-	else
-	{
-		if (level.status ==LEVEL_STATUS_OVERTIME)
-		{
-			if (gset_vars->overtimetype==OVERTIME_FAST)
-			{
-				return;
-			}
-		}
-		else
-			return;
-
-		if (ent->client->resp.ctf_team<CTF_TEAM1)
-			return;
-	}
-
+	// state check
 	if (ent->client->hook_state)
 		return;
 
-    ent->client->hook_state = HOOK_OUT;
+	// do the hook shit
+	if (ent->client->resp.ctf_team == CTF_TEAM1 || gset_vars->dev) {
+		ent->client->hook_state = HOOK_OUT;
 
-	AngleVectors (ent->client->v_angle, forward, right, NULL);
-	VectorSet(offset, 8, -8, ent->viewheight-8);
-	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+		AngleVectors(ent->client->v_angle, forward, right, NULL);
+		VectorSet(offset, 8, -8, ent->viewheight - 8);
+		P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
 
-	VectorScale (forward, -2, ent->client->kick_origin);
-	ent->client->kick_angles[0] = -1;
+		VectorScale(forward, -2, ent->client->kick_origin);
+		ent->client->kick_angles[0] = -1;
 
-	fire_hook (ent, start, forward);
-
-
-	//Hooksound 
-	jumpmod_sound(ent, false, gi.soundindex("flyer/Flyatck3.wav"), CHAN_WEAPON, 1, ATTN_NORM);
-	/*
-	if (ent->client->silencer_shots)
-		gi.sound(ent, CHAN_WEAPON, gi.soundindex("flyer/Flyatck3.wav"), 0.2, ATTN_NORM, 0);
-	else
-		gi.sound(ent, CHAN_WEAPON, gi.soundindex("flyer/Flyatck3.wav"), 1, ATTN_NORM, 0);
-
-	PlayerNoise(ent, start, PNOISE_WEAPON);
-	*/
-
+		fire_hook(ent, start, forward);
+		jumpmod_sound(ent, false, gi.soundindex("flyer/Flyatck3.wav"), CHAN_WEAPON, 1, ATTN_NORM);
+	}
 }
 
 void CTFSilence(edict_t *ent)
