@@ -2666,8 +2666,9 @@ qboolean Store_Recall(edict_t *ent, int store_index)
 		respawn(ent);
 
 
-	client->resp.item_timer = client->resp.store[0].stored_item_timer;	
-	client->resp.finished = client->resp.store[0].stored_finished;
+	client->resp.item_timer = store->stored_item_timer; // Copy run time
+	client->resp.finished = store->stored_finished; // Did we finish?
+
 	client->resp.recalls--;
 	client->pers.total_recall++;
 
