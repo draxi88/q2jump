@@ -394,28 +394,41 @@ void Cmd_Noclip_f (edict_t *ent)
 {
 	char	*msg;
 
-/*	if (deathmatch->value && !sv_cheats->value)
-	{
-		gi.cprintf (ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
-		return;
-	}*/
 	if (gametype->value==GAME_CTF)
 		return;
 
-	if ((ent->client->resp.ctf_team==CTF_TEAM1))
-	{
-		if (ent->movetype == MOVETYPE_NOCLIP)
-		{
+	// team easy or dev gset
+	if (ent->client->resp.ctf_team == CTF_TEAM1 || (gset_vars->dev && ent->client->resp.ctf_team == CTF_TEAM2)) {
+
+		// already in noclip
+		if (ent->movetype == MOVETYPE_NOCLIP) {
 			ent->movetype = MOVETYPE_WALK;
-			msg = "noclip OFF\n";
-		} else	 
-		{
+			if (gset_vars->dev) {
+				msg = "Dev: noclip OFF\n";
+			}
+			else {
+				msg = "noclip OFF\n";
+			}
+		} 
+
+		// not in noclip
+		else {
 			ent->movetype = MOVETYPE_NOCLIP;
-			msg = "noclip ON\n";
+			if (gset_vars->dev) {
+				msg = "Dev: noclip ON\n";
+			}
+			else {
+				msg = "noclip ON\n";
+			}
 		}
-		gi.cprintf (ent, PRINT_HIGH, msg);
-	} 
-	
+	}
+
+	// give them a fail message
+	else {
+		msg = "The noclip cmd is only usable in team easy or dev.\n";
+	}
+
+	gi.cprintf(ent, PRINT_HIGH, msg);
 }
 
 

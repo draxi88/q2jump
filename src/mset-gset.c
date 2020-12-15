@@ -413,6 +413,13 @@ zbotcmd_t zbotCommands[] =
 	  &gset_vars->debug,
 	},
 	{
+	  0,1,0,
+	  "dev",
+	  CMDWHERE_CFGFILE | CMD_GSET,
+	  CMDTYPE_NUMBER,
+	  &gset_vars->dev,
+	},
+	{
 	  0,1,1,
 	  "gdroptofloor",
 	  CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
@@ -1845,6 +1852,7 @@ void SetDefaultValues(void)
 	gset_vars->cvote_announce = 1;
 	gset_vars->mset->damage = 1;
 	gset_vars->debug = 0;
+	gset_vars->dev = 0;
 	gset_vars->mset->droptofloor = 1;
 	strcpy(gset_vars->mset->edited_by, "NA");
 	gset_vars->mset->ezmode = 0;
