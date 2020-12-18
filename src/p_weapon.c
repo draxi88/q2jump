@@ -162,18 +162,20 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		}
 	}
 
-	// lapcounter check
-	if (mset_vars->lap_total > 0 && pickup != 1) {
-		if (other->client->pers.lapcount < mset_vars->lap_total)
-			pickup = 2;
+	// check for overtime finish
+	if (level.status==LEVEL_STATUS_OVERTIME) {
+		if (gset_vars->overtimetype==OVERTIME_FAST) {
+			gi.bprintf(PRINT_CHAT,"%s wins!\n",other->client->pers.netname);
+			End_Overtime();
+			return false;
+		}
 	}
 
-	// checkpoint check
-	if (mset_vars->checkpoint_total > 0 && (pickup != 1 && pickup != 2)) {
-		if (other->client->resp.store[0].checkpoints < mset_vars->checkpoint_total) {
-			if (trigger_timer(5))
-				gi.cprintf(other,PRINT_HIGH,"You need %d checkpoint(s), you have %d. Find more checkpoints!\n", mset_vars->checkpoint_total, other->client->resp.store[0].checkpoints);
-			pickup = 2;
+	// We haven't picked up the weapon.
+	// Check for run finish.
+	if (pickup == 0) {
+		if (!jumpmod_ontouchend(other, ent)) {
+			return false; // Didn't finish, don't get this weapon.
 		}
 	}
 
@@ -193,7 +195,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		else
 			Add_Ammo (other, ammo, 1000);
 
-		if (! (ent->spawnflags & DROPPED_PLAYER_ITEM) && (Q_stricmp(ent->classname, "trigger_finish") != 0)) { //Added stricmp for trigger_finish so it doesn't mess it up.
+		if (!(ent->spawnflags & DROPPED_PLAYER_ITEM)) {
 			if (deathmatch->value) {
 				if ((int)(dmflags->value) & DF_WEAPONS_STAY)
 					ent->flags |= FL_RESPAWN;
@@ -203,37 +205,6 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 			if (coop->value)
 				ent->flags |= FL_RESPAWN;
 		}
-	}
-
-	// check for overtime finish
-	if (level.status==LEVEL_STATUS_OVERTIME) {
-		if (gset_vars->overtimetype==OVERTIME_FAST) {
-			gi.bprintf(PRINT_CHAT,"%s wins!\n",other->client->pers.netname);
-			End_Overtime();
-			return false;
-		}
-	}
-
-	// easy team timer
-	if (other->client->resp.ctf_team==CTF_TEAM1) {
-		if (pickup == 0) {
-			if (other->client->pers.cp_split > 0) {
-				gi.cprintf(other, PRINT_HIGH, "You would have got this weapon in %3.1f seconds. (split: %3.1f)\n",
-					other->client->resp.item_timer, other->client->resp.item_timer - other->client->pers.cp_split);
-				other->client->pers.cp_split = other->client->resp.item_timer;
-			}
-			else {
-				gi.cprintf(other, PRINT_HIGH, "You would have got this weapon in %3.1f seconds.\n", other->client->resp.item_timer);
-			}
-			other->client->resp.finished = true;
-		}
-	}
-	// hard team timer
-	int my_time;
-	float my_time_decimal;
-	if (other->client->resp.ctf_team==CTF_TEAM2) {
-		if (pickup == 0)
-			apply_time(other,ent);
 	}
 
 	// always switch to the new weapon pickup

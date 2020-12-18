@@ -990,34 +990,65 @@ void SP_trigger_monsterjump (edict_t *self)
 	self->movedir[2] = st.height;
 }
 
+/*
+==============================================================================
+
+trigger_finish
+
+==============================================================================
+*/
 // Trigger that works with Pickup_Weapon.
 // Used as a finish (railgun by default)
 // Add a <message> value with a classname of a weapon in the editor to change it to some other weapon.
 // Then it can be used to give players a weapon, like rocket launcher or bfg or whatever.
 // e.g. "message = weapon_rocketlauncher"
 // options: weapon_railgun, weapon_rocketlauncher, weapon_grenadelauncher, weapon_bfg
+
+qboolean trigger_finish_giveweapon(edict_t *self, edict_t *player)
+{
+	const char* item_name = "weapon_railgun";
+
+	if (self->message && self->message[0] != NULL) {
+		item_name = self->message;
+	}
+
+
+	gitem_t *item = FindItemByClassname(item_name);
+
+	if (item && (item->flags & IT_WEAPON) && item->use) {
+		player->client->pers.inventory[ITEM_INDEX(item)]++;
+		
+		player->client->newweapon = item;
+		ChangeWeapon(player);
+
+		return true;
+	}
+
+	return false;
+}
+
+void trigger_finish_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	if (!other->client)
+		return;
+
+	if (jumpmod_ontouchend(other, self)) {
+		// Finished and now give weapon.
+		trigger_finish_giveweapon(self, other);
+	}
+}
+
 void SP_trigger_finish(edict_t *ent)
 {
-	gitem_t *wep;
-	
-	//if no message, set it to act like a railgun.
-	if (!ent->message) {
-		wep = FindItemByClassname("weapon_railgun");
+	// Check optional custom weapon to give to player.
+	if (ent->message && ent->message[0] != NULL) {
+		gitem_t *item = FindItemByClassname(ent->message);
+
+		if (!item || (item->flags & IT_WEAPON) || !item->use) {
+			gi.dprintf("trigger_finish with unsupported <message> value. (%s is not a classname of a weapon)\n", ent->message);
+		}
 	}
 
-	//check for stupid mappers:
-	else if (strstr(ent->message, "weapon_") == 0 || !(wep = FindItemByClassname(ent->message))) {
-		gi.dprintf("trigger_finish with unsupported <message> value. (%s is not a classname of a weapon)\n",ent->message);
-		return;
-	}
-
-	ent->classname = "trigger_finish";
-	ent->movetype = MOVETYPE_NONE;
-	ent->svflags |= SVF_NOCLIENT;
-	ent->solid = SOLID_TRIGGER;
-	ent->item = wep;
-	//ent->item->pickup_name = wep->pickup_name;
-	ent->touch = Pickup_Weapon;
-	gi.setmodel(ent, ent->model);
-	gi.linkentity(ent);
+	InitTrigger(ent);
+	ent->touch = trigger_finish_touch;
 }

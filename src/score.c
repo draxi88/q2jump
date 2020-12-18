@@ -811,7 +811,7 @@ void UpdateThisUsersUID(edict_t *ent, char *name)
 	}
 }
 
-void apply_time(edict_t *other, edict_t *ent)
+void apply_time(edict_t *other)
 {
 	char		item_name[128];
 
@@ -846,7 +846,6 @@ void apply_time(edict_t *other, edict_t *ent)
 				level_items.jumps = other->client->resp.jumps;
 				level_items.fastest_time = other->client->resp.item_timer;
 				strcpy(level_items.item_owner, other->client->pers.netname);
-				strcpy(level_items.item_name, ent->item->pickup_name);
 				level_items.fastest_player = other;
 				Save_Current_Recording(other);
 
