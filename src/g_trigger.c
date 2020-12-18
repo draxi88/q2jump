@@ -997,8 +997,8 @@ trigger_finish
 
 ==============================================================================
 */
-// Trigger that works with Pickup_Weapon.
-// Used as a finish (railgun by default)
+// Trigger that finishes a players run.
+// Gives a railgun.
 // Add a <message> value with a classname of a weapon in the editor to change it to some other weapon.
 // Then it can be used to give players a weapon, like rocket launcher or bfg or whatever.
 // e.g. "message = weapon_rocketlauncher"
@@ -1044,7 +1044,7 @@ void SP_trigger_finish(edict_t *ent)
 	if (ent->message && ent->message[0] != NULL) {
 		gitem_t *item = FindItemByClassname(ent->message);
 
-		if (!item || (item->flags & IT_WEAPON) || !item->use) {
+		if (!item || !(item->flags & IT_WEAPON) || !item->use) {
 			gi.dprintf("trigger_finish with unsupported <message> value. (%s is not a classname of a weapon)\n", ent->message);
 		}
 	}

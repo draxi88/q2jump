@@ -9393,6 +9393,9 @@ void worldspawn_mset() {
 		else if (Q_stricmp(temp[i], "lap_total") == 0) {
 			mset_vars->lap_total = atoi(temp[i + 1]);
 		}
+		else if (Q_stricmp(temp[i], "railgun") == 0) {
+			mset_vars->railgun = atoi(temp[i + 1]);
+		}
 		else if (Q_stricmp(temp[i], "regen") == 0) {
 			mset_vars->regen = atoi(temp[i + 1]);
 		}

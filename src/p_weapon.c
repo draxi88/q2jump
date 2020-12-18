@@ -162,6 +162,14 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		}
 	}
 
+	// railgun check
+	if (mset_vars->railgun == 1 && pickup != 1) {
+		if (Q_stricmp(ent->item->pickup_name, "Railgun") == 0) {
+			other->client->pers.inventory[index]++;
+			pickup = 1;
+		}
+	}
+
 	// check for overtime finish
 	if (level.status==LEVEL_STATUS_OVERTIME) {
 		if (gset_vars->overtimetype==OVERTIME_FAST) {
