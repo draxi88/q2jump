@@ -9002,6 +9002,78 @@ void CPSoundCheck(edict_t *ent) {
 		jumpmod_sound(ent, false, gi.soundindex("items/pkup.wav"), CHAN_ITEM, 1, ATTN_NORM);
 }
 
+/*
+===========
+jumpmod_ontouchend
+
+When player has touched the end.
+Entity may be a finishing weapon (usually railgun) or trigger_finish.
+Returns true if player finished a run successfully, false otherwise.
+============
+*/
+qboolean jumpmod_ontouchend(edict_t *player, edict_t *ent)
+{
+	assert(player && player->client);
+
+	gclient_t *client = player->client;
+
+	// Already finished.
+	if (client->resp.finished)
+		return false;
+
+	if (gametype->value!=GAME_JUMP)
+		return false;
+
+	// Spectator
+	if (client->resp.ctf_team==CTF_NOTEAM)
+		return false;
+
+
+	// Lap counter check
+	if (mset_vars->lap_total > 0) {
+		if (client->pers.lapcount < mset_vars->lap_total)
+			return false;
+	}
+
+	// Checkpoint check
+	if (mset_vars->checkpoint_total > 0) {
+		if (client->resp.store[0].checkpoints < mset_vars->checkpoint_total) {
+			if (trigger_timer(5))
+				gi.cprintf(player, PRINT_HIGH, "You need %d checkpoint(s), you have %d. Find more checkpoints!\n",
+					mset_vars->checkpoint_total,
+					client->resp.store[0].checkpoints);
+			
+			return false;
+		}
+	}
+
+	// Easy team
+	if (client->resp.ctf_team==CTF_TEAM1) {
+		if (client->pers.cp_split > 0) {
+			gi.cprintf(player, PRINT_HIGH, "You would have got this weapon in %3.1f seconds. (split: %3.1f)\n",
+				client->resp.item_timer,
+				client->resp.item_timer - client->pers.cp_split);
+			client->pers.cp_split = client->resp.item_timer;
+		}
+		else {
+			gi.cprintf(player, PRINT_HIGH, "You would have got this weapon in %3.1f seconds.\n",
+				client->resp.item_timer);
+		}
+
+		client->resp.finished = true;
+
+		return true;
+	}
+	// Hard team
+	else if (client->resp.ctf_team==CTF_TEAM2) {
+		apply_time(player);
+
+		return true;
+	}
+
+	return false;
+}
+
 // Hack to override the gi.sound function.
 // set volume 0.0 to 1.0 (1.0 default)
 void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float volume, int attenuation) {
@@ -9320,6 +9392,9 @@ void worldspawn_mset() {
 		}
 		else if (Q_stricmp(temp[i], "lap_total") == 0) {
 			mset_vars->lap_total = atoi(temp[i + 1]);
+		}
+		else if (Q_stricmp(temp[i], "railgun") == 0) {
+			mset_vars->railgun = atoi(temp[i + 1]);
 		}
 		else if (Q_stricmp(temp[i], "regen") == 0) {
 			mset_vars->regen = atoi(temp[i + 1]);
