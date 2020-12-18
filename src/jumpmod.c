@@ -2517,6 +2517,7 @@ qboolean Client_SwitchToWeaponImmediately(edict_t *ent, int item_index)
 
 	client->machinegun_shots = 0;
 	client->grenade_time = 0;
+	client->weapon_sound = 0; // Stop weapon sounds
 
 	return true;
 }
