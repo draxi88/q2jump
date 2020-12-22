@@ -1037,7 +1037,7 @@ void SP_trigger_finish(edict_t *ent)
 		gi.dprintf("trigger_finish with unsupported <message> value. (%s is not a classname of a weapon)\n",ent->message);
 		return;
 	}
-	ent->item->pickup_name = ent->message;
+
 	ent->classname = "trigger_finish";
 	ent->movetype = MOVETYPE_NONE;
 	ent->svflags |= SVF_NOCLIENT;
