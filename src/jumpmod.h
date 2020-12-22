@@ -217,7 +217,7 @@ void		Save_Recording(edict_t *ent, int uid);//,int uid_1st);
 
 void		Stop_Recording(edict_t *ent);
 void		Start_Recording(edict_t *ent);
-void		apply_time(edict_t *other, edict_t *ent);
+void		apply_time(edict_t *other);
 void		Replay_Recording(edict_t *ent);
 void		Cmd_Replay(edict_t *ent);
 void		Load_Recording(void);
@@ -588,6 +588,7 @@ void		Cmd_1st(edict_t *ent);
 void Cmd_Stats(edict_t *ent);
 extern qboolean removed_map;
 
+qboolean jumpmod_ontouchend(edict_t *player, edict_t *ent);
 void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float volume, int attenuation);
 void jumpmod_pos_sound(vec3_t pos, edict_t *ent, int sound, int channel, float volume, int attenuation);
 void hud_footer(edict_t *ent);

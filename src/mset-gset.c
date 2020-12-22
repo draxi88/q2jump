@@ -225,6 +225,13 @@ zbotcmd_t zbotCommands[] =
 	  &mset_vars->quad_damage,
 	},
 	{
+	  0,1,0,
+	  "railgun",
+	  CMDWHERE_CFGFILE | CMD_MSET,
+	  CMDTYPE_NUMBER,
+	  &mset_vars->railgun,
+	},
+	{
 	  -100,100,100,
 	  "regen",
 	  CMDWHERE_CFGFILE | CMD_MSET,

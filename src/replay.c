@@ -337,6 +337,10 @@ void Replay_Recording(edict_t *ent)
 			ent->client->ps.pmove.pm_type = PM_FREEZE;
 			ent->viewheight = 0;
 			ent->client->ps.pmove.pm_flags |= PMF_NO_PREDICTION;
+			// trigger_push or anything that potentially modifies player's velocity
+			// will screw up the view on the client.
+			VectorClear(ent->velocity);
+			VectorClear(ent->client->oldvelocity);
 
 			//need to get fraction and whole value of replay_frame
 

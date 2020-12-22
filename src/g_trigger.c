@@ -140,17 +140,27 @@ void Touch_Multi (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 }
 
 /*QUAKED trigger_multiple (.5 .5 .5) ? MONSTER NOT_PLAYER TRIGGERED
-Variable sized repeatable trigger.  Must be targeted at one or more entities.
-If "delay" is set, the trigger waits some time after activating before firing.
-"wait" : Seconds between triggerings. (.2 default)
-sounds
-1)	secret
-2)	beep beep
-3)	large switch
-4)
-set "message" to text string
-if 'count' is set to 1-9, the trigger will fire once per level, for each player
-each count value is a separate trigger, so you can have 9 of these in a map
+
+spawnflags(Flags) =
+[
+	1 : "Monster" : 0
+	2 : "Not Player" : 0
+	4 : "Enabled on load" : 0
+]
+wait(integer) : "Seconds between triggers" : 0.2
+
+sound(choices) : "Sound the trigger playus" =
+[
+	1 : "misc/secret.wav"
+	2 : "misc/talk.wav"
+	3 : "misc/trigger1.wav"
+]
+
+count(integer) : "Count 1-10 for welcome triggers. These welcome players to the map a single time. Count 11-20 for announcement triggers. These announce the first person to reach a specific point on a map while on team hard. Mset `announcements` must be set to 1. Set the `message` field to the name of the location."
+
+message(string) : "The message the plays. If using this as an announcement, the message value is the location name."
+
+delay(integer) : "Time after activating to fire"
 */
 void trigger_enable (edict_t *self, edict_t *other, edict_t *activator)
 {
@@ -225,7 +235,7 @@ void slower_touch(edict_t* self, edict_t* other, cplane_t* plane, csurface_t* su
 	}
 }
 
-// min wait is 0.5 seconds, set a wait if you want more
+// min wait is 0.2 seconds, set a wait if you want more
 void SP_trigger_slower(edict_t* self) {
 
 	if (self->wait < .2) {
@@ -287,42 +297,6 @@ void lapcounter_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		}
 		return;
 	}
-
-	/*
-	// setting up the internal one-way-wall checking and laptime
-	vec3_t   vel;
-	float	 dot;
-	vec3_t	 forward;
-
-	
-	// normalize vector, get angle of the wall, get dot product
-	vectorcopy(other->velocity, vel);
-	vectornormalize(vel);
-	anglevectors(self->s.angles, forward, null, null);
-	dot = dotproduct(vel, forward); 
-
-	// check for speed setting, kill velocity if they don't meet it
-	if (self->speed) { // without this the error msg sometimes leaks through
-		if (other->client->resp.cur_speed <= self->speed) {
-			VectorCopy(other->s.old_origin, other->s.origin);
-			VectorClear(other->velocity);
-			if (trigger_timer(self->wait)) {
-				gi.cprintf(other, PRINT_HIGH, "You need %.0f speed to pass the wall.\n", self->speed);
-			}
-			return;
-		}
-	}
-
-	// check if the player enters at the right angle
-	if (dot <= 0) {
-		VectorCopy(other->s.old_origin, other->s.origin);
-		VectorClear(other->velocity);
-		if (trigger_timer(self->wait)) {
-			gi.cprintf(other, PRINT_HIGH, "You are going the wrong way.\n");
-		}
-		return;
-	}
-	*/
 
 	// they don't have enough lap checkpoints, tell them how many they missed
 	if (other->client->pers.lap_cps < self->count) {
@@ -476,7 +450,6 @@ void quad_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	}
 
 	other->client->pers.has_quad = true;
-	// add
 }
 
 void SP_trigger_quad(edict_t *self) {
@@ -1017,34 +990,65 @@ void SP_trigger_monsterjump (edict_t *self)
 	self->movedir[2] = st.height;
 }
 
-// Trigger that works with Pickup_Weapon.
-// Used as a finish (railgun by default)
+/*
+==============================================================================
+
+trigger_finish
+
+==============================================================================
+*/
+// Trigger that finishes a players run.
+// Gives a railgun.
 // Add a <message> value with a classname of a weapon in the editor to change it to some other weapon.
 // Then it can be used to give players a weapon, like rocket launcher or bfg or whatever.
 // e.g. "message = weapon_rocketlauncher"
 // options: weapon_railgun, weapon_rocketlauncher, weapon_grenadelauncher, weapon_bfg
+
+qboolean trigger_finish_giveweapon(edict_t *self, edict_t *player)
+{
+	const char* item_name = "weapon_railgun";
+
+	if (self->message && self->message[0] != NULL) {
+		item_name = self->message;
+	}
+
+
+	gitem_t *item = FindItemByClassname(item_name);
+
+	if (item && (item->flags & IT_WEAPON) && item->use) {
+		player->client->pers.inventory[ITEM_INDEX(item)]++;
+		
+		player->client->newweapon = item;
+		ChangeWeapon(player);
+
+		return true;
+	}
+
+	return false;
+}
+
+void trigger_finish_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	if (!other->client)
+		return;
+
+	if (jumpmod_ontouchend(other, self)) {
+		// Finished and now give weapon.
+		trigger_finish_giveweapon(self, other);
+	}
+}
+
 void SP_trigger_finish(edict_t *ent)
 {
-	gitem_t *wep;
-	
-	//if no message, set it to act like a railgun.
-	if (!ent->message) {
-		wep = FindItemByClassname("weapon_railgun");
+	// Check optional custom weapon to give to player.
+	if (ent->message && ent->message[0] != NULL) {
+		gitem_t *item = FindItemByClassname(ent->message);
+
+		if (!item || !(item->flags & IT_WEAPON) || !item->use) {
+			gi.dprintf("trigger_finish with unsupported <message> value. (%s is not a classname of a weapon)\n", ent->message);
+		}
 	}
 
-	//check for stupid mappers:
-	else if (strstr(ent->message, "weapon_") == 0 || !(wep = FindItemByClassname(ent->message))) {
-		gi.dprintf("trigger_finish with unsupported <message> value. (%s is not a classname of a weapon)\n",ent->message);
-		return;
-	}
-
-	ent->classname = "trigger_finish";
-	ent->movetype = MOVETYPE_NONE;
-	ent->svflags |= SVF_NOCLIENT;
-	ent->solid = SOLID_TRIGGER;
-	ent->item = wep;
-	//ent->item->pickup_name = wep->pickup_name;
-	ent->touch = Pickup_Weapon;
-	gi.setmodel(ent, ent->model);
-	gi.linkentity(ent);
+	InitTrigger(ent);
+	ent->touch = trigger_finish_touch;
 }

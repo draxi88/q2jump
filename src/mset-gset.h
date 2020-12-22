@@ -71,6 +71,7 @@ typedef struct
 	int hyperblaster;
 	int lap_total;
 	int quad_damage;
+	int railgun;
 	int regen;
 	int rocket;
 	int rocketjump_fix;
