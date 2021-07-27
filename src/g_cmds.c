@@ -1597,8 +1597,6 @@ void ClientCommand (edict_t *ent)
 		Showtimes_on_off(ent);
 	else if (Q_stricmp (cmd, "mute_cprep") == 0)
 		mute_cprep_on_off(ent);
-	else if (Q_stricmp (cmd, "ezmsg") == 0)
-		Ezmsg_on_off(ent);
 	else if (Q_stricmp (cmd, "remban") == 0)
 		RemBan(ent);
 	else if (Q_stricmp (cmd, "banflags") == 0)

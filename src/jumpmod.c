@@ -38,7 +38,6 @@ static char *help_main[] = {
 	"cpsound - turn on or off checkpoint sounds\n",
 	"showtimes - turn on or off displaying all times\n",
 	"mute_cprep - turn on or off displaying replays cp-time\n",
-	"ezmode - turn on or off dsiplaying recall count in ezmode\n",
 	"store - place a marker that stores your location\n",
 	"recall / kill - return to your store location\n",
 	"reset - removes your store location\n",
@@ -1811,8 +1810,12 @@ void hook_fire (edict_t *ent) {
 	if (ent->client->hook_state)
 		return;
 
-	// do the hook shit
+	// use hook if team easy, or dev gset for mapping
 	if (ent->client->resp.ctf_team == CTF_TEAM1 || gset_vars->dev) {
+
+		if (gset_vars->dev && ent->client->resp.ctf_team == CTF_TEAM2)
+			gi.cprintf(ent, PRINT_HIGH, "Dev: Hook\n");
+
 		ent->client->hook_state = HOOK_OUT;
 
 		AngleVectors(ent->client->v_angle, forward, right, NULL);
@@ -2617,8 +2620,8 @@ qboolean Store_Recall(edict_t *ent, int store_index)
 	if (!client->resp.can_store)
 		return false;
 
-	// Must be on team easy unless ezmode is on.
-	if (mset_vars->ezmode != 1 && ent->client->resp.ctf_team != CTF_TEAM1)
+	// Must be on team easy
+	if (ent->client->resp.ctf_team != CTF_TEAM1)
 		return false;
 
 	ClearPersistants(&client->pers);
@@ -2676,20 +2679,13 @@ qboolean Store_Recall(edict_t *ent, int store_index)
 	
 	
 	hud_footer(ent);
-
-	if ( ent->client->resp.ctf_team==CTF_TEAM2 || mset_vars->ezmode == 1) { // if hard and ezmode give a readout
-		if (ent->client->resp.ezmsg)
-			gi.cprintf(ent, PRINT_HIGH, "You have recalled %i time(s).\n", ent->client->pers.total_recall);
-	}
-
 	return true;
 }
 
 void Cmd_Recall(edict_t *ent)
 {
-	// Can't store or not on recallable team.
-	// Just kill.
-	if (!ent->client->resp.can_store || (ent->client->resp.ctf_team != CTF_TEAM1 && mset_vars->ezmode != 1)) {
+	// Can't store, not on recallable team, just kill.
+	if (!ent->client->resp.can_store || ent->client->resp.ctf_team != CTF_TEAM1) {
 		Cmd_Kill_f(ent);
 		return;
 	}
@@ -2717,6 +2713,9 @@ void Cmd_Recall(edict_t *ent)
 			return;
 		}
 	}
+
+	if (gset_vars->dev && ent->client->resp.ctf_team == CTF_TEAM2)
+		gi.cprintf(ent, PRINT_HIGH, "Dev: Recalling to store %i\n", store_index);
 
 	Store_Recall(ent, store_index);
 }
@@ -3943,12 +3942,6 @@ ent->client->resp.replay_speed = REPLAY_SPEED_ONE;
 
 	KillMyRox(ent);
 
-	if (mset_vars->ezmode == 1) { // force a store, so they cant cheat
-        M_droptofloor(ent);
-        Cmd_Store_f(ent);
-		ent->client->pers.total_recall = 0; // reset recall count
-	}
-
 //	gi.bprintf(PRINT_HIGH,"Kill_hard\n");
 
 }
@@ -4258,13 +4251,7 @@ void Notify_Of_Team_Commands(edict_t *ent)
 		}
 	}
 	else if (ent->client->resp.ctf_team==CTF_TEAM2) {
-		if (mset_vars->ezmode == 1) { // force a store, so they cant cheat
-			M_droptofloor(ent);
-			Cmd_Store_f(ent);
-			ent->client->pers.total_recall = 0; // reset recall count
-			gi.cprintf(ent,PRINT_HIGH,"Ez Mode: Hard mode... with teles.\n");
-		} else
-			gi.cprintf(ent,PRINT_HIGH,"Team Hard: Grab the rail and set a time!\n");
+		gi.cprintf(ent,PRINT_HIGH,"Team Hard: Grab the rail and set a time!\n");
 	}
 }
 
@@ -8564,15 +8551,6 @@ void Showtimes_on_off(edict_t *ent)
 	ent->client->resp.showtimes = !ent->client->resp.showtimes;
 	Com_sprintf(s, sizeof(s), "Showing all times is now %s", (ent->client->resp.showtimes ? "on." : "off."));
 	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(s));
-}
-
-// toggle for a message to display number of recalls during an ezmode run
-void Ezmsg_on_off(edict_t *ent)
-{
-	char s[255];
-	ent->client->resp.ezmsg = !ent->client->resp.ezmsg;
-	Com_sprintf(s,sizeof(s),"Showing recall count is now %s",(ent->client->resp.ezmsg ? "on." : "off."));
-	gi.cprintf(ent,PRINT_HIGH,"%s\n",HighAscii(s));
 }
 
 

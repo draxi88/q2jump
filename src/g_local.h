@@ -1014,7 +1014,6 @@ typedef struct
 	qboolean	mute_cps;
     qboolean    showtimes;
 	qboolean	mute_cprep;
-	qboolean	ezmsg;
 	int			cur_jumper;
 	qboolean	going_up;
 	qboolean	going_forward;

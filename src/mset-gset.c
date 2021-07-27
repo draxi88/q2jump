@@ -85,13 +85,6 @@ zbotcmd_t zbotCommands[] =
 	  &mset_vars->edited_by,
 	},
 	{
-	  0,1,0,
-	  "ezmode",
-	  CMDWHERE_CFGFILE | CMD_MSET,
-	  CMDTYPE_NUMBER,
-	  &mset_vars->ezmode,
-	},
-	{
 	  0,1,1,
 	  "falldamage",
 	  CMDWHERE_CFGFILE | CMD_MSET,
@@ -432,13 +425,6 @@ zbotcmd_t zbotCommands[] =
 	  CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
 	  CMDTYPE_STRING,
 	  &gset_vars->mset->edited_by,
-	},
-	{
-	  0,1,0,
-	  "gezmode",
-	  CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
-	  CMDTYPE_NUMBER,
-	  &gset_vars->mset->ezmode,
 	},
 	{
 	  0,1,1,
@@ -1855,7 +1841,6 @@ void SetDefaultValues(void)
 	gset_vars->dev = 0;
 	gset_vars->mset->droptofloor = 1;
 	strcpy(gset_vars->mset->edited_by, "NA");
-	gset_vars->mset->ezmode = 0;
 	gset_vars->mset->falldamage = 1;
 	gset_vars->mset->fast_firing = 0;
 	gset_vars->mset->fastdoors = 0;
