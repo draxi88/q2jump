@@ -2749,7 +2749,7 @@ void List_Admin_Commands(edict_t *ent)
 		if (i == aset_vars->ADMIN_ADDTIME_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"addtime ");
 		if (i == aset_vars->ADMIN_ADDENT_LEVEL)
-			gi.cprintf(ent,PRINT_HIGH,"addent rement moveent alignent shiftent listents addbox movebox skinbox lock");
+			gi.cprintf(ent,PRINT_HIGH,"addent rement moveent alignent shiftent listents addbox movebox skinbox lock ");
 		if (i == aset_vars->ADMIN_MSET_LEVEL)
 			gi.cprintf(ent,PRINT_HIGH,"mset ");
 		if (i == aset_vars->ADMIN_GSET_LEVEL)
