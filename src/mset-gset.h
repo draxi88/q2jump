@@ -51,7 +51,6 @@ typedef struct
 	int damage;
 	int droptofloor;
 	char edited_by[256];
-	int ezmode;
 	int falldamage;
 	int fast_firing;
 	int fastdoors;
@@ -107,6 +106,7 @@ typedef struct
 	int transparent;
 	int walkthru;
 	int debug;
+	int dev;
 	char model_store[256];
 	char numberone_wav[256];
 	int	overtimerandom;
