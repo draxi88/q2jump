@@ -2631,12 +2631,9 @@ qboolean Store_Recall(edict_t *ent, int store_index)
 	if (ent->deadflag)
 		respawn(ent);
 
-
 	client->resp.item_timer = client->resp.store[0].stored_item_timer;	
 	client->resp.finished = client->resp.store[0].stored_finished;
 	client->resp.recalls--;
-	client->pers.total_recall++;
-
 	
 	VectorCopy(store->store_pos,spawn_origin);
 	VectorCopy(store->store_angles,spawn_angles);
@@ -2682,10 +2679,16 @@ qboolean Store_Recall(edict_t *ent, int store_index)
 	return true;
 }
 
-void Cmd_Recall(edict_t *ent)
-{
-	// Can't store, not on recallable team, just kill.
-	if (!ent->client->resp.can_store || ent->client->resp.ctf_team != CTF_TEAM1) {
+void Cmd_Recall(edict_t *ent) {
+
+	// check if they can store
+	if (!ent->client->resp.can_store) {
+		Cmd_Kill_f(ent);
+		return;
+	}
+
+	// check for team easy
+	if (ent->client->resp.ctf_team != CTF_TEAM1) {
 		Cmd_Kill_f(ent);
 		return;
 	}
@@ -2713,9 +2716,6 @@ void Cmd_Recall(edict_t *ent)
 			return;
 		}
 	}
-
-	if (gset_vars->dev && ent->client->resp.ctf_team == CTF_TEAM2)
-		gi.cprintf(ent, PRINT_HIGH, "Dev: Recalling to store %i\n", store_index);
 
 	Store_Recall(ent, store_index);
 }

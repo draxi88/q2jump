@@ -911,9 +911,6 @@ typedef struct
 	// quad pickup
 	qboolean	has_quad;
 
-	// recall counter
-	int			total_recall;
-
 	// lapcounter things
 	int			lapcount;
 	float		laptime;
