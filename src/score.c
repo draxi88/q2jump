@@ -68,11 +68,14 @@ qboolean maplist_log(edict_t *ent, int uid, float time, char *date)
 		
 
 		//setting a first
+		char txt[255];
 		if (time < maplist.times[level.mapnum][0].time) {
 			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
-			gi.bprintf(PRINT_CHAT, "%1.3f ", time - oldtime);
+			Com_sprintf(txt, sizeof(txt), "%1.3f ", time - oldtime);
+			gi.cprintf(ent, PRINT_HIGH, "%s", HighAscii(txt));
 			gi.bprintf(PRINT_HIGH, "| 1st ");
-			gi.bprintf(PRINT_CHAT, "%1.3f", time - maplist.times[level.mapnum][0].time);
+			Com_sprintf(txt, sizeof(txt), "%1.3f", time - maplist.times[level.mapnum][0].time);
+			gi.cprintf(ent, PRINT_HIGH, "%s", HighAscii(txt));
 			if (ent->client->pers.cp_split > 0)
 				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
 			gi.bprintf(PRINT_HIGH, ")\n");
@@ -82,7 +85,8 @@ qboolean maplist_log(edict_t *ent, int uid, float time, char *date)
 		// beat pb, show to server
 		if (time < oldtime) {
 			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
-			gi.bprintf(PRINT_CHAT, "%1.3f ", time - oldtime);
+			Com_sprintf(txt, sizeof(txt), "%1.3f ", time - oldtime);
+			gi.cprintf(ent, PRINT_HIGH, "%s", HighAscii(txt));
 			gi.bprintf(PRINT_HIGH, "| 1st +%1.3f", time - maplist.times[level.mapnum][0].time);
 			if (ent->client->pers.cp_split > 0)
 				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
@@ -148,9 +152,11 @@ qboolean maplist_log(edict_t *ent, int uid, float time, char *date)
 					}
 
 					// 1st comp AND 1st place
+					char txt[255];
 					if (time < maplist.times[level.mapnum][0].time) {
 						gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (1st ", ent->client->pers.netname, time);
-						gi.bprintf(PRINT_CHAT, "%1.3f ", time - maplist.times[level.mapnum][0].time);
+						Com_sprintf(txt, sizeof(txt), "%1.3f ", time - maplist.times[level.mapnum][0].time);
+						gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(txt));
 						gi.bprintf(PRINT_HIGH, "| ");
 						if (ent->client->pers.cp_split > 0)
 							gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);

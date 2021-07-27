@@ -1122,14 +1122,18 @@ all further velocity storing unless turned on again. Recall 1, 2 and 3 are suppo
 Vectors and toggle state are stored in ent->client->pers
 ==================
 */
-void Velocity_store_toggle(edict_t *ent) {
+void Velocity_store_toggle(edict_t* ent) {
 
 	//toggle velocity storing
 	ent->client->pers.store_velocity = !ent->client->pers.store_velocity;
 
 	//let the player know the state of velocity storing
-	gi.cprintf(ent, PRINT_CHAT, "Velocity storing is %s\n", (ent->client->pers.store_velocity ? "ON." : "OFF."));
+	char txt[255];
+	Com_sprintf(txt, sizeof(txt), "Velocity storing is %s\n", (ent->client->pers.store_velocity ? "ON." : "OFF."));
+	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(txt));
 }
+
+
 
 void Infinite_Loop ()
 {

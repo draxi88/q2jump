@@ -2632,15 +2632,8 @@ qboolean Store_Recall(edict_t *ent, int store_index)
 	if (ent->deadflag)
 		respawn(ent);
 
-<<<<<<< HEAD
-
 	client->resp.item_timer = store->stored_item_timer; // Copy run time
 	client->resp.finished = store->stored_finished; // Did we finish?
-
-=======
-	client->resp.item_timer = client->resp.store[0].stored_item_timer;	
-	client->resp.finished = client->resp.store[0].stored_finished;
->>>>>>> feature/dev_gset
 	client->resp.recalls--;
 	
 	VectorCopy(store->store_pos,spawn_origin);
@@ -6097,7 +6090,9 @@ void showfps(edict_t *ent)
 	edict_t	*e2;
 	float fps;
 	int j;
-	gi.cprintf(ent,PRINT_CHAT,"            cl_maxfps actual\n");
+	char txt[255];
+	Com_sprintf(txt, sizeof(txt), "            cl_maxfps actual\n");
+	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(txt));
 	for (i = 1; i <= maxclients->value; i++) 
 	{
 		e2 = g_edicts + i;
@@ -7071,8 +7066,10 @@ void Cmd_Race (edict_t *ent)
 	{
 		if (!strcmp(gi.argv(1),"now"))
 			race_this = MAX_HIGHSCORES;
-		else if (!strcmp(gi.argv(1),"off")) { // turn racing off
-			gi.cprintf(ent,PRINT_CHAT,"No longer racing.\n");
+		else if (!strcmp(gi.argv(1), "off")) { // turn racing off
+			char txt[255];
+			Com_sprintf(txt, sizeof(txt), "No longer racing.\n");
+			gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(txt));
 			ent->client->resp.rep_racing = false;
 			hud_footer(ent);
 			return;
@@ -7105,8 +7102,10 @@ void Cmd_Race (edict_t *ent)
 
 	if (!level_items.recorded_time_frames[race_this]) {
 		ent->client->resp.rep_racing = false;
-		gi.cprintf(ent,PRINT_HIGH,"There is no demo to race. Choose one from below:");
-		gi.cprintf(ent,PRINT_CHAT,"\nNo. Player             Time\n");
+		gi.cprintf(ent,PRINT_HIGH,"There is no demo to race. Choose one from below:\n");
+		char txt[255];
+		Com_sprintf(txt, sizeof(txt), "\nNo. Player             Time\n");
+		gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(txt));
 		for (i=0;i<MAX_HIGHSCORES;i++) {
 			if (level_items.recorded_time_frames[i])
 				gi.cprintf(ent,PRINT_HIGH,"%2d. %-16s %8.3f\n",i+1,maplist.users[maplist.times[level.mapnum][i].uid].name,maplist.times[level.mapnum][i].time);
@@ -7118,14 +7117,18 @@ void Cmd_Race (edict_t *ent)
 	ent->client->resp.rep_racing = true;
 	ent->client->resp.rep_race_number = race_this;
 	hud_footer(ent);
+
+	char txt[255];
 	if (race_this==MAX_HIGHSCORES) // replay now, from above
-		gi.cprintf(ent,PRINT_CHAT,"Now racing replay 1: %s\n", maplist.users[maplist.times[level.mapnum][0].uid].name);
+		Com_sprintf(txt, sizeof(txt), "Now racing replay 1: %s\n", maplist.users[maplist.times[level.mapnum][0].uid].name);
 	else
-		gi.cprintf(ent,PRINT_CHAT,"Now racing replay %d: %s\n", (int)(race_this+1), maplist.users[maplist.times[level.mapnum][race_this].uid].name);
+		Com_sprintf(txt, sizeof(txt), "Now racing replay %d: %s\n", (int)(race_this+1), maplist.users[maplist.times[level.mapnum][race_this].uid].name);
 
 	// player gave no further arguments, tell them what they could do next time
 	if (gi.argc() == 1)
-		gi.cprintf(ent,PRINT_HIGH,"Other options: race delay <num>, race off, race now, race <demonumber>\n");
+		Com_sprintf(txt, sizeof(txt), "Other options: race delay <num>, race off, race now, race <demonumber>\n");
+
+
 
 #endif
 }
