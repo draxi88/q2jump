@@ -7664,7 +7664,7 @@ void ToggleHud(edict_t *ent)
 	for (i=0;i<strlen(this_map);i++)
 		this_map[i] |= 128;
 
-	Com_sprintf(s, sizeof(s), "Hud is now %s", (showhud ? "on." : "off."));
+	Com_sprintf(s, sizeof(s), "Hud is now %s", (showhud ? "off." : "on."));
 	gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(s));
 
 	showhud = !showhud;
