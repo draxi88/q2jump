@@ -2530,11 +2530,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	ent->light_level = ucmd->lightlevel;
 
 	// fire weapon from final position if needed
-	if ((client->latched_buttons & BUTTON_ATTACK)
-//ZOID
-		&& (ent->client->resp.ctf_team>=CTF_TEAM1)
-//ZOID
-		)
+	if ((client->latched_buttons & BUTTON_ATTACK))
 	{
 		if (!client->weapon_thunk)
 		{
@@ -2621,11 +2617,7 @@ void ClientBeginServerFrame (edict_t *ent)
 
 	client = ent->client;
 	// run weapon animations if it hasn't been done by a ucmd_t
-	if (!client->weapon_thunk
-//ZOID
-		&& ent->movetype != MOVETYPE_NOCLIP
-//ZOID
-		)
+	if (!client->weapon_thunk)
 		Think_Weapon (ent);
 	else
 		client->weapon_thunk = false;
