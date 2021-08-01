@@ -503,7 +503,8 @@ static void Weapon_Generic2 (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FI
 
 	if (ent->client->weaponstate == WEAPON_READY || (mset_vars->fast_firing == 1 && Q_stricmp(ent->client->pers.weapon->pickup_name, "Rocket Launcher") == 0))
 	{
-		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
+		// JUMP: Disallow firing while noclipping.
+		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) && ent->movetype != MOVETYPE_NOCLIP)
 		{
 			ent->client->latched_buttons &= ~BUTTON_ATTACK;
 			if ((!ent->client->ammo_index) || 
@@ -692,7 +693,8 @@ void Weapon_Grenade (edict_t *ent)
 
 	if (ent->client->weaponstate == WEAPON_READY)
 	{
-		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
+		// JUMP: Disallow firing while noclipping.
+		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) && ent->movetype != MOVETYPE_NOCLIP)
 		{
 			ent->client->latched_buttons &= ~BUTTON_ATTACK;
 			if (ent->client->pers.inventory[ent->client->ammo_index])
@@ -977,7 +979,8 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 
 	ent->client->weapon_sound = gi.soundindex("weapons/hyprbl1a.wav");
 
-	if (!(ent->client->buttons & BUTTON_ATTACK))
+	// JUMP: Stop shooting while noclipping.
+	if (!(ent->client->buttons & BUTTON_ATTACK) || ent->movetype == MOVETYPE_NOCLIP)
 	{
 		ent->client->ps.gunframe++;
 	}
@@ -1064,7 +1067,8 @@ void Machinegun_Fire (edict_t *ent)
 	int			kick = 2;
 	vec3_t		offset;
 
-	if (!(ent->client->buttons & BUTTON_ATTACK))
+	// JUMP: Stop shooting while noclipping.
+	if (!(ent->client->buttons & BUTTON_ATTACK) || ent->movetype == MOVETYPE_NOCLIP)
 	{
 		ent->client->machinegun_shots = 0;
 		ent->client->ps.gunframe++;
@@ -1168,7 +1172,8 @@ void Chaingun_Fire (edict_t *ent)
 	if (ent->client->ps.gunframe == 5)
 		gi.sound(ent, CHAN_AUTO, gi.soundindex("weapons/chngnu1a.wav"), 1, ATTN_IDLE, 0);
 
-	if ((ent->client->ps.gunframe == 14) && !(ent->client->buttons & BUTTON_ATTACK))
+	// JUMP: Stop shooting while noclipping.
+	if (((ent->client->ps.gunframe == 14) && !(ent->client->buttons & BUTTON_ATTACK)) || ent->movetype == MOVETYPE_NOCLIP)
 	{
 		ent->client->ps.gunframe = 32;
 		ent->client->weapon_sound = 0;
