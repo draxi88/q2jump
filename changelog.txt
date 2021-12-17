@@ -1,9 +1,73 @@
 #####v1.35ger#####
-
+-cpbox
+	-added the ability to take away a specific checkpoint
+		-use spawnflag 1
+		-it will take away the checkpoint with the given 'count'
+	-added target options
+		-nodisplay - won't display checkpoint when picking it up
+		-nosound - will show the string in console, but won't play a sound
+-cpbrush
+	-added ability for a cpbrush to only work with a specific cpbox
+	-use spawnflag 2
+	-cpbrush will only activate/deactivate if a cpbox with the same count as the cpbrush is picked up
+-store/recall changes
+	-weapons/inventory now store/recall
+	-fixed an issue with first recall giving the wrong time
+-idle logic rewrite
+	-auto idle from being afk now carries over into new maps
+-announcement triggers
+	-only fires once per map, by the first person to hit it
+	-use a trigger_multiple with counts 11-20 to use them
+	-set a 'message' for the location name to announce, [name] reached [location] first. Congrats!
+	-can only be triggered on team hard
+-added mset 'hyperblaster'
+	-enables hyperblaster
+	-check out cpbox's 'health' field 
+	-can be used in worldspawn
+-added mset 'railgun'
+	-enables railgun
+	-check out cpbox's 'health' field
+	-can be used in worldspawn
+-added trigger_slower
+    -slows a player down, useful for creating choke points
+    -'speed' max speed a player can go in the area
+    -'wait' time between triggers, default is 0.2
+-added mset weapon_respawn_time
+    -can change the time weapons take to respawn, useful for people on a local server, default is 0 seconds
+	-can set this in worldspawn
+-grenade changes
+	-remove random damage values from grenades
+	-all grenades should hit players the same now
+-noclip changes
+	-can no longer fire weapons while noclipping
+	-this prevents a few bugs and animation problems
+-fog msets
+	-added mset fog (fog_r, fog_g, fog_b, fog_a, fog_density, fog_start, fog end)
+	-connects to a client with CS_FOG
+-increased max_maps to 3584
+-removed ezmode
+-fixes
+	-cp_clear should update hud correctly
+	-fixed discrepancy between playermaps and mapsdone/mapsleft
+	-fixed camera position being wrong in replays due to ents that modify player velocity
+	-minor fixes to playerstats
+	-fix for checkpoint hud while chasing players
+	-removed chat beep when: finishing runs, !fps, race, velstore
+	-fixed an admin login spacing issue
+	-fixed togglehud admin cmd to show the right state
+	-reduced memory usage for the server
+	-made cpwall/cpbrush a solidclass instead of a pointclass
+	-all weapons spawn with 1000 ammo, this mostly affects BFG
+	-replaced hard-coded with hex in some hud/menus
+	-hand grenades no longer stop weapons switches
+	-fixed some bugs with hook, made it no longer usable after finishing a map
+	-removed even more CTF code
+	-weapon sounds will now stop when using kill
+	-rewrote trigger_finish, pickup_weapon, and timer logic to be separate
 
 
 #####v1.34ger#####
--Reenabled strafehud, PRAISE THE TOUCAN
+-Reenabled strafehud
 -new ent, jump_cpbrush
 	-similar to a jump_cpwall, but this is a physical wall that can be assigned a textures
 	-count: how many checkpoints are needed to activate or deactivate the wall
