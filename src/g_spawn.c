@@ -1256,6 +1256,8 @@ void SP_worldspawn (edict_t *ent)
 	gi.modelindex ("models/objects/gibs/skull/tris.md2");
 	gi.modelindex ("models/objects/gibs/head2/tris.md2");
 
+	gi.modelindex ("models/jump/emptymodel/tris.md2"); //cpbrush hack..
+
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is doublebright.
 //
