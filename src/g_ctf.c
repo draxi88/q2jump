@@ -822,7 +822,7 @@ qboolean CTFPickup_Flag(edict_t *ent, edict_t *other)
 /*				gi.bprintf(PRINT_HIGH, "%s captured the %s flag in %1.1 seconds!\n",
 						other->client->pers.netname, CTFOtherTeamName(ctf_team),level.time-other->client->resp.ctf_flagsince);*/
 
-		apply_time(other,ent);
+		apply_time(other);
 
 				other->client->pers.inventory[ITEM_INDEX(enemy_flag_item)] = 0;
 

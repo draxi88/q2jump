@@ -261,7 +261,7 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 
 	
 	if (Q_stricmp(ent->item->pickup_name, "Jetpack") != 0)
-		apply_time(other,ent);
+		apply_time(other);
 
 	return true;
 }
@@ -1077,7 +1077,7 @@ qboolean Pickup_PowerArmor (edict_t *ent, edict_t *other)
 	}
 
 	//pooy
-	apply_time(other,ent);
+	apply_time(other);
 
 	return true;
 }
