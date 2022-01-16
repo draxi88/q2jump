@@ -12,7 +12,7 @@ void Stop_Recording(edict_t *ent)
 	client_record[index].allow_record = false;
 }
 
-void		Save_Recording(edict_t *ent, int uid)//,int uid_1st)
+void Save_Recording(edict_t *ent, int uid)//,int uid_1st)
 {
 	FILE	*f;
 	char	name[256];
@@ -163,7 +163,51 @@ void Cmd_Replay(edict_t *ent)
 			}
 			return;
 		}
-
+		else if (strcmp(temp, "global") == 0) {
+			strncpy(temp, gi.argv(2), sizeof(temp) - 1);
+			num = atoi(temp);
+			if (num < 1 || num>15)
+				num = 1;
+			if (num >= 1 && num <= 15)
+			{
+				num--;
+				//time set?
+				if (jsonmaptimes[num].name[0])
+				{
+					if (level_items.remote_recorded_time_uid[num] != jsonmaptimes[num].uid || strcmp(level_items.remote_recorded_time_mapname, level.mapname) != 0)
+						Load_Individual_Recording_Global(num);
+					if (level_items.remote_recorded_time_frames[num]) {
+						done_num = true;
+						ent->client->resp.replaying = num + 1 + 20;
+						ent->client->resp.replay_frame = 0;
+						gi.cprintf(ent, PRINT_HIGH, "Global Replay of %s who finished in %1.3f seconds.\n", jsonmaptimes[num].name, jsonmaptimes[num].time);
+					}
+					else {
+						gi.cprintf(ent, PRINT_HIGH, "No Global Demo exists for that position.\n");
+						return;
+					}
+				}
+				else {
+					gi.cprintf(ent, PRINT_HIGH, "No Global Demo exists for that position.\n");
+					return;
+				}
+			}
+			if (!done_num)
+			{
+				if (level_items.remote_recorded_time_frames[0])
+				{
+					ent->client->resp.replaying = 1 + 20;
+					ent->client->resp.replay_frame = 0;
+					gi.cprintf(ent, PRINT_HIGH, "Replaying %s who finished in %1.3f seconds.\n", jsonmaptimes[0].name, jsonmaptimes[0].time);
+					gi.cprintf(ent, PRINT_HIGH, "Hit forward and back keys to change demo speed, jump to toggle repeating.\n");
+					gi.cprintf(ent, PRINT_HIGH, "Type replay list to see all replays available.\n");
+				}
+				else {
+					gi.cprintf(ent, PRINT_HIGH, "No Global Demo available.\n");
+					return;
+				}
+			}
+		}
 		else
 		{
 			num = atoi(temp);
@@ -312,6 +356,38 @@ void Load_Individual_Recording(int num, int uid)
 
 }
 
+void Load_Individual_Recording_Global(int num)
+{
+	//load recording using level.mapname
+	FILE	*f;
+	char	name[256];
+	cvar_t	*tgame;
+	long lSize;
+
+	if (num < 0 || num >= MAX_HIGHSCORES)
+		return;
+	level_items.remote_recorded_time_frames[num] = 0;
+	level_items.remote_recorded_time_uid[num] = -1;
+	tgame = gi.cvar("game", "", 0);
+	sprintf(name, "%s/remotedemos/%i_%s_%d.dj3", tgame->string, jsonmaptimes[num].server, level.mapname, jsonmaptimes[num].uid);
+
+	f = fopen(name, "rb");
+	if (!f) {
+		return;
+	}
+	fseek(f, 0, SEEK_END);
+	lSize = ftell(f);
+	rewind(f);
+	level_items.remote_recorded_time_uid[num] = jsonmaptimes[num].uid;
+	fread(level_items.remote_recorded_time_data[num], 1, lSize, f);
+	//now put it in local data
+	level_items.remote_recorded_time_frames[num] = lSize / sizeof(record_data);
+	//gi.dprintf("num:%i -> lsize:%i -> frames:%i\n", num, lSize, level_items.remote_recorded_time_frames[num]);
+	strncpy(level_items.remote_recorded_time_mapname, level.mapname, MAX_MAPNAME_LEN);
+	fclose(f);
+}
+
+
 void Replay_Recording(edict_t *ent)
 {
 	int i;
@@ -329,10 +405,21 @@ void Replay_Recording(edict_t *ent)
 	vec3_t rep_speed1;
 	vec3_t rep_speed2;
 	int rep_speed;
+	record_data temp_replay_data[50000]; //MAX_RECORD_FRAMES didn't work..
+	int frames;
 
 	temp = ent->client->resp.replaying - 1;
+	if (temp >= 20) {
+		temp -= 20;
+		memcpy(&temp_replay_data, level_items.remote_recorded_time_data[temp], sizeof(temp_replay_data));
+		frames = level_items.remote_recorded_time_frames[temp];
+	}
+	else if (temp >= 0) {
+		memcpy(&temp_replay_data, level_items.recorded_time_data[temp], sizeof(record_data)*50000); //MAX_RECORD_FRAMES didn't work..
+		frames = level_items.recorded_time_frames[temp];
+	}
 	if (temp >= 0)
-		if (ent->client->resp.replay_frame < level_items.recorded_time_frames[temp])
+		if (ent->client->resp.replay_frame < frames)
 		{
 			ent->client->ps.pmove.pm_type = PM_FREEZE;
 			ent->viewheight = 0;
@@ -349,19 +436,19 @@ void Replay_Recording(edict_t *ent)
 			if (frame_fraction2)
 			{
 				//if we have a fraction, process new origin/angles
-				VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer].origin, prev_frame);
-				VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer].angle, prev_angle);
+				VectorCopy(temp_replay_data[(int)frame_integer].origin, prev_frame);
+				VectorCopy(temp_replay_data[(int)frame_integer].angle, prev_angle);
 				if (frame_integer > 0)
 				{
-					VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer + 1].origin, next_frame);
-					VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer + 1].angle, next_angle);
+					VectorCopy(temp_replay_data[(int)frame_integer + 1].origin, next_frame);
+					VectorCopy(temp_replay_data[(int)frame_integer + 1].angle, next_angle);
 				}
 				else
 				{
-					VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer - 1].origin, next_frame);
-					VectorCopy(level_items.recorded_time_data[temp][(int)frame_integer - 1].angle, next_angle);
+					VectorCopy(temp_replay_data[(int)frame_integer - 1].origin, next_frame);
+					VectorCopy(temp_replay_data[(int)frame_integer - 1].angle, next_angle);
 				}
-				ent->client->resp.replay_data = level_items.recorded_time_data[temp][(int)frame_integer].frame;
+				ent->client->resp.replay_data = temp_replay_data[(int)frame_integer].frame;
 
 				VectorSubtract(next_frame, prev_frame, diff_frame);
 				VectorSubtract(next_angle, prev_angle, diff_angle);
@@ -395,14 +482,14 @@ void Replay_Recording(edict_t *ent)
 					if (frame_fraction)
 						ent->client->resp.replay_frame = frame_integer;
 
-				ent->client->resp.replay_data = level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].frame;
+				ent->client->resp.replay_data = temp_replay_data[(int)ent->client->resp.replay_frame].frame;
 
-				VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].origin, ent->s.origin);
-				VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].angle, ent->client->v_angle);
-				VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].angle, ent->client->ps.viewangles);
+				VectorCopy(temp_replay_data[(int)ent->client->resp.replay_frame].origin, ent->s.origin);
+				VectorCopy(temp_replay_data[(int)ent->client->resp.replay_frame].angle, ent->client->v_angle);
+				VectorCopy(temp_replay_data[(int)ent->client->resp.replay_frame].angle, ent->client->ps.viewangles);
 
 				for (i = 0; i < 3; i++)
-					ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].angle[i] - ent->client->resp.cmd_angles[i]);
+					ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(temp_replay_data[(int)ent->client->resp.replay_frame].angle[i] - ent->client->resp.cmd_angles[i]);
 			}
 			if (ent->client->resp.replay_speed != REPLAY_SPEED_ZERO)
 				ent->client->resp.replay_frame += replay_speed_modifier[ent->client->resp.replay_speed];
@@ -410,7 +497,7 @@ void Replay_Recording(edict_t *ent)
 			{
 				if (ent->client->resp.rep_repeat)
 				{
-					ent->client->resp.replay_frame = level_items.recorded_time_frames[temp] - 1;
+					ent->client->resp.replay_frame = frames - 1;
 				}
 				else
 				{
@@ -420,9 +507,9 @@ void Replay_Recording(edict_t *ent)
 			}
 			//replay speedometer a la Killa
 			if (ent->client->resp.replaying) {
-				VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame - 10].origin, rep_speed1);
+				VectorCopy(temp_replay_data[(int)ent->client->resp.replay_frame - 10].origin, rep_speed1);
 				rep_speed1[2] = 0;
-				VectorCopy(level_items.recorded_time_data[temp][(int)ent->client->resp.replay_frame].origin, rep_speed2);
+				VectorCopy(temp_replay_data[(int)ent->client->resp.replay_frame].origin, rep_speed2);
 				rep_speed2[2] = 0;
 				VectorSubtract(rep_speed1, rep_speed2, rep_speed1);
 				rep_speed = (int)fabs(VectorLength(rep_speed1));

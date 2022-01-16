@@ -75,6 +75,12 @@
     <ClCompile Include="jetpack.c">
       <Filter>q2jump</Filter>
     </ClCompile>
+    <ClCompile Include="curl.c">
+      <Filter>q2jump</Filter>
+    </ClCompile>
+    <ClCompile Include="json.c">
+      <Filter>q2jump</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />

@@ -1264,9 +1264,13 @@ void ClientEndServerFrame (edict_t *ent)
 			{
 				DeathmatchScoreboardMessage (ent, ent->enemy);
 			}
+			else if (ent->client->showscores == 2)
+			{
+				BestTimesScoreboardMessage(ent, ent->enemy);
+			}
 			else
 			{
-				BestTimesScoreboardMessage (ent, ent->enemy);
+				GlobalTimesScoreboardMessage(ent, ent->enemy);
 			}
 		}
 		gi.unicast (ent, false);

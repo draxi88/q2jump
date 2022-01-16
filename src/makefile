@@ -3,7 +3,7 @@
 # Compiler flags
 CC = gcc
 CFLAGS = -Wall -fPIC -Dstricmp=strcasecmp
-LDFLAGS = -ldl -lm -shared
+LDFLAGS = -ldl -lm -shared -lcurl
 
 # Project files
 GAME_OBJS = \
@@ -13,7 +13,7 @@ GAME_OBJS = \
     p_hud.o p_menu.o p_trail.o p_view.o p_weapon.o q_shared.o jumpmod.o \
     zb_util.o m_insane.o m_infantry.o m_gunner.o m_flipper.o m_berserk.o \
     m_boss3.o m_mutant.o m_soldier.o g_wireplay.o mset-gset.o replay.o \
-	scoreboard.o score.o jetpack.o
+	scoreboard.o score.o jetpack.o json.o curl.o
 
 # Shared library name
 ARCH = $(shell uname -m | sed -e s/i.86/i386/ -e s/amd64/x86_64/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/ -e s/alpha/axp/)

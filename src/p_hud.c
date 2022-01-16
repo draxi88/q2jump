@@ -343,8 +343,11 @@ void DeathmatchScoreboard (edict_t *ent)
 //pooy
 void BestTimesScoreboard (edict_t *ent)
 {
-	BestTimesScoreboardMessage (ent, ent->enemy);
-	gi.unicast (ent, true);
+	if (ent->client->showscores == 2)
+		BestTimesScoreboardMessage(ent, ent->enemy);
+	else if (ent->client->showscores == 3)
+		GlobalTimesScoreboardMessage(ent);
+	gi.unicast(ent, true);
 }
 
 
@@ -391,14 +394,14 @@ void Cmd_Score2_f (edict_t *ent)
 	if (!deathmatch->value && !coop->value)
 		return;
 
-	if (ent->client->showscores>=2)
+	if (ent->client->showscores>=3)
 	{
 		ent->client->showscores = 0;
 		ent->client->update_chase = true;
 		return;
 	}
 
-	ent->client->showscores = 2;
+	ent->client->showscores += 1;
 
 	BestTimesScoreboard (ent);
 }

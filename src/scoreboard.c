@@ -398,3 +398,53 @@ void JumpModScoreboardMessage(edict_t *ent, edict_t *killer)
 	gi.WriteByte(svc_layout);
 	gi.WriteString(string);
 }
+
+
+void GlobalTimesScoreboardMessage(edict_t *ent) //MAX STRING SIZE = 1024
+{
+	char	string[1400];
+	int i;
+	int completions = 0;
+	int total_count = 0;
+	char colorstring[8];
+	char chr[2];
+	*string = 0;
+	chr[0] = 13;
+	chr[1] = 0;
+	//get total completions
+	completions = 0;
+
+	for (i = 0; i < MAX_USERS; i++)
+	{
+		if (!jsonmaptimes[i].comp)
+			continue;
+		total_count += jsonmaptimes[i].comp;
+		completions++;
+	}
+	//
+	sprintf(string + strlen(string), "xv 0 yv -18 string2 \"-------------- Global highscore --------------\"");
+	sprintf(string + strlen(string), "yv 0 string2 \"No  Player           Time     Date      Server\"");
+	for (i = 0; i < MAX_HIGHSCORES; i++)
+	{
+		if (strcmp(ent->client->pers.netname, jsonmaptimes[i].name) == 0)
+			strcpy(colorstring, "string2");
+		else
+			strcpy(colorstring, "string");
+		//015 sort floating point thing
+		if (jsonmaptimes[i].name[0])
+		{
+			sprintf(string + strlen(string), "yv %d %s \"%2d%s %-16s%8.3f  %s  %s\"", i * 10 + 16, colorstring, i + 1, (level_items.remote_recorded_time_frames[i] == 0 ? " " : chr), jsonmaptimes[i].name,
+				jsonmaptimes[i].time, jsonmaptimes[i].date, rp_url[jsonmaptimes[i].server].name);
+		}
+		else {
+			sprintf(string + strlen(string), "yv %d string \"%2d \" ", i * 10 + 16, i + 1);
+		}
+	}
+	//sprintf(string + strlen(string), "yv %d string \"%3d players completed map %d times\"", i * 10 + 24, completions, total_count);
+	gi.WriteByte(svc_layout);
+	gi.WriteString(string);
+	if (strcmp(ent->client->pers.netname, "debug") == 0)
+		gi.cprintf(ent, PRINT_HIGH, "strlen=%d\n", strlen(string));
+}
+
+

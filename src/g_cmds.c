@@ -1399,7 +1399,7 @@ void ClientCommand (edict_t *ent)
 	}
 	else if (Q_stricmp (cmd, "score") == 0)
 	{
-		if (ent->client->showscores==1)
+		if (ent->client->showscores>=1)
 		{
 			Cmd_Score2_f(ent);
 		} else {

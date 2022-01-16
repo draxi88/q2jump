@@ -2144,7 +2144,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		//stuffcmd(ent, "set cl_drawstrafehelper 0 u\n");
 	}
 
-
 	// Update frames without movement.
 	if (ucmd->buttons==0) {
 		ent->client->pers.frames_without_movement += ucmd->msec;
@@ -2579,29 +2578,35 @@ any other entities in the world.
 ==============
 */
 
-void Generate_Race_Data(int race_frame,int race_this)
+void Generate_Race_Data(int race_frame, int race_this)
 {
-								if (race_frame > 1)
-								{
-									gi.WriteByte (svc_temp_entity);
-									gi.WriteByte (TE_BFG_LASER);
-									gi.WritePosition (level_items.recorded_time_data[race_this][race_frame - 1].origin);
-									gi.WritePosition (level_items.recorded_time_data[race_this][race_frame].origin);
-								}
-								if (race_frame > 2)
-								{
-									gi.WriteByte (svc_temp_entity);
-									gi.WriteByte (TE_BFG_LASER);
-									gi.WritePosition (level_items.recorded_time_data[race_this][race_frame - 2].origin);
-									gi.WritePosition (level_items.recorded_time_data[race_this][race_frame - 1].origin);
-								}
-								if (race_frame > 3)
-								{
-									gi.WriteByte (svc_temp_entity);
-									gi.WriteByte (TE_BFG_LASER);
-									gi.WritePosition (level_items.recorded_time_data[race_this][race_frame - 3].origin);
-									gi.WritePosition (level_items.recorded_time_data[race_this][race_frame - 2].origin);
-								}
+	record_data *temp;
+	if (race_this >= 20)
+		temp = &level_items.remote_recorded_time_data[race_this - 20];
+	else
+		temp = &level_items.recorded_time_data[race_this];
+
+	if (race_frame > 1)
+	{
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_BFG_LASER);
+		gi.WritePosition(temp[race_frame - 1].origin);
+		gi.WritePosition(temp[race_frame].origin);
+	}
+	if (race_frame > 2)
+	{
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_BFG_LASER);
+		gi.WritePosition(temp[race_frame - 2].origin);
+		gi.WritePosition(temp[race_frame - 1].origin);
+	}
+	if (race_frame > 3)
+	{
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_BFG_LASER);
+		gi.WritePosition(temp[race_frame - 3].origin);
+		gi.WritePosition(temp[race_frame - 2].origin);
+	}
 }
 
 void ClientBeginServerFrame (edict_t *ent)

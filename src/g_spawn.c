@@ -894,8 +894,14 @@ debug_log(text);
 	Load_Recording();
 
 	SetSpinnyThing();
-	for (i=1;i<MAX_HIGHSCORES;i++)
-		Load_Individual_Recording(i,maplist.times[level.mapnum][i].uid);
+	json_loadMaptimes(level.mapname);
+	for (i = 1; i < MAX_HIGHSCORES; i++) {
+		Load_Individual_Recording(i, maplist.times[level.mapnum][i].uid);
+	}
+	for (i = 0; i < MAX_HIGHSCORES; i++) {
+		gi.dprintf("Load global replay %i\n", i + 1);
+		Load_Individual_Recording_Global(i);
+	}		
 
 	//backup to dj3 demo
 	if (level_items.recorded_time_frames[0] && maplist.times[level.mapnum][0].time>0)

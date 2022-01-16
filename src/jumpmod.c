@@ -7051,6 +7051,8 @@ void Cmd_Race (edict_t *ent)
 	float delay = 0;
 	int i;
     int race_this = 0;
+	qboolean global = false;
+
 #ifndef RACESPARK
 	gi.cprintf(ent,PRINT_HIGH,"Replay racing not available.\n");
 	return;
@@ -7090,6 +7092,11 @@ void Cmd_Race (edict_t *ent)
 				return;
 			}
 		}
+		else if (!strcmp(gi.argv(1), "global")) {
+			race_this = atoi(gi.argv(2));
+			race_this--;
+			global = true;
+		}
 		else {
 			race_this = atoi(gi.argv(1));
 			race_this--;
@@ -7100,18 +7107,34 @@ void Cmd_Race (edict_t *ent)
 	if (race_this<0 || race_this>MAX_HIGHSCORES)
 		race_this = 0;
 
-	if (!level_items.recorded_time_frames[race_this]) {
-		ent->client->resp.rep_racing = false;
-		gi.cprintf(ent,PRINT_HIGH,"There is no demo to race. Choose one from below:\n");
-		char txt[255];
-		Com_sprintf(txt, sizeof(txt), "\nNo. Player             Time\n");
-		gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(txt));
-		for (i=0;i<MAX_HIGHSCORES;i++) {
-			if (level_items.recorded_time_frames[i])
-				gi.cprintf(ent,PRINT_HIGH,"%2d. %-16s %8.3f\n",i+1,maplist.users[maplist.times[level.mapnum][i].uid].name,maplist.times[level.mapnum][i].time);
+	//check if replay exists
+	if (global) {
+		if (!level_items.remote_recorded_time_frames[race_this]) {
+			ent->client->resp.rep_racing = false;
+			gi.cprintf(ent, PRINT_HIGH, "There is no global demo to race. Choose one from below:");
+			gi.cprintf(ent, PRINT_CHAT, "\nNo. Player             Time\n");
+			for (i = 0; i < MAX_HIGHSCORES; i++) {
+				if (level_items.remote_recorded_time_frames[i])
+					gi.cprintf(ent, PRINT_HIGH, "%2d. %-16s %8.3f\n", i + 1, jsonmaptimes[i].name, jsonmaptimes[i].time);
+			}
+			return;
 		}
-		return;
 	}
+	else {
+		if (!level_items.recorded_time_frames[race_this]) {
+			ent->client->resp.rep_racing = false;
+			gi.cprintf(ent, PRINT_HIGH, "There is no demo to race. Choose one from below:\n");
+			char txt[255];
+			Com_sprintf(txt, sizeof(txt), "\nNo. Player             Time\n");
+			gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(txt));
+			for (i = 0; i < MAX_HIGHSCORES; i++) {
+				if (level_items.recorded_time_frames[i])
+					gi.cprintf(ent, PRINT_HIGH, "%2d. %-16s %8.3f\n", i + 1, maplist.users[maplist.times[level.mapnum][i].uid].name, maplist.times[level.mapnum][i].time);
+			}
+			return;
+		}
+	}
+	
 
 	// race number is usable
 	ent->client->resp.rep_racing = true;
@@ -7121,14 +7144,14 @@ void Cmd_Race (edict_t *ent)
 	char txt[255];
 	if (race_this==MAX_HIGHSCORES) // replay now, from above
 		Com_sprintf(txt, sizeof(txt), "Now racing replay 1: %s\n", maplist.users[maplist.times[level.mapnum][0].uid].name);
+	else if (global)
+		Com_sprintf(txt, sizeof(txt), "Now racing global replay %d: %s\n", (int)(race_this + 1), jsonmaptimes[race_this].name);
 	else
 		Com_sprintf(txt, sizeof(txt), "Now racing replay %d: %s\n", (int)(race_this+1), maplist.users[maplist.times[level.mapnum][race_this].uid].name);
 
 	// player gave no further arguments, tell them what they could do next time
 	if (gi.argc() == 1)
 		Com_sprintf(txt, sizeof(txt), "Other options: race delay <num>, race off, race now, race <demonumber>\n");
-
-
 
 #endif
 }
@@ -9190,7 +9213,12 @@ void hud_footer(edict_t *ent) {
 		if (Q_stricmp(race, "16") == 0) {
 			sprintf(race, "NOW");
 		}
-		sprintf(ent->client->resp.hud[strnr].string, "Replay: %s", HighAscii(race));
+		if (ent->client->resp.replaying >= 20) {
+			sprintf(race, "%d", ent->client->resp.replaying - 20);
+			sprintf(ent->client->resp.hud[strnr].string, "Global Replay: %s", HighAscii(race));
+		}
+		else 
+			sprintf(ent->client->resp.hud[strnr].string, "Replay: %s", HighAscii(race));
 		strnr++;
 	}
 	else if (ent->client->resp.rep_racing) {
@@ -9198,7 +9226,12 @@ void hud_footer(edict_t *ent) {
 		if (Q_stricmp(race, "16") == 0) {
 			sprintf(race, "NOW");
 		}
-		sprintf(ent->client->resp.hud[strnr].string, "  Race: %s", HighAscii(race));
+		if (ent->client->resp.rep_race_number >= 20) {
+			sprintf(race, "%d", ent->client->resp.rep_race_number - 19);
+			sprintf(ent->client->resp.hud[strnr].string, "Global Race: %s", HighAscii(race));
+		}
+		else
+			sprintf(ent->client->resp.hud[strnr].string, "  Race: %s", HighAscii(race));
 		strnr++;
 	}
 

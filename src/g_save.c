@@ -173,7 +173,9 @@ void InitGame (void)
 	
 	FS_CreatePath(va("%s/%s/",tgame->string,port->string));
 	FS_CreatePath(va("%s/jumpdemo/",tgame->string));
-	FS_CreatePath(va("%s/ent/",tgame->string));
+	FS_CreatePath(va("%s/ent/", tgame->string));
+	FS_CreatePath(va("%s/mapsent/", tgame->string));
+	FS_CreatePath(va("%s/remotedemos/", tgame->string));
 
 	open_debug_file();
 	sprintf(text,"\n==== InitGame ====");

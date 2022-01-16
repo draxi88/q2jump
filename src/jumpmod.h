@@ -115,6 +115,11 @@ typedef struct
 	int			recorded_time_frames[1+MAX_HIGHSCORES];
 	record_data recorded_time_data[1+MAX_HIGHSCORES][MAX_RECORD_FRAMES];
 
+	int			remote_recorded_time_uid[1 + MAX_HIGHSCORES];
+	int			remote_recorded_time_frames[MAX_HIGHSCORES];
+	record_data remote_recorded_time_data[MAX_HIGHSCORES][MAX_RECORD_FRAMES];
+	char		remote_recorded_time_mapname[MAX_MAPNAME_LEN];
+
 	qboolean	locked;
 	edict_t		*locked_by;
 	vec3_t		clip1;
@@ -595,3 +600,38 @@ void ClearCheckpoints(edict_t *ent);
 
 void worldspawn_mset();
 qboolean	Pickup_Weapon(edict_t *ent, edict_t *other); //trigger_finish uses this.	
+
+//CURL
+void CURL_DownloadFile(char *url, char *filename);
+void CURL_DownloadMapents(char *mapname);
+double CURL_GetFileSize(char *url);
+//void CURL_DownloadReplays(); /*NOT WORKING*/
+void CURL_SendFirstplace(char *str, char *mapname);
+void CURL_SendChat(char *str, qboolean chat);
+
+//json maptimes
+typedef struct {
+	char *response;
+	size_t size;
+} memory_s;
+typedef struct {
+	int server;
+	char name[17];
+	int uid;
+	char date[9];
+	float time;
+	int comp;
+	char replay[96];
+	char mapname[MAX_MAPNAME_LEN];
+} maptime;
+maptime jsonmaptimes[MAX_USERS];
+typedef struct {
+	char name[5];
+	char url[128];
+} remote_replays;
+remote_replays rp_url[16];
+
+void json_loadMaptimes(char *mapname);
+void json_printMaptimes(char *mapname, edict_t *ent);
+void GlobalTimesScoreboardMessage(edict_t *ent);
+void Load_Individual_Recording_Global(int num);
