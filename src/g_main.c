@@ -196,17 +196,20 @@ void ClientEndServerFrames (void)
 		}
 		#ifdef RACESPARK
 		race_this = race_frame = 0;
-		if ((ent->client->resp.ctf_team==CTF_TEAM2 || (gametype->value==GAME_CTF && ent->client->resp.ctf_team==CTF_TEAM1)) && ent->client->resp.rep_racing)
+		if ((ent->client->resp.ctf_team == CTF_TEAM2 || (gametype->value == GAME_CTF && ent->client->resp.ctf_team == CTF_TEAM1)) && ent->client->resp.rep_racing)
 		{
 			race_this = ent->client->resp.rep_race_number;
-			if (race_this<0 || race_this>MAX_HIGHSCORES)
+			if (race_this >= 20 && race_this < 20 + MAX_HIGHSCORES) {
+				race_this = race_this;
+			}
+			else if (race_this<0 || race_this>MAX_HIGHSCORES)
 			{
 				race_this = ent->client->resp.rep_race_number = 0;
 			}
 			race_frame = ent->client->resp.race_frame;
 		}
 		else if (ent->client->resp.replaying && ent->client->resp.rep_racing &&
-			     ent->client->resp.replaying-1 != ent->client->resp.rep_race_number) //no replay+race if both is from the same demo
+			ent->client->resp.replaying - 1 != ent->client->resp.rep_race_number) //no replay+race if both is from the same demo
 		{
 			race_this = ent->client->resp.rep_race_number;
 			if (race_this >= 20 && race_this < 20 + MAX_HIGHSCORES) {
@@ -221,22 +224,25 @@ void ClientEndServerFrames (void)
 		else if (ent->client->chase_target)
 		{
 			cent = ent->client->chase_target;
-			if (cent->inuse && cent->client && (cent->client->resp.ctf_team==CTF_TEAM2 || (gametype->value==GAME_CTF && cent->client->resp.ctf_team==CTF_TEAM1)))
+			if (cent->inuse && cent->client && (cent->client->resp.ctf_team == CTF_TEAM2 || (gametype->value == GAME_CTF && cent->client->resp.ctf_team == CTF_TEAM1)))
 			{
 				race_this = cent->client->resp.rep_race_number;
-				if (race_this<0 || race_this>MAX_HIGHSCORES)
+				if (race_this >= 20 && race_this < 20 + MAX_HIGHSCORES) {
+					race_this = race_this;
+				}
+				else if (race_this<0 || race_this>MAX_HIGHSCORES)
 				{
 					race_this = cent->client->resp.rep_race_number = 0;
 				}
 				race_frame = cent->client->resp.race_frame;
 			}
 		}
-		if (level_items.recorded_time_frames[race_this] && race_frame)
+		if ((level_items.recorded_time_frames[race_this] && race_frame) || (level_items.remote_recorded_time_frames[race_this - 20] && race_frame))
 		{
 			if (gset_vars->allow_race_spark)
 			{
-				Generate_Race_Data(race_frame,race_this);
-				gi.unicast(ent,true);
+				Generate_Race_Data(race_frame, race_this);
+				gi.unicast(ent, true);
 			}
 		}
 		#endif

@@ -7139,6 +7139,10 @@ void Cmd_Race (edict_t *ent)
 	// race number is usable
 	ent->client->resp.rep_racing = true;
 	ent->client->resp.rep_race_number = race_this;
+	if (global)
+		ent->client->resp.rep_race_number = race_this + 20;
+	else
+		ent->client->resp.rep_race_number = race_this;
 	hud_footer(ent);
 
 	char txt[255];

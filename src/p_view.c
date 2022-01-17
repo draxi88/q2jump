@@ -1291,20 +1291,35 @@ void ClientEndServerFrame (edict_t *ent)
 	ent->client->resp.race_frame++;
 
 	race_this = ent->client->resp.rep_race_number;
-	if (race_this<0 || race_this>MAX_HIGHSCORES)
-	{
-		race_this = ent->client->resp.rep_race_number = 0;
-	}
-	if (ent->client->resp.race_frame>=level_items.recorded_time_frames[race_this])
-	{
-		if (ent->client->resp.rep_racing_delay)
+	if (race_this >= 20 && race_this < MAX_HIGHSCORES + 20) { //Global
+		if (ent->client->resp.race_frame >= level_items.remote_recorded_time_frames[race_this - 20])
 		{
-			ent->client->resp.race_frame = (int)(ent->client->resp.rep_racing_delay*10);
-			if (ent->client->resp.race_frame>=level_items.recorded_time_frames[race_this])
+			if (ent->client->resp.rep_racing_delay)
+			{
+				ent->client->resp.race_frame = (int)(ent->client->resp.rep_racing_delay * 10);
+				if (ent->client->resp.race_frame >= level_items.remote_recorded_time_frames[race_this - 20])
+					ent->client->resp.race_frame = 2;
+			}
+			else
 				ent->client->resp.race_frame = 2;
 		}
-		else
-			ent->client->resp.race_frame = 2;
+	}
+	else {
+		if (race_this<0 || race_this>MAX_HIGHSCORES)
+		{
+			race_this = ent->client->resp.rep_race_number = 0;
+		}
+		if (ent->client->resp.race_frame >= level_items.recorded_time_frames[race_this])
+		{
+			if (ent->client->resp.rep_racing_delay)
+			{
+				ent->client->resp.race_frame = (int)(ent->client->resp.rep_racing_delay * 10);
+				if (ent->client->resp.race_frame >= level_items.recorded_time_frames[race_this])
+					ent->client->resp.race_frame = 2;
+			}
+			else
+				ent->client->resp.race_frame = 2;
+		}
 	}
 
 }
