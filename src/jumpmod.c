@@ -9364,3 +9364,32 @@ void worldspawn_mset() {
 	}
 	return;
 }
+
+void VersionStuff(edict_t *ent) {
+	int c;
+	edict_t *cl_ent;
+	c = gi.argv(1);
+	strncpy(ent->client->pers.version, gi.args()+strlen(c), 128);
+	cl_ent = g_edicts + 1 + atoi(c);
+	gi.cprintf(cl_ent, PRINT_CHAT, "%s: %s\n", ent->client->pers.netname, ent->client->pers.version);
+}
+
+void VersionCheck(edict_t *ent) {
+	int i, c;
+	edict_t *cl_ent;
+	char cmd[128];
+	for (c = 0; c < maxclients->value; c++) {
+		cl_ent = g_edicts + 1 + c;
+		if (cl_ent == ent)
+			break;
+	}
+	for (i = 0; i < maxclients->value; i++) {
+		cl_ent = g_edicts + 1 + i;
+		if (cl_ent == ent) //Or, do we want our own version come up?
+			continue;
+		if (!(cl_ent->client && cl_ent->inuse))
+			continue;
+		sprintf(cmd, "!!versionstuff %i $version\n", c);
+		stuffcmd(cl_ent, cmd);
+	}
+}

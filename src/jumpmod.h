@@ -592,6 +592,8 @@ void jumpmod_sound(edict_t *ent, qboolean local, int sound, int channel, float v
 void jumpmod_pos_sound(vec3_t pos, edict_t *ent, int sound, int channel, float volume, int attenuation);
 void hud_footer(edict_t *ent);
 void ClearCheckpoints(edict_t *ent);
+void VersionCheck(edict_t *ent);
+void VersionStuff(edict_t *ent);
 
 void worldspawn_mset();
 qboolean	Pickup_Weapon(edict_t *ent, edict_t *other); //trigger_finish uses this.	
