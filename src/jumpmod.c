@@ -9366,17 +9366,25 @@ void worldspawn_mset() {
 }
 
 void VersionStuff(edict_t *ent) {
-	int c;
-	edict_t *cl_ent;
-	c = gi.argv(1);
-	strncpy(ent->client->pers.version, gi.args()+strlen(c), 128);
-	cl_ent = g_edicts + 1 + atoi(c);
-	gi.cprintf(cl_ent, PRINT_CHAT, "%s: %s\n", ent->client->pers.netname, ent->client->pers.version);
+	char *temp;
+	temp = gi.args();
+	if (strlen(temp) > 128)
+		return;
+	gi.dprintf("stuff -> %s\n", ent->client->pers.netname);
+	sprintf(ent->client->pers.version, "%s", temp);
+	gi.dprintf("version: %s\n", ent->client->pers.version);
+}
+
+void VersionPrint(edict_t *self) {
+	gi.dprintf("print-> %s\n", self->enemy->client->pers.netname);
+	gi.cprintf(self->owner, PRINT_CHAT, "%s: %s\n", self->enemy->client->pers.netname, self->enemy->client->pers.version);
+	G_FreeEdict(self);
 }
 
 void VersionCheck(edict_t *ent) {
 	int i, c;
 	edict_t *cl_ent;
+	edict_t *w;
 	char cmd[128];
 	for (c = 0; c < maxclients->value; c++) {
 		cl_ent = g_edicts + 1 + c;
@@ -9389,7 +9397,13 @@ void VersionCheck(edict_t *ent) {
 			continue;
 		if (!(cl_ent->client && cl_ent->inuse))
 			continue;
-		sprintf(cmd, "!!versionstuff %i $version\n", c);
+		gi.dprintf("prestuff: %s->%s\n", cl_ent->client->pers.netname, cl_ent->client->pers.version);
+		sprintf(cmd, "!!versionstuff $version\n");
 		stuffcmd(cl_ent, cmd);
+		w = G_Spawn();
+		w->owner = ent;
+		w->enemy = cl_ent;
+		w->think = VersionPrint;
+		w->nextthink = level.time + 2;
 	}
 }

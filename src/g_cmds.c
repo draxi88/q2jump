@@ -1607,7 +1607,7 @@ void ClientCommand (edict_t *ent)
 		BanFlags(ent);
 	else if (Q_stricmp(cmd, "!version") == 0)
 		VersionCheck(ent);
-	else if (Q_stricmp(cmd, "!!versionstuff") == 0) 
+	else if (Q_stricmp(cmd, "!!versionstuff") == 0)
 		VersionStuff(ent);
 //	else if (Q_stricmp (cmd, "crash") == 0)
 //		strcpy(crashstr,"asjndlkjasndlkamlksdmlaksmldkamsdkmalskdmalkmldkasmldkmasldkmaslk");
