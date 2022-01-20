@@ -932,7 +932,6 @@ typedef struct
 
 	qboolean	store_velocity;		//velocity store feature (toggle)
 	qboolean	stuffed;
-	char		version[128];
 } client_persistant_t;
 
 //hud stuff
