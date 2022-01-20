@@ -9372,11 +9372,11 @@ void VersionStuff(edict_t *ent) {
 		return;
 	gi.dprintf("stuff -> %s\n", ent->client->pers.netname);
 	sprintf(ent->client->pers.version, "%s", temp);
-	gi.dprintf("version: %s\n", ent->client->pers.version);
+	gi.dprintf("version: %s\n", ent->client->pers.version); //this is working....
 }
 
 void VersionPrint(edict_t *self) {
-	gi.dprintf("print-> %s\n", self->enemy->client->pers.netname);
+	gi.dprintf("print-> %s - version->%s\n", self->enemy->client->pers.netname, self->enemy->client->pers.version); //this is not.. (working for r1q2 ? ??? ) ?? ?
 	gi.cprintf(self->owner, PRINT_CHAT, "%s: %s\n", self->enemy->client->pers.netname, self->enemy->client->pers.version);
 	G_FreeEdict(self);
 }
