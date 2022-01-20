@@ -9370,14 +9370,11 @@ void VersionStuff(edict_t *ent) {
 	temp = gi.args();
 	if (strlen(temp) > 128)
 		return;
-	gi.dprintf("stuff -> %s\n", ent->client->pers.netname);
-	sprintf(ent->client->pers.version, "%s", temp);
-	gi.dprintf("version: %s\n", ent->client->pers.version); //this is working....
+	sprintf(ent->client->resp.version, "%s", temp);
 }
 
 void VersionPrint(edict_t *self) {
-	gi.dprintf("print-> %s - version->%s\n", self->enemy->client->pers.netname, self->enemy->client->pers.version); //this is not.. (working for r1q2 ? ??? ) ?? ?
-	gi.cprintf(self->owner, PRINT_CHAT, "%s: %s\n", self->enemy->client->pers.netname, self->enemy->client->pers.version);
+	gi.cprintf(self->owner, PRINT_CHAT, "%s: %s\n", self->enemy->client->pers.netname, self->enemy->client->resp.version); //using resp.version works, using pers.version does not.. ?!?
 	G_FreeEdict(self);
 }
 
@@ -9393,11 +9390,10 @@ void VersionCheck(edict_t *ent) {
 	}
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
-		if (cl_ent == ent) //Or, do we want our own version come up?
-			continue;
+		//if (cl_ent == ent) //Or, do we want our own version come up? //Now you do!
+			//continue;
 		if (!(cl_ent->client && cl_ent->inuse))
 			continue;
-		gi.dprintf("prestuff: %s->%s\n", cl_ent->client->pers.netname, cl_ent->client->pers.version);
 		sprintf(cmd, "!!versionstuff $version\n");
 		stuffcmd(cl_ent, cmd);
 		w = G_Spawn();
