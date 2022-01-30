@@ -1605,7 +1605,7 @@ void ClientCommand (edict_t *ent)
 		RemBan(ent);
 	else if (Q_stricmp (cmd, "banflags") == 0)
 		BanFlags(ent);
-	else if (Q_stricmp(cmd, "!version") == 0)
+	else if (Q_strncasecmp(cmd, "!version", 8) == 0)
 		VersionCheck(ent);
 	else if (Q_stricmp(cmd, "!!versionstuff") == 0)
 		VersionStuff(ent);
