@@ -782,6 +782,19 @@ qboolean Add_Ammo (edict_t *ent, gitem_t *item, int count)
 	return true;
 }
 
+qboolean Set_Ammo(edict_t* ent, gitem_t* item, int count) {
+	int			index;
+
+	if (!ent->client)
+		return false;
+
+	index = ITEM_INDEX(item);
+
+	ent->client->pers.inventory[index] = count;
+
+	return true;
+}
+
 qboolean Pickup_Ammo (edict_t *ent, edict_t *other)
 {
 	int			oldcount;
