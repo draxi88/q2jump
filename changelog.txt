@@ -1,4 +1,5 @@
 #####v1.35ger#####
+-big thanks to mehis for a lot rewrites and bug fixes on this update
 -cpbox
 	-added the ability to take away a specific checkpoint
 		-use spawnflag 1
@@ -44,6 +45,9 @@
 -fog msets
 	-added mset fog (fog_r, fog_g, fog_b, fog_a, fog_density, fog_start, fog end)
 	-connects to a client with CS_FOG
+-added a count field to weapons
+	-if added, the count value is how much ammo the weapon has
+	-ex: give a rocket launcher with only 2 rockets
 -increased max_maps to 3584
 -removed ezmode
 -fixes
@@ -64,6 +68,7 @@
 	-removed even more CTF code
 	-weapon sounds will now stop when using kill
 	-rewrote trigger_finish, pickup_weapon, and timer logic to be separate
+	-...and anything else I forgot
 
 
 #####v1.34ger#####
