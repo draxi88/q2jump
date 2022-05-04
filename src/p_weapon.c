@@ -195,13 +195,16 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 	if (!(ent->spawnflags & DROPPED_ITEM) ) {
 		ammo = FindItem (ent->item->ammo);
 
-		// inf ammo
-		if ((int)dmflags->value & DF_INFINITE_AMMO) 
-			Add_Ammo (other, ammo, 1000);
+		// specific ammo count
+		if (ent->count) {
+			Set_Ammo(other, ammo, ent->count);
+			if (trigger_timer(3))
+				gi.bprintf(PRINT_CHAT, "%s with %i %s.\n", ent->item->pickup_name, ent->count, ent->item->ammo);
+		}
 
 		// normal ammo
 		else
-			Add_Ammo (other, ammo, 1000);
+			Add_Ammo(other, ammo, 1000);
 
 		if (!(ent->spawnflags & DROPPED_PLAYER_ITEM)) {
 			if (deathmatch->value) {
@@ -651,7 +654,6 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 	if (mset_vars->weapons || mset_vars->rocket)
 		fire_grenade2 (ent, start, forward, damage, speed, timer, radius, held);
 
-	if (!mset_vars->rocket)
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 
@@ -832,7 +834,6 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
-	if (!mset_vars->rocket)
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 }
@@ -898,7 +899,6 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
-	if (!mset_vars->rocket)
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 }
