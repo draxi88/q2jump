@@ -27,7 +27,7 @@ void BestTimesScoreboardMessage(edict_t *ent, edict_t *killer)
 	{
 		sprintf(colorstring, "string");
 		//gi.dprintf("i:%i -> name:%s\n", i, maplist.users[maplist.times[level.mapnum][i].uid].name);
-		if (strlen(maplist.users[maplist.times[level.mapnum][i].uid].name)>0)
+		if (strlen(maplist.users[maplist.times[level.mapnum][i].uid].name)>1)
 		{
 			if (Q_stricmp(maplist.times[level.mapnum][i].date,maplist.today)==0)
 			{
