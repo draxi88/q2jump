@@ -30,6 +30,11 @@ qboolean maplist_log(edict_t *ent, int uid, float time, char *date)
 	int maplist_uid;
 	float oldtime;
 	edict_t *cl_ent;
+	char txt[255];
+	char msg[255];
+	float first;
+	
+	first = maplist.times[level.mapnum][0].time; //first place on map.
 
 	//find user in maplist.times
 	maplist_uid = FindMaplistUID(level.mapnum, uid);
@@ -68,29 +73,28 @@ qboolean maplist_log(edict_t *ent, int uid, float time, char *date)
 		
 
 		//setting a first
-		char txt[255];
-		if (time < maplist.times[level.mapnum][0].time) {
-			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
+		if (time < first) {
+			sprintf(msg, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
 			Com_sprintf(txt, sizeof(txt), "%1.3f ", time - oldtime);
-			gi.cprintf(ent, PRINT_HIGH, "%s", HighAscii(txt));
-			gi.bprintf(PRINT_HIGH, "| 1st ");
-			Com_sprintf(txt, sizeof(txt), "%1.3f", time - maplist.times[level.mapnum][0].time);
-			gi.cprintf(ent, PRINT_HIGH, "%s", HighAscii(txt));
+			sprintf(msg + strlen(msg), "%s | 1st ", HighAscii(txt));
+			Com_sprintf(txt, sizeof(txt), "%1.3f", time - first);
+			sprintf(msg + strlen(msg), "%s", HighAscii(txt));
 			if (ent->client->pers.cp_split > 0)
-				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
-			gi.bprintf(PRINT_HIGH, ")\n");
+				sprintf(msg + strlen(msg)," | split: %1.3f", my_split);
+			gi.bprintf(PRINT_HIGH, "%s)\n", msg);
 			return false;
 		}
 
 		// beat pb, show to server
 		if (time < oldtime) {
-			gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
+			sprintf(msg, "%s finished in %1.3f seconds (PB ", ent->client->pers.netname, time);
 			Com_sprintf(txt, sizeof(txt), "%1.3f ", time - oldtime);
-			gi.cprintf(ent, PRINT_HIGH, "%s", HighAscii(txt));
-			gi.bprintf(PRINT_HIGH, "| 1st +%1.3f", time - maplist.times[level.mapnum][0].time);
+			sprintf(msg + strlen(msg), "%s | 1st ", HighAscii(txt));
+			Com_sprintf(txt, sizeof(txt), "%1.3f", time - first);
+			sprintf(msg + strlen(msg), "%s", HighAscii(txt));
 			if (ent->client->pers.cp_split > 0)
-				gi.cprintf(ent, PRINT_HIGH, " | split: %1.3f", my_split);
-			gi.bprintf(PRINT_HIGH, ")\n");
+				sprintf(msg + strlen(msg), " | split: %1.3f", my_split);
+			gi.bprintf(PRINT_HIGH, "%s)\n");
 			return false;
 		}
 
@@ -143,33 +147,32 @@ qboolean maplist_log(edict_t *ent, int uid, float time, char *date)
 					ent->client->resp.best_time = time;
 
 					// new map, so don't show comparison
-					if (maplist.times[level.mapnum][0].time == 0) {
-						gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (", ent->client->pers.netname, time);
+					if (first == 0) { //this isn't working!!!
+						sprintf(msg, "%s finished in %1.3f seconds (", ent->client->pers.netname, time);
 						if (ent->client->pers.cp_split > 0)
-							gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
-						gi.bprintf(PRINT_HIGH, "1st completion on the map)\n");
+							sprintf(msg + strlen(msg), "split: %1.3f | ", my_split);
+						sprintf(txt,"1st completion on the map");
+						gi.bprintf(PRINT_HIGH, "%s%s)\n", msg, HighAscii(txt));
 						return false;
 					}
 
 					// 1st comp AND 1st place
-					char txt[255];
-					if (time < maplist.times[level.mapnum][0].time) {
-						gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (1st ", ent->client->pers.netname, time);
-						Com_sprintf(txt, sizeof(txt), "%1.3f ", time - maplist.times[level.mapnum][0].time);
-						gi.cprintf(ent, PRINT_HIGH, "%s\n", HighAscii(txt));
-						gi.bprintf(PRINT_HIGH, "| ");
+					if (time < first) {
+						sprintf(msg, "%s finished in %1.3f seconds (1st ", ent->client->pers.netname, time);
+						Com_sprintf(txt, sizeof(txt), "%1.3f ", time - first);
+						sprintf(msg + strlen(msg), "%s | ", HighAscii(txt));
 						if (ent->client->pers.cp_split > 0)
-							gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
-						gi.bprintf(PRINT_HIGH, "1st completion)\n");
+							sprintf(msg + strlen(msg), "split: %1.3f | ", my_split);
+						gi.bprintf(PRINT_HIGH, "%s1st completion)\n", msg);
 						return false;
 					}
 
 					// always display someone's first completion
-					gi.bprintf(PRINT_HIGH, "%s finished in %1.3f seconds (1st +%1.3f | ",
+					sprintf(msg, "%s finished in %1.3f seconds (1st +%1.3f | ",
 						ent->client->pers.netname, time, time - maplist.times[level.mapnum][0].time);
 					if (ent->client->pers.cp_split > 0)
-						gi.cprintf(ent, PRINT_HIGH, "split: %1.3f | ", my_split);
-					gi.bprintf(PRINT_HIGH, "1st completion)\n");
+						sprintf(msg + strlen(msg), "split: %1.3f | ", my_split);
+					gi.bprintf(PRINT_HIGH, "%s1st completion)\n", msg);
 
 					if (gset_vars->playsound)
 						if (time > gset_vars->playsound)
