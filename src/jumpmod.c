@@ -5131,6 +5131,13 @@ void AddMap(edict_t *ent)
 	maplist.update[maplist.nummaps] = 0;//atoi(date_marker);
 
 	strcpy(maplist.mapnames[maplist.nummaps],mapname);
+	//clear maplist.times for this map.
+	for (i = 0; i < MAX_USERS; i++)
+	{
+		maplist.times[maplist.nummaps][i].uid = -1;
+		maplist.times[maplist.nummaps][i].time = 0;
+		maplist.times[maplist.nummaps][i].completions = 0;
+	}
 
 	maplist.nummaps++;
 	gi.bprintf(PRINT_HIGH,"%s has added %s to the map rotation.\n", ent->client->pers.netname, mapname);
@@ -5880,7 +5887,14 @@ void addmaps(void)
 		{
 			maplist.demoavail[maplist.nummaps] = false;
 			maplist.update[maplist.nummaps] = 0;
-			strncpy(maplist.mapnames[maplist.nummaps], temp, MAX_MAPNAME_LEN); 
+			strncpy(maplist.mapnames[maplist.nummaps], temp, MAX_MAPNAME_LEN);
+			//clear maplist.times for this map.
+			for (i = 0; i < MAX_USERS; i++)
+			{
+				maplist.times[maplist.nummaps][i].uid = -1;
+				maplist.times[maplist.nummaps][i].time = 0;
+				maplist.times[maplist.nummaps][i].completions = 0;
+			}
 			//UpdateTimes(maplist.nummaps);
 			maplist.nummaps++;
 			//new map added
@@ -5928,6 +5942,13 @@ void addsinglemap()
 		maplist.demoavail[maplist.nummaps] = false;
 		maplist.update[maplist.nummaps] = 0;
 		strncpy(maplist.mapnames[maplist.nummaps], mapname, MAX_MAPNAME_LEN); 
+		//clear maplist.times for this map.
+		for (i = 0; i < MAX_USERS; i++)
+		{
+			maplist.times[maplist.nummaps][i].uid = -1;
+			maplist.times[maplist.nummaps][i].time = 0;
+			maplist.times[maplist.nummaps][i].completions = 0;
+		}
 		//UpdateTimes(maplist.nummaps);
 		maplist.nummaps++;
 		//new map added
