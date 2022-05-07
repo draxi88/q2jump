@@ -94,7 +94,7 @@ qboolean maplist_log(edict_t *ent, int uid, float time, char *date)
 			sprintf(msg + strlen(msg), "%s", HighAscii(txt));
 			if (ent->client->pers.cp_split > 0)
 				sprintf(msg + strlen(msg), " | split: %1.3f", my_split);
-			gi.bprintf(PRINT_HIGH, "%s)\n");
+			gi.bprintf(PRINT_HIGH, "%s)\n", msg);
 			return false;
 		}
 
