@@ -140,6 +140,7 @@ qboolean maplist_log(edict_t *ent, int uid, float time, char *date)
 					if (!maplist.times[level.mapnum][i].completions)
 					{
 						maplist.users[uid].completions++;
+						maplist.users[uid].maps_done[level.mapnum] = 1;
 						append_uid_file(uid, level.mapname);
 					}
 					maplist.times[level.mapnum][i].completions++;
