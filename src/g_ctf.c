@@ -4386,12 +4386,10 @@ void CTFWarp(edict_t *ent)
 	if (ent->client->resp.silence)
 		return;
 
+	//looks like we gotta do this every time.. could probably remove the resp.uid checks then..
+	UpdateThisUsersUID(ent, ent->client->pers.netname);
+	uid = ent->client->resp.uid - 1;
 
-	if (!ent->client->resp.uid)
-	{
-		UpdateThisUsersUID(ent, ent->client->pers.netname);
-		uid = ent->client->resp.uid - 1;
-	}
 	// check for nomapvotetime gset
 	if ((gset_vars->nomapvotetime >= level.time) && (ent->client->resp.admin<aset_vars->ADMIN_VOTE_LEVEL) && curclients > 2) {
 		gi.cprintf(ent,PRINT_HIGH,"Votes have been disabled for the first %d seconds of a map.\n",gset_vars->nomapvotetime);
@@ -4593,10 +4591,10 @@ void CTFWarp(edict_t *ent)
 			write_map_file(level.mapname,level.mapnum);   // 084_h3
 			open_uid_file(ent->client->resp.uid-1,ent);
 		}*/
-
 		i2 = 0;
-		for (i=0;i<maplist.nummaps;i++) {
-			if (maplist.users[uid].maps_done[i]!=1) {
+		for (i = 0; i < maplist.nummaps; i++)
+		{
+			if (!maplist.users[uid].maps_done[i]) {
 				notimes[i2] = i;
 				i2++;
 			}
@@ -4606,7 +4604,6 @@ void CTFWarp(edict_t *ent)
 			gi.cprintf(ent,PRINT_HIGH,"All maps been completed\n");
 			return;
 		}
-
 		map = rand() % i2;
 
 		sprintf(text, "%s: Request to change map to %s (To do)", 
@@ -4620,7 +4617,7 @@ void CTFWarp(edict_t *ent)
 				CTFWinElection(0, NULL);
 		}
 	}
-	
+
 	// notime mapvote
 	else if ((strcmp(temp,"notime")==0) || (strcmp(temp,"NOTIME")==0)) {
 		i2 = 0;
