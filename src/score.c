@@ -825,6 +825,18 @@ void apply_time(edict_t *other)
 {
 	char		item_name[128];
 
+	// Checkpoint check
+	if (mset_vars->checkpoint_total > 0) {
+		if (other->client->resp.store[0].checkpoints < mset_vars->checkpoint_total) {
+			if (trigger_timer(5))
+				gi.cprintf(other, PRINT_HIGH, "You need %d checkpoint(s), you have %d. Find more checkpoints!\n",
+					mset_vars->checkpoint_total,
+					other->client->resp.store[0].checkpoints);
+
+			return;
+		}
+	}
+
 	Stop_Recording(other);
 	if (((other->client->resp.item_timer_allow) || (other->client->resp.ctf_team == CTF_TEAM2)) || (gametype->value == GAME_CTF && other->client->resp.ctf_team == CTF_TEAM1))
 	{
