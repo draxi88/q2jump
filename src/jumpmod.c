@@ -9386,12 +9386,17 @@ void worldspawn_mset() {
 	return;
 }
 
-void VersionStuff(edict_t *ent) {
+void GetClientVersion(edict_t *ent) {
 	char *temp;
-	temp = gi.args();
-	if (strlen(temp) > 128)
-		return;
-	sprintf(ent->client->resp.version, "%s", temp);
+	if (Q_stricmp(gi.argv(0), "GetClientVersion") != 0) {
+		stuffcmd(ent, "GetClientVersion $version\n");
+	}
+	else {
+		temp = gi.args();
+		if (strlen(temp) > 128)
+			temp[128] = '\0';
+		sprintf(ent->client->resp.version, "%s", temp);
+	}
 }
 
 void VersionPrint(edict_t *self) {
@@ -9403,20 +9408,12 @@ void VersionCheck(edict_t *ent) {
 	int i, c;
 	edict_t *cl_ent;
 	edict_t *w;
-	char cmd[128];
-	for (c = 0; c < maxclients->value; c++) {
-		cl_ent = g_edicts + 1 + c;
-		if (cl_ent == ent)
-			break;
-	}
 	for (i = 0; i < maxclients->value; i++) {
 		cl_ent = g_edicts + 1 + i;
 		//if (cl_ent == ent) //Or, do we want our own version come up? //Now you do!
 			//continue;
 		if (!(cl_ent->client && cl_ent->inuse))
 			continue;
-		sprintf(cmd, "!!versionstuff $version\n");
-		stuffcmd(cl_ent, cmd);
 		w = G_Spawn();
 		w->owner = ent;
 		w->enemy = cl_ent;

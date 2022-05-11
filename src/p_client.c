@@ -1671,6 +1671,7 @@ void ClientBegin (edict_t *ent)
 	int		i;
 
 	ent->client = game.clients + (ent - g_edicts - 1);
+	GetClientVersion(ent); //save !version.
 
 	/*overall_completions[ent-g_edicts-1].loaded = false;
 	compare_users[ent-g_edicts-1].user1.loaded = false;

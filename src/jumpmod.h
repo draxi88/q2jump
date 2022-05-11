@@ -594,4 +594,6 @@ void hud_footer(edict_t *ent);
 void ClearCheckpoints(edict_t *ent);
 
 void worldspawn_mset();
-qboolean	Pickup_Weapon(edict_t *ent, edict_t *other); //trigger_finish uses this.	
+qboolean	Pickup_Weapon(edict_t *ent, edict_t *other); //trigger_finish uses this.
+void GetClientVersion(edict_t *ent);
+
