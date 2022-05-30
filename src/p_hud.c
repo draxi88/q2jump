@@ -108,12 +108,12 @@ void BeginIntermission(edict_t *targ)
 				break;
 			}*/
 
-
+	write_users_file();
 	UpdateScores();
 	
 	UpdateScores2_Israfel();
 	//sort_users();
-	write_users_file();
+	
 	
 	Lastseen_Save();
 
