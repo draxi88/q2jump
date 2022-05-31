@@ -2300,26 +2300,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	// perform a pmove
 	gi.Pmove (&pm);
 	CheckCpbrush(ent, false); //reset cpbrush solidity
-	if (!pm.groundentity && ent->client->resp.ctf_team != CTF_NOTEAM && ent->movetype == MOVETYPE_WALK && ent->client->hook_state != HOOK_ON) {
-
-		if (!ent->client->resp.liftoff) {
-			VectorCopy(ent->s.origin, ent->client->resp.liftoff_pos);
-			ent->client->resp.liftoff_time = level.time;
-			ent->client->resp.liftoff = true;
-		}
-		else if (ent->client->resp.liftoff && level.time > ent->client->resp.liftoff_time + 0.5f) {
-			if (VectorCompare(ent->client->resp.liftoff_pos, ent->s.origin)) {
-				//gi.cprintf(ent, PRINT_HIGH, "STOP HACKING!\n");
-				gi.dprintf("%s is trying to hack! =(\n", ent->client->pers.netname);
-				ucmd->buttons = 0;
-				stuffcmd(ent, "toggleconsole\n");
-			}
-			ent->client->resp.liftoff = false;
-		}		
-	}
-	else {
-		ent->client->resp.liftoff = false;
-	}
 
 	if (gametype->value!=GAME_CTF)
 
