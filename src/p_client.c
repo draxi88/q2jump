@@ -2219,6 +2219,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		else
 			ent->client->resp.chasecam_type = 0;
 	}*/
+	if (gset_vars->autohop)
+		if (client->ps.pmove.pm_flags & PMF_JUMP_HELD) {
+			client->ps.pmove.pm_flags &= ~PMF_JUMP_HELD;
+		}
+
 	if (ent->client->chase_target) {
 		client->resp.cmd_angles[0] = SHORT2ANGLE(ucmd->angles[0]);
 		client->resp.cmd_angles[1] = SHORT2ANGLE(ucmd->angles[1]);
@@ -2304,6 +2309,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		if (!ent->client->resp.liftoff) {
 			VectorCopy(ent->s.origin, ent->client->resp.liftoff_pos);
+			VectorCopy(ent->s.old_origin, ent->client->resp.liftoff_oldpos);
 			ent->client->resp.liftoff_time = level.time;
 			ent->client->resp.liftoff = true;
 		}
@@ -2311,8 +2317,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			if (VectorCompare(ent->client->resp.liftoff_pos, ent->s.origin)) {
 				//gi.cprintf(ent, PRINT_HIGH, "STOP HACKING!\n");
 				gi.dprintf("%s is trying to hack! =(\n", ent->client->pers.netname);
-				ucmd->buttons = 0;
-				stuffcmd(ent, "toggleconsole\n");
+				VectorCopy(ent->client->resp.liftoff_oldpos, ent->s.origin);
+				//stuffcmd(ent, "toggleconsole\n");
 			}
 			ent->client->resp.liftoff = false;
 		}		

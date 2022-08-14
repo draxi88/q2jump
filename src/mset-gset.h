@@ -91,6 +91,7 @@ typedef struct
 	char admin_model[255];
 	int allow_admin_boot;
 	int autotime;
+	int autohop;
 	int best_time_glow;
 	int flashlight;
 	int hookspeed;

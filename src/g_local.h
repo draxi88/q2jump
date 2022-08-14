@@ -1063,6 +1063,7 @@ typedef struct
 	float		liftoff_time;
 	qboolean	liftoff;
 	vec3_t		liftoff_pos;
+	vec3_t		liftoff_oldpos;
 
 	qboolean	rep_racing;
 	int			rep_race_number;

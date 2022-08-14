@@ -357,6 +357,13 @@ zbotcmd_t zbotCommands[] =
 	  &gset_vars->autotime,
 	},
 	{
+	  0,1,0,
+	  "autohop",
+	  CMDWHERE_CFGFILE | CMD_GSET,
+	  CMDTYPE_NUMBER,
+	  &gset_vars->autohop,
+	},
+	{
 	  0,2147483647,0,
 	  "gbest_time_glow",
 	  CMDWHERE_CFGFILE | CMD_GSET | CMD_GSETMAP,
@@ -1837,6 +1844,7 @@ void SetDefaultValues(void)
 	gset_vars->mset->allowsrj = 0;
 	gset_vars->mset->announcements = 0;
 	gset_vars->autotime = 10;
+	gset_vars->autohop = 0;
 	gset_vars->best_time_glow = 0;
 	gset_vars->mset->bfg = 0;
 	gset_vars->mset->blaster = 0;
