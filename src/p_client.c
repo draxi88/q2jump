@@ -2172,12 +2172,12 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		qboolean autoidle = ent->client->pers.idle_player_state == PLAYERIDLE_STATE_AUTO;
 		qboolean player_moved = ent->client->pers.frames_without_movement == 0;
-		qboolean pressed_score = Q_stricmp(gi.argv(0), "score") == 0;
+		// qboolean pressed_score = Q_stricmp(gi.argv(0), "score") == 0;
 		qboolean remove_idle = false;
 
 		// In a team playing or spectating and auto-idling.
 		if (ent->client->resp.ctf_team != CTF_NOTEAM || autoidle) {
-			remove_idle = player_moved || pressed_score;
+			remove_idle = player_moved; // || pressed_score;
 		}
 
 		if (remove_idle) {
