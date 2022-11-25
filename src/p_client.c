@@ -2148,7 +2148,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	// Update frames without movement.
 	if (ucmd->buttons==0) {
-		ent->client->pers.frames_without_movement += ucmd->msec;
+		// Speculative fix for idle bug. Msec may be 0?
+		ent->client->pers.frames_without_movement += ucmd->msec > 0 ? ucmd->msec : 1;
 	} else {
 		ent->client->pers.frames_without_movement = 0;
 	}
