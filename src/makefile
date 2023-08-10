@@ -3,7 +3,7 @@
 # Compiler flags
 CC = gcc
 CFLAGS = -Wall -fPIC -Dstricmp=strcasecmp
-LDFLAGS = -ldl -lm -shared -lcurl
+LDFLAGS = -ldl -lm -shared -lcurl -pthread -ldiscord
 
 # Project files
 GAME_OBJS = \
