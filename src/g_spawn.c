@@ -919,6 +919,7 @@ debug_log(text);
 		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    team BLUE");
 	}*/
 	
+	StartDiscordBot();
 }
 
 

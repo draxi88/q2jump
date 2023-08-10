@@ -635,3 +635,6 @@ void json_loadMaptimes(char *mapname);
 void json_printMaptimes(char *mapname, edict_t *ent);
 void GlobalTimesScoreboardMessage(edict_t *ent);
 void Load_Individual_Recording_Global(int num);
+
+//discord
+int StartDiscordBot(void);
