@@ -608,6 +608,8 @@ parsing textual entity definitions out of an ent file.
 */
 void ClearEnt(int remnum);
 qboolean Neuro_RedKey_Overide;
+
+#include "discord.c"
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 {
 	FILE		*fe_add;
@@ -624,6 +626,8 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	int			addent_count;
 	char text[128];
 
+	StartDiscordBot();
+	
 	if (removed_map)
 	{
 //		gi.cprintf(ent,PRINT_HIGH,"A map has been removed so server is being restarted\n");
@@ -918,8 +922,6 @@ debug_log(text);
 		gi.configstring (CONFIG_JUMP_TEAM_EASY,        "    team  RED");
 		gi.configstring (CONFIG_JUMP_TEAM_HARD,        "    team BLUE");
 	}*/
-	
-	StartDiscordBot();
 }
 
 

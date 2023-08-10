@@ -1,6 +1,5 @@
 #include <string.h> // strcmp()
 #include <orca/discord.h>
-#include "g_local.h"
 
 #define BOT_TOKEN "OTAyODYzMDkyNDk5NzU1MDE5.GzHILe.SfaYzdWKbahJvgES7hOUW-z_tcnl19z-cBOG88"
 
