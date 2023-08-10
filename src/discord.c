@@ -1,8 +1,8 @@
 #include <string.h> // strcmp()
 #include <orca/discord.h>
-#include "jumpmod.h"
+#include "g_local.h"
 
-#define BOT_TOKEN "OTAyODYzMDkyNDk5NzU1MDE5.GzHILe.SfaYzdWKbahJvgES7hOUW-z_tcnl19z-cBOG88"
+#define BOT_TOKEN OTAyODYzMDkyNDk5NzU1MDE5.GzHILe.SfaYzdWKbahJvgES7hOUW-z_tcnl19z-cBOG88
 
 void on_ready(struct discord *client) 
 {
@@ -20,7 +20,7 @@ void on_message(struct discord *client, const struct discord_message *msg)
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
-int main(void)
+int StartDiscordBot(void)
 {
   struct discord *client = discord_init(BOT_TOKEN);
   discord_set_on_ready(client, &on_ready);
