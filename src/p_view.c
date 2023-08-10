@@ -1270,7 +1270,7 @@ void ClientEndServerFrame (edict_t *ent)
 			}
 			else
 			{
-				GlobalTimesScoreboardMessage(ent, ent->enemy);
+				GlobalTimesScoreboardMessage(ent);
 			}
 		}
 		gi.unicast (ent, false);
