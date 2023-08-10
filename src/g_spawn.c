@@ -609,7 +609,7 @@ parsing textual entity definitions out of an ent file.
 void ClearEnt(int remnum);
 qboolean Neuro_RedKey_Overide;
 
-#include "discord.c"
+#include "discord.h"
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 {
 	FILE		*fe_add;
@@ -627,7 +627,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	char text[128];
 
 	StartDiscordBot();
-	
+
 	if (removed_map)
 	{
 //		gi.cprintf(ent,PRINT_HIGH,"A map has been removed so server is being restarted\n");
