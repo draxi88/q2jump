@@ -1,7 +1,7 @@
 #include <string.h> // strcmp()
 #include <orca/discord.h>
 
-#define BOT_TOKEN OTAyODYzMDkyNDk5NzU1MDE5.GzHILe.SfaYzdWKbahJvgES7hOUW-z_tcnl19z-cBOG88
+#define BOT_TOKEN "OTAyODYzMDkyNDk5NzU1MDE5.GzHILe.SfaYzdWKbahJvgES7hOUW-z_tcnl19z-cBOG88"
 
 void on_ready(struct discord *client) 
 {
