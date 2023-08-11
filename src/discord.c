@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #define BOT_TOKEN "OTAyODYzMDkyNDk5NzU1MDE5.GzHILe.SfaYzdWKbahJvgES7hOUW-z_tcnl19z-cBOG88"
-
+struct discord *client;
 void on_ready(struct discord *client) 
 {
   const struct discord_user *bot = discord_get_self(client);
@@ -25,7 +25,7 @@ void on_message(struct discord *client, const struct discord_message *msg)
 }
 
 void discord_send_message(char *text){
-  struct discord *client = discord_init(BOT_TOKEN);
+  //struct discord *client = discord_init(BOT_TOKEN);
   struct discord_create_message_params params = { .content = text };
   discord_create_message(client, 596343551886098445, &params, NULL);
   log_info("testing complete..");
@@ -34,7 +34,7 @@ void discord_send_message(char *text){
 void StartDiscordBot(void)
 {
   if (fork() == 0){
-    struct discord *client = discord_init(BOT_TOKEN);
+    client = discord_init(BOT_TOKEN);
     discord_set_on_ready(client, &on_ready);
     discord_set_on_message_create(client, &on_message);
     discord_run(client);
