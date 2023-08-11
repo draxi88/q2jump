@@ -26,7 +26,7 @@ void on_message(struct discord *client, const struct discord_message *msg)
 
 void discord_send_message(char *text){
   struct discord *client = discord_init(BOT_TOKEN);
-  struct discord_create_message_params params = { .content = &text };
+  struct discord_create_message_params params = { .content = text };
   discord_create_message(client, 596343551886098445, &params, NULL);
   log_info("testing complete..");
 }
