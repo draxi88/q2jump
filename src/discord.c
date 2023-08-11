@@ -3,9 +3,8 @@
 #include "discord.h"
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
+#include <sys/types.h>;
+#include <unistd.h>;
 
 #define BOT_TOKEN "OTAyODYzMDkyNDk5NzU1MDE5.GzHILe.SfaYzdWKbahJvgES7hOUW-z_tcnl19z-cBOG88"
 
@@ -25,20 +24,14 @@ void on_message(struct discord *client, const struct discord_message *msg)
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
-void *threadDiscordBot(void *vargp){
-  struct discord *client = discord_init(BOT_TOKEN);
-  discord_set_on_ready(client, &on_ready);
-  discord_set_on_message_create(client, &on_message);
-  discord_run(client);
-  log_info("Client running...");
-}
-
 void StartDiscordBot(void)
 {
-  pthread_t thread_id;
-  pthread_create(&thread_id, NULL, threadDiscordBot, NULL);
-  log_info("join..");
-  pthread_join(thread_id, NULL);
-  log_info("return..");
-  return;
+  if (fork() == 0){
+    struct discord *client = discord_init(BOT_TOKEN);
+    discord_set_on_ready(client, &on_ready);
+    discord_set_on_message_create(client, &on_message);
+    discord_run(client);
+  } else {
+    return;
+  }
 }
