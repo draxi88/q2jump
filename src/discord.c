@@ -21,7 +21,7 @@ void on_message(struct discord *client, const struct discord_message *msg)
     discord_async_next(client, NULL); // make next request non-blocking (OPTIONAL)
     struct discord_create_message_params params = { .content = "message sent to server.." };
     discord_create_message(client, msg->channel_id, &params, NULL);
-    gi.bprintf(PRINT_CHAT, "%s: %s",msg->author->username, msg->content->);
+    gi.bprintf(PRINT_CHAT, "%s: %s", msg->author->username, msg->content);
   }
 }
 
