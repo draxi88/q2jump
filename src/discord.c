@@ -37,4 +37,5 @@ void StartDiscordBot(void)
   pthread_t thread_id;
   pthread_create(&thread_id, NULL, threadDiscordBot, NULL);
   pthread_join(thread_id, NULL);
+  return;
 }
