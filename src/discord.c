@@ -32,7 +32,7 @@ void *threadDiscordBot(void *vargp){
   discord_run(client);
 }
 
-int StartDiscordBot(void)
+void StartDiscordBot(void)
 {
   pthread_t thread_id;
   pthread_create(&thread_id, NULL, threadDiscordBot, NULL);
