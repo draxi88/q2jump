@@ -4,11 +4,8 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
-
-#define __discord
-#ifdef __discord
 #include <orca/discord.h>
-#endif
+
 #define BOT_TOKEN "OTAyODYzMDkyNDk5NzU1MDE5.GzHILe.SfaYzdWKbahJvgES7hOUW-z_tcnl19z-cBOG88"
 struct discord *client;
 void on_ready(struct discord *client) 
@@ -45,4 +42,3 @@ void StartDiscordBot(void)
     return;
   }
 }
-#undef __discord
