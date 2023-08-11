@@ -16,11 +16,11 @@ void on_ready(struct discord *client)
 
 void on_message(struct discord *client, const struct discord_message *msg)
 {
-  if (strcmp(msg->content, "ping") != 0)
+  if (strcmp(msg->content, "!mapvote") != 0)
     return; // ignore messages that aren't 'ping'
 
   discord_async_next(client, NULL); // make next request non-blocking (OPTIONAL)
-  struct discord_create_message_params params = { .content = "pong" };
+  struct discord_create_message_params params = { .content = "what map?" };
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
