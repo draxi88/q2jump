@@ -1,5 +1,4 @@
 #include <string.h> // strcmp()
-#include "discord.h"
 #include "g_local.h"
 
 #include <stdio.h>
@@ -23,9 +22,9 @@ void on_message(struct discord *client, const struct discord_message *msg)
   if (strstr(msg->content, "!say") != 0)
     return; // ignore messages that aren't 'ping'
 
-  //discord_async_next(client, NULL); // make next request non-blocking (OPTIONAL)
-  //struct discord_create_message_params params = { .content = "what map?" };
-  //discord_create_message(client, msg->channel_id, &params, NULL);
+  discord_async_next(client, NULL); // make next request non-blocking (OPTIONAL)
+  struct discord_create_message_params params = { .content = "message sent to server.." };
+  discord_create_message(client, msg->channel_id, &params, NULL);
   gi.bprintf(PRINT_CHAT, msg->content);
 }
 
@@ -33,7 +32,6 @@ void discord_send_message(char *text){
   client = discord_init(BOT_TOKEN);
   struct discord_create_message_params params = { .content = text };
   discord_create_message(client, 596343551886098445, &params, NULL);
-  log_info("testing complete..");
 }
 
 void StartDiscordBot(void)

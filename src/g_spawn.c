@@ -609,7 +609,6 @@ parsing textual entity definitions out of an ent file.
 void ClearEnt(int remnum);
 qboolean Neuro_RedKey_Overide;
 
-#include "discord.h"
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 {
 	FILE		*fe_add;

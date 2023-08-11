@@ -975,7 +975,6 @@ qboolean CheckFlood(edict_t *ent)
 	return false;
 }
 
-#import "discord.h"
 /*
 ==================
 Cmd_Say_f
