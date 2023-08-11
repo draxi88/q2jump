@@ -2,6 +2,7 @@
 #include <orca/discord.h>
 #include "discord.h"
 #include "jumpmod.h"
+#include "g_local.h"
 
 #include <stdio.h>
 #include <sys/types.h>
