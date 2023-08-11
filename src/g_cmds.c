@@ -994,6 +994,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 	char	*p;
 	int len;
 	char	text[2048];
+	char 	discord_text[2048];
 //	char	nitro[128],xania[128];
 
 	if (gi.argc () < 2 && !arg0)
@@ -1024,6 +1025,28 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		}
 		strcat(text, p);
 	}
+
+	//Discord text
+	Com_sprintf(discord_text, sizeof(discord_text), "```bash %s:" ent->client->pers.netname);
+	if (arg0)
+	{
+		strcat (discord_text, gi.argv(0));
+		strcat (discord_text, " ");
+		strcat (discord_text, gi.args());
+	}
+	else
+	{
+		p = gi.args();
+
+		if (*p == '"')
+		{
+			p++;
+			p[strlen(p)-1] = 0;
+		}
+		strcat(discord_text, p);
+	}
+	strcat(discord_text,"```");
+	discord_send_message(discord_text);
 
 	// don't let text be too long for malicious reasons
 	if (strlen(text) > 150)
@@ -1108,8 +1131,6 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		gi.cprintf(other, PRINT_CHAT, "%s", text);
 	}
 	gi.cprintf(ent, PRINT_CHAT, "%s", text);
-
-	discord_send_message(text);
 }
 
 
