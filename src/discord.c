@@ -30,13 +30,15 @@ void *threadDiscordBot(void *vargp){
   discord_set_on_ready(client, &on_ready);
   discord_set_on_message_create(client, &on_message);
   discord_run(client);
+  log_info("Client running...");
 }
 
 void StartDiscordBot(void)
 {
   pthread_t thread_id;
-  gi.dprintf("test1");
   pthread_create(&thread_id, NULL, threadDiscordBot, NULL);
+  log_info("join..");
   pthread_join(thread_id, NULL);
+  log_info("return..");
   return;
 }
