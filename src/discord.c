@@ -35,6 +35,7 @@ void *threadDiscordBot(void *vargp){
 void StartDiscordBot(void)
 {
   pthread_t thread_id;
+  gi.dprintf("test1");
   pthread_create(&thread_id, NULL, threadDiscordBot, NULL);
   pthread_join(thread_id, NULL);
   return;
