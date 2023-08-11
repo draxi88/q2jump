@@ -627,7 +627,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	char text[128];
 	
 	StartDiscordBot();
-	//discord_send_message("Bot loaded!");
+	discord_send_message("Bot loaded!");
 	if (removed_map)
 	{
 //		gi.cprintf(ent,PRINT_HIGH,"A map has been removed so server is being restarted\n");
