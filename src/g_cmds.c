@@ -975,6 +975,7 @@ qboolean CheckFlood(edict_t *ent)
 	return false;
 }
 
+#import "discord.h"
 /*
 ==================
 Cmd_Say_f
@@ -1107,6 +1108,8 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 		gi.cprintf(other, PRINT_CHAT, "%s", text);
 	}
 	gi.cprintf(ent, PRINT_CHAT, "%s", text);
+
+	discord_send_message(text);
 }
 
 
