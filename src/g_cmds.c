@@ -1027,7 +1027,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
 	}
 
 	//Discord text
-	Com_sprintf(discord_text, sizeof(discord_text), "```diff\n-%s: ", ent->client->pers.netname);
+	Com_sprintf(discord_text, sizeof(discord_text), "```yaml\n%s: ", ent->client->pers.netname);
 	if (arg0)
 	{
 		strcat (discord_text, gi.argv(0));
