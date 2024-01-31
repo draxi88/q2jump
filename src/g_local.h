@@ -889,6 +889,7 @@ typedef struct
 	char		skin[255];
 	int			hand;
 	int			fps;
+	int			packets;
 
 	qboolean	connected;			// a loadgame will leave valid entities that
 									// just don't have a connection yet
