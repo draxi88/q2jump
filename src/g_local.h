@@ -889,6 +889,7 @@ typedef struct
 	char		skin[255];
 	int			hand;
 	int			fps;
+	int			packets;
 
 	qboolean	connected;			// a loadgame will leave valid entities that
 									// just don't have a connection yet
@@ -1059,7 +1060,7 @@ typedef struct
 	qboolean	showjumpdistance;
 	int			last_fire_frame;
 	int			cur_time;
-
+  
 	qboolean	rep_racing;
 	int			rep_race_number;
 	float	rep_racing_delay;

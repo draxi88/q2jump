@@ -1826,6 +1826,19 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 		}
 	}
 
+	// packets
+	s = Info_ValueForKey (userinfo, "cl_maxpackets");
+
+	// check for the string, fpskick mset
+	if (strlen(s) && gset_vars->fpskick == 1) {
+		ent->client->pers.packets = atoi(s);
+		if (ent->client->pers.packets<20) { // kick for lower than 20
+            gi.cprintf (ent,PRINT_HIGH, "[JumpMod]   You have been kicked for lowering CL_MAXpackets below 20\n");
+			sprintf(temps,"kick %d\n",ent-g_edicts-1);
+			gi.AddCommandString(temps);
+		}
+	}
+
 	/*
 	// speedhud
 	s = Info_ValueForKey(userinfo, "cl_drawstrafehelper");
@@ -2142,13 +2155,15 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	if (!ent->client->pers.stuffed && ent->client->resp.ctf_team != CTF_NOTEAM) {
 		ent->client->pers.stuffed = true;
 		stuffcmd(ent, "set cl_maxfps $cl_maxfps u\n");
+		stuffcmd(ent, "set cl_maxpackets $cl_maxpackets u\n");
 		//stuffcmd(ent, "set cl_drawstrafehelper 0 u\n");
 	}
 
 
 	// Update frames without movement.
 	if (ucmd->buttons==0) {
-		ent->client->pers.frames_without_movement += ucmd->msec;
+		// Speculative fix for idle bug. Msec may be 0?
+		ent->client->pers.frames_without_movement += ucmd->msec > 0 ? ucmd->msec : 1;
 	} else {
 		ent->client->pers.frames_without_movement = 0;
 	}
@@ -2171,12 +2186,12 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		qboolean autoidle = ent->client->pers.idle_player_state == PLAYERIDLE_STATE_AUTO;
 		qboolean player_moved = ent->client->pers.frames_without_movement == 0;
-		qboolean pressed_score = Q_stricmp(gi.argv(0), "score") == 0;
+		// qboolean pressed_score = Q_stricmp(gi.argv(0), "score") == 0;
 		qboolean remove_idle = false;
 
 		// In a team playing or spectating and auto-idling.
 		if (ent->client->resp.ctf_team != CTF_NOTEAM || autoidle) {
-			remove_idle = player_moved || pressed_score;
+			remove_idle = player_moved; // || pressed_score;
 		}
 
 		if (remove_idle) {
@@ -2219,6 +2234,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		else
 			ent->client->resp.chasecam_type = 0;
 	}*/
+	if (gset_vars->autohop)
+		if (client->ps.pmove.pm_flags & PMF_JUMP_HELD) {
+			client->ps.pmove.pm_flags &= ~PMF_JUMP_HELD;
+		}
+
 	if (ent->client->chase_target) {
 		client->resp.cmd_angles[0] = SHORT2ANGLE(ucmd->angles[0]);
 		client->resp.cmd_angles[1] = SHORT2ANGLE(ucmd->angles[1]);
