@@ -1060,12 +1060,7 @@ typedef struct
 	qboolean	showjumpdistance;
 	int			last_fire_frame;
 	int			cur_time;
-
-	float		liftoff_time;
-	qboolean	liftoff;
-	vec3_t		liftoff_pos;
-	vec3_t		liftoff_oldpos;
-
+  
 	qboolean	rep_racing;
 	int			rep_race_number;
 	float	rep_racing_delay;
