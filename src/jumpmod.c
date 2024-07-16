@@ -6602,6 +6602,7 @@ qboolean ValidateMap (char *mapname)
 
 ind_map_t individual_map[MAX_USERS];
 int num_map_recs;
+html_data_t html_data;
 
 qboolean HTML_ReadTemplate(char *filename)
 {
