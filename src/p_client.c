@@ -1652,9 +1652,9 @@ void ClientBeginDeathmatch (edict_t *ent)
 
 //	gi.cprintf(ent,PRINT_CHAT,"console: p_version\n");
 	// make sure all view stuff is valid
-	ESF_debug = 1;
+	//ESF_debug = 1;
 	ClientEndServerFrame (ent);
-	ESF_debug = 0;
+	//ESF_debug = 0;
 }
 
 
