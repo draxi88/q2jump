@@ -442,6 +442,7 @@ typedef enum {
 
 void CreateHTML(edict_t *ent,int type,int usenum);
 
+/*
 #define SIZEOF_HTML_BUFFER 8192
 typedef struct {
 	FILE *file;
@@ -450,6 +451,7 @@ typedef struct {
 	int len;
 } html_data_t;
 extern html_data_t html_data;
+*/
 
 #define HTML_TEMPLATE_POSITION "$template_position$"
 #define HTML_TEMPLATE_MAPBESTTIME "$template_mapbesttime$"

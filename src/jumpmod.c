@@ -6602,7 +6602,7 @@ qboolean ValidateMap (char *mapname)
 
 ind_map_t individual_map[MAX_USERS];
 int num_map_recs;
-
+/*
 qboolean HTML_ReadTemplate(char *filename)
 {
 	FILE *tfile;
@@ -7057,7 +7057,7 @@ void CreateHTML(edict_t *ent,int type,int usenum)
 	if (html_data.file)
 		fclose(html_data.file);
 }
-
+*/
 void Cmd_Idle(edict_t *ent) {
 	if (ent->client->pers.idle_player_state != PLAYERIDLE_STATE_SELF) {
 		gi.cprintf(ent, PRINT_HIGH, "You are now marked as idle!\n");
