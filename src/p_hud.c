@@ -121,16 +121,16 @@ void BeginIntermission(edict_t *targ)
 	//html stuff
 	if (gset_vars->html_create)
 	{
-		CreateHTML (NULL,HTML_PLAYERS_SCORES,0);
-		CreateHTML (NULL,HTML_MAPS,0);
-		CreateHTML (NULL,HTML_BESTSCORES,0);
-		CreateHTML (NULL,HTML_FIRST,0);
-		CreateHTML (NULL,HTML_PLAYERS_PERCENTAGE,0);	
-		CreateHTML (NULL,HTML_INDIVIDUAL_MAP,level.mapnum);
+		//CreateHTML (NULL,HTML_PLAYERS_SCORES,0);
+		//CreateHTML (NULL,HTML_MAPS,0);
+		//CreateHTML (NULL,HTML_BESTSCORES,0);
+		//CreateHTML (NULL,HTML_FIRST,0);
+		//CreateHTML (NULL,HTML_PLAYERS_PERCENTAGE,0);	
+		//CreateHTML (NULL,HTML_INDIVIDUAL_MAP,level.mapnum);
 		for (i=0;i<MAX_USERS;i++)
 		{
 			if (Q_stricmp(maplist.times[level.mapnum][i].date,maplist.today)==0)
-				CreateHTML (NULL,HTML_INDIVIDUALS,maplist.times[level.mapnum][i].uid);
+				//CreateHTML (NULL,HTML_INDIVIDUALS,maplist.times[level.mapnum][i].uid);
 		}
 
 	}
