@@ -1,8 +1,8 @@
 # Quake2 Jump Makefile
 
 # Compiler flags
-CC = gcc
-CFLAGS = -Wall -fPIC -Dstricmp=strcasecmp
+CC = gcc 
+CFLAGS = -Wall -fPIC -Dstricmp=strcasecmp -lstdc++
 LDFLAGS = -ldl -lm -shared
 
 # Project files
