@@ -1420,7 +1420,7 @@ void resync(qboolean overide)
 			//gi.dprintf("map loaded: %s\n", maplist.mapnames[i]);
 			open_map_file(maplist.mapnames[i], true);
 			//html
-			//CreateHTML(NULL, HTML_INDIVIDUAL_MAP, i);
+			CreateHTML(NULL, HTML_INDIVIDUAL_MAP, i);
 		}
 		//save users.t file
 		//write_users_file();
@@ -1430,13 +1430,13 @@ void resync(qboolean overide)
 		for (i = 0; i < MAX_USERS; i++)
 		{
 			if (maplist.users[i].score)
-				//CreateHTML(NULL, HTML_INDIVIDUALS, i);
+				CreateHTML(NULL, HTML_INDIVIDUALS, i);
 		}
-		//CreateHTML(NULL, HTML_PLAYERS_SCORES, 0);
-		//CreateHTML(NULL, HTML_MAPS, 0);
-		//CreateHTML(NULL, HTML_BESTSCORES, 0);
-		//CreateHTML(NULL, HTML_FIRST, 0);
-		//CreateHTML(NULL, HTML_PLAYERS_PERCENTAGE, 0);
+		CreateHTML(NULL, HTML_PLAYERS_SCORES, 0);
+		CreateHTML(NULL, HTML_MAPS, 0);
+		CreateHTML(NULL, HTML_BESTSCORES, 0);
+		CreateHTML(NULL, HTML_FIRST, 0);
+		CreateHTML(NULL, HTML_PLAYERS_PERCENTAGE, 0);
 	}
 }
 

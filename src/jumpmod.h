@@ -440,7 +440,7 @@ typedef enum {
 	HTML_BESTSCORES
 } html_t;
 
-//void CreateHTML(edict_t *ent,int type,int usenum);
+extern void CreateHTML(edict_t *ent,int type,int usenum);
 
 /*
 #define SIZEOF_HTML_BUFFER 8192
