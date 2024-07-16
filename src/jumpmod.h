@@ -449,7 +449,7 @@ typedef struct {
 	char tplate[SIZEOF_HTML_BUFFER];
 	int len;
 } html_data_t;
-html_data_t html_data;
+extern html_data_t html_data;
 
 #define HTML_TEMPLATE_POSITION "$template_position$"
 #define HTML_TEMPLATE_MAPBESTTIME "$template_mapbesttime$"
