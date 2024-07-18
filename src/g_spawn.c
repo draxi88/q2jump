@@ -1107,7 +1107,7 @@ void SP_worldspawn (edict_t *ent)
 
 	if (ent->message && ent->message[0])
 	{
-		gi.configstring (CS_NAME, ent->message);
+		gi.configstring (CS_NAME, "Alt20");
 		strncpy (level.level_name, ent->message, sizeof(level.level_name));
 	}
 	else
