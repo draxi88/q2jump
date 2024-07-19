@@ -1947,6 +1947,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	ent->client->resp.cur_time = 0;
 	ent->client->resp.last_fire_frame = 0;
 	return true;
+	
 }
 
 /*
