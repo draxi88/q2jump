@@ -1947,6 +1947,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	ent->client->resp.cur_time = 0;
 	ent->client->resp.last_fire_frame = 0;
 	return true;
+	
 }
 
 /*
@@ -2155,7 +2156,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	if (!ent->client->pers.stuffed && ent->client->resp.ctf_team != CTF_NOTEAM) {
 		ent->client->pers.stuffed = true;
 		stuffcmd(ent, "set cl_maxfps $cl_maxfps u\n");
-		stuffcmd(ent, "set cl_maxpackets $cl_maxpackets u\n");
+		stuffcmd(ent, "set cl_maxpackets 30 u\n");
 		//stuffcmd(ent, "set cl_drawstrafehelper 0 u\n");
 	}
 
